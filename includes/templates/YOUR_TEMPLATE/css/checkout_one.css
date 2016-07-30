@@ -1,0 +1,12 @@
+th#ccProductsHeading { text-align: left; }
+th#ccTotalHeading { text-align: right; }
+.floatingBox  { width: 49%; }
+.clearRight { clear: right; }
+label.inputLabel { width: 110px; }
+#cartContentsDisplay  th, #cartContentsDisplay td { padding: 0.5em 1em; }
+#cartOrderTotals { border-top: 1px solid #bbb; border-bottom: 1px solid #bbb; }
+fieldset#checkoutOneCartGroup { padding-bottom: 0; }
+fieldset > #cartContentsDisplay div { margin-right: 0; }
+@media (max-width: 979px) {
+  .floatingBox { width: 95%; float: none; margin: 0 auto; }
+}
