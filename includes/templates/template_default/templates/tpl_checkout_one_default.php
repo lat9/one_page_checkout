@@ -379,7 +379,20 @@ if (TEXT_CHECKOUT_ONE_INSTRUCTIONS != '') {
   </div>
 <?php
 }
-?> 
+
+if (DISPLAY_CONDITIONS_ON_CHECKOUT == 'true') {
+?>
+  <div id="conditions-div">
+    <fieldset>
+      <legend><?php echo TABLE_HEADING_CONDITIONS; ?></legend>
+      <div><?php echo TEXT_CONDITIONS_DESCRIPTION;?></div>
+      <?php echo zen_draw_checkbox_field ('conditions', '1', false, 'id="conditions"'); ?><label class="checkboxLabel" for="conditions"><?php echo TEXT_CONDITIONS_CONFIRM; ?></label>
+    </fieldset>
+  </div>
+<?php
+}
+?>
+
 <div id="checkoutOneSubmit" class="buttonRow forward"><?php echo zen_image_submit (BUTTON_IMAGE_CHECKOUT_ONE_CONFIRM, BUTTON_CHECKOUT_ONE_CONFIRM_ALT, 'id="confirm-order" name="confirm_order" onclick="submitFunction(' .zen_user_has_gv_account($_SESSION['customer_id']).','.$order->info['total'] . '); setOrderConfirmed (1);"') . zen_draw_hidden_field ('order_confirmed', '1', 'id="confirm-the-order"') . zen_draw_hidden_field ('javascript_enabled', '0', 'id="javascript-enabled"'); ?></div>
 <div id="checkoutOneEmail" class="forward clearRight"><?php echo sprintf (TEXT_CONFIRMATION_EMAILS_SENT_TO, $order->customer['email_address']); ?></div>
 <div class="clearBoth"></div>

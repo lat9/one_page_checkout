@@ -84,7 +84,6 @@ $error = false;
 if (DISPLAY_CONDITIONS_ON_CHECKOUT == 'true') {
     if (!isset ($_POST['conditions']) || $_POST['conditions'] != '1') {
         $messageStack->add_session ('checkout_payment', ERROR_CONDITIONS_NOT_ACCEPTED, 'error');
-        zen_redirect (zen_href_link (FILENAME_CHECKOUT_ONE, '', 'SSL'));
     }
 }
 
@@ -198,7 +197,7 @@ if ($order->content_type != 'virtual') {
 }
 $checkout_one->debug_message ('Shipping setup, preparing to call order-totals.' . print_r ($shipping_modules, true) . print_r ($quote, true) . ((isset ($_SESSION['shipping'])) ? print_r ($_SESSION['shipping'], true) : 'Shipping not set'));
 
-require(DIR_WS_CLASSES . 'order_total.php');
+require (DIR_WS_CLASSES . 'order_total.php');
 $order_total_modules = new order_total;
 $order_total_modules->collect_posts();
 $order_total_modules->pre_confirmation_check();

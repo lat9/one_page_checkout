@@ -78,6 +78,7 @@ th { background-color: #eee; }
     <li>The HTML map that helps to describe the sections of the checkout_one page in this document was created using the tool at <a href="http://imagemap-generator.dariodomi.de/" target="_blank">http://imagemap-generator.dariodomi.de/</a>.</li>
     <li>Responsive image-map handling courtesy of <a href="https://github.com/davidjbradshaw/image-map-resizer" target="_blank">https://github.com/davidjbradshaw/image-map-resizer</a>.</li>
   </ol>
+  <hr />
   <p>Current Support Thread at Zen Cart Forums: <a href="https://www.zen-cart.com/showthread.php?220781-One-Page-Checkout-Support-Thread">https://www.zen-cart.com/showthread.php?220781-One-Page-Checkout-Support-Thread</a></p>
   
   <div class="tab-container" id="outer-container">
@@ -91,7 +92,7 @@ th { background-color: #eee; }
     
       <div id="overview">
         <p>This section identifies how the <em>One-Page Checkout</em> presents itself to your customers and your admin users.</p>
-        <div class="tab-container" id="inner-container2">
+        <div class="tab-container" id="inner-container1">
           <ul class="etabs">
             <li class="tab"><a href="#operation">Operation</a></li>
             <li class="tab"><a href="#config">Configuration</a></li>
@@ -210,6 +211,11 @@ th { background-color: #eee; }
                   <li><em>TEXT_CHECKOUT_ONE_INSTRUCTIONS</em>.  This constant, if not empty, results in the <code class="no-pad">fieldset</code> being displayed, with the text you've entered surrounded by a <code class="no-pad">p</code> tag.</li>
                   <li><em>TEXT_CHECKOUT_ONE_INSTRUCTION_LABEL</em>.  This constant, if not empty, is displayed as the fieldset's <code class="no-pad">label</code>.</li>
                 </ol>
+              </fieldset>
+              
+              <fieldset id="conditions">
+                <legend>Terms and Condition</legend>
+                <p>This section <em>conditionally</em> displays full-screen width, just above the <b><em>Order Confirmation</em></b> section, based on your store's setting of <em>Configuration-&gt;Regulations-&gt;Confirm Terms and Conditions During Checkout Procedure</em>.</p>
               </fieldset>
                
               <fieldset id="confirm">
@@ -337,9 +343,11 @@ th { background-color: #eee; }
                 <li>v1.0.1, 2016-08-xx:<ul>
                   <li>BUGFIX: Check customer's authorization.</li>
                   <li>BUGFIX: Zen Cart base AJAX handling changes required for Zen Cart 1.5.5 (pre-a) installations, too.</li>
+                  <li>BUGFIX: Display &quot;Terms and Conditions&quot; block, if configured.</li>
                   <li>The following files were affected:<ol>
                     <li>/includes/modules/pages/checkout_one/header_php.php</li>
                     <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
+                    <li>/includes/templates/template_default/templates/tpl_checkout_one_default.php</li>
                     <li>/zc154_only/*.* renamed to /pre_zc155a/*.*</li>
                   </ol></li>
                 </ul></li>
@@ -356,7 +364,7 @@ th { background-color: #eee; }
   
   <script src="../imageMapResizer.js" type="text/javascript"></script>
   <script type="text/javascript">
-    $('#outer-container, #inner-container2, #inner-container3').easytabs();
+    $('#outer-container, #inner-container1, #inner-container2, #inner-container3').easytabs();
     
     $( '.side-link' ).click( function() {
         window.location.hash = $(this).attr( 'href' );
