@@ -43,6 +43,7 @@ th { background-color: #eee; }
 .smaller { font-size: smaller; }
 .left-pane { width: 49%; float: left; }
 .right-pane { width: 49%; float: right; }
+.multi-list { width: 32%; float: left; }
 
 .etabs { margin: 0; padding: 0; }
 .tab { display: inline-block; zoom:1; *display:inline; background: #eee; border: solid 1px #999; border-bottom: none; border-radius: 4px 4px 0 0; margin: 0; }
@@ -52,6 +53,9 @@ th { background-color: #eee; }
 .tab a.active { font-weight: bold; }
 .tab-container .panel-container { background: #fff; border: solid #666 1px; padding: 10px; border-radius: 0 4px 4px 4px; }
 .panel-container { margin-bottom: 10px; }
+@media (max-width: 979px) {
+  .multi-list { width: 95%; float: none; margin: 0 auto; }
+}
 -->
 </style>
 <link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" />
@@ -66,7 +70,7 @@ th { background-color: #eee; }
 
 <body>
   <h1>One-Page Checkout <span class="smaller">for Zen Cart v1.5.4 (and later)</span></h1>
-  <h3>Version 1.0.0 by lat9</h3>
+  <h3>Version 1.0.1 by lat9</h3>
   <h3>Copyright &copy; 2013-2016 <a href="http://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
   <p><b>Credits:</b></p>
   <ol>
@@ -98,29 +102,37 @@ th { background-color: #eee; }
               <p>This plugin streamlines the flow that your customers see during your store's checkout process, combining the handling required for the <code class="no-pad">checkout_shipping</code>, <code class="no-pad">checkout_payment</code> and <code class="no-pad">checkout_confirmation</code> into a single-page display.</p>
               <p>The plugin's installation loads all the plugin's files into the folders associated with the <em>default</em> template's use; that way, the processing is available for <b>all</b> templates you might use in your store.  If you make changes to those default files, you'll use the Zen Cart &quot;override&quot; system to make your updates.  For example, if you're adding a top-of-page message, you'll copy the file /includes/languages/english/checkout_one.php to the /includes/languages/english/YOUR_TEMPLATE folder and make your changes there.</p>
               <p>The plugin has been validated on Zen Cart 1.5.4 and Zen Cart 1.5.5a, using the following shipping, order-total and payment methods:</p>
-              <ul>
-                <li><em>Shipping Methods:</em><ol>
+              <div class="multi-list">
+                <h3>Shipping Methods</h3>
+                <ol>
                   <li>Per Item</li>
                   <li>Flat Rate</li>
                   <li>Store Pickup</li>
                   <li>United States Postal Service (usps)</li>
                   <li>United Parcel Service (ups)</li>
-                </ol></li>
-                <li><em>Order Totals:</em><ol>
+                </ol>
+              </div>
+              <div class="multi-list">
+                <h3>Order Totals</h3>
+                <ol>
                   <li>ot_subtotal</li>
                   <li>ot_tax</li>
                   <li>ot_coupon</li>
                   <li>ot_gv</li>
                   <li>ot_shipping</li>
                   <li>ot_total</li>
-                </ol></li>
-                <li><em>Payment Methods:</em><ol>
+                </ol>
+              </div>
+              <div class="multi-list">
+                <h3>Payment Methods:</h3>
+                <ol>
                   <li>Check / Moneyorder (moneyorder)</li>
                   <li>Authorize.net (AIM) (authorizenet_aim)</li>
                   <li>PayPal Express Checkout (paypalwpp)</li>
                   <li>Purchase Order (purchaseorders)</li>
-                </ol></li>
-              </ul>
+                </ol>
+              </div>
+              <div class="clearBoth"></div>
             </div>
             
             <div id="config">
@@ -221,11 +233,11 @@ th { background-color: #eee; }
           </ul>
           <div class="panel-container">
             <div id="install">
-              <p><b>Note:</b> If you are installing this plugin on Zen Cart 1.5.4, you'll need to also copy/merge the files present in the <code class="no-pad">zc154_only</code> folder.  Each of those files contain the contents of the like-named file provided in the Zen Cart 1.5.5a distribution.</p>
+              <p><b>Note:</b> If you are installing this plugin on Zen Cart 1.5.4 or Zen Cart 1.5.5 (without an alphabetic suffix), you'll need to also copy/merge the files present in the <code class="no-pad">pre_zc155a</code> folder.  Each of those files contain the contents of the like-named file provided in the Zen Cart 1.5.5a distribution.</p>
               <ol>
-                <li><span class="corefile">/zc154_only/ajax.php</span></li>
-                <li><span class="corefile">/zc154_only/includes/templates/template_default/jscript/jscript_framework.php</span></li>
-                <li><span class="template">/zc154_only/includes/templates/YOUR_TEMPLATE/jscript/jscript_framework.php</span></li>
+                <li><span class="corefile">/pre_zc155a/ajax.php</span></li>
+                <li><span class="corefile">/pre_zc155a/includes/templates/template_default/jscript/jscript_framework.php</span></li>
+                <li><span class="template">/pre_zc155a/includes/templates/YOUR_TEMPLATE/jscript/jscript_framework.php</span></li>
               </ol>
               <hr />
               <p>Other than the above conditionally-required files, there is one <span class="corefile">core-file overwrite</span> in this plugin; you should <strong>always</strong> backup your cart&rsquo;s database and files prior to making any changes.  Unzip the plugin's package file, rename the YOUR_TEMPLATE folders (3 of them) to match your store's template name:</p>
@@ -287,7 +299,7 @@ th { background-color: #eee; }
           </ul>
           <div class="panel-container">
             <div id="files">
-              <p>The plugin provides the following files in its distribution zip-file.  Please note that the files present in the &quot;zc154_only&quot; folder are required only if you're installing this plugin on <span class="smaller">(er)</span> Zen Cart 1.5.4!</p>
+              <p>The plugin provides the following files in its distribution zip-file.  Please note that the files present in the &quot;pre_zc155a&quot; folder are required only if you're installing this plugin on <span class="smaller">(er)</span> a version of Zen Cart <em>prior to</em> 1.5.5<b>a</b>!</p>
               <ol>
                 <li>/includes/auto_loaders/config.checkout_one.php</li>
                 <li><span class="corefile">/includes/classes/message_stack.php</span></li>
@@ -314,14 +326,23 @@ th { background-color: #eee; }
                 <li>/YOUR_ADMIN/includes/auto_loaders/config.checkout_one.php</li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                 <li>/YOUR_ADMIN/includes/languages/english/extra_definitions/checkout_one_name.php</li>
-                <li><span class="corefile">/zc154_only/ajax.php</span></li>
-                <li><span class="corefile">/zc154_only/includes/templates/template_default/jscript/jscript_framework.php</span></li>
-                <li><span class="template">/zc154_only/includes/templates/YOUR_TEMPLATE/jscript/jscript_framework.php</span></li>
+                <li><span class="corefile">/pre_zc155a/ajax.php</span></li>
+                <li><span class="corefile">/pre_zc155a/includes/templates/template_default/jscript/jscript_framework.php</span></li>
+                <li><span class="template">/pre_zc155a/includes/templates/YOUR_TEMPLATE/jscript/jscript_framework.php</span></li>
               </ol>
             </div>
             
             <div id="changes">
               <ul>
+                <li>v1.0.1, 2016-08-xx:<ul>
+                  <li>BUGFIX: Check customer's authorization.</li>
+                  <li>BUGFIX: Zen Cart base AJAX handling changes required for Zen Cart 1.5.5 (pre-a) installations, too.</li>
+                  <li>The following files were affected:<ol>
+                    <li>/includes/modules/pages/checkout_one/header_php.php</li>
+                    <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
+                    <li>/zc154_only/*.* renamed to /pre_zc155a/*.*</li>
+                  </ol></li>
+                </ul></li>
                 <li>v1.0.0, 2016-07-30:<ul>
                   <li>Initial public release.</li>
                 </ul></li>
