@@ -19,6 +19,13 @@ if (!(defined ('CHECKOUT_ONE_ENABLED') && CHECKOUT_ONE_ENABLED == 'true')) {
 }
 
 // -----
+// There are some payment methods (like eWay) that "replace" the confirmation form via the HTML they return on
+// the "process_button" payment-class function.  Rather than hard-code the list in code, below, the following
+// constant will be updated as additional payment-methods that make use of that interface are identified.
+//
+if (!defined ('CHECKOUT_ONE_CONFIRMATION_REQUIRED')) define ('CHECKOUT_ONE_CONFIRMATION_REQUIRED', 'eway_rapid');
+
+// -----
 // In the "normal" Zen Cart checkout flow, the module /includes/init_includes/init_customer_auth.php performs the
 // following check to see that the customer is authorized to checkout.  Rather than changing the code in that
 // core-file, we'll repeat that check here.
@@ -309,7 +316,17 @@ if (isset (${$_SESSION['payment']}->form_action_url)) {
     $form_action_url = zen_href_link (FILENAME_CHECKOUT_PROCESS, '', 'SSL');
 }
 
-$flag_disable_header = $flag_disable_footer = $flag_disable_left = $flag_disable_right = true;
+// -----
+// If the currently-selected payment method requires the order-confirmation page to be displayed, then the
+// header/footer are displayed too; otherwise, all elements of the display are hidden.
+//
+$flag_disable_left = $flag_disable_right = true;
+if (in_array ($_SESSION['payment'], explode (',', CHECKOUT_ONE_CONFIRMATION_REQUIRED))) {
+    $confirmation_required = true;
+} else {
+    $confirmation_required = false;
+    $flag_disable_header = $flag_disable_footer = true;
+}
 
 $breadcrumb->add(NAVBAR_TITLE_1, zen_href_link (FILENAME_CHECKOUT_ONE, '', 'SSL'));
 $breadcrumb->add(NAVBAR_TITLE_2);

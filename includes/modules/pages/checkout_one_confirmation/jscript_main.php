@@ -5,14 +5,49 @@
 //
 ?>
 <script type="text/javascript"><!--
-$(document).ready(function(){
-    $('#navBreadCrumb').hide();
-    $('#checkoutOneConfirmationLoading').show();
-    $('body', 'html').css({ 
-        "overflow": "hidden",
-        "height": "100%",
-        "background": "none"
+    var submitter = null;
+    function popupWindow(url) 
+    {
+        window.open(url,'popupWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=450,height=320,screenX=150,screenY=150,top=150,left=150')
+    } 
+
+    function couponpopupWindow(url) {
+        window.open(url,'couponpopupWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=450,height=320,screenX=150,screenY=150,top=150,left=150')
+    }
+
+    function submitonce()
+    {
+        var button = document.getElementById("btn_submit");
+        button.style.cursor="wait";
+        button.disabled = true;
+        setTimeout('button_timeout()', 4000);
+        return false;
+    }
+    function button_timeout() 
+    {
+        var button = document.getElementById("btn_submit");
+        button.style.cursor="pointer";
+        button.disabled = false;
+    }
+<?php
+// -----
+// In normal circumstances, the form on the checkout_one_confirmation page auto-submits via the following
+// jQuery.  This should happen **only if ** the active payment method doesn't require the confirmation page
+// to be shown.
+//
+if (!$confirmation_required) {
+?>
+    $(document).ready(function(){
+        $('#navBreadCrumb').hide();
+        $('#checkoutOneConfirmationLoading').show();
+        $('body', 'html').css({ 
+            "overflow": "hidden",
+            "height": "100%",
+            "background": "none"
+        });
+        $('form[name="confirmation_one"]').submit();
     });
-    $('form[name="confirmation_one"]').submit();
-});
+<?php
+}
+?>
 //--></script>

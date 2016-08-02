@@ -6,6 +6,8 @@
 define('NAVBAR_TITLE_1', 'Checkout');
 define('NAVBAR_TITLE_2', 'Confirm Your Order');
 
+define ('HEADING_TITLE', 'Finalize and Confirm Your Order');
+
 define('HEADING_BILLING_ADDRESS', 'Billing/Payment Information');
 define('HEADING_DELIVERY_ADDRESS', 'Delivery/Shipping Information');
 define('HEADING_SHIPPING_METHOD', 'Shipping Method:');
@@ -15,8 +17,6 @@ define('HEADING_TAX', 'Tax');
 define('HEADING_ORDER_COMMENTS', 'Special Instructions or Order Comments');
 // no comments entered
 define('NO_COMMENTS_TEXT', 'None');
-define('TITLE_CONTINUE_CHECKOUT_PROCEDURE', '<strong>Continue to Step 4</strong>');
-define('TEXT_CONTINUE_CHECKOUT_PROCEDURE', '- to complete your order. Thank you!');
 
 define('OUT_OF_STOCK_CAN_CHECKOUT', 'Products marked with ' . STOCK_MARK_PRODUCT_OUT_OF_STOCK . ' are out of stock.<br />Items not in stock will be placed on backorder.');
 define ('BILLING_ADDRESS', '(Billing Address) ');
