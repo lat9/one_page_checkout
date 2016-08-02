@@ -131,6 +131,7 @@ th { background-color: #eee; }
                   <li>Authorize.net (AIM) (authorizenet_aim)</li>
                   <li>PayPal Express Checkout (paypalwpp)</li>
                   <li>Purchase Order (purchaseorders)</li>
+                  <li>eWay Rapid 3.0 (eway_rapid)</li>
                 </ol>
               </div>
               <div class="clearBoth"></div>
@@ -344,10 +345,14 @@ th { background-color: #eee; }
                   <li>BUGFIX: Check customer's authorization.</li>
                   <li>BUGFIX: Zen Cart base AJAX handling changes required for Zen Cart 1.5.5 (pre-a) installations, too.</li>
                   <li>BUGFIX: Display &quot;Terms and Conditions&quot; block, if configured.</li>
+                  <li>BUGFIX: Enable support for payment methods (like eWay Rapid) that insert form-handling HTML into their &quot;process_button&quot; function's output.</li>
                   <li>The following files were affected:<ol>
+                    <li>/includes/languages/english/checkout_one_confirmation.php</li>
                     <li>/includes/modules/pages/checkout_one/header_php.php</li>
                     <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
+                    <li>/includes/modules/pages/checkout_one_confirmation/jscript_main.php</li>
                     <li>/includes/templates/template_default/templates/tpl_checkout_one_default.php</li>
+                    <li>/includes/templates/template_default/templates/tpl_checkout_one_confirmation_default.php</li>
                     <li>/zc154_only/*.* renamed to /pre_zc155a/*.*</li>
                   </ol></li>
                 </ul></li>
