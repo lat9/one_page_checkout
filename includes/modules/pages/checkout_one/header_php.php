@@ -190,8 +190,9 @@ if (!$is_virtual_order) {
             $free_shipping = true;
         }
     }
-
-    $checkout_one->debug_message ("CHECKOUT_ONE_AFTER_SHIPPING_CALCULATIONS, pass ($pass), free_shipping ($free_shipping).");
+    
+    $extra_message = (isset ($_SESSION['shipping'])) ? var_export ($_SESSION['shipping'], true) : ' (not set)';
+    $checkout_one->debug_message ("CHECKOUT_ONE_AFTER_SHIPPING_CALCULATIONS, pass ($pass), free_shipping ($free_shipping), $extra_message");
 
     // get all available shipping quotes
     $quotes = $shipping_modules->quote();
@@ -271,7 +272,8 @@ if (isset($_GET['payment_error']) && is_object(${$_GET['payment_error']}) && ($e
     $messageStack->add('checkout_payment', $error['error'], 'error');
 }
 
-$checkout_one->debug_message ("CHECKOUT_ONE_AFTER_PAYMENT_MODULES_SELECTION\n" . print_r ($payment_modules, true));
+$extra_message = (isset ($_SESSION['shipping'])) ? var_export ($_SESSION['shipping'], true) : ' (not set)';
+$checkout_one->debug_message ("CHECKOUT_ONE_AFTER_PAYMENT_MODULES_SELECTION\n" . print_r ($payment_modules, true) . $extra_message);
 
 // -----
 // If the payment method has been set in the session, there are a couple more cleanup/template-setting actions that might be needed.
