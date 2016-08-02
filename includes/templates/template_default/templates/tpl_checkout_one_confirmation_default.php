@@ -11,7 +11,7 @@
 ?>
 <div id="checkoutOneConfirmation">
 <?php
-echo zen_draw_form ('confirmation_one', $form_action_url, 'post', 'id="checkout_confirmation""');
+echo zen_draw_form ('confirmation_one', $form_action_url, 'post', 'id="checkout_confirmation"');
 
 if (is_array ($payment_modules->modules)) {
     echo $payment_modules->process_button();
