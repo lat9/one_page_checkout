@@ -193,7 +193,7 @@ if ($order->content_type != 'virtual') {
                 }
             } else {
                 unset ($_SESSION['shipping']);
-                $checkout_one->debug_message ("Missing shipping module ($module/$method)? is_object (" . is_object (${$module}) . ')');
+                $checkout_one->debug_message ("Missing shipping module ($module/$method)? is_object (" . var_export (is_object (${$module}), true) . ')');
                 $error = true;
             }
         }

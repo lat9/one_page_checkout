@@ -243,7 +243,7 @@ if ($order->info['shipping_method'] == '' && isset ($_SESSION['shipping']) && is
     $order->info['shipping_cost'] = $_SESSION['shipping']['cost'];
 }
 
-$checkout_one->debug_message ("CHECKOUT_ONE_AFTER_SHIPPING_QUOTES\n" . print_r ($order, true) . print_r ($messageStack, true));
+$checkout_one->debug_message ("CHECKOUT_ONE_AFTER_SHIPPING_QUOTES\n" . var_export ($_SESSION['shipping'], true) . print_r ($order, true) . print_r ($messageStack, true) . print_r ($quotes, true));
 
 // Should address-edit button be offered?
 $address_can_be_changed = (MAX_ADDRESS_BOOK_ENTRIES > 1);
