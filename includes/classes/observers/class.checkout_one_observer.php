@@ -15,7 +15,7 @@ class checkout_one_observer extends base
         $this->enabled = false;
         if (defined ('CHECKOUT_ONE_ENABLED') && CHECKOUT_ONE_ENABLED == 'true') {
             $this->enabled = true;
-            $this->debug = (CHECKOUT_ONE_DEBUG == 'true');
+            $this->debug = (CHECKOUT_ONE_DEBUG == 'true' || CHECKOUT_ONE_DEBUG == 'full');
             if ($this->debug && CHECKOUT_ONE_DEBUG_EXTRA != '' && CHECKOUT_ONE_DEBUG_EXTRA != '*') {
                 $debug_customers = explode (',', CHECKOUT_ONE_DEBUG_EXTRA);
                 if (!in_array ($_SESSION['customer_id'], $debug_customers)) {

@@ -46,6 +46,18 @@ if (CHECKOUT_ONE_MODULE_VERSION != $version_release_date) {
 }
 
 // -----
+// If not already updated, update the configuration of the plugin's debug setting.  Starting with v1.0.1, there are now three settings.
+//
+if (defined ('CHECKOUT_ONE_DEBUG') && strpos (CHECKOUT_ONE_DEBUG, '<b>full</b>') === false) {
+    $db->Execute (
+        "UPDATE " . TABLE_CONFIGURATION . " 
+            SET configuration_description = 'When enabled, debug files named myDEBUG-one_page_checkout-<em>xx</em>.log are created in your /logs folder (<em>xx</em> is the customer_id for the checkout).  Use the <b>true</b> or <b>full</b> settings in combination with the <em>Debug: Customer List</em> setting to limit the customers for which the debug-action is taken.  Setting the value to <b>full</b> will also set the PHP error-level for the checkout so that <b>all</b> PHP errors are logged.<br /><br />Default: <b>false</b>',
+                set_function = 'zen_cfg_select_option(array(\'true\', \'false\', \'full\'),'
+          WHERE configuration_key = 'CHECKOUT_ONE_DEBUG' LIMIT 1"
+    );
+}
+
+// -----
 // Register the plugin's configuration page for display on the menus.
 //
 if (!zen_page_key_exists ('configOnePageCheckout')) {
