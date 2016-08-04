@@ -19,6 +19,15 @@ require_once(DIR_WS_CLASSES . 'http_client.php');
 
 require (DIR_WS_MODULES . zen_get_module_directory ('require_languages.php'));
 
+$checkout_one->debug_message (sprintf ('CHECKOUT_ONE_ENTRY, version (%s), Zen Cart version (%s)', CHECKOUT_ONE_MODULE_VERSION, PRODUCT_VERSION_MAJOR . '.' . PRODUCT_VERSION_MINOR));
+
+// -----
+// If the plugin's debug-mode is set to "full", then enable ALL error reporting for the checkout_one page.
+//
+if (CHECKOUT_ONE_DEBUG == 'full') {
+    @ini_set('error_reporting', -1 );
+}
+
 // -----
 // In the "normal" Zen Cart checkout flow, the module /includes/init_includes/init_customer_auth.php performs the
 // following check to see that the customer is authorized to checkout.  Rather than changing the code in that
@@ -57,15 +66,17 @@ if ($_SESSION['valid_to_checkout'] == false) {
 }
 
 // Stock Check
-if ( (STOCK_CHECK == 'true') && (STOCK_ALLOW_CHECKOUT != 'true') ) {
-    $products = $_SESSION['cart']->get_products();
-    for ($i=0, $n=sizeof($products); $i<$n; $i++) {
-        $qtyAvailable = zen_get_products_stock($products[$i]['id']);
-        // compare against product inventory, and against mixed=YES
-        if ($qtyAvailable - $products[$i]['quantity'] < 0 || $qtyAvailable - $_SESSION['cart']->in_cart_mixed($products[$i]['id']) < 0) {
-            zen_redirect (zen_href_link (FILENAME_SHOPPING_CART));
-            break;
+$flagAnyOutOfStock = false;
+$stock_check = array ();
+if (STOCK_CHECK == 'true') {
+    for ($i = 0, $n = count ($order->products); $i < $n; $i++) {
+        if ($stock_check[$i] = zen_check_stock ($order->products[$i]['id'], $order->products[$i]['qty'])) {
+            $flagAnyOutOfStock = true;
         }
+    }
+    // Out of Stock
+    if (STOCK_ALLOW_CHECKOUT != 'true' && $flagAnyOutOfStock == true) {
+        zen_redirect (zen_href_link (FILENAME_SHOPPING_CART));
     }
 }
 
@@ -119,7 +130,7 @@ if (!isset ($_SESSION['sendto'])) {
 
     if ($check_address->fields['total'] != '1') {
         $_SESSION['sendto'] = $_SESSION['customer_default_address_id'];
-        unset($_SESSION['shipping']);
+        unset ($_SESSION['shipping']);
     }
 }
 
@@ -197,6 +208,7 @@ if (!$is_virtual_order) {
     // get all available shipping quotes
     $quotes = $shipping_modules->quote();
 
+    $shipping_selection_changed = false;
     // check that the currently selected shipping method is still valid (in case a zone restriction has disabled it, etc)
     if (isset ($_SESSION['shipping'])) {
         $checklist = array();
@@ -216,6 +228,7 @@ if (!$is_virtual_order) {
             // message to the customer to let them know what's up.
             //
             unset ($_SESSION['shipping']);
+            $shipping_selection_changed = true;
             $messageStack->add ('checkout_shipping', ERROR_PLEASE_RESELECT_SHIPPING_METHOD, 'error');
         }
     }
@@ -227,17 +240,20 @@ if (!$is_virtual_order) {
     if (!isset ($_SESSION['shipping']) || !isset($_SESSION['shipping']['id']) || $_SESSION['shipping']['id'] == '') {
         if (zen_count_shipping_modules() > 1) {
             $_SESSION['shipping'] = $shipping_modules->cheapest();
-        } elseif (count ($quotes) == 1 && count ($quotes[0]['methods']) == 1) {
-            $_SESSION['shipping'] = array ( 'id' => $quotes[0]['id'] . '_' . $quotes[0]['methods'][0]['id'], 'title' => $quotes[0]['title'] . ' (' . $quotes[0]['methods'][0]['title'] . ')', 'cost' => $quotes[0]['methods'][0]['cost'] );
+        } elseif (count ($quotes) > 0 && count ($quotes[0]['methods']) > 0 && !$shipping_selection_changed) {
+            $_SESSION['shipping'] = array ( 
+                'id' => $quotes[0]['id'] . '_' . $quotes[0]['methods'][0]['id'], 
+                'title' => $quotes[0]['title'] . ' (' . $quotes[0]['methods'][0]['title'] . ')', 
+                'cost' => $quotes[0]['methods'][0]['cost'] 
+            );
         }
     }
 }
 
 // -----
-// If the shipping-information is valid, but hasn't yet been entered into the order, set those values now so that
-// the shipping order-total has something to total!
+// If the session-based shipping information is set, sync that information up with the order.
 //
-if ($order->info['shipping_method'] == '' && isset ($_SESSION['shipping']) && is_array ($_SESSION['shipping'])) {
+if (isset ($_SESSION['shipping']) && is_array ($_SESSION['shipping'])) {
     $order->info['shipping_method'] = $_SESSION['shipping']['title'];
     $order->info['shipping_module_code'] = $_SESSION['shipping']['id'];
     $order->info['shipping_cost'] = $_SESSION['shipping']['cost'];
@@ -269,7 +285,7 @@ $payment_modules = new payment;
 $flagOnSubmit = count ($payment_modules->selection());
 
 if (isset($_GET['payment_error']) && is_object(${$_GET['payment_error']}) && ($error = ${$_GET['payment_error']}->get_error())) {
-    $messageStack->add('checkout_payment', $error['error'], 'error');
+    $messageStack->add ('checkout_payment', $error['error'], 'error');
 }
 
 $extra_message = (isset ($_SESSION['shipping'])) ? var_export ($_SESSION['shipping'], true) : ' (not set)';
