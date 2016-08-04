@@ -316,6 +316,20 @@ if (isset (${$_SESSION['payment']}->form_action_url)) {
     $form_action_url = zen_href_link (FILENAME_CHECKOUT_PROCESS, '', 'SSL');
 }
 
+// if shipping-edit button should be overridden, do so
+$editShippingButtonLink = zen_href_link (FILENAME_CHECKOUT_SHIPPING_ADDRESS, '', 'SSL');
+if (method_exists (${$_SESSION['payment']}, 'alterShippingEditButton')) {
+    $theLink = ${$_SESSION['payment']}->alterShippingEditButton();
+    if ($theLink) {
+        $editShippingButtonLink = $theLink;
+    }
+}
+// deal with billing address edit button
+$flagDisablePaymentAddressChange = false;
+if (isset (${$_SESSION['payment']}->flagDisablePaymentAddressChange)) {
+    $flagDisablePaymentAddressChange = ${$_SESSION['payment']}->flagDisablePaymentAddressChange;
+}
+
 // -----
 // If the currently-selected payment method requires the order-confirmation page to be displayed, then the
 // header/footer are displayed too; otherwise, all elements of the display are hidden.

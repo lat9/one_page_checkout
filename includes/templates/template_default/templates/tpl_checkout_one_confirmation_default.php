@@ -68,7 +68,7 @@ if ($confirmation_required) {
 ?>
     <div id="checkoutShipto" class="forward">
         <h2 id="checkoutConfirmDefaultShippingAddress"><?php echo HEADING_DELIVERY_ADDRESS; ?></h2>
-        <div class="buttonRow forward"><?php echo '<a href="' . $editShippingButtonLink . '">' . zen_image_button(BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) . '</a>'; ?></div>
+        <div class="buttonRow forward"><?php echo '<a href="' . $editShippingButtonLink . '">' . zen_image_button (BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) . '</a>'; ?></div>
 
         <address><?php echo zen_address_format ($order->delivery['format_id'], $order->delivery, 1, ' ', '<br />'); ?></address>
 <?php
@@ -87,14 +87,14 @@ if ($confirmation_required) {
     <hr />
 
     <h2 id="checkoutConfirmDefaultHeadingComments"><?php echo HEADING_ORDER_COMMENTS; ?></h2>
-    <div class="buttonRow forward"><?php echo  '<a href="' . zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) . '</a>'; ?></div>
-    <div><?php echo (empty($order->info['comments']) ? NO_COMMENTS_TEXT : nl2br(zen_output_string_protected($order->info['comments'])) . zen_draw_hidden_field('comments', $order->info['comments'])); ?></div>
+    <div class="buttonRow forward"><?php echo  '<a href="' . zen_href_link (FILENAME_CHECKOUT_ONE, '', 'SSL') . '">' . zen_image_button (BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) . '</a>'; ?></div>
+    <div><?php echo (empty($order->info['comments']) ? NO_COMMENTS_TEXT : nl2br (zen_output_string_protected ($order->info['comments'])) . zen_draw_hidden_field ('comments', $order->info['comments'])); ?></div>
     <br class="clearBoth" />
     <hr />
 
     <h2 id="checkoutConfirmDefaultHeadingCart"><?php echo HEADING_PRODUCTS; ?></h2>
 
-    <div class="buttonRow forward"><?php echo '<a href="' . zen_href_link(FILENAME_SHOPPING_CART, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) . '</a>'; ?></div>
+    <div class="buttonRow forward"><?php echo '<a href="' . zen_href_link (FILENAME_SHOPPING_CART, '', 'SSL') . '">' . zen_image_button (BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) . '</a>'; ?></div>
     <br class="clearBoth" />
 <?php  
     if ($flagAnyOutOfStock) { 
