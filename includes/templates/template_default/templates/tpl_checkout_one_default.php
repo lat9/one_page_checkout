@@ -110,6 +110,7 @@ if (!$is_virtual_order) {
       <legend><?php echo TABLE_HEADING_SHIPPING_METHOD; ?></legend>
 <?php
         if (count ($quotes) > 1 && count ($quotes[0]) > 1) {
+            $checkout_one->debug_message ("CHECKOUT_ONE_TEMPLATE_SHIPPING_QUOTES:\n" . var_export ($_SESSION['shipping'], true) . "\n" . var_export ($quotes, true));
 ?>
 
         <div id="checkoutShippingContentChoose" class="important"><?php echo TEXT_CHOOSE_SHIPPING_METHOD; ?></div>

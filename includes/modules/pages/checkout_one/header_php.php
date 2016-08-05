@@ -265,6 +265,14 @@ $checkout_one->debug_message ("CHECKOUT_ONE_AFTER_SHIPPING_QUOTES\n" . var_expor
 $address_can_be_changed = (MAX_ADDRESS_BOOK_ENTRIES > 1);
 
 // -----
+// Now that the shipping information has been gathered, reset the order's total based on that shipping-cost.
+//
+$order->info['total'] = $order->info['subtotal'] + $order->info['shipping_cost'];
+if (DISPLAY_PRICE_WITH_TAX != 'true') {
+    $order->info['total'] += $order->info['tax'];
+}
+
+// -----
 // The ot_gv "assumes" that its processing happens on the confirmation page (with POSTed values).  Since this processing pushes the handling
 // to the checkout_one_confirmation page, need to fake-out a $_POST value for the Gift Certificate value to be applied.
 //
