@@ -327,6 +327,10 @@ for ($i = 0, $n = count ($order->products); $i < $n; $i++) {
             </ul>
 <?php
     } // endif attribute-info
+    
+    if (isset ($posStockMessage)) {
+        echo '<br />' . $posStockMessage[$i];
+    }
 ?>
           </td>
 <?php 

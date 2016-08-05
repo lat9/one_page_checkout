@@ -145,6 +145,10 @@ if ($confirmation_required) {
                 </ul>
 <?php
         } // endif attribute-info
+    
+        if (isset ($posStockMessage)) {
+            echo '<br />' . $posStockMessage[$i];
+        }
 ?>
             </td>
 <?php 
