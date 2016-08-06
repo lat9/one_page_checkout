@@ -109,19 +109,22 @@ th { background-color: #eee; }
                   <li>Per Item</li>
                   <li>Flat Rate</li>
                   <li>Store Pickup</li>
+                  <li>Table Rate (and various clones)</li>
                   <li>United States Postal Service (usps)</li>
                   <li>United Parcel Service (ups)</li>
+                  <li>FedEx</li>
                 </ol>
               </div>
               <div class="multi-list">
                 <h3>Order Totals</h3>
                 <ol>
-                  <li>ot_subtotal</li>
-                  <li>ot_tax</li>
-                  <li>ot_coupon</li>
-                  <li>ot_gv</li>
-                  <li>ot_shipping</li>
-                  <li>ot_total</li>
+                  <li>Sub-total (ot_subtotal)</li>
+                  <li>Tax (ot_tax)</li>
+                  <li>Coupon (ot_coupon)</li>
+                  <li>Gift Certificates (ot_gv)</li>
+                  <li>Shipping (ot_shipping)</li>
+                  <li>Total (ot_total)</li>
+                  <li>Reward Points</li>
                 </ol>
               </div>
               <div class="multi-list">
@@ -132,6 +135,9 @@ th { background-color: #eee; }
                   <li>PayPal Express Checkout (paypalwpp)</li>
                   <li>Purchase Order (purchaseorders)</li>
                   <li>eWay Rapid 3.0 (eway_rapid)</li>
+                  <li>Direct Bank Deposit</li>
+                  <li>Layaway Plan</li>
+                  <li>Braintree</li>
                 </ol>
               </div>
               <div class="clearBoth"></div>
@@ -142,7 +148,7 @@ th { background-color: #eee; }
               <ul>
                 <li><em>Version/Release Date</em>.  This display-only field shows the plugin's current version and release date.</li>
                 <li><em>Enable One-Page Checkout?</em>.  Choose whether (true) or not (false, <em>the default</em>) to enable the one-page checkout handling for your store.</li>
-                <li><em>Enable One-Page Checkout Debug?</em>. When enabled, debug files named myDEBUG-one_page_checkout-<em>xx</em>.log are created in your /logs folder (<em>xx</em> is the customer_id for the checkout).  Use the <b>true</b> setting in combination with the <em>Debug: Customer List</em> setting to limit the customers for which the debug-action is taken..</li>
+                <li><em>Enable One-Page Checkout Debug?</em>. When enabled, debug files named myDEBUG-one_page_checkout-<em>xx</em>.log are created in your /logs folder (<em>xx</em> is the customer_id for the checkout). Use the <b>true</b> or <b>full</b> settings in combination with the <em>Debug: Customer List</em> setting to limit the customers for which the debug-action is taken.  Setting the value to <b>full</b> will also set the PHP error-level for the checkout_one page's processing so that <b>all</b> PHP errors are logged.</li>
                 <li><em>Debug: Customer List</em>. When you enable the plugin's debug, use this setting to limit the customers for which the debug-logs are generated.  Leave the setting blank (the default) to debug <b>all</b> customers or identify a comma-separated list of customer_id values to limit the debug to just those customers.</li>
               </ul>
               <p>There are also a couple of constants present in the plugin's language file (/includes/languages/english/checkout_one.php) that you can use to control the <code class="no-pad">checkout_one</code> page's display.  Each of these values are an empty string (i.e. no display produced) as-shipped by the plugin.</p>
@@ -158,15 +164,16 @@ th { background-color: #eee; }
               <p>Click on an area in the image to view additional information about that section, or just scroll down to see that information.</p>
               <img class="wide" src="checkout_one.jpg" alt="The One-Page Checkout page" title="What the customer sees" usemap="#image-map" />
               <map name="image-map">
-                 <area alt="Give your customers some guidance" title="Upper Message" href="#upper-message" shape="poly" coords="14,103,24,102,698,106,700,136,17,134" />
-                 <area alt="Billing/Shipping Address" title="Billing/Shipping Address" href="#billing-shipping" shape="poly" coords="10,140,694,139,692,381,8,383" />
-                 <area alt="Order Comments" title="Order Comments" href="#comments" shape="poly" coords="11,387,693,387,694,535,8,533" />
-                 <area alt="Order Credits" title="Order Credits" href="#order-credits" shape="poly" coords="9,552,696,551,697,793,9,787" />
-                 <area alt="Shopping Cart" title="Shopping Cart" href="#cart" shape="poly" coords="9,808,1405,807,1405,1092,11,1091" />
-                 <area alt="Shipping Method" title="Shipping Method" href="#shipping" shape="poly" coords="719,136,1405,136,1406,557,719,558" />
-                 <area alt="Payment Method" title="Payment Method" href="#payment" shape="poly" coords="720,577,1405,576,1405,675,720,674" />
-                 <area alt="Pre-confirmation Message" title="Pre-confirmation Message" href="#pre-confirm" shape="poly" coords="9,1108,1404,1108,1406,1242,9,1242" />
-                 <area alt="Order Confirmation" title="Order Confirmation" href="#confirm" shape="poly" coords="11,1254,1409,1255,1408,1335,19,1337" />
+                 <area alt="Give your customers some guidance" title="Upper Message" href="#upper-message" shape="poly" coords="9,87,1401,89,1401,131,9,131" />
+                 <area alt="Billing/Shipping Address" title="Billing/Shipping Address" href="#billing-shipping" shape="poly" coords="11,137,692,136,693,384,9,383" />
+                 <area alt="Order Comments" title="Order Comments" href="#comments" shape="poly" coords="9,384,695,384,695,533,8,535" />
+                 <area alt="Order Credits" title="Order Credits" href="#order-credits" shape="poly" coords="11,549,693,552,698,793,15,790" />
+                 <area alt="Shopping Cart" title="Shopping Cart" href="#cart" shape="poly" coords="10,806,1403,806,1401,1021,9,1024" />
+                 <area alt="Shipping Method" title="Shipping Method" href="#shipping" shape="poly" coords="721,135,1406,135,1408,454,725,444" />
+                 <area alt="Payment Method" title="Payment Method" href="#payment" shape="poly" coords="721,467,1406,467,1409,664,722,659" />
+                 <area alt="Pre-confirmation Message" title="Pre-confirmation Message" href="#pre-confirm" shape="poly" coords="10,1041,1406,1037,1402,1176,14,1170" />
+                 <area alt="Terms and Conditions" title="Terms and Conditions" href="#conditions" shape="poly" coords="12,1186,1405,1186,1405,1316,11,1316" />
+                 <area alt="Order Confirmation" title="Order Confirmation" href="#confirm" shape="poly" coords="14,1318,1404,1322,1408,1404,18,1398" />
               </map>
               
               <fieldset id="upper-message">
@@ -346,13 +353,20 @@ th { background-color: #eee; }
                   <li>BUGFIX: Zen Cart base AJAX handling changes required for Zen Cart 1.5.5 (pre-a) installations, too.</li>
                   <li>BUGFIX: Display &quot;Terms and Conditions&quot; block, if configured.</li>
                   <li>BUGFIX: Enable support for payment methods (like eWay Rapid) that insert form-handling HTML into their &quot;process_button&quot; function's output.</li>
+                  <li>BUGFIX: On initial entry, the order's total sometimes didn't include the proper shipping cost.</li>
+                  <li>CHANGE: Additional debug configuration added to enable strict PHP processing for the <em>One-Page Checkout</em> page.</li>
+                  <li>CHANGE: Provide pre-integration of the <a href="http://vinosdefrutastropicales.com/index.php?main_page=product_info&cPath=2_7&products_id=46" target="_blank">Products' Options' Stock Manager</a>; yes, it's a shameless plug!</li>
                   <li>The following files were affected:<ol>
+                    <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                     <li>/includes/languages/english/checkout_one_confirmation.php</li>
                     <li>/includes/modules/pages/checkout_one/header_php.php</li>
                     <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
                     <li>/includes/modules/pages/checkout_one_confirmation/jscript_main.php</li>
+                    <li>/includes/templates/template_default/css/checkout_one_confirmation.css</li>
                     <li>/includes/templates/template_default/templates/tpl_checkout_one_default.php</li>
                     <li>/includes/templates/template_default/templates/tpl_checkout_one_confirmation_default.php</li>
+                    <li>/includes/templates/YOUR_TEMPLATE/css/checkout_one_confirmation.css</li>
+                    <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                     <li>/zc154_only/*.* renamed to /pre_zc155a/*.*</li>
                   </ol></li>
                 </ul></li>
