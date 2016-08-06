@@ -19,7 +19,7 @@ require_once(DIR_WS_CLASSES . 'http_client.php');
 
 require (DIR_WS_MODULES . zen_get_module_directory ('require_languages.php'));
 
-$checkout_one->debug_message (sprintf ('CHECKOUT_ONE_ENTRY, version (%s), Zen Cart version (%s)', CHECKOUT_ONE_MODULE_VERSION, PROJECT_VERSION_MAJOR . '.' . PROJECT_VERSION_MINOR));
+$checkout_one->debug_message (sprintf ('CHECKOUT_ONE_ENTRY, version (%s), Zen Cart version (%s), template (%s)', CHECKOUT_ONE_MODULE_VERSION, PROJECT_VERSION_MAJOR . '.' . PROJECT_VERSION_MINOR, $template_dir));
 
 // -----
 // If the plugin's debug-mode is set to "full", then enable ALL error reporting for the checkout_one page.
