@@ -202,6 +202,28 @@ if (!$is_virtual_order) {
         }
     }
     
+//-bof-product_delivery_by_postcode (PDP) integration
+    if (function_exists ('zen_get_UKPostcodeFirstPart')) {
+        $check_delivery_postcode = $order->delivery['postcode'];
+  
+        // shorten UK / Canada postcodes to use first part only
+        $check_delivery_postcode = zen_get_UKPostcodeFirstPart ($check_delivery_postcode);
+
+        // now check db for allowed postcodes and enable / disable relevant shipping modules
+        if (in_array ($check_delivery_postcode, explode (",", MODULE_SHIPPING_LOCALDELIVERY_POSTCODE))) {
+        // continue as normal
+        } else {
+            $localdelivery = false;
+        }
+      
+        if (in_array ($check_delivery_postcode, explode (",", MODULE_SHIPPING_STOREPICKUP_POSTCODE))) {
+        // continue as normal
+        } else {
+            $storepickup = false;
+        }
+    }
+//-eof-product_delivery_by_postcode (PDP) integration
+  
     $extra_message = (isset ($_SESSION['shipping'])) ? var_export ($_SESSION['shipping'], true) : ' (not set)';
     $checkout_one->debug_message ("CHECKOUT_ONE_AFTER_SHIPPING_CALCULATIONS, pass ($pass), free_shipping ($free_shipping), $extra_message");
 
