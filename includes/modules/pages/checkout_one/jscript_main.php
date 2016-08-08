@@ -150,14 +150,14 @@ $(document).ready(function(){
     $('form[name="checkout_payment"]').submit(function() {
         zcLog2Console ('Form submitted, orderConfirmed ('+orderConfirmed+')');
         if (orderConfirmed) {
-            $('#checkoutOneSubmit').attr('disabled', true);
+            $('#confirm-order').attr('disabled', true);
 <?php 
 if ($flagOnSubmit) { 
 ?>
             var formPassed = check_form();
             zcLog2Console ('Form checked, passed ('+formPassed+')');
             if (formPassed == false) {
-                $('#checkoutOneSubmit').attr('disabled', false);
+                $('#confirm-order').attr('disabled', false);
             }
             return formPassed;
 <?php 

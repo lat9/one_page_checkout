@@ -70,7 +70,7 @@ th { background-color: #eee; }
 
 <body>
   <h1>One-Page Checkout <span class="smaller">for Zen Cart v1.5.4 (and later)</span></h1>
-  <h3>Version 1.0.1 by lat9</h3>
+  <h3>Version 1.0.2 by lat9</h3>
   <h3>Copyright &copy; 2013-2016 <a href="http://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
   <p><b>Credits:</b></p>
   <ol>
@@ -113,6 +113,7 @@ th { background-color: #eee; }
                   <li>United States Postal Service (usps)</li>
                   <li>United Parcel Service (ups)</li>
                   <li>FedEx</li>
+                  <li>Product Delivery by Postcode (PDP)</li>
                 </ol>
               </div>
               <div class="multi-list">
@@ -349,6 +350,13 @@ th { background-color: #eee; }
             
             <div id="changes">
               <ul>
+                <li>v1.0.2, 2016-08-xx:<ul>
+                  <li>BUGFIX: Form won't submit on IE-11 browser.</li>
+                  <li>The following files were affected:<ol>
+                    <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
+                    <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
+                  </ol></li>
+                </ul></li>
                 <li>v1.0.1, 2016-08-06:<ul>
                   <li>BUGFIX: Check customer's authorization.</li>
                   <li>BUGFIX: Zen Cart base AJAX handling changes required for Zen Cart 1.5.5 (pre-a) installations, too.</li>
