@@ -11,11 +11,10 @@ define('NAVBAR_TITLE_1', 'Checkout');
 
 //-bof-one_page_checkout-lat9  *** 1 of 1 ***
 if (defined ('CHECKOUT_ONE_ENABLED') && CHECKOUT_ONE_ENABLED == 'true') {
-    define ('NAVBAR_TITLE_2', 'Review and Submit')
+    define ('NAVBAR_TITLE_2', 'Review and Submit');
     define ('HEADING_TITLE', 'Review Order Details and Submit Your Order');
 } else {
     define('NAVBAR_TITLE_2', 'Confirmation');
-
     define('HEADING_TITLE', 'Step 3 of 3 - Order Confirmation');
 }
 //-eof-one_page_checkout-lat9  *** 1 of 1 ***
