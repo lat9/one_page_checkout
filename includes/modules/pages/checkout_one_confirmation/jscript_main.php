@@ -45,7 +45,7 @@ if (!$confirmation_required) {
             "height": "100%",
             "background": "none"
         });
-        $('form[name="confirmation_one"]').submit();
+        $('form[name="checkout_confirmation"]').submit();
     });
 <?php
 }

@@ -186,7 +186,7 @@ if ($confirmation_required) {
 // -----
 // Now, display the form that actually submits this order.
 //
-echo zen_draw_form ('confirmation_one', $form_action_url, 'post', 'id="checkout_confirmation"' . ($confirmation_required) ? ' onsubmit="submitonce();"' : '');
+echo zen_draw_form ('checkout_confirmation', $form_action_url, 'post', 'id="checkout_confirmation"' . ($confirmation_required) ? ' onsubmit="submitonce();"' : '');
 
 // -----
 // Add the selected payment module's final HTML to the display.
