@@ -17,7 +17,7 @@ class zcAjaxOnePageCheckout extends base
         // Since we're running as a function, need to declare the objects we're instantiating here, for use by the various classes
         // involved in creating the order's total-block.
         //
-        global $order, $currencies, $checkout_one, $total_weight, $total_count, $discount_coupon;
+        global $db, $order, $currencies, $checkout_one, $total_weight, $total_count, $discount_coupon;
         global $shipping_weight, $uninsurable_value, $shipping_quoted, $shipping_num_boxes, $current_page_base, $current_page, $template;
 
         // -----
