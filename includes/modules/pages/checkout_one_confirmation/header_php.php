@@ -23,7 +23,10 @@ if (!(defined ('CHECKOUT_ONE_ENABLED') && CHECKOUT_ONE_ENABLED == 'true')) {
 // the "process_button" payment-class function.  Rather than hard-code the list in code, below, the following
 // constant will be updated as additional payment-methods that make use of that interface are identified.
 //
-if (!defined ('CHECKOUT_ONE_CONFIRMATION_REQUIRED')) define ('CHECKOUT_ONE_CONFIRMATION_REQUIRED', 'eway_rapid');
+if (!defined ('CHECKOUT_ONE_CONFIRMATION_REQUIRED')) {
+
+    define ('CHECKOUT_ONE_CONFIRMATION_REQUIRED', "eway_rapid");
+}
 
 // -----
 // In the "normal" Zen Cart checkout flow, the module /includes/init_includes/init_customer_auth.php performs the

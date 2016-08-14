@@ -28,16 +28,6 @@ if (CHECKOUT_ONE_DEBUG == 'full') {
     @ini_set('error_reporting', -1 );
 }
 
-// -----
-// In the "normal" Zen Cart checkout flow, the module /includes/init_includes/init_customer_auth.php performs the
-// following check to see that the customer is authorized to checkout.  Rather than changing the code in that
-// core-file, we'll repeat that check here.
-//
-if ($_SESSION['customers_authorization'] != 0) {
-    $messageStack->add_session ('header', TEXT_AUTHORIZATION_PENDING_CHECKOUT, 'caution');
-    zen_redirect (zen_href_link (FILENAME_DEFAULT));
-}
-
 // if there is nothing in the customers cart, redirect them to the shopping cart page
 if ($_SESSION['cart']->count_contents() <= 0) {
     zen_redirect (zen_href_link (FILENAME_SHOPPING_CART, '', 'NONSSL'));
@@ -55,6 +45,16 @@ if (!isset($_SESSION['customer_id']) || !$_SESSION['customer_id']) {
         zen_redirect (zen_href_link (FILENAME_LOGIN, '', 'SSL'));
     
     }
+}
+
+// -----
+// In the "normal" Zen Cart checkout flow, the module /includes/init_includes/init_customer_auth.php performs the
+// following check to see that the customer is authorized to checkout.  Rather than changing the code in that
+// core-file, we'll repeat that check here.
+//
+if ($_SESSION['customers_authorization'] != 0) {
+    $messageStack->add_session ('header', TEXT_AUTHORIZATION_PENDING_CHECKOUT, 'caution');
+    zen_redirect (zen_href_link (FILENAME_DEFAULT));
 }
 
 // Validate Cart for checkout

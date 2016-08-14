@@ -110,6 +110,14 @@ function shippingIsBilling ()
     }
 }
 
+<?php
+// -----
+// The "collectsCartDataOnsite" interface built into Zen Cart magically transformed between
+// Zen Cart 1.5.4 and 1.5.5, so this module for the One-Page Checkout plugin includes both
+// forms.  That way, if a payment module was written for 1.5.4 it'll work, ditto for those
+// written for the 1.5.5 method.
+// 
+?>
 function collectsCardDataOnsite(paymentValue)
 {
     zcJS.ajax({
@@ -127,6 +135,7 @@ function collectsCardDataOnsite(paymentValue)
                 $('#navBreadCrumb').html(response.breadCrumbHtml);
                 $('#checkoutPayment').before(response.confirmationHtml);
                 $(document).attr('title', response.pageTitle);
+
             });
         } else {
             zcLog2Console ('collectsCartDataOnsite: submitting form');
@@ -134,6 +143,31 @@ function collectsCardDataOnsite(paymentValue)
         }
     });
     return false;
+}
+
+function doesCollectsCardDataOnsite(paymentValue)
+{
+    if ($('#'+paymentValue+'_collects_onsite').val()) {
+        if ($('#pmt-'+paymentValue).is(':checked')) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function doCollectsCardDataOnsite(paymentValue)
+{
+    var str = $('form[name="checkout_payment"]').serializeArray();
+
+    zcJS.ajax({
+        url: "ajax.php?act=ajaxPayment&method=prepareConfirmation",
+        data: str
+    }).done(function( response ) {
+        $('#checkoutPayment').hide();
+        $('#navBreadCrumb').html(response.breadCrumbHtml);
+        $('#checkoutPayment').before(response.confirmationHtml);
+        $(document).attr('title', response.pageTitle);
+    });
 }
 
 var orderConfirmed = 0;
