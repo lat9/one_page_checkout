@@ -50,3 +50,7 @@ if (isset ($_GET['act'])&&isset ($_GET['method'])) {
         }
     }
 }
+
+//-bof-lat9-bugfix-https://www.zen-cart.com/showthread.php?220887-AJAX-Session-variable-changes-not-saved&p=1317259#post1317259
+require ('includes/application_bottom.php');
+//-eof-lat9-bugfix
