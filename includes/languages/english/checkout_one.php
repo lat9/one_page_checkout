@@ -31,6 +31,7 @@ define('FREE_SHIPPING_DESCRIPTION', 'Free shipping for orders over %s');
 
 define('ERROR_PLEASE_RESELECT_SHIPPING_METHOD', 'Your available shipping options have changed. Please re-select your desired shipping method.');
 define('ERROR_NO_SHIPPING_SELECTED', 'You must choose a shipping method for your order before the order can be confirmed.');
+define('ERROR_SESSION_TIMED_OUT', "Sorry, your session has timed out.\n\nThe items in your cart have been saved and will be restored the next time you log in.");
 
 // ----- From checkout_payment -----
 

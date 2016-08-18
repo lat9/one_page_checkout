@@ -244,19 +244,24 @@ $(document).ready(function(){
                 var shippingError = false;
                 $( '#otshipping, #otshipping+br' ).show ();
                 if (response.status != 'ok') {
+                    if (response.status == 'timeout') {
+                        alert( response.errorMessage );
+                        $(location).attr( 'href', response.timeoutUrl );
+                    }
+                    
                     shippingError = true;
                     if (response.status == 'invalid') {
                         $( '#checkoutShippingMethod input[name=shipping]' ).prop( 'checked', false );
                         $( '#checkoutShippingChoices' ).html( response.shippingHtml );
                         $( '#checkoutShippingChoices' ).on( 'click', 'input[name=shipping]', function ( event ) {
-                            changeShippingSubmitForm ('shipping-only', event);
+                            changeShippingSubmitForm( 'shipping-only', event );
                         });
                         $( '#otshipping, #otshipping+br' ).hide ();
                         focusOnShipping();
                     }
                     if (response.errorMessage != '') {
                         if (type == 'submit') {
-                            alert (response.errorMessage);
+                            alert( response.errorMessage );
                         }
                     }
                 }  
