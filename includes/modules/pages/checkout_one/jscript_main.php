@@ -138,7 +138,6 @@ function collectsCardDataOnsite(paymentValue)
 
             });
         } else {
-            zcLog2Console ('collectsCartDataOnsite: submitting form');
             $('form[name="checkout_payment"]')[0].submit();
         }
     });
@@ -178,37 +177,128 @@ function setOrderConfirmed (value)
     zcLog2Console ('Setting orderConfirmed ('+value+'), submitter ('+submitter+')');
 }
 
-$(document).ready(function(){
+$(document).ready(function(){   
     setOrderConfirmed (0);
     $('#checkoutOneShippingFlag').show();
-    $('form[name="checkout_payment"]').submit(function() {
-        zcLog2Console ('Form submitted, orderConfirmed ('+orderConfirmed+')');
-        if (orderConfirmed) {
-            $('#confirm-order').attr('disabled', true);
-<?php 
+    
+    function handleError ()
+    {
+        alert( 'Error' );
+    }
+    
+    function focusOnShipping ()
+    {
+        var scrollPos =  $( "#checkoutShippingMethod" ).offset().top;
+        $(window).scrollTop( scrollPos );
+    }
+    
+    function changeShippingSubmitForm (type, event)
+    {
+        var shippingSelected = $( "input[name=shipping]:checked" );
+        if (shippingSelected.length == 0) {
+            alert( '<?php echo NO_SHIPPING_SELECTED; ?>' );
+            event.preventDefault();
+            event.stopPropagation();
+            focusOnShipping();
+        } else {
+            shippingSelected = shippingSelected.val();
+<?php
+    // -----
+    // If a shipping-module has required inputs that should accompany the post, format the necessary
+    // jQuery to gather those inputs.
+    //
+    $additional_shipping_inputs = array ();
+    foreach ($quotes as $current_quote) {
+        if (isset ($current_quote['required_input_names']) && is_array ($current_quote['required_input_names'])) {
+            foreach ($current_quote['required_input_names'] as $current_input_name => $selection_required) {
+                $variable_name = base::camelize ($current_input_name);
+?>
+            var <?php echo $variable_name; ?> = $( "input[name=<?php echo $current_input_name; ?>]<?php echo ($selection_required) ? ':checked' : ''; ?>" ).val();
+<?php
+                $additional_shipping_inputs[$current_input_name] = $variable_name;
+            }
+        }
+    }
+
+?>
+            if (type == 'submit') {
+                event.preventDefault ();
+            }
+            zcLog2Console( 'Updating shipping method to '+shippingSelected );
+            zcJS.ajax({
+                url: "ajax.php?act=ajaxOnePageCheckout&method=updateShipping",
+                data: {
+                    shipping: shippingSelected,
+<?php
+    if (count ($additional_shipping_inputs) != 0) {
+        foreach ($additional_shipping_inputs as $current_input_name => $current_input_value) {
+?>
+                <?php echo $current_input_name;?>: <?php echo $current_input_value; ?>,
+<?php
+        }
+    }
+?>
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    zcLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
+                    d.reject(jqXHR, textStatus, errorThrown);
+                },
+            }).done(function( response ) {
+                $( '#orderTotalDivs' ).html(response.orderTotalHtml);
+                
+                var shippingError = false;
+                $( '#otshipping, #otshipping+br' ).show ();
+                if (response.status != 'ok') {
+                    shippingError = true;
+                    if (response.status == 'invalid') {
+                        $( '#checkoutShippingMethod input[name=shipping]' ).prop( 'checked', false );
+                        $( '#checkoutShippingChoices' ).html( response.shippingHtml );
+                        $( '#otshipping, #otshipping+br' ).hide ();
+                        focusOnShipping();
+                    }
+                    if (response.errorMessage != '') {
+                        if (type == 'submit') {
+                            alert (response.errorMessage);
+                        }
+                    }
+                }  
+                zcLog2Console( 'Shipping method updated, error: '+shippingError ); 
+                
+                if (type == 'submit') {
+                    if (shippingError == true) {
+                        zcLog2Console( 'Shipping error, correct to proceed.' );
+                        event.stopPropagation ();
+                    } else {
+                        zcLog2Console ('Form submitted, orderConfirmed ('+orderConfirmed+')');
+                        if (orderConfirmed) {
+                            $( '#confirm-order' ).attr( 'disabled', true );
+<?php   
 if ($flagOnSubmit) { 
 ?>
-            var formPassed = check_form();
-            zcLog2Console ('Form checked, passed ('+formPassed+')');
-            if (formPassed == false) {
-                $('#confirm-order').attr('disabled', false);
-            }
-            return formPassed;
+                            var formPassed = check_form();
+                            zcLog2Console ('Form checked, passed ('+formPassed+')');
+                            if (formPassed == false) {
+                                $( '#confirm-order' ).attr('disabled', false);
+                            }
+                            return formPassed;
 <?php 
 } 
 ?>
+                        }
+                    }
+                }
+            });
         }
+    }
+    
+    $( '#checkoutShippingMethod input[name=shipping]' ).click(function( event ) {
+        changeShippingSubmitForm ('shipping-only', event);
     });
     
-    $('#checkoutShippingMethod input:radio').click(function() {
-        var shippingSelected = $( "input[name=shipping]:checked" ).val();
-        zcLog2Console( 'Updating shipping method to '+shippingSelected );
-        zcJS.ajax({
-            url: "ajax.php?act=ajaxOnePageCheckout&method=updateShipping",
-            data: {shipping: shippingSelected}
-        }).done(function( response ) {
-            $('#orderTotalDivs').html(response.orderTotalHtml);
-        });
+    $( 'form[name="checkout_payment"]' ).submit(function( event ) {
+        if (orderConfirmed) {
+            changeShippingSubmitForm ('submit', event);
+        }
     });
 });
 //--></script>
