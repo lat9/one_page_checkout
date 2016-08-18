@@ -19,7 +19,8 @@ class zcAjaxOnePageCheckout extends base
         //
         global $db, $order, $currencies, $checkout_one, $total_weight, $total_count, $discount_coupon, $messageStack;
         global $shipping_weight, $uninsurable_value, $shipping_quoted, $shipping_num_boxes, $current_page_base, $current_page, $template, $template_dir;
-
+        global $language_page_directory;
+        
         // -----
         // Include the class required by some of the shipping methods, e.g. USPS.
         //
