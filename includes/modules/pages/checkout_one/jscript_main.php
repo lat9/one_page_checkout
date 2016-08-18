@@ -181,11 +181,6 @@ $(document).ready(function(){
     setOrderConfirmed (0);
     $('#checkoutOneShippingFlag').show();
     
-    function handleError ()
-    {
-        alert( 'Error' );
-    }
-    
     function focusOnShipping ()
     {
         var scrollPos =  $( "#checkoutShippingMethod" ).offset().top;
@@ -196,7 +191,7 @@ $(document).ready(function(){
     {
         var shippingSelected = $( "input[name=shipping]:checked" );
         if (shippingSelected.length == 0) {
-            alert( '<?php echo NO_SHIPPING_SELECTED; ?>' );
+            alert( '<?php echo ERROR_NO_SHIPPING_SELECTED; ?>' );
             event.preventDefault();
             event.stopPropagation();
             focusOnShipping();
@@ -253,6 +248,9 @@ $(document).ready(function(){
                     if (response.status == 'invalid') {
                         $( '#checkoutShippingMethod input[name=shipping]' ).prop( 'checked', false );
                         $( '#checkoutShippingChoices' ).html( response.shippingHtml );
+                        $( '#checkoutShippingChoices' ).on( 'click', 'input[name=shipping]', function ( event ) {
+                            changeShippingSubmitForm ('shipping-only', event);
+                        });
                         $( '#otshipping, #otshipping+br' ).hide ();
                         focusOnShipping();
                     }
@@ -288,7 +286,7 @@ if ($flagOnSubmit) {
                     }
                 }
             });
-        }
+        }           
     }
     
     $( '#checkoutShippingMethod input[name=shipping]' ).click(function( event ) {
