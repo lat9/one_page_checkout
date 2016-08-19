@@ -33,6 +33,7 @@ textarea { width: 100%; }
 .corefile { color: red; }
 .template { color: green; }
 .forward { float: right; }
+.removed { text-decoration: line-through; }
 .back { float: back; }
 .clearBoth { clear: both; }
 #buttons, #fa-buttons { margin-left: 20px; width: 300px; }
@@ -101,7 +102,7 @@ th { background-color: #eee; }
           <div class="panel-container">
             <div id="operation">
               <p>This plugin streamlines the flow that your customers see during your store's checkout process, combining the handling required for the <code class="no-pad">checkout_shipping</code>, <code class="no-pad">checkout_payment</code> and <code class="no-pad">checkout_confirmation</code> into a single-page display.</p>
-              <p>The plugin's installation loads all the plugin's files into the folders associated with the <em>default</em> template's use; that way, the processing is available for <b>all</b> templates you might use in your store.  If you make changes to those default files, you'll use the Zen Cart &quot;override&quot; system to make your updates.  For example, if you're adding a top-of-page message, you'll copy the file /includes/languages/english/checkout_one.php to the /includes/languages/english/YOUR_TEMPLATE folder and make your changes there.</p>
+              <p>The plugin's installation loads all the plugin's files into the folders associated with the <em>template_default</em> template's use; that way, the processing is available for <b>all</b> templates you might use in your store.  If you make changes to those default files, you'll use the Zen Cart &quot;override&quot; system to make your updates.  For example, if you're adding a top-of-page message, you'll copy the file /includes/languages/english/checkout_one.php to the /includes/languages/english/YOUR_TEMPLATE folder and make your changes there.</p>
               <p>The plugin has been validated on Zen Cart 1.5.4 and Zen Cart 1.5.5a, using the following shipping, order-total and payment methods:</p>
               <div class="multi-list">
                 <h3>Shipping Methods</h3>
@@ -158,6 +159,7 @@ th { background-color: #eee; }
                 <li><b>TEXT_CHECKOUT_ONE_INSTRUCTIONS</b>.  This constant, echoed within a <code class="no-pad">p</code> tage within a <code class="no-pad">fieldset</code> tag, defines any lower-page instructions just above the form's submit button.</li>
                 <li><b>TEXT_CHECKOUT_ONE_INSTRUCTION_LABEL</b>.  Defines the value to be used in the fieldset's <code class="no-pad">legend</code> tag; if the value is set as '', no legend is generated.</li>
               </ol>
+              <p><strong>Note:</strong> If you're going to change those constants, be sure to make a <span class="template">template-override</span> copy of the plugin's as-shipped language file so the file isn't mistakenly overwritten on an update to the plugin!</p>
             </div>
             
             <div id="storefront">
@@ -250,12 +252,11 @@ th { background-color: #eee; }
             <div id="install">
               <p><b>Note:</b> If you are installing this plugin on Zen Cart 1.5.4 or Zen Cart 1.5.5 (without an alphabetic suffix), you'll need to also copy the files present in the <code class="no-pad">pre_zc155a</code> folder.  Each of those files contain the contents of the like-named file provided in the Zen Cart 1.5.5a distribution.</p>
               <ol>
-                <li><span class="corefile">/pre_zc155a/ajax.php</span></li>
                 <li><span class="corefile">/pre_zc155a/includes/templates/template_default/jscript/jscript_framework.php</span></li>
                 <li><span class="template">/pre_zc155a/includes/templates/YOUR_TEMPLATE/jscript/jscript_framework.php</span></li>
               </ol>
               <hr />
-              <p>Other than the above conditionally-required files, there is one <span class="corefile">core-file overwrite</span> in this plugin; you should <strong>always</strong> backup your cart&rsquo;s database and files prior to making any changes.  Unzip the plugin's package file, rename the YOUR_TEMPLATE folders (3 of them) to match your store's template name:</p>
+              <p>Other than the above conditionally-required files, there are two <span class="corefile">core-file overwrite</span> in this plugin; you should <strong>always</strong> backup your cart&rsquo;s database and files prior to making any changes.  Unzip the plugin's package file, rename the YOUR_TEMPLATE folders (3 of them) to match your store's template name:</p>
               <ol>
                 <li>/includes/languages/english/YOUR_TEMPLATE</li>
                 <li>/includes/languages/english/order_total/YOUR_TEMPLATE</li>
@@ -263,9 +264,10 @@ th { background-color: #eee; }
               </ol>
               <p>&hellip; and the YOUR_ADMIN folder to match your store's admin-folder name and then:
               <ol type="A">
-                <li>Merge the changes to the <span class="corefile">core-file</span> modification required by this plugin with your store's existing copy of the file.</li>
+                <li>Merge the changes to the <span class="corefile">core-file</span> modifications required by this plugin with your store's existing copy of the file.</li>
                 <li>Sign into your Zen Cart's admin panel.</li>
                 <li>Copy the plugin's files to your store's folder structure:<ol>
+                  <li><span class="corefile">/ajax.php</span></li>
                   <li>/includes/auto_loaders/config.checkout_one.php</li>
                   <li><span class="corefile">/includes/classes/message_stack.php</span></li>
                   <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
@@ -286,6 +288,7 @@ th { background-color: #eee; }
                   <li>/includes/templates/template_default/images/confirmation_one_loading.gif</li>
                   <li>/includes/templates/template_default/templates/tpl_checkout_one_confirmation_default.php</li>
                   <li>/includes/templates/template_default/templates/tpl_checkout_one_default.php</li>
+                  <li>/includes/templates/template_default/templates/tpl_modules_checkout_one_shipping.php</li>
                   <li>/includes/templates/YOUR_TEMPLATE/css/checkout_one.css</li>
                   <li>/includes/templates/YOUR_TEMPLATE/css/checkout_one_confirmation.css</li>
                   <li>/YOUR_ADMIN/includes/auto_loaders/config.checkout_one.php</li>
@@ -317,6 +320,7 @@ th { background-color: #eee; }
             <div id="files">
               <p>The plugin provides the following files in its distribution zip-file.  Please note that the files present in the &quot;pre_zc155a&quot; folder are required only if you're installing this plugin on <span class="smaller">(er)</span> a version of Zen Cart <em>prior to</em> 1.5.5<b>a</b>!</p>
               <ol>
+                <li><span class="corefile">/ajax.php</span> <span class="smaller">(Added in v1.0.2)</span></li>
                 <li>/includes/auto_loaders/config.checkout_one.php</li>
                 <li><span class="corefile">/includes/classes/message_stack.php</span></li>
                 <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
@@ -337,31 +341,44 @@ th { background-color: #eee; }
                 <li>/includes/templates/template_default/images/confirmation_one_loading.gif</li>
                 <li>/includes/templates/template_default/templates/tpl_checkout_one_confirmation_default.php</li>
                 <li>/includes/templates/template_default/templates/tpl_checkout_one_default.php</li>
+                <li>/includes/templates/template_default/templates/tpl_modules_checkout_one_shipping.php <span class="smaller">(Added in v1.0.2)</span></li>
                 <li>/includes/templates/YOUR_TEMPLATE/css/checkout_one.css</li>
                 <li>/includes/templates/YOUR_TEMPLATE/css/checkout_one_confirmation.css</li>
                 <li>/YOUR_ADMIN/includes/auto_loaders/config.checkout_one.php</li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                 <li>/YOUR_ADMIN/includes/languages/english/extra_definitions/checkout_one_name.php</li>
-                <li><span class="corefile">/pre_zc155a/ajax.php</span></li>
+                <li><span class="corefile removed">/pre_zc155a/ajax.php</span> <span class="smaller">(Removed in v1.0.2)</span></li>
                 <li><span class="corefile">/pre_zc155a/includes/templates/template_default/jscript/jscript_framework.php</span></li>
                 <li><span class="template">/pre_zc155a/includes/templates/YOUR_TEMPLATE/jscript/jscript_framework.php</span></li>
               </ol>
             </div>
             
             <div id="changes">
+              <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a></p>
               <ul>
-                <li>v1.0.2, 2016-08-xx:<ul>
+                <li>v1.0.2, 2016-08-19:<ul>
+                  <li>BUGFIX: Display payment-method block when in &quot;special checkout&quot; (i.e. PayPal Express Checkout/Shortcut Button).</li>
+                  <li>BUGFIX: Gracefully handle session timeouts during the checkout process.</li>
+                  <li>BUGFIX: Correct AJAX session-save handling.</li>
+                  <li>BUGFIX: Correct interoperation with shipping-methods that have additional data; also corrects handling when the chosen shipping method is no longer valid.</li>
+                  <li>BUGFIX: Include both ZC1.5.4 and 1.5.5 versions of <em>collectsCardDataOnSite</em> handling.</li>
+                  <li>BUGFIX: Check customer's authorization <em>after</em> checking that they're logged in.</li>
                   <li>BUGFIX: Form won't submit on IE-11 browser.</li>
                   <li>CHANGE: Provide pre-integration of <a href="https://www.zen-cart.com/downloads.php?do=file&id=1702">Product Delivery by Postcode (PDP)</a> plugin.</li>
                   <li>BUGFIX: Missing semi-colon in language-file override.</li>
                   <li>BUGFIX: Debug-log generated when coupon applied and shipping-method changed.</li>
                   <li>The following files were affected:<ol>
+                    <li><span class="corefile">/ajax.php</span> <span class="smaller">(Added)</span></li>
                     <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
+                    <li>/includes/languages/english/checkout_one.php</li>
                     <li><span class="template">/includes/languages/english/YOUR_TEMPLATE/checkout_confirmation.php</span></li>
                     <li>/includes/modules/pages/checkout_one/header_php.php</li>
                     <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
+                    <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
                     <li>/includes/templates/template_default/templates/tpl_checkout_one_default.php</li>
+                    <li>/includes/templates/template_default/templates/tpl_modules_checkout_one_shipping.php <span class="smaller">(Added)</span></li>
                     <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
+                    <li><span class="corefile removed">/pre_zc155a/ajax.php</span> <span class="smaller">(Removed)</span></li>
                   </ol></li>
                 </ul></li>
                 <li>v1.0.1, 2016-08-06:<ul>
