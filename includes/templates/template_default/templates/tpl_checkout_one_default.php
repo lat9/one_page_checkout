@@ -163,16 +163,13 @@ if (!$is_virtual_order) {
 <?php
 }  //-Order is not "virtual", display shipping-method block
 ?>
-
+  <div id="checkoutPaymentMethod" class="floatingBox forward clearRight">
+    <fieldset>
+      <legend><?php echo TABLE_HEADING_PAYMENT_METHOD; ?></legend>
 <?php 
 // ** BEGIN PAYPAL EXPRESS CHECKOUT **
 if (!$payment_modules->in_special_checkout()) {
 // ** END PAYPAL EXPRESS CHECKOUT ** 
-?>
-  <div id="checkoutPaymentMethod" class="floatingBox forward clearRight">
-    <fieldset>
-      <legend><?php echo TABLE_HEADING_PAYMENT_METHOD; ?></legend>
-<?php
     if (SHOW_ACCEPTED_CREDIT_CARDS != '0') {
         if (SHOW_ACCEPTED_CREDIT_CARDS == '1') {
             echo TEXT_ACCEPTED_CREDIT_CARDS . zen_get_cc_enabled();
@@ -245,18 +242,17 @@ if (!$payment_modules->in_special_checkout()) {
         $radio_buttons++;
 
     }
-?>
-    </fieldset>
-  </div>
-<?php 
 // ** BEGIN PAYPAL EXPRESS CHECKOUT **
 } else {
 ?>
+    <p><?php echo ${$_SESSION['payment']}->title; ?></p>
     <input type="hidden" name="payment" value="<?php echo $_SESSION['payment']; ?>" />
 <?php
 }
 // ** END PAYPAL EXPRESS CHECKOUT **
 ?>
+    </fieldset>
+  </div>
   <div class="clearBoth"></div>
   
   <div id="checkoutOneShoppingCart">
