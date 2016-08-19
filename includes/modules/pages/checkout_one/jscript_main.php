@@ -181,6 +181,9 @@ $(document).ready(function(){
     setOrderConfirmed (0);
     $('#checkoutOneShippingFlag').show();
     
+    var timeoutUrl = '<?php echo zen_href_link (FILENAME_LOGIN, '', 'SSL'); ?>';
+    var timeoutErrorMessage = '<?php echo JS_ERROR_SESSION_TIMED_OUT; ?>';
+    
     function focusOnShipping ()
     {
         var scrollPos =  $( "#checkoutShippingMethod" ).offset().top;
@@ -216,9 +219,6 @@ $(document).ready(function(){
     }
 
 ?>
-            if (type == 'submit') {
-                event.preventDefault ();
-            }
             zcLog2Console( 'Updating shipping method to '+shippingSelected );
             zcJS.ajax({
                 url: "ajax.php?act=ajaxOnePageCheckout&method=updateShipping",
@@ -236,7 +236,10 @@ $(document).ready(function(){
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     zcLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
-                    d.reject(jqXHR, textStatus, errorThrown);
+                    if (textStatus == 'timeout') {
+                        alert( timeoutErrorMessage );
+                        $(location).attr( 'href', timeoutUrl );
+                    }
                 },
             }).done(function( response ) {
                 $( '#orderTotalDivs' ).html(response.orderTotalHtml);
@@ -245,8 +248,8 @@ $(document).ready(function(){
                 $( '#otshipping, #otshipping+br' ).show ();
                 if (response.status != 'ok') {
                     if (response.status == 'timeout') {
-                        alert( response.errorMessage );
-                        $(location).attr( 'href', response.timeoutUrl );
+                        alert( timeoutErrorMessage );
+                        $(location).attr( 'href', timeoutUrl );
                     }
                     
                     shippingError = true;
@@ -300,7 +303,7 @@ if ($flagOnSubmit) {
     
     $( 'form[name="checkout_payment"]' ).submit(function( event ) {
         if (orderConfirmed) {
-            changeShippingSubmitForm ('submit', event);
+            return changeShippingSubmitForm ('submit', event);
         }
     });
 });

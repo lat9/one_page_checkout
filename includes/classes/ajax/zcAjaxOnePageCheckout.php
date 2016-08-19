@@ -27,7 +27,7 @@ class zcAjaxOnePageCheckout extends base
         $_GET['main_page'] = $current_page_base = $current_page = FILENAME_CHECKOUT_ONE;
         require (DIR_WS_MODULES . zen_get_module_directory ('require_languages.php'));        
         
-        $error_message = $order_total_html = $shipping_html = $timeout_url = '';
+        $error_message = $order_total_html = $shipping_html = '';
         $status = 'ok';
         
         // -----
@@ -36,8 +36,6 @@ class zcAjaxOnePageCheckout extends base
         //
         if (!isset ($_SESSION['customer_id'])) {
             $status = 'timeout';
-            $error_message = ERROR_SESSION_TIMED_OUT;
-            $timeout_url = zen_href_link (FILENAME_LOGIN, '', 'SSL');
             $checkout_one->debug_message ("Session time-out detected.", 'zcAjaxOnePageCheckout');
         } else {
             // -----
@@ -121,7 +119,6 @@ class zcAjaxOnePageCheckout extends base
             'errorMessage' => $error_message,
             'orderTotalHtml' => $order_total_html,
             'shippingHtml' => $shipping_html,
-            'timeoutUrl' => $timeout_url,
         );
         $checkout_one->debug_message ('Returning:' . print_r ($return_array, true));
 

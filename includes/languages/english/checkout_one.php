@@ -31,7 +31,13 @@ define('FREE_SHIPPING_DESCRIPTION', 'Free shipping for orders over %s');
 
 define('ERROR_PLEASE_RESELECT_SHIPPING_METHOD', 'Your available shipping options have changed. Please re-select your desired shipping method.');
 define('ERROR_NO_SHIPPING_SELECTED', 'You must choose a shipping method for your order before the order can be confirmed.');
-define('ERROR_SESSION_TIMED_OUT', "Sorry, your session has timed out.\n\nThe items in your cart have been saved and will be restored the next time you log in.");
+
+// -----
+// NOTE: The following constant is used in the page's jscript_main.php file as a javascript text literal.  If you want to include single-quotes in the value,
+// you'll need to specify them as \' just like the \n in the as-shipped version represents a new-line.  Just be sure to keep the contant's string within a set
+// of single-quots and you should be good-to-go!
+//
+define('JS_ERROR_SESSION_TIMED_OUT', 'Sorry, your session has timed out.\n\nThe items in your cart have been saved and will be restored the next time you log in.');
 
 // ----- From checkout_payment -----
 
