@@ -45,6 +45,7 @@ th { background-color: #eee; }
 .left-pane { width: 49%; float: left; }
 .right-pane { width: 49%; float: right; }
 .multi-list { width: 32%; float: left; }
+#unsupported-templates { margin: 0 20px; border: 1px solid #444; border-radius: 6px; }
 
 .etabs { margin: 0; padding: 0; }
 .tab { display: inline-block; zoom:1; *display:inline; background: #eee; border: solid 1px #999; border-bottom: none; border-radius: 4px 4px 0 0; margin: 0; }
@@ -102,7 +103,13 @@ th { background-color: #eee; }
           <div class="panel-container">
             <div id="operation">
               <p>This plugin streamlines the flow that your customers see during your store's checkout process, combining the handling required for the <code class="no-pad">checkout_shipping</code>, <code class="no-pad">checkout_payment</code> and <code class="no-pad">checkout_confirmation</code> into a single-page display.</p>
-              <p>The plugin's installation loads all the plugin's files into the folders associated with the <em>template_default</em> template's use; that way, the processing is available for <b>all</b> templates you might use in your store.  If you make changes to those default files, you'll use the Zen Cart &quot;override&quot; system to make your updates.  For example, if you're adding a top-of-page message, you'll copy the file /includes/languages/english/checkout_one.php to the /includes/languages/english/YOUR_TEMPLATE folder and make your changes there.</p>
+              <div id="unsupported-templates">
+                <p>The plugin's design utilizes <b><i>standard Zen Cart</i></b> HTML/CSS layout when rendering its new pages, so the look-and-feel of your store gets &quot;inherited&quot;.  Some templates make <em>drastic</em>    modifications to that layout &mdash; removing those <em>standard</em> HTML/CSS selectors &mdash; which causes this plugin's newly-added pages to display improperly.  The following templates are known to be incompatible with the <em>One-Page Checkout</em> plugin:<p>
+                <ol>
+                  <li>Tableau</li>
+                </ol>
+              </div>
+              <p><em>One-Page Checkout's</em> installation loads all the plugin's files into the folders associated with the <em>template_default</em> template's use; that way, the processing is available for <b>all</b> templates you might use in your store.  If you make changes to those default files, you'll use the Zen Cart &quot;override&quot; system to make your updates.  For example, if you're adding a top-of-page message, you'll copy the file /includes/languages/english/checkout_one.php to the /includes/languages/english/YOUR_TEMPLATE folder and make your changes there.</p>
               <p>The plugin has been validated on Zen Cart 1.5.4 and Zen Cart 1.5.5a, using the following shipping, order-total and payment methods:</p>
               <div class="multi-list">
                 <h3>Shipping Methods</h3>
