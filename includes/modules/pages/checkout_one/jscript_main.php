@@ -116,15 +116,20 @@ function shippingIsBilling ()
 // Zen Cart 1.5.4 and 1.5.5, so this module for the One-Page Checkout plugin includes both
 // forms.  That way, if a payment module was written for 1.5.4 it'll work, ditto for those
 // written for the 1.5.5 method.
+//
+// Zen Cart 1.5.4 uses the single-function approach (collectsCardDataOnsite) while the 1.5.5
+// approach splits the functions int "doesCollectsCardDataOnsite" and "doCollectsCardDataOnsite".
 // 
 ?>
 function collectsCardDataOnsite(paymentValue)
 {
+    zcLog2Console( 'Checking collectsDardDataOnsite('+paymentValue+') ...' );
     zcJS.ajax({
         url: "ajax.php?act=ajaxPayment&method=doesCollectsCardDataOnsite",
         data: {paymentValue: paymentValue}
     }).done(function( response ) {
         if (response.data == true) {
+            zcLog2Console( ' ... it does!' );
             var str = $('form[name="checkout_payment"]').serializeArray();
 
             zcJS.ajax({
@@ -135,9 +140,9 @@ function collectsCardDataOnsite(paymentValue)
                 $('#navBreadCrumb').html(response.breadCrumbHtml);
                 $('#checkoutPayment').before(response.confirmationHtml);
                 $(document).attr('title', response.pageTitle);
-
             });
         } else {
+            zcLog2Console( ' ... it does not, submitting.' );
             $('form[name="checkout_payment"]')[0].submit();
         }
     });
@@ -146,11 +151,14 @@ function collectsCardDataOnsite(paymentValue)
 
 function doesCollectsCardDataOnsite(paymentValue)
 {
+    zcLog2Console( 'Checking doesCollectsCardDataOnsite('+paymentValue+') ...' );
     if ($('#'+paymentValue+'_collects_onsite').val()) {
         if ($('#pmt-'+paymentValue).is(':checked')) {
+            zcLog2Console( '... it does!' );
             return true;
         }
     }
+    zcLog2Console( '... it does not.' );
     return false;
 }
 
@@ -158,6 +166,7 @@ function doCollectsCardDataOnsite(paymentValue)
 {
     var str = $('form[name="checkout_payment"]').serializeArray();
 
+    zcLog2Console( 'doCollectsCardDataOnsite('+paymentValue+')' );
     zcJS.ajax({
         url: "ajax.php?act=ajaxPayment&method=prepareConfirmation",
         data: str
@@ -189,7 +198,7 @@ $(document).ready(function(){
         var scrollPos =  $( "#checkoutShippingMethod" ).offset().top;
         $(window).scrollTop( scrollPos );
     }
-    
+
     function changeShippingSubmitForm (type, event)
     {
         var shippingSelected = $( "input[name=shipping]:checked" );
@@ -219,7 +228,11 @@ $(document).ready(function(){
     }
 
 ?>
-            zcLog2Console( 'Updating shipping method to '+shippingSelected );
+            zcLog2Console( 'Updating shipping method to '+shippingSelected+', processing type: '+type );
+            if (type == 'submit') {
+                event.preventDefault();
+                event.stopPropagation();
+            }
             zcJS.ajax({
                 url: "ajax.php?act=ajaxOnePageCheckout&method=updateShipping",
                 data: {
@@ -240,6 +253,7 @@ $(document).ready(function(){
                         alert( timeoutErrorMessage );
                         $(location).attr( 'href', timeoutUrl );
                     }
+                    shippingError = true;
                 },
             }).done(function( response ) {
                 $( '#orderTotalDivs' ).html(response.orderTotalHtml);
@@ -273,7 +287,6 @@ $(document).ready(function(){
                 if (type == 'submit') {
                     if (shippingError == true) {
                         zcLog2Console( 'Shipping error, correct to proceed.' );
-                        event.stopPropagation ();
                     } else {
                         zcLog2Console ('Form submitted, orderConfirmed ('+orderConfirmed+')');
                         if (orderConfirmed) {
@@ -283,10 +296,13 @@ if ($flagOnSubmit) {
 ?>
                             var formPassed = check_form();
                             zcLog2Console ('Form checked, passed ('+formPassed+')');
-                            if (formPassed == false) {
-                                $( '#confirm-order' ).attr('disabled', false);
+                            
+                            if (formPassed == true) {
+                                $( 'form[name="checkout_payment"]' ).unbind( 'submit' ).submit();
                             }
-                            return formPassed;
+                            
+                            $( '#confirm-order' ).attr('disabled', false);
+                            return false;
 <?php 
 } 
 ?>
@@ -302,8 +318,9 @@ if ($flagOnSubmit) {
     });
     
     $( 'form[name="checkout_payment"]' ).submit(function( event ) {
+        zcLog2Console( 'Submitting form, orderConfirmed ('+orderConfirmed+')' );
         if (orderConfirmed) {
-            return changeShippingSubmitForm ('submit', event);
+            changeShippingSubmitForm ('submit', event);
         }
     });
 });
