@@ -64,12 +64,16 @@ class zcAjaxOnePageCheckout extends base
             $shipping_modules = new shipping;
             
             $quote = $shipping_modules->quote ($method, $module);
+            $checkout_one->debug_message ("Current quote: " . print_r ($quote, true) . PHP_EOL);
             if (isset ($quote[0]['methods'][0]['title']) && isset ($quote[0]['methods'][0]['cost'])) {
                 $_SESSION['shipping'] = array (
                     'id' => $_POST['shipping'],
                     'title' => $quote[0]['module'] . ' (' . $quote[0]['methods'][0]['title'] . ')',
                     'cost' => $quote[0]['methods'][0]['cost']
                 );
+                if (isset ($quote[0]['extras'])) {
+                    $_SESSION['shipping']['extras'] = $quote[0]['extras'];
+                }
             } else {
                 $checkout_one->debug_message ('Shipping method returned empty result; no longer valid.');
                 $error_message = ERROR_PLEASE_RESELECT_SHIPPING_METHOD;
