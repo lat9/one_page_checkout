@@ -190,6 +190,8 @@ $(document).ready(function(){
     setOrderConfirmed (0);
     $( '#checkoutOneShippingFlag' ).show();
     
+    zcLog2Console ( 'jQuery version: '+jQuery().jquery );
+    
     var timeoutUrl = '<?php echo zen_href_link (FILENAME_LOGIN, '', 'SSL'); ?>';
     var sessionTimeoutErrorMessage = '<?php echo JS_ERROR_SESSION_TIMED_OUT; ?>';
     var ajaxTimeoutErrorMessage = '<?php echo JS_ERROR_AJAX_TIMEOUT; ?>';
