@@ -29,6 +29,8 @@ if ($configuration->EOF) {
 if (!defined ('CHECKOUT_ONE_ENABLED')) {
     $db->Execute ("INSERT INTO " . TABLE_CONFIGURATION . " ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) VALUES ( 'Enable One-Page Checkout?', 'CHECKOUT_ONE_ENABLED', 'false', 'Enable the one-page checkout processing for your store?  Default: <b>false</b>', $cgi, now(), 10, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),')");
     
+    define ('CHECKOUT_ONE_ENABLED', 'false');
+    
     $db->Execute ("INSERT INTO " . TABLE_CONFIGURATION . " ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) VALUES ( 'Enable One-Page Checkout Debug?', 'CHECKOUT_ONE_DEBUG', 'false', 'When enabled, debug files named myDEBUG-one_page_checkout-<em>xx</em>.log are created in your /logs folder (<em>xx</em> is the customer_id for the checkout).  Use the <b>true</b> setting in combination with the <em>Debug: Customer List</em> setting to limit the customers for which the debug-action is taken.<br /><br />Default: <b>false</b>', $cgi, now(), 50, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),')");
     
     $db->Execute ("INSERT INTO " . TABLE_CONFIGURATION . " ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) VALUES ( 'Debug: Customer List', 'CHECKOUT_ONE_DEBUG_EXTRA', '', 'When you enable the plugin\'s debug, use this setting to limit the customers for which the debug-logs are generated.  Leave the setting blank (the default) to debug <b>all</b> customers or identify a comma-separated list of customer_id values to limit the debug to just those customers.<br />', $cgi, now(), 51, NULL, NULL)");
@@ -67,4 +69,19 @@ if (defined ('CHECKOUT_ONE_DEBUG') && strpos (CHECKOUT_ONE_DEBUG, '<b>full</b>')
 if (!zen_page_key_exists ('configOnePageCheckout')) {
     $next_sort = $db->Execute ('SELECT MAX(sort_order) as max_sort FROM ' . TABLE_ADMIN_PAGES . " WHERE menu_key='configuration'", false, false, 0, true);
     zen_register_admin_page ('configOnePageCheckout', 'BOX_TOOLS_CHECKOUT_ONE', 'FILENAME_CONFIGURATION', "gID=$cgi", 'configuration', 'Y', $next_sort->fields['max_sort'] + 1);
+}
+
+// -----
+// Now, check to make sure that the currently-active template's folder includes the jscript_framework.php file and disable the One-Page Checkout if
+// that file's not found.
+//
+$template_check = $db->Execute ("SELECT DISTINCT template_dir FROM " . TABLE_TEMPLATE_SELECT);
+while (!$template_check->EOF) {
+    $jscript_dir = DIR_FS_CATALOG . 'includes/templates/' . $template_check->fields['template_dir'] . '/jscript';
+    if (CHECKOUT_ONE_ENABLED !== 'false' && !is_dir ($jscript_dir) || !file_exists ("$jscript_dir/jscript_framework.php")) {
+        $db->Execute ("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = 'false' WHERE configuration_key = 'CHECKOUT_ONE_ENABLED' LIMIT 1");
+        $messageStack->add_session (sprintf (ERROR_STORESIDE_CONFIG, "$jscript_dir/jscript_framework.php"), 'error');
+        break;
+    }
+    $template_check->MoveNext();
 }
