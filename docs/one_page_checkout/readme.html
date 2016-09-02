@@ -157,6 +157,7 @@ th { background-color: #eee; }
               <ul>
                 <li><em>Version/Release Date</em>.  This display-only field shows the plugin's current version and release date.</li>
                 <li><em>Enable One-Page Checkout?</em>.  Choose whether (true) or not (false, <em>the default</em>) to enable the one-page checkout handling for your store.</li>
+                <li><em>Update Shipping AJAX Time-out</em>.  Use this setting to adjust the timeout to use when the plugin requests an update to the shipping quotes on the "checkout_one" page. The default setting of 5000 (5 seconds) should work for most stores. If your store has enabled multiple external shipping methods (e.g. USPS, UPS and FedEx), you might need to increase this value. <span class="smaller">(Added in v1.0.3)</span></li>
                 <li><em>Enable One-Page Checkout Debug?</em>. When enabled, debug files named myDEBUG-one_page_checkout-<em>xx</em>.log are created in your /logs folder (<em>xx</em> is the customer_id for the checkout). Use the <b>true</b> or <b>full</b> settings in combination with the <em>Debug: Customer List</em> setting to limit the customers for which the debug-action is taken.  Setting the value to <b>full</b> will also set the PHP error-level for the checkout_one page's processing so that <b>all</b> PHP errors are logged.</li>
                 <li><em>Debug: Customer List</em>. When you enable the plugin's debug, use this setting to limit the customers for which the debug-logs are generated.  Leave the setting blank (the default) to debug <b>all</b> customers or identify a comma-separated list of customer_id values to limit the debug to just those customers.</li>
               </ul>
@@ -377,15 +378,18 @@ th { background-color: #eee; }
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a></p>
               <ul>
                 <li>v1.0.3, 2016-09-xx:<ul>
+                  <li>BUGFIX: Correct handling of AJAX request timeouts on the shipping-method change.</li>
                   <li>BUGFIX: Correct interlock with &quot;collectsCardDataOnsite&quot; payment methods and shipping methods that require &quot;extra&quot; information.</li>
                   <li>BUGFIX: Correct Zen Cart 1.5.5a payment-class handling of &quot;collectsCardDataOnsite&quot; payment methods.</li>
                   <li>BUGFIX: Unfinished form submittal occurs when payment method &quot;collectsCardDataOnsite&quot;.</li>
                   <li>CHANGE: Identify known template incompatibilities in the readme.</li>
                   <li>The following files were affected:<ol>
                     <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
+                    <li>/includes/languages/english/checkout_one.php</li>
                     <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
                     <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_ajax_checkout_confirmation_default.php</span> <span class="smaller">(Added)</span></li>
                     <li><span class="corefile">/zc155a/includes/classes/payment.php</span> <span class="smaller">(Added)</span></li>
+                    <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                   </ol></li>
                 </ul></li>
                 <li>v1.0.2, 2016-08-19:<ul>

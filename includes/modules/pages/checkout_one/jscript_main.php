@@ -188,10 +188,11 @@ function setOrderConfirmed (value)
 
 $(document).ready(function(){   
     setOrderConfirmed (0);
-    $('#checkoutOneShippingFlag').show();
+    $( '#checkoutOneShippingFlag' ).show();
     
     var timeoutUrl = '<?php echo zen_href_link (FILENAME_LOGIN, '', 'SSL'); ?>';
-    var timeoutErrorMessage = '<?php echo JS_ERROR_SESSION_TIMED_OUT; ?>';
+    var sessionTimeoutErrorMessage = '<?php echo JS_ERROR_SESSION_TIMED_OUT; ?>';
+    var ajaxTimeoutErrorMessage = '<?php echo JS_ERROR_AJAX_TIMEOUT; ?>';
     
     function focusOnShipping ()
     {
@@ -247,11 +248,11 @@ $(document).ready(function(){
     }
 ?>
                 },
+                timeout: <?php echo (int)((defined ('CHECKOUT_ONE_SHIPPING_TIMEOUT')) ? CHECKOUT_ONE_SHIPPING_TIMEOUT : 5000); ?>,
                 error: function (jqXHR, textStatus, errorThrown) {
                     zcLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
                     if (textStatus == 'timeout') {
-                        alert( timeoutErrorMessage );
-                        $(location).attr( 'href', timeoutUrl );
+                        alert( ajaxTimeoutErrorMessage );
                     }
                     shippingError = true;
                 },
@@ -262,7 +263,7 @@ $(document).ready(function(){
                 $( '#otshipping, #otshipping+br' ).show ();
                 if (response.status != 'ok') {
                     if (response.status == 'timeout') {
-                        alert( timeoutErrorMessage );
+                        alert( sessionTimeoutErrorMessage );
                         $(location).attr( 'href', timeoutUrl );
                     }
                     

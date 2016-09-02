@@ -41,6 +41,10 @@ if (!defined ('CHECKOUT_ONE_MODULE_VERSION')) {
     define ('CHECKOUT_ONE_MODULE_VERSION', $version_release_date);
 }
 
+if (!defined ('CHECKOUT_ONE_SHIPPING_TIMEOUT')) {
+    $db->Execute ("INSERT INTO " . TABLE_CONFIGURATION . " ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) VALUES ( 'Update Shipping AJAX Time-out', 'CHECKOUT_ONE_SHIPPING_TIMEOUT', '5000', 'Enter the timeout to use for the plugin\'s request to update the shipping quotes on the &quot;checkout_one&quot; page. The default setting of 5000 (5 seconds) <em>should work</em> for most stores.  If your store has enabled multiple external shipping methods (e.g. USPS, UPS <b>and</b> FedEx), you might need to increase this value.<br />', $cgi, now(), 15, NULL, NULL)");
+}
+
 if (CHECKOUT_ONE_MODULE_VERSION != $version_release_date) {
     $db->Execute ("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '$version_release_date', last_modified = now() WHERE configuration_key = 'CHECKOUT_ONE_MODULE_VERSION' LIMIT 1");
 }
