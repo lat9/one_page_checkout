@@ -72,7 +72,7 @@ th { background-color: #eee; }
 
 <body>
   <h1>One-Page Checkout <span class="smaller">for Zen Cart v1.5.4 (and later)</span></h1>
-  <h3>Version 1.0.3 by lat9</h3>
+  <h3>Version 1.0.4 by lat9</h3>
   <h3>Copyright &copy; 2013-2016 <a href="http://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
   <p><b>Credits:</b></p>
   <ol>
@@ -375,6 +375,17 @@ th { background-color: #eee; }
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a></p>
               <ul>
+                <li>v1.0.4, 2016-09-xx:<ul>
+                  <li>BUGFIX: Correct processing for orders that qualify for the &quot;free_free&quot; shipping method, e.g. virtual products only and free shipping as configured by the shipping order-total module.</li>
+                  <li>BUGFIX: Correct readme references to <code class="no-pad">/includes/languages/english/order_total</code> to <code class="no-pad">/includes/languages/english/modules/order_total</code>.</li>
+                  <li>The following files were affected:<ol>
+                    <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
+                    <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
+                    <li>/includes/languages/english/checkout_one.php</li>
+                    <li>/includes/templates/template_default/templates/tpl_checkout_one_default.php</li>
+                    <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
+                  </ol></li>
+                </ul></li>
                 <li>v1.0.3, 2016-09-02:<ul>
                   <li>CHANGE: Disable plugin if the active template doesn't include jscript_framework.php</li>
                   <li>CHANGE: Update documentation to ensure that the v1.5.5a version of <code class="no-pad">jscript_framework.php</code> gets copied.</li>

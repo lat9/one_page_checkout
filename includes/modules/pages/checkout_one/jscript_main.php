@@ -204,7 +204,10 @@ $(document).ready(function(){
 
     function changeShippingSubmitForm (type, event)
     {
-        var shippingSelected = $( "input[name=shipping]:checked" );
+        var shippingSelected = $( 'input[name=shipping]' );
+        if (shippingSelected.is( ':radio' )) {
+            shippingSelected = $( 'input[name=shipping]:checked' );
+        }
         if (shippingSelected.length == 0) {
             alert( '<?php echo ERROR_NO_SHIPPING_SELECTED; ?>' );
             event.preventDefault();
@@ -214,22 +217,23 @@ $(document).ready(function(){
             shippingSelected = shippingSelected.val();
 <?php
     // -----
-    // If a shipping-module has required inputs that should accompany the post, format the necessary
-    // jQuery to gather those inputs.
+    // If the current order has generated shipping quotes (i.e. it's got at least one physical product), check to see if a 
+    // shipping-module has required inputs that should accompany the post, format the necessary jQuery to gather those inputs.
     //
-    $additional_shipping_inputs = array ();
-    foreach ($quotes as $current_quote) {
-        if (isset ($current_quote['required_input_names']) && is_array ($current_quote['required_input_names'])) {
-            foreach ($current_quote['required_input_names'] as $current_input_name => $selection_required) {
-                $variable_name = base::camelize ($current_input_name);
+    if (isset ($quotes) && is_array ($quotes)) {
+        $additional_shipping_inputs = array ();
+        foreach ($quotes as $current_quote) {
+            if (isset ($current_quote['required_input_names']) && is_array ($current_quote['required_input_names'])) {
+                foreach ($current_quote['required_input_names'] as $current_input_name => $selection_required) {
+                    $variable_name = base::camelize ($current_input_name);
 ?>
             var <?php echo $variable_name; ?> = $( "input[name=<?php echo $current_input_name; ?>]<?php echo ($selection_required) ? ':checked' : ''; ?>" ).val();
 <?php
-                $additional_shipping_inputs[$current_input_name] = $variable_name;
+                    $additional_shipping_inputs[$current_input_name] = $variable_name;
+                }
             }
         }
     }
-
 ?>
             zcLog2Console( 'Updating shipping method to '+shippingSelected+', processing type: '+type );
             if (type == 'submit') {

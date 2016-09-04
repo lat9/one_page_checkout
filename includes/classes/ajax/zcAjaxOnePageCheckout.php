@@ -56,57 +56,90 @@ class zcAjaxOnePageCheckout extends base
             $order = new order ();
             list ($module, $method) = explode ('_', $_POST['shipping']);
             
-            $checkout_one->debug_message ("Shipping method change to $module ($method). Current values: " . print_r ($_SESSION['shipping'], true) . PHP_EOL . print_r ($_POST, true), true, 'zcAjaxOnePageCheckout');
+            $pass = false;
+            $free_shipping = false;
+            if (defined ('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING') && MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING == 'true') {
+                switch (MODULE_ORDER_TOTAL_SHIPPING_DESTINATION) {
+                    case 'national':
+                        if ($order->delivery['country_id'] == STORE_COUNTRY) {
+                            $pass = true;
+                        }
+                        break;
 
-            global ${$module};
+                    case 'international':
+                        if ($order->delivery['country_id'] != STORE_COUNTRY) {
+                            $pass = true;
+                        }
+                        break;
+
+                    case 'both':
+                        $pass = true;
+                        break;
+                }
+                if ($pass && $_SESSION['cart']->show_total() >= MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER) {
+                    $free_shipping = true;
+                }
+            }        
+            $is_virtual_order = ($_SESSION['cart']->get_content_type () == 'virtual');
             
-            require (DIR_WS_CLASSES . 'shipping.php');
-            $shipping_modules = new shipping;
-            
-            $quote = $shipping_modules->quote ($method, $module);
-            $checkout_one->debug_message ("Current quote: " . print_r ($quote, true) . PHP_EOL);
-            if (isset ($quote[0]['methods'][0]['title']) && isset ($quote[0]['methods'][0]['cost'])) {
-                $_SESSION['shipping'] = array (
-                    'id' => $_POST['shipping'],
-                    'title' => $quote[0]['module'] . ' (' . $quote[0]['methods'][0]['title'] . ')',
-                    'cost' => $quote[0]['methods'][0]['cost']
-                );
-                if (isset ($quote[0]['extras'])) {
-                    $_SESSION['shipping']['extras'] = $quote[0]['extras'];
+            $checkout_one->debug_message ("Shipping method change to $module ($method), free_shipping ($free_shipping), virtual order ($is_virtual_order). Current values: " . print_r ($_SESSION['shipping'], true) . PHP_EOL . print_r ($_POST, true), true, 'zcAjaxOnePageCheckout');
+
+            if ($free_shipping || $is_virtual_order) {
+                if ($_POST['shipping'] != 'free_free') {
+                    $checkout_one->debug_message ('Invalid shipping method (' . $_POST['shipping'] . ') submitted; free-shipping and virtual orders should be free_free.', false, 'zcAjaxOnePageCheckout');
+                    $status = 'error';
+                    $error_message = ERROR_UNKNOWN_SHIPPING_SELECTION;
                 }
             } else {
-                $checkout_one->debug_message ('Shipping method returned empty result; no longer valid.');
-                $error_message = ERROR_PLEASE_RESELECT_SHIPPING_METHOD;
-                $status = 'invalid';
-                unset ($GLOBALS[_SESSION]['shipping']);
-            }
-            $order = new order ();
-            $shipping_modules = new shipping (isset ($_SESSION['shipping']) ? $_SESSION['shipping'] : '');
-            
-            $shipping_html = '';
-            if ($status == 'invalid') {
-                $quotes = $shipping_modules->quote ();
-                ob_start ();
-                require ($template->get_template_dir ('tpl_modules_checkout_one_shipping.php', DIR_WS_TEMPLATE, $current_page_base, 'templates'). '/tpl_modules_checkout_one_shipping.php');
-                $shipping_html = ob_get_clean ();
-                ob_flush ();
-            }
-            
-            if ($status == 'ok' && isset ($quote[0]['error'])) {
-                $status = 'error';
-                if (count ($messageStack->messages) > 0) {
-                    foreach ($messageStack->messages as $current_message) {
-                        if ($current_message['class'] == 'checkout_shipping') {
-                            $error_message = strip_tags ($current_message['text']);
-                            break;
-                        }
+                global ${$module};           
+                require (DIR_WS_CLASSES . 'shipping.php');
+                $shipping_modules = new shipping;
+                
+                $quote = $shipping_modules->quote ($method, $module);
+                $checkout_one->debug_message ("Current quote: " . print_r ($quote, true) . PHP_EOL);
+                if (isset ($quote[0]['methods'][0]['title']) && isset ($quote[0]['methods'][0]['cost'])) {
+                    $_SESSION['shipping'] = array (
+                        'id' => $_POST['shipping'],
+                        'title' => $quote[0]['module'] . ' (' . $quote[0]['methods'][0]['title'] . ')',
+                        'cost' => $quote[0]['methods'][0]['cost']
+                    );
+                    if (isset ($quote[0]['extras'])) {
+                        $_SESSION['shipping']['extras'] = $quote[0]['extras'];
                     }
-                    $messageStack->reset ();
+                } else {
+                    $checkout_one->debug_message ('Shipping method returned empty result; no longer valid.');
+                    $error_message = ERROR_PLEASE_RESELECT_SHIPPING_METHOD;
+                    $status = 'invalid';
+                    unset ($GLOBALS[_SESSION]['shipping']);
                 }
-            }
-            unset ($GLOBALS[_SESSION]['messageToStack']);
+                $order = new order ();
+                $shipping_modules = new shipping (isset ($_SESSION['shipping']) ? $_SESSION['shipping'] : '');
+                
+                $shipping_html = '';
+                if ($status == 'invalid') {
+                    $quotes = $shipping_modules->quote ();
+                    ob_start ();
+                    require ($template->get_template_dir ('tpl_modules_checkout_one_shipping.php', DIR_WS_TEMPLATE, $current_page_base, 'templates'). '/tpl_modules_checkout_one_shipping.php');
+                    $shipping_html = ob_get_clean ();
+                    ob_flush ();
+                }
+                
+                if ($status == 'ok' && isset ($quote[0]['error'])) {
+                    $status = 'error';
+                    if (count ($messageStack->messages) > 0) {
+                        foreach ($messageStack->messages as $current_message) {
+                            if ($current_message['class'] == 'checkout_shipping') {
+                                $error_message = strip_tags ($current_message['text']);
+                                break;
+                            }
+                        }
+                        $messageStack->reset ();
+                    }
+                }
+                unset ($GLOBALS[_SESSION]['messageToStack']);
 
-            $checkout_one->debug_message ("Shipping method changed: " . print_r ($quote, true) . print_r ($_SESSION['shipping'], true), false, 'zcAjaxOnePageCheckout');
+                $checkout_one->debug_message ("Shipping method changed: " . print_r ($quote, true) . print_r ($_SESSION['shipping'], true), false, 'zcAjaxOnePageCheckout');
+            }
 
             require (DIR_WS_CLASSES . 'order_total.php');
             $order_total_modules = new order_total ();

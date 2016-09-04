@@ -9,7 +9,7 @@ echo $payment_modules->javascript_validation();
 ?>
 <div class="centerColumn" id="checkoutPayment">
 <?php
-  echo zen_draw_form ('checkout_payment', zen_href_link (FILENAME_CHECKOUT_ONE_CONFIRMATION, '', 'SSL'), 'post') . zen_draw_hidden_field ('action', 'process'); 
+  echo zen_draw_form ('checkout_payment', zen_href_link (FILENAME_CHECKOUT_ONE_CONFIRMATION, '', 'SSL'), 'post', 'id="checkout_payment"') . zen_draw_hidden_field ('action', 'process'); 
 ?>
   <h1 id="checkoutOneHeading"><?php echo HEADING_TITLE; ?></h1>
 <?php
@@ -96,14 +96,15 @@ for ($i = 0, $n = count ($credit_selection); $i < $n; $i++) {
 ?>   
   </div>
   
+  <div id="checkoutShippingMethod" class="floatingBox forward">   
 <?php
 // -----
-// Display the shipping-method block ... only if the order doesn't include all-virtual products.
+// If the order contains only virtual products, the shipping block contains only a hidden field that
+// identifies the "free" shipping method; otherwise, display the full shipping block.
 //
-if (!$is_virtual_order) {
-?>  
-  <div id="checkoutShippingMethod" class="floatingBox forward">     
-<?php
+if ($is_virtual_order) {
+    echo zen_draw_hidden_field ('shipping', $_SESSION['shipping']['id']) . PHP_EOL;
+} else {
     if (zen_count_shipping_modules() > 0) {
 ?>
     <fieldset>
@@ -126,8 +127,8 @@ if (!$is_virtual_order) {
 <?php
         if ($free_shipping == true) {
 ?>
-        <div id="freeShip" class="important" ><?php echo FREE_SHIPPING_TITLE; ?>&nbsp;<?php echo $quotes[$i]['icon']; ?></div>
-        <div id="defaultSelected"><?php echo sprintf(FREE_SHIPPING_DESCRIPTION, $currencies->format(MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER)) . zen_draw_hidden_field('shipping', 'free_free'); ?></div>
+        <div id="freeShip" class="important" ><?php echo FREE_SHIPPING_TITLE; ?></div>
+        <div id="defaultSelected"><?php echo sprintf (FREE_SHIPPING_DESCRIPTION, $currencies->format (MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER)) . zen_draw_hidden_field ('shipping', 'free_free'); ?></div>
 
 <?php
         } else {
@@ -158,11 +159,10 @@ if (!$is_virtual_order) {
     <div id="checkoutShippingContentChoose" class="important"><?php echo TEXT_NO_SHIPPING_AVAILABLE; ?></div>
 <?php
     }
+}  //-Order is not "virtual", display full shipping-method block
 ?>
-</div>
-<?php
-}  //-Order is not "virtual", display shipping-method block
-?>
+  </div>
+  
   <div id="checkoutPaymentMethod" class="floatingBox forward clearRight">
     <fieldset>
       <legend><?php echo TABLE_HEADING_PAYMENT_METHOD; ?></legend>
