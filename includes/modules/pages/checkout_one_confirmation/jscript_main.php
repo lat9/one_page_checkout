@@ -38,13 +38,13 @@
 if (!$confirmation_required) {
 ?>
     $(document).ready(function(){
-        $('#navBreadCrumb').hide();
-        $('#checkoutOneConfirmationLoading').show();
         $('body', 'html').css({ 
             "overflow": "hidden",
             "height": "100%",
             "background": "none"
         });
+        $('#navBreadCrumb, #bannerSix').hide();
+        $('#checkoutOneConfirmationLoading').show();
         $('form[name="checkout_confirmation"]').submit();
     });
 <?php
