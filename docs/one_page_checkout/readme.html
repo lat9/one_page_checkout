@@ -79,6 +79,7 @@ th { background-color: #eee; }
     <li>The checkout-confirmation loading .gif file was created using the tool at <a href="http://preloaders.net/en/free" target="_blank">http://preloaders.net/en/free</a>.</li>
     <li>The HTML map that helps to describe the sections of the checkout_one page in this document was created using the tool at <a href="http://imagemap-generator.dariodomi.de/" target="_blank">http://imagemap-generator.dariodomi.de/</a>.</li>
     <li>Responsive image-map handling courtesy of <a href="https://github.com/davidjbradshaw/image-map-resizer" target="_blank">https://github.com/davidjbradshaw/image-map-resizer</a>.</li>
+    <li>Browser detection class courtesy of <a href="https://github.com/cbschuld/Browser.php" target="_blank">https://github.com/cbschuld/Browser.php</a>.</li>
   </ol>
   <hr />
   <p>Current Support Thread at Zen Cart Forums: <a href="https://www.zen-cart.com/showthread.php?220781-One-Page-Checkout-Support-Thread">https://www.zen-cart.com/showthread.php?220781-One-Page-Checkout-Support-Thread</a></p>
@@ -172,6 +173,7 @@ th { background-color: #eee; }
             
             <div id="storefront">
               <p>When you've enabled the <em>One-Page Checkout</em>, the customer will see a single-page similar to the image below.  The customer uses the form to apply any coupon (or gift-certificate) codes, choose their shipping and payment methods and then clicks that &quot;Confirm Order&quot; button &hellip; which takes them to a transitional confirmation page and subsequently to the &quot;checkout_success&quot; page.  If they've chosen a payment method that accepts credit-cards onsite, then an additional confirmation page is displayed from which the customer re-confirms their order.</p>
+              <p><strong>Note:</strong> Starting with v1.0.4, customers that access your site using a version of <b><em>Internet Explorer</em> less than 9.0</b> will continue to see the &quot;traditional&quot; multi-page version of the checkout process.</p>
               <p>Click on an area in the image to view additional information about that section, or just scroll down to see that information.</p>
               <img class="wide" src="checkout_one.jpg" alt="The One-Page Checkout page" title="What the customer sees" usemap="#image-map" />
               <map name="image-map">
@@ -275,6 +277,7 @@ th { background-color: #eee; }
                   <li><span class="corefile">/ajax.php</span></li>
                   <li>/includes/auto_loaders/config.checkout_one.php</li>
                   <li><span class="corefile">/includes/classes/message_stack.php</span></li>
+                  <li>/includes/classes/Vinos_Browser.php</li>
                   <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
                   <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                   <li>/includes/extra_datafiles/checkout_one_filenames.php</li>
@@ -307,7 +310,7 @@ th { background-color: #eee; }
                 <li><em><b>If your store is running Zen Cart v1.5.5 or v1.5.5a:</b></em><ol>
                   <li>Copy the plugin's file <code class="no-pad">/zc155a/includes/classes/payment.php</code> to your store's copy of <code class="no-pad">/includes/classes/payment.php</code>, making sure to merge any currently-existing changes prior to the copy.</li>
                 </ol></li>
-                <li>One last item to &quot;tidy up&quot; ... registering the two new checkout pages into the <b>ROBOTS_PAGES_TO_SHIP</b> value.  I don't think this is a high-priority item since the pages' names don't appear on any menus and include it only for completeness!  If you want to make sure that robots aren't indexing the <code class="no-pad">checkout_one</code> and <code class="no-pad">checkout_one_confirmation</code> pages, you'll need to edit your template's version of <code class="no-pad">/includes/languages/english/meta_tags.php</code> and add those two page-names to the end of that constant's comma-separated-list.</li>
+                <li>One last item to &quot;tidy up&quot; ... registering the two new checkout pages into the <b>ROBOTS_PAGES_TO_SKIP</b> value.  I don't think this is a high-priority item since the pages' names don't appear on any menus and include it only for completeness!  If you want to make sure that robots aren't indexing the <code class="no-pad">checkout_one</code> and <code class="no-pad">checkout_one_confirmation</code> pages, you'll need to edit your template's version of <code class="no-pad">/includes/languages/english/meta_tags.php</code> and add those two page-names to the end of that constant's comma-separated-list.</li>
               </ol>
             </div>
              
@@ -338,6 +341,7 @@ th { background-color: #eee; }
                 <li><span class="corefile">/ajax.php</span> <span class="smaller">(Added in v1.0.2)</span></li>
                 <li>/includes/auto_loaders/config.checkout_one.php</li>
                 <li><span class="corefile">/includes/classes/message_stack.php</span></li>
+                <li>/includes/classes/Vinos_Browser.php <span class="smaller">(Added in v1.0.4)</span></li>
                 <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
                 <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                 <li>/includes/extra_datafiles/checkout_one_filenames.php</li>
@@ -376,10 +380,14 @@ th { background-color: #eee; }
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a></p>
               <ul>
                 <li>v1.0.4, 2016-09-xx:<ul>
+                  <li>BUGFIX: Don't allow one-page checkout on unsupported browsers (currently limited to IE versions less than 9.0).</li>
+                  <li>BUGFIX: Correct spelling of <code class="no-pad">ROBOTS_PAGES_TO_SKIP</code> in the readme's installation instructions.</li>
                   <li>BUGFIX: Correct processing for orders that qualify for the &quot;free_free&quot; shipping method, e.g. virtual products only and free shipping as configured by the shipping order-total module.</li>
                   <li>BUGFIX: Correct readme references to <code class="no-pad">/includes/languages/english/order_total</code> to <code class="no-pad">/includes/languages/english/modules/order_total</code>.</li>
                   <li>The following files were affected:<ol>
+                    <li>/includes/classes/Vinos_Browser.php <span class="smaller">(Added)</span></li>
                     <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
+                    <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                     <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
                     <li>/includes/languages/english/checkout_one.php</li>
                     <li>/includes/templates/template_default/templates/tpl_checkout_one_default.php</li>

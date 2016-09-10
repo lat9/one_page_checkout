@@ -13,7 +13,13 @@ class checkout_one_observer extends base
     {
         global $current_page_base;
         $this->enabled = false;
-        if (defined ('CHECKOUT_ONE_ENABLED') && CHECKOUT_ONE_ENABLED == 'true') {
+        
+        require (DIR_WS_CLASSES . 'Vinos_Browser.php');
+        $browser = new Vinos_Browser ();
+        $unsupported_browser = ($browser->getBrowser () == Vinos_Browser::BROWSER_IE && $browser->getVersion () < 9);
+        $this->browser = $browser->getBrowser() . '::' . $browser->getVersion ();
+        
+        if (!$unsupported_browser && defined ('CHECKOUT_ONE_ENABLED') && CHECKOUT_ONE_ENABLED == 'true') {
             $this->enabled = true;
             $this->debug = (CHECKOUT_ONE_DEBUG == 'true' || CHECKOUT_ONE_DEBUG == 'full');
             if ($this->debug && CHECKOUT_ONE_DEBUG_EXTRA != '' && CHECKOUT_ONE_DEBUG_EXTRA != '*') {
