@@ -65,7 +65,7 @@ class checkout_one_observer extends base
             if ($include_request) {
                 $the_request = $_REQUEST;
                 foreach ($the_request as $name => $value) {
-                    if (strpos ($name, 'cc_number') !== false || strpos ($name, 'cc_cvv') !== false) {
+                    if (strpos ($name, 'cc_number') !== false || strpos ($name, 'cc_cvv') !== false || strpos ($name, 'card-number') !== false || strpos ($name, 'cv2-number') !== false) {
                         unset ($the_request[$name]);
                     }
                 }
