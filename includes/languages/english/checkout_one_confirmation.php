@@ -30,3 +30,9 @@ define ('NO_JAVASCRIPT_MESSAGE', 'JavaScript is not enabled; please click the co
 define ('CHECKOUT_ONE_CONFIRMATION_LOADING', 'confirmation_one_loading.gif');
 define ('CHECKOUT_ONE_CONFIRMATION_LOADING_ALT', 'Please wait ...');
 define ('ERROR_NOJS_ORDER_CHANGED', 'Your order\'s details have changed.  Please review the current values and re-submit.');
+
+// -----
+// If your store uses a payment method that needs "additional time" to process (like "Ceon Manual Card"), you can add some instructions
+// to your customers on the checkout_one_confirmation page letting them know that the processing might take a while!
+//
+define ('CHECKOUT_ONE_CONFIRMATION_INSTRUCTIONS', '');

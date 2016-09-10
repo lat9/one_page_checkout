@@ -199,5 +199,5 @@ if (is_array ($payment_modules->modules)) {
     <div class="clearBoth"></div>
   </form>
   
-  <div id="checkoutOneConfirmationLoading" style="display: none;"><?php echo zen_image ($template->get_template_dir (CHECKOUT_ONE_CONFIRMATION_LOADING, DIR_WS_TEMPLATE, $current_page_base ,'images') . '/' . CHECKOUT_ONE_CONFIRMATION_LOADING, CHECKOUT_ONE_CONFIRMATION_LOADING_ALT); ?></div>
+  <div id="checkoutOneConfirmationLoading" style="display: none;"><?php echo ((CHECKOUT_ONE_CONFIRMATION_INSTRUCTIONS == '') ? '' : (CHECKOUT_ONE_CONFIRMATION_INSTRUCTIONS . '<br /><br />')) . zen_image ($template->get_template_dir (CHECKOUT_ONE_CONFIRMATION_LOADING, DIR_WS_TEMPLATE, $current_page_base ,'images') . '/' . CHECKOUT_ONE_CONFIRMATION_LOADING, CHECKOUT_ONE_CONFIRMATION_LOADING_ALT); ?></div>
 </div>
