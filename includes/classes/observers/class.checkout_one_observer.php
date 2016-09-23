@@ -71,6 +71,11 @@ class checkout_one_observer extends base
                 }
                 $extra_info = print_r ($the_request, true);
             }
+            
+            // -----
+            // Change any occurrences of [code] to ["code"] in the logs so that they can be properly posted between [CODE} tags on the Zen Cart forums.
+            //
+            $message = str_replace ('[code]', '["code"]', $message);
             error_log (date ('Y-m-d H:i:s') . ' ' . (($other_caller != '') ? $other_caller : $this->current_page_base) . ": $message$extra_info" . PHP_EOL, 3, $this->debug_logfile);
             $this->notify ($message);
         }
