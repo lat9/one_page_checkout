@@ -186,7 +186,24 @@ function setOrderConfirmed (value)
     zcLog2Console ('Setting orderConfirmed ('+value+'), submitter ('+submitter+')');
 }
 
-$(document).ready(function(){   
+$(document).ready(function(){
+    var elementsMissing = false;
+    if ($( 'form[name="checkout_payment"]' ).length == 0) {
+        elementsMissing = true;
+        zcLog2Console( 'Missing form[name="checkout_payment"]' );
+    }
+    if ($( '#orderTotalDivs' ).length == 0) {
+        elementsMissing = true;
+        zcLog2Console ( 'Missing #orderTotalDivs' );
+    }
+    if ($( '#otshipping' ).length == 0) {
+        elementsMissing = true;
+        zcLog2Console ( 'Missing #otshipping' );
+    }
+    if (elementsMissing) {
+        alert( 'Please contact the store owner; some required elements of this page are missing.' );
+    }
+    
     setOrderConfirmed (0);
     $( '#checkoutOneShippingFlag' ).show();
     
