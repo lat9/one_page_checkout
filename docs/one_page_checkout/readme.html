@@ -72,7 +72,7 @@ th { background-color: #eee; }
 
 <body>
   <h1>One-Page Checkout <span class="smaller">for Zen Cart v1.5.4 (and later)</span></h1>
-  <h3>Version 1.0.4 by lat9</h3>
+  <h3>Version 1.0.5 by lat9</h3>
   <h3>Copyright &copy; 2013-2016 <a href="http://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
   <p><b>Credits:</b></p>
   <ol>
@@ -385,6 +385,21 @@ th { background-color: #eee; }
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a></p>
               <ul>
+                <li>v1.0.5, 2016-09-xx:<ul>
+                  <li>CHANGE: Update jQuery to check for (and alert if missing) required selectors.</li>
+                  <li>CHANGE: Replace occurrences of [code] to allow log files to be properly posted on the Zen Cart forums.</li>
+                  <li>BUGFIX: Hide the &quot;bannerOne&quot; block, if present.</li>
+                  <li>BUGFIX: Hide the &quot;Confirm Order&quot; button on the confirmation page.</li>
+                  <li>The following files were affected:<ol>
+                    <li>/includes/classes/observers/class.checkout_one_observer.php</li>
+                    <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
+                    <li>/includes/modules/pages/checkout_one_confirmation/jscript_main.php</li>
+                    <li>/includes/templates/template_default/css/checkout_one_confirmation.css</li>
+                    <li>/includes/templates/template_default/templates/tpl_checkout_one_confirmation_default.php</li>
+                    <li>/includes/templates/YOUR_TEMPLATE/css/checkout_one_confirmation.css</li>
+                    <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
+                  </ol></li>
+                </ul></li>
                 <li>v1.0.4, 2016-09-11:<ul>
                   <li>BUGFIX: Make sure that the <code class="no-pad">#bannerSix</code> block is also hidden on the plugin's confirmation page.</li>
                   <li>CHANGE: Add language constant for the confirmation page, allowing store-owners to have additional customization opportunities.</li>
