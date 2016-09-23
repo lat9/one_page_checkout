@@ -187,7 +187,9 @@ if ($confirmation_required) {
 // Now, display the form that actually submits this order.
 //
 echo zen_draw_form ('checkout_confirmation', $form_action_url, 'post', 'id="checkout_confirmation"' . ($confirmation_required) ? ' onsubmit="submitonce();"' : '');
-
+?>
+    <div id="checkoutOneConfirmationButtons">
+<?php
 // -----
 // Add the selected payment module's final HTML to the display.
 //
@@ -195,8 +197,9 @@ if (is_array ($payment_modules->modules)) {
     echo $payment_modules->process_button();
 }
 ?>
-    <div class="buttonRow forward"><?php echo zen_image_submit (BUTTON_IMAGE_CONFIRM_ORDER, BUTTON_CONFIRM_ORDER_ALT, 'name="btn_submit" id="btn_submit"'); ?></div>
-    <div class="clearBoth"></div>
+        <div class="buttonRow forward"><?php echo zen_image_submit (BUTTON_IMAGE_CONFIRM_ORDER, BUTTON_CONFIRM_ORDER_ALT, 'name="btn_submit" id="btn_submit"'); ?></div>
+        <div class="clearBoth"></div>
+    </div>
   </form>
   
   <div id="checkoutOneConfirmationLoading" style="display: none;"><?php echo ((CHECKOUT_ONE_CONFIRMATION_INSTRUCTIONS == '') ? '' : (CHECKOUT_ONE_CONFIRMATION_INSTRUCTIONS . '<br /><br />')) . zen_image ($template->get_template_dir (CHECKOUT_ONE_CONFIRMATION_LOADING, DIR_WS_TEMPLATE, $current_page_base ,'images') . '/' . CHECKOUT_ONE_CONFIRMATION_LOADING, CHECKOUT_ONE_CONFIRMATION_LOADING_ALT); ?></div>
