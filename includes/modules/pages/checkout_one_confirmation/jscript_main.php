@@ -43,7 +43,7 @@ if (!$confirmation_required) {
             "height": "100%",
             "background": "none"
         });
-        $('#navBreadCrumb, #bannerSix').hide();
+        $('#navBreadCrumb, #bannerSix, #bannerOne, #checkoutOneConfirmationButtons').hide();
         $('#checkoutOneConfirmationLoading').show();
         $('form[name="checkout_confirmation"]').submit();
     });
