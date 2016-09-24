@@ -166,7 +166,7 @@ th { background-color: #eee; }
               <p>There are also a couple of constants present in the plugin's language file (/includes/languages/english/checkout_one.php) that you can use to control the <code class="no-pad">checkout_one</code> page's display.  Each of these values are an empty string (i.e. no display produced) as-shipped by the plugin.</p>
               <ol>
                 <li><b>TEXT_CHECKOUT_ONE_TOP_INSTRUCTIONS</b>.  This constant, echoed within a <code class="no-pad">p</code> tag, defines any upper-page instructions you might want to give to your customers.</li>
-                <li><b>TEXT_CHECKOUT_ONE_INSTRUCTIONS</b>.  This constant, echoed within a <code class="no-pad">p</code> tage within a <code class="no-pad">fieldset</code> tag, defines any lower-page instructions just above the form's submit button.</li>
+                <li><b>TEXT_CHECKOUT_ONE_INSTRUCTIONS</b>.  This constant, echoed within a <code class="no-pad">p</code> tag within a <code class="no-pad">fieldset</code> tag, defines any lower-page instructions just above the form's submit button.</li>
                 <li><b>TEXT_CHECKOUT_ONE_INSTRUCTION_LABEL</b>.  Defines the value to be used in the fieldset's <code class="no-pad">legend</code> tag; if the value is set as '', no legend is generated.</li>
               </ol>
               <p>Starting with v1.0.4, the <code class="no-pad">checkout_one_confirmation</code> page's language file also has an instructional constant that you can use to customize your customers' experience: <b>CHECKOUT_ONE_CONFIRMATION_INSTRUCTIONS</b>.  These instructions are displayed just before the page's progress-spinner and <em>should</em> be supplied if your store requires additional time to process.</p>
@@ -385,10 +385,10 @@ th { background-color: #eee; }
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a></p>
               <ul>
-                <li>v1.0.5, 2016-09-xx:<ul>
+                <li>v1.0.5, 2016-09-24:<ul>
                   <li>CHANGE: Update jQuery to check for (and alert if missing) required selectors.</li>
                   <li>CHANGE: Replace occurrences of [code] to allow log files to be properly posted on the Zen Cart forums.</li>
-                  <li>BUGFIX: Hide the &quot;bannerOne&quot; block, if present.</li>
+                  <li>BUGFIX: Hide the &quot;bannerOne&quot; block on the confirmation page.</li>
                   <li>BUGFIX: Hide the &quot;Confirm Order&quot; button on the confirmation page.</li>
                   <li>The following files were affected:<ol>
                     <li>/includes/classes/observers/class.checkout_one_observer.php</li>
