@@ -101,6 +101,9 @@ $session_start_hash = $checkout_one->hashSession ();
 
 $shipping_billing = ($_POST['javascript_enabled'] != '0' && isset ($_POST['shipping_billing']) && $_POST['shipping_billing'] == '1');
 $_SESSION['shipping_billing'] = $shipping_billing;
+if ($shipping_billing) {
+    $_SESSION['sendto'] = $_SESSION['billto'];
+}
 
 $_SESSION['comments'] = (zen_not_null ($_POST['comments'])) ? zen_clean_html ($_POST['comments']) : '';
 $comments = $_SESSION['comments'];
