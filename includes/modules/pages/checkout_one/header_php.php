@@ -70,6 +70,7 @@ $flagAnyOutOfStock = false;
 $stock_check = array ();
 if (STOCK_CHECK == 'true') {
     for ($i = 0, $n = count ($products_array); $i < $n; $i++) {
+        if ($stock_check[$i] = zen_check_stock ($products_array[$i]['id'], $products_array[$i]['quantity'])) {
             $flagAnyOutOfStock = true;
         }
     }
