@@ -59,7 +59,7 @@ if ($_SESSION['customers_authorization'] != 0) {
 
 // Validate Cart for checkout
 $_SESSION['valid_to_checkout'] = true;
-$_SESSION['cart']->get_products(true);
+$products_array = $_SESSION['cart']->get_products (true);
 if ($_SESSION['valid_to_checkout'] == false) {
     $messageStack->add('header', ERROR_CART_UPDATE, 'error');
     zen_redirect (zen_href_link (FILENAME_SHOPPING_CART));
@@ -69,8 +69,7 @@ if ($_SESSION['valid_to_checkout'] == false) {
 $flagAnyOutOfStock = false;
 $stock_check = array ();
 if (STOCK_CHECK == 'true') {
-    for ($i = 0, $n = count ($order->products); $i < $n; $i++) {
-        if ($stock_check[$i] = zen_check_stock ($order->products[$i]['id'], $order->products[$i]['qty'])) {
+    for ($i = 0, $n = count ($products_array); $i < $n; $i++) {
             $flagAnyOutOfStock = true;
         }
     }
@@ -79,6 +78,7 @@ if (STOCK_CHECK == 'true') {
         zen_redirect (zen_href_link (FILENAME_SHOPPING_CART));
     }
 }
+unset ($products_array);
 
 // get coupon code
 if (isset ($_SESSION['cc_id'])) {
