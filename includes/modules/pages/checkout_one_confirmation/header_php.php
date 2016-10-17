@@ -24,7 +24,6 @@ if (!(defined ('CHECKOUT_ONE_ENABLED') && CHECKOUT_ONE_ENABLED == 'true')) {
 // constant will be updated as additional payment-methods that make use of that interface are identified.
 //
 if (!defined ('CHECKOUT_ONE_CONFIRMATION_REQUIRED')) {
-
     define ('CHECKOUT_ONE_CONFIRMATION_REQUIRED', "eway_rapid");
 }
 
@@ -243,13 +242,16 @@ if ($order_confirmed) {
 }
 
 // -----
-// If the customer's disabled javascript in their browser, check to see if the session-related information has changed.  This would
-// occur, for instance, if the customer has chosen a different shipping method or applied a coupon/GB to their order.
+// Check to see that the order's total value hasn't been changed by the confirmation-page's processing.  This can happen if:
+//
+// 1) The customer's disabled javascript in their browser, check to see if the session-related information has changed.  This would
+//    occur, for instance, if the customer has chosen a different shipping method or applied a coupon/GB to their order.
+// 2) An order-total (e.g. ot_cod_fee) has added its cost to the order as a result of the previous processing on this page.
 //
 // If so, redirect back to the checkout_one page so that the customer sees what they're confirming on the next pass through the
 // confirmation page.
 //
-if ($_POST['javascript_enabled'] == '0' && $checkout_one->hashSession () != $session_start_hash) {
+if ($checkout_one->hashSession () != $session_start_hash) {
     $error = true;
     $messageStack->add_session ('checkout_payment', ERROR_NOJS_ORDER_CHANGED, 'error');
 }
