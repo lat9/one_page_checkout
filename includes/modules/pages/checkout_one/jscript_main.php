@@ -196,10 +196,16 @@ $(document).ready(function(){
         elementsMissing = true;
         zcLog2Console ( 'Missing #orderTotalDivs' );
     }
+<?php
+if (!$is_virtual_order) {
+?>
     if ($( '#otshipping' ).length == 0) {
         elementsMissing = true;
         zcLog2Console ( 'Missing #otshipping' );
     }
+<?php
+}
+?>
     if (elementsMissing) {
         alert( 'Please contact the store owner; some required elements of this page are missing.' );
     }
