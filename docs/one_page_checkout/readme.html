@@ -135,6 +135,8 @@ th { background-color: #eee; }
                   <li>Shipping (ot_shipping)</li>
                   <li>Total (ot_total)</li>
                   <li>Reward Points</li>
+                  <li>COD Fee (ot_cod_fee)</li>
+                  <li>Low-order Fee (ot_loworder_fee)</li>
                 </ol>
               </div>
               <div class="multi-list">
@@ -149,6 +151,7 @@ th { background-color: #eee; }
                   <li>Layaway Plan</li>
                   <li>Braintree</li>
                   <li>Ceon Manual Card</li>
+                  <li>Stripe-Pay</li>
                 </ol>
               </div>
               <div class="clearBoth"></div>
@@ -386,11 +389,12 @@ th { background-color: #eee; }
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a></p>
               <ul>
                 <li>v1.0.6, 2016-10-xx:<ul>
+                  <li>CHANGE: Add support for the <em>Stripe</em> payment method; it requires the confirmation-page's display.</li>
                   <li>BUGFIX: Ensure that the order's total has been properly reviewed by the customer.</li>
                   <li>BUGFIX: Don't require shipping order-total selector if the order contains only virtual products.</li>
                   <li>BUGFIX: Correct product stock-check handling.</li>
                   <li>BUGFIX: Shipping, same as Billing not being honored after shipping address change.</li>
-                  <li>CHANGE: Use updated /ajax.php from the Zen Cart repository.</li>
+                  <li>CHANGE: Use updated /ajax.php from the Zen Cart repository's 155 branch.</li>
                   <li>The following files were affected:<ol>
                     <li><span class="corefile">/ajax.php</span></li>
                     <li>/includes/modules/pages/checkout_one/header_php.php</li>
