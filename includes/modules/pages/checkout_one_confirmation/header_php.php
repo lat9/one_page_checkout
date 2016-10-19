@@ -178,7 +178,7 @@ if ($order->content_type != 'virtual') {
                     $quote = $shipping_modules->quote ($method, $module);
             
                 }
-                $checkout_one->debug_message ("SHIPPING_QUOTE:\n" . print_r ($quote, true));
+                $checkout_one->debug_message ("SHIPPING_QUOTE for " . $_POST['shipping'] . ":\n" . print_r ($quote, true));
                 if (isset ($quote['error'])) {
                     $error = true;
                     $messageStack->add_session ('checkout_shipping', $quote['error'], 'error');
