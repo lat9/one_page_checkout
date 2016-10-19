@@ -72,7 +72,7 @@ th { background-color: #eee; }
 
 <body>
   <h1>One-Page Checkout <span class="smaller">for Zen Cart v1.5.4 (and later)</span></h1>
-  <h3>Version 1.0.6 by lat9</h3>
+  <h3>Version 1.0.7 by lat9</h3>
   <h3>Copyright &copy; 2013-2016 <a href="http://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
   <p><b>Credits:</b></p>
   <ol>
@@ -388,6 +388,16 @@ th { background-color: #eee; }
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a></p>
               <ul>
+                <li>v1.0.7, 2016-10-19:<ul>
+                  <li>BUGFIX: Can't checkout due to session-information change.</li>
+                  <li>CHANGE: Use updated /ajax.php from the Zen Cart repository's 155 branch ... again.</li>
+                  <li>The following files were affected:<ol>
+                    <li><span class="corefile">/ajax.php</span></li>
+                    <li>/includes/classes/observers/class.checkout_one_observer.php</li>
+                    <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
+                    <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
+                  </ol></li>
+                </ul></li>
                 <li>v1.0.6, 2016-10-18:<ul>
                   <li>CHANGE: Add support for the <em>Stripe</em> payment method; it requires the confirmation-page's display.</li>
                   <li>BUGFIX: Ensure that the order's total has been properly reviewed by the customer.</li>
