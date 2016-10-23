@@ -83,10 +83,12 @@ class checkout_one_observer extends base
     
     public function hashSession ()
     {
-        if (isset ($_SESSION['shipping']) && !isset ($_SESSION['shipping']['extras'])) {
-            $_SESSION['shipping']['extras'] = '';
+        $session_data = $_SESSION;
+        if (isset ($session_data['shipping'])) {
+           unset ($session_data['shipping']['extras']);
         }
-        $hash_values = var_export ($_SESSION, true);
+        unset ($session_data['shipping_billing'], $session_data['comments']);
+        $hash_values = var_export ($session_data, true);
         $this->debug_message ("hashSession returning an md5 of $hash_values", false, 'checkout_one_observer');
         return md5 ($hash_values);
     }
