@@ -24,7 +24,7 @@ if (!(defined ('CHECKOUT_ONE_ENABLED') && CHECKOUT_ONE_ENABLED == 'true')) {
 // constant will be updated as additional payment-methods that make use of that interface are identified.
 //
 if (!defined ('CHECKOUT_ONE_CONFIRMATION_REQUIRED')) {
-    define ('CHECKOUT_ONE_CONFIRMATION_REQUIRED', 'eway_rapid, stripepay');
+    define ('CHECKOUT_ONE_CONFIRMATION_REQUIRED', 'eway_rapid,stripepay');
 }
 
 // if there is nothing in the customers cart, redirect them to the shopping_cart page
@@ -127,32 +127,7 @@ if ($order->content_type != 'virtual') {
     // -----
     // Determine free shipping conditions.
     //
-    $free_shipping = false;
-    $pass = false;
-    if (defined ('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING') && MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING == 'true') {
-        switch (MODULE_ORDER_TOTAL_SHIPPING_DESTINATION) {
-            case 'national':
-                if ($order->delivery['country_id'] == STORE_COUNTRY) {
-                    $pass = true;
-                }
-                break;
-
-            case 'international':
-                if ($order->delivery['country_id'] != STORE_COUNTRY) {
-                    $pass = true;
-                }
-                break;
-
-            case 'both':
-                $pass = true;
-                break;
-
-        }
-
-        if ($pass && $_SESSION['cart']->show_total() >= MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER) {
-            $free_shipping = true;
-        }
-    }
+    $free_shipping = $checkout_one->isCartFreeShipping ();
 
     // -----
     // Handle selected shipping module quote.
@@ -163,7 +138,7 @@ if ($order->content_type != 'virtual') {
             /**
             * check to be sure submitted data hasn't been tampered with
             */
-            if ($_POST['shipping'] == 'free_free' && ($order->content_type != 'virtual' && !$pass)) {
+            if ($_POST['shipping'] == 'free_free' && ($order->content_type != 'virtual' && !$free_shipping)) {
                 $error = true;
                 $messageStack->add_session ('checkout_shipping', ERROR_INVALID_SHIPPING_SELECTION, 'error');
             }
@@ -171,7 +146,7 @@ if ($order->content_type != 'virtual') {
             if (is_object (${$module}) || $_POST['shipping'] == 'free_free') {
                 if ($_POST['shipping'] == 'free_free') {
                     $quote[0]['methods'][0]['title'] = FREE_SHIPPING_TITLE;
-                    $quote[0]['methods'][0]['cost'] = '0';
+                    $quote[0]['methods'][0]['cost'] = 0;
                     $quote[0]['methods'][0]['icon'] = '';
             
                 } else {

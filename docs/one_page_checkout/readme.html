@@ -72,7 +72,7 @@ th { background-color: #eee; }
 
 <body>
   <h1>One-Page Checkout <span class="smaller">for Zen Cart v1.5.4 (and later)</span></h1>
-  <h3>Version 1.0.7 by lat9</h3>
+  <h3>Version 1.0.8 by lat9</h3>
   <h3>Copyright &copy; 2013-2016 <a href="http://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
   <p><b>Credits:</b></p>
   <ol>
@@ -359,6 +359,7 @@ th { background-color: #eee; }
                 <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_coupon.php</span></li>
                 <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_gv.php</span></li>
                 <li><span class="template">/includes/languages/english/YOUR_TEMPLATE/checkout_confirmation.php</span></li>
+                <li>/includes/languages/english/extra_definitions/checkout_one_extra_definitions.php <span class="smaller">(Added in v1.0.8)</span></li>
                 <li>/includes/modules/pages/checkout_one/header_php.php</li>
                 <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
                 <li>/includes/modules/pages/checkout_one/on_load_main.js</li>
@@ -388,6 +389,18 @@ th { background-color: #eee; }
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a></p>
               <ul>
+                <li>v1.0.8, 2016-10-xx:<ul>
+                  <li>BUGFIX: Correct the change needed for the <em>Stripe</em> payment method.</li>
+                  <li>BUGFIX: Can't checkout if order qualifies for &quot;free shipping&quot; by the shipping order-total.</li>
+                  <li>The following files were affected:<ol>
+                    <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
+                    <li><span class="added">/includes/languages/english/extra_definitions/checkout_one_extra_definitions.php</span></li>
+                    <li>/includes/classes/observers/class.checkout_one_observer.php</li>
+                    <li>/includes/modules/pages/checkout_one/header_php.php</li>
+                    <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
+                    <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
+                  </ol></li>
+                </ul></li>
                 <li>v1.0.7, 2016-10-19:<ul>
                   <li>BUGFIX: Can't checkout due to session-information change.</li>
                   <li>CHANGE: Use updated /ajax.php from the Zen Cart repository's 155 branch ... again.</li>
