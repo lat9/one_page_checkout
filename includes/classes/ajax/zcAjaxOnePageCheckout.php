@@ -96,7 +96,7 @@ class zcAjaxOnePageCheckout extends base
                 $shipping_modules = new shipping;
                 
                 $quote = $shipping_modules->quote ($method, $module);
-                $checkout_one->debug_message ("Current quote: " . print_r ($quote, true) . PHP_EOL);
+                $checkout_one->debug_message ("Current quote for " . $_POST['shipping'] . ": " . print_r ($quote, true) . PHP_EOL);
                 if (isset ($quote[0]['methods'][0]['title']) && isset ($quote[0]['methods'][0]['cost'])) {
                     $_SESSION['shipping'] = array (
                         'id' => $_POST['shipping'],
@@ -157,7 +157,7 @@ class zcAjaxOnePageCheckout extends base
             'orderTotalHtml' => $order_total_html,
             'shippingHtml' => $shipping_html,
         );
-        $checkout_one->debug_message ('Returning:' . print_r ($return_array, true));
+        $checkout_one->debug_message ('Returning:' . print_r ($return_array, true) . print_r ($_SESSION['shipping'], true));
 
         return $return_array;
     }

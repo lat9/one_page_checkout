@@ -156,8 +156,16 @@ if ($_SESSION['cart']->get_content_type () == 'virtual') {
     $is_virtual_order = true;
     $shipping_billing = false;
 
-    $_SESSION['shipping'] = array ( 'id' => 'free_free', 'title' => 'free_free', 'cost' => 0 );
+    $_SESSION['shipping'] = array ( 'id' => 'free_free', 'title' => FREE_SHIPPING_TITLE, 'cost' => 0 );
     $_SESSION['sendto'] = false;
+}
+
+// -----
+// Check to see if the order qualifies for free-shipping and, if so, set that shipping method into the customer's session.
+//
+$free_shipping = $checkout_one->isCartFreeShipping ();
+if ($free_shipping) {
+    $_SESSION['shipping'] = array ( 'id' => 'free_free', 'title' => FREE_SHIPPING_TITLE, 'cost' => 0 );
 }
 
 require (DIR_WS_CLASSES . 'order.php');
@@ -175,33 +183,6 @@ if (!$is_virtual_order) {
     // load all enabled shipping modules
     require (DIR_WS_CLASSES . 'shipping.php');
     $shipping_modules = new shipping;
-
-    $pass = false;
-    $free_shipping = false;
-    if (defined ('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING') && MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING == 'true') {
-        switch (MODULE_ORDER_TOTAL_SHIPPING_DESTINATION) {
-            case 'national':
-                if ($order->delivery['country_id'] == STORE_COUNTRY) {
-                    $pass = true;
-                }
-                break;
-
-            case 'international':
-                if ($order->delivery['country_id'] != STORE_COUNTRY) {
-                    $pass = true;
-                }
-                break;
-
-            case 'both':
-                $pass = true;
-                break;
-
-        }
-
-        if ($pass && $_SESSION['cart']->show_total() >= MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER) {
-            $free_shipping = true;
-        }
-    }
     
 //-bof-product_delivery_by_postcode (PDP) integration
     if (function_exists ('zen_get_UKPostcodeFirstPart')) {
@@ -245,7 +226,7 @@ if (!$is_virtual_order) {
 
         $checkval = $_SESSION['shipping']['id'];
         $checkout_one->debug_message ("CHECKOUT_ONE_SHIPPING_CHECK ($checkval)\n" . print_r ($quotes, true) . "\n" . print_r ($checklist, true));
-        if (!in_array ($checkval, $checklist) && !($_SESSION['shipping']['id'] == 'free_free' && $is_virtual_order)) {
+        if (!in_array ($checkval, $checklist) && !($_SESSION['shipping']['id'] == 'free_free' && ($is_virtual_order || $free_shipping))) {
             // -----
             // Since the available shipping methods have changed, need to kill the current shipping method and display a
             // message to the customer to let them know what's up.

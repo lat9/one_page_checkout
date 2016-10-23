@@ -87,8 +87,39 @@ class checkout_one_observer extends base
             $_SESSION['shipping']['extras'] = '';
         }
         $hash_values = var_export ($_SESSION, true);
-//        $this->debug_message ("hashSession returning an md5 of $hash_values", false, 'checkout_one_observer');
+        $this->debug_message ("hashSession returning an md5 of $hash_values", false, 'checkout_one_observer');
         return md5 ($hash_values);
+    }
+    
+    public function isCartFreeShipping ()
+    {
+        $free_shipping = false;
+        $pass = false;
+        if (defined ('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING') && MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING == 'true') {
+            switch (MODULE_ORDER_TOTAL_SHIPPING_DESTINATION) {
+                case 'national':
+                    if ($order->delivery['country_id'] == STORE_COUNTRY) {
+                        $pass = true;
+                    }
+                    break;
+
+                case 'international':
+                    if ($order->delivery['country_id'] != STORE_COUNTRY) {
+                        $pass = true;
+                    }
+                    break;
+
+                case 'both':
+                    $pass = true;
+                    break;
+
+            }
+
+            if ($pass && $_SESSION['cart']->show_total() >= MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER) {
+                $free_shipping = true;
+            }
+        }
+        return $free_shipping;
     }
  
 }
