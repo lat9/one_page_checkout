@@ -46,6 +46,7 @@ th { background-color: #eee; }
 .right-pane { width: 49%; float: right; }
 .multi-list { width: 32%; float: left; }
 #unsupported-templates { margin: 0 20px; border: 1px solid #444; border-radius: 6px; }
+.template-changed { color: #7d1b7e; }
 
 .etabs { margin: 0; padding: 0; }
 .tab { display: inline-block; zoom:1; *display:inline; background: #eee; border: solid 1px #999; border-bottom: none; border-radius: 4px 4px 0 0; margin: 0; }
@@ -387,9 +388,10 @@ th { background-color: #eee; }
             </div>
             
             <div id="changes">
-              <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a></p>
+              <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a> Changes to the plugin's default templates are identified in <span class="template-changed">this</span> color; remember to merge those changes with any template-override version you might have created!</p>
               <ul>
                 <li>v1.0.8, 2016-10-xx:<ul>
+                  <li>BUGFIX: Don't render the &quot;Confirm Order&quot; submit-button unless there's at least one shipping-method and one payment-method enabled for the order.</li>
                   <li>BUGFIX: Correct the change needed for the <em>Stripe</em> payment method.</li>
                   <li>BUGFIX: Can't checkout if order qualifies for &quot;free shipping&quot; by the shipping order-total.</li>
                   <li>The following files were affected:<ol>
@@ -398,6 +400,7 @@ th { background-color: #eee; }
                     <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                     <li>/includes/modules/pages/checkout_one/header_php.php</li>
                     <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
+                    <li><span class="template-changed">/includes/templates/template_default/templates/tpl_checkout_one_default.php</span></li>
                     <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                   </ol></li>
                 </ul></li>
@@ -436,7 +439,7 @@ th { background-color: #eee; }
                     <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
                     <li>/includes/modules/pages/checkout_one_confirmation/jscript_main.php</li>
                     <li>/includes/templates/template_default/css/checkout_one_confirmation.css</li>
-                    <li>/includes/templates/template_default/templates/tpl_checkout_one_confirmation_default.php</li>
+                    <li><span class="template-changed">/includes/templates/template_default/templates/tpl_checkout_one_confirmation_default.php</span></li>
                     <li>/includes/templates/YOUR_TEMPLATE/css/checkout_one_confirmation.css</li>
                     <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                   </ol></li>
@@ -457,8 +460,8 @@ th { background-color: #eee; }
                     <li>/includes/languages/english/checkout_one_confirmation.php</li>
                     <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
                     <li>/includes/modules/pages/checkout_one_confirmation/jscript_main.php</li>
-                    <li>/includes/templates/template_default/templates/tpl_checkout_one_default.php</li>
-                    <li>/includes/templates/template_default/templates/tpl_checkout_one_confirmation_default.php</li>
+                    <li><span class="template-changed">/includes/templates/template_default/templates/tpl_checkout_one_default.php</span></li>
+                    <li><span class="template-changed">/includes/templates/template_default/templates/tpl_checkout_one_confirmation_default.php</span></li>
                     <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                   </ol></li>
                 </ul></li>
@@ -504,8 +507,8 @@ th { background-color: #eee; }
                     <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
                     <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
                     <li>/includes/modules/pages/checkout_one_confirmation/jscript_main.php</li>
-                    <li>/includes/templates/template_default/templates/tpl_checkout_one_default.php</li>
-                    <li>/includes/templates/template_default/templates/tpl_checkout_one_confirmation_default.php</li>
+                    <li><span class="template-changed">/includes/templates/template_default/templates/tpl_checkout_one_default.php</span></li>
+                    <li><span class="template-changed">/includes/templates/template_default/templates/tpl_checkout_one_confirmation_default.php</span></li>
                     <li>/includes/templates/template_default/templates/tpl_modules_checkout_one_shipping.php <span class="smaller">(Added)</span></li>
                     <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                     <li><span class="corefile removed">/pre_zc155a/ajax.php</span> <span class="smaller">(Removed)</span></li>
@@ -526,8 +529,8 @@ th { background-color: #eee; }
                     <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
                     <li>/includes/modules/pages/checkout_one_confirmation/jscript_main.php</li>
                     <li>/includes/templates/template_default/css/checkout_one_confirmation.css</li>
-                    <li>/includes/templates/template_default/templates/tpl_checkout_one_default.php</li>
-                    <li>/includes/templates/template_default/templates/tpl_checkout_one_confirmation_default.php</li>
+                    <li><span class="template-changed">/includes/templates/template_default/templates/tpl_checkout_one_default.php</span></li>
+                    <li><span class="template-changed">/includes/templates/template_default/templates/tpl_checkout_one_confirmation_default.php</span></li>
                     <li>/includes/templates/YOUR_TEMPLATE/css/checkout_one_confirmation.css</li>
                     <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                     <li>/zc154_only/*.* renamed to /pre_zc155a/*.*</li>

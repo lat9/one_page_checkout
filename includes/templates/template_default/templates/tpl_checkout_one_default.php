@@ -364,11 +364,18 @@ if (DISPLAY_CONDITIONS_ON_CHECKOUT == 'true') {
   </div>
 <?php
 }
-?>
 
-<div id="checkoutOneSubmit" class="buttonRow forward"><?php echo zen_image_submit (BUTTON_IMAGE_CHECKOUT_ONE_CONFIRM, BUTTON_CHECKOUT_ONE_CONFIRM_ALT, 'id="confirm-order" name="confirm_order" onclick="submitFunction(' .zen_user_has_gv_account($_SESSION['customer_id']).','.$order->info['total'] . '); setOrderConfirmed (1);"') . zen_draw_hidden_field ('order_confirmed', '1', 'id="confirm-the-order"') . zen_draw_hidden_field ('javascript_enabled', '0', 'id="javascript-enabled"'); ?></div>
-<div id="checkoutOneEmail" class="forward clearRight"><?php echo sprintf (TEXT_CONFIRMATION_EMAILS_SENT_TO, $order->customer['email_address']); ?></div>
-<div class="clearBoth"></div>
+// -----
+// Check to see that at least one shipping-method and one payment-method is enabled; if not, don't render the submit button.
+//
+if (zen_count_shipping_modules () > 0 && ($payment_modules->in_special_checkout() || count ($selection) > 0)) {
+?>
+  <div id="checkoutOneSubmit" class="buttonRow forward"><?php echo zen_image_submit (BUTTON_IMAGE_CHECKOUT_ONE_CONFIRM, BUTTON_CHECKOUT_ONE_CONFIRM_ALT, 'id="confirm-order" name="confirm_order" onclick="submitFunction(' .zen_user_has_gv_account($_SESSION['customer_id']).','.$order->info['total'] . '); setOrderConfirmed (1);"') . zen_draw_hidden_field ('order_confirmed', '1', 'id="confirm-the-order"') . zen_draw_hidden_field ('javascript_enabled', '0', 'id="javascript-enabled"'); ?></div>
+  <div id="checkoutOneEmail" class="forward clearRight"><?php echo sprintf (TEXT_CONFIRMATION_EMAILS_SENT_TO, $order->customer['email_address']); ?></div>
+<?php
+}
+?>
+  <div class="clearBoth"></div>
 
 </form>
 </div>
