@@ -45,7 +45,7 @@ th { background-color: #eee; }
 .left-pane { width: 49%; float: left; }
 .right-pane { width: 49%; float: right; }
 .multi-list { width: 32%; float: left; }
-#unsupported-templates { margin: 0 20px; border: 1px solid #444; border-radius: 6px; }
+.box-border { margin: 0 20px; border: 1px solid #444; border-radius: 6px; }
 .template-changed { color: #7d1b7e; }
 
 .etabs { margin: 0; padding: 0; }
@@ -95,7 +95,7 @@ th { background-color: #eee; }
     <div class="panel-container">
     
       <div id="overview">
-        <p>This section identifies how the <em>One-Page Checkout</em> presents itself to your customers and your admin users.</p>
+        <p>This section identifies how the <em>One-Page Checkout</em>, a.k.a. <em>OPC</em>, presents itself to your customers and your admin users.</p>
         <div class="tab-container" id="inner-container1">
           <ul class="etabs">
             <li class="tab"><a href="#operation">Operation</a></li>
@@ -105,10 +105,19 @@ th { background-color: #eee; }
           <div class="panel-container">
             <div id="operation">
               <p>This plugin streamlines the flow that your customers see during your store's checkout process, combining the handling required for the <code class="no-pad">checkout_shipping</code>, <code class="no-pad">checkout_payment</code> and <code class="no-pad">checkout_confirmation</code> into a single-page display.</p>
-              <div id="unsupported-templates">
+              <div class="box-border">
                 <p>The plugin's design utilizes <b><i>standard Zen Cart</i></b> HTML/CSS layout when rendering its new pages, so the look-and-feel of your store gets &quot;inherited&quot;.  Some templates make <em>drastic</em>  modifications to that layout &mdash; removing those <em>standard</em> HTML/CSS selectors &mdash; which causes this plugin's newly-added pages to display improperly.  The following templates are known to be incompatible with the <em>One-Page Checkout</em> plugin:<p>
                 <ol>
                   <li>Tableau</li>
+                </ol>
+              </div>
+              <br />
+              <div class="box-border">
+                <p>The plugin's design also utilizes jQuery as its AJAX interface to the various updates required.  There are some Zen Cart plugins that use the <em>MooTools</em> interface that will need a little extra &quot;care and feeding&quot; for compatibility with <em>One-Page Checkout</em>.  <em>OPC</em>'s v1.0.8 release provides the changes that enable interoperation with <em>MooTools</em>, but some plugin-specific changes might be needed in addition &mdash; specifically:</p>
+                <ol>
+                  <li><a href="https://www.zen-cart.com/showthread.php?92762-Order-Delivery-Date-Support-Thread&p=1319186" target="_blank">Order Delivery Date</a>.  You'll need to copy that plugin's <code class="no-pad">jscript*.*</code> files to the <code class="no-pad">/includes/modules/pages/checkout_one</code> directory and modify the file <code class="no-pad">jscript_a-mootools.js</code>, adding the highlighted line to the top of that module:
+                  <pre class="no-pad" style="margin-top: 10px;">//MooTools, <http://mootools.net>, My Object Oriented (JavaScript) Tools. Copyright (c) 2006-2009 Valerio Proietti, <http://mad4milk.net>, MIT Style License.
+<b style="color: red;">jQuery.noConflict();</b></pre></li>
                 </ol>
               </div>
               <p><em>One-Page Checkout's</em> installation loads all the plugin's files into the folders associated with the <em>template_default</em> template's use; that way, the processing is available for <b>all</b> templates you might use in your store.  If you make changes to those default files, you'll use the Zen Cart &quot;override&quot; system to make your updates.  For example, if you're adding a top-of-page message, you'll copy the file /includes/languages/english/checkout_one.php to the /includes/languages/english/YOUR_TEMPLATE folder and make your changes there.</p>
@@ -124,6 +133,7 @@ th { background-color: #eee; }
                   <li>United Parcel Service (ups)</li>
                   <li>FedEx</li>
                   <li>Product Delivery by Postcode (PDP)</li>
+                  <li>ZipShip <span class="smaller">(Requires v2.0.0 or later)</span></li>
                 </ol>
               </div>
               <div class="multi-list">
@@ -391,6 +401,7 @@ th { background-color: #eee; }
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a> Changes to the plugin's default templates are identified in <span class="template-changed">this</span> color; remember to merge those changes with any template-override version you might have created!</p>
               <ul>
                 <li>v1.0.8, 2016-10-xx:<ul>
+                  <li>BUGFIX: Correct interoperation with plugins that make use of other, e.g. <em>MooTools</em> javascript libraries.</li>
                   <li>BUGFIX: Don't render the &quot;Confirm Order&quot; submit-button unless there's at least one shipping-method and one payment-method enabled for the order.</li>
                   <li>BUGFIX: Correct the change needed for the <em>Stripe</em> payment method.</li>
                   <li>BUGFIX: Can't checkout if order qualifies for &quot;free shipping&quot; by the shipping order-total.</li>
@@ -399,8 +410,12 @@ th { background-color: #eee; }
                     <li><span class="added">/includes/languages/english/extra_definitions/checkout_one_extra_definitions.php</span></li>
                     <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                     <li>/includes/modules/pages/checkout_one/header_php.php</li>
+                    <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
                     <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
+                    <li>/includes/modules/pages/checkout_one_confirmation/jscript_main.php</li>
+                    <li><span class="template-changed">/includes/templates/template_default/jscript/jscript_framework.php</span></li>
                     <li><span class="template-changed">/includes/templates/template_default/templates/tpl_checkout_one_default.php</span></li>
+                    <li>/includes/templates/YOUR_TEMPLATE/jscript/jscript_framework.php</li>
                     <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                   </ol></li>
                 </ul></li>

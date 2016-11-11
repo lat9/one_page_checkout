@@ -37,15 +37,15 @@
 //
 if (!$confirmation_required) {
 ?>
-    $(document).ready(function(){
-        $('body', 'html').css({ 
+    jQuery(document).ready(function(){
+        jQuery('body', 'html').css({ 
             "overflow": "hidden",
             "height": "100%",
             "background": "none"
         });
-        $('#navBreadCrumb, #bannerSix, #bannerOne, #checkoutOneConfirmationButtons').hide();
-        $('#checkoutOneConfirmationLoading').show();
-        $('form[name="checkout_confirmation"]').submit();
+        jQuery('#navBreadCrumb, #bannerSix, #bannerOne, #checkoutOneConfirmationButtons').hide();
+        jQuery('#checkoutOneConfirmationLoading').show();
+        jQuery('form[name="checkout_confirmation"]').submit();
     });
 <?php
 }

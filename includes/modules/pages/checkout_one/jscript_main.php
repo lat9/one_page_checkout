@@ -10,7 +10,7 @@ var submitter = null;
 
 function concatExpiresFields(fields) 
 {
-    return $(":input[name=" + fields[0] + "]").val() + $(":input[name=" + fields[1] + "]").val();
+    return jQuery(":input[name=" + fields[0] + "]").val() + jQuery(":input[name=" + fields[1] + "]").val();
 }
 
 function popupWindow(url) 
@@ -130,20 +130,20 @@ function collectsCardDataOnsite(paymentValue)
     }).done(function( response ) {
         if (response.data == true) {
             zcLog2Console( ' ... it does!' );
-            var str = $('form[name="checkout_payment"]').serializeArray();
+            var str = jQuery('form[name="checkout_payment"]').serializeArray();
 
             zcJS.ajax({
                 url: "ajax.php?act=ajaxPayment&method=prepareConfirmation",
                 data: str
             }).done(function( response ) {
-                $('#checkoutPayment').hide();
-                $('#navBreadCrumb').html(response.breadCrumbHtml);
-                $('#checkoutPayment').before(response.confirmationHtml);
-                $(document).attr('title', response.pageTitle);
+                jQuery('#checkoutPayment').hide();
+                jQuery('#navBreadCrumb').html(response.breadCrumbHtml);
+                jQuery('#checkoutPayment').before(response.confirmationHtml);
+                jQuery(document).attr('title', response.pageTitle);
             });
         } else {
             zcLog2Console( ' ... it does not, submitting.' );
-            $('form[name="checkout_payment"]')[0].submit();
+            jQuery('form[name="checkout_payment"]')[0].submit();
         }
     });
     return false;
@@ -152,8 +152,8 @@ function collectsCardDataOnsite(paymentValue)
 function doesCollectsCardDataOnsite(paymentValue)
 {
     zcLog2Console( 'Checking doesCollectsCardDataOnsite('+paymentValue+') ...' );
-    if ($('#'+paymentValue+'_collects_onsite').val()) {
-        if ($('#pmt-'+paymentValue).is(':checked')) {
+    if (jQuery('#'+paymentValue+'_collects_onsite').val()) {
+        if (jQuery('#pmt-'+paymentValue).is(':checked')) {
             zcLog2Console( '... it does!' );
             return true;
         }
@@ -164,17 +164,17 @@ function doesCollectsCardDataOnsite(paymentValue)
 
 function doCollectsCardDataOnsite(paymentValue)
 {
-    var str = $('form[name="checkout_payment"]').serializeArray();
+    var str = jQuery('form[name="checkout_payment"]').serializeArray();
 
     zcLog2Console( 'doCollectsCardDataOnsite('+paymentValue+')' );
     zcJS.ajax({
         url: "ajax.php?act=ajaxPayment&method=prepareConfirmation",
         data: str
     }).done(function( response ) {
-        $('#checkoutPayment').hide();
-        $('#navBreadCrumb').html(response.breadCrumbHtml);
-        $('#checkoutPayment').before(response.confirmationHtml);
-        $(document).attr('title', response.pageTitle);
+        jQuery('#checkoutPayment').hide();
+        jQuery('#navBreadCrumb').html(response.breadCrumbHtml);
+        jQuery('#checkoutPayment').before(response.confirmationHtml);
+        jQuery(document).attr('title', response.pageTitle);
     });
 }
 
@@ -182,24 +182,24 @@ var orderConfirmed = 0;
 function setOrderConfirmed (value)
 {
     orderConfirmed = value;
-    $('#confirm-the-order').val( value );
+    jQuery('#confirm-the-order').val( value );
     zcLog2Console ('Setting orderConfirmed ('+value+'), submitter ('+submitter+')');
 }
 
-$(document).ready(function(){
+jQuery(document).ready(function(){
     var elementsMissing = false;
-    if ($( 'form[name="checkout_payment"]' ).length == 0) {
+    if (jQuery( 'form[name="checkout_payment"]' ).length == 0) {
         elementsMissing = true;
         zcLog2Console( 'Missing form[name="checkout_payment"]' );
     }
-    if ($( '#orderTotalDivs' ).length == 0) {
+    if (jQuery( '#orderTotalDivs' ).length == 0) {
         elementsMissing = true;
         zcLog2Console ( 'Missing #orderTotalDivs' );
     }
 <?php
 if (!$is_virtual_order) {
 ?>
-    if ($( '#otshipping' ).length == 0) {
+    if (jQuery( '#otshipping' ).length == 0) {
         elementsMissing = true;
         zcLog2Console ( 'Missing #otshipping' );
     }
@@ -211,7 +211,7 @@ if (!$is_virtual_order) {
     }
     
     setOrderConfirmed (0);
-    $( '#checkoutOneShippingFlag' ).show();
+    jQuery( '#checkoutOneShippingFlag' ).show();
     
     zcLog2Console ( 'jQuery version: '+jQuery().jquery );
     
@@ -221,15 +221,15 @@ if (!$is_virtual_order) {
     
     function focusOnShipping ()
     {
-        var scrollPos =  $( "#checkoutShippingMethod" ).offset().top;
-        $(window).scrollTop( scrollPos );
+        var scrollPos =  jQuery( "#checkoutShippingMethod" ).offset().top;
+        jQuery(window).scrollTop( scrollPos );
     }
 
     function changeShippingSubmitForm (type, event)
     {
-        var shippingSelected = $( 'input[name=shipping]' );
+        var shippingSelected = jQuery( 'input[name=shipping]' );
         if (shippingSelected.is( ':radio' )) {
-            shippingSelected = $( 'input[name=shipping]:checked' );
+            shippingSelected = jQuery( 'input[name=shipping]:checked' );
         }
         if (shippingSelected.length == 0) {
             alert( '<?php echo ERROR_NO_SHIPPING_SELECTED; ?>' );
@@ -250,7 +250,7 @@ if (!$is_virtual_order) {
                 foreach ($current_quote['required_input_names'] as $current_input_name => $selection_required) {
                     $variable_name = base::camelize ($current_input_name);
 ?>
-            var <?php echo $variable_name; ?> = $( "input[name=<?php echo $current_input_name; ?>]<?php echo ($selection_required) ? ':checked' : ''; ?>" ).val();
+            var <?php echo $variable_name; ?> = jQuery( "input[name=<?php echo $current_input_name; ?>]<?php echo ($selection_required) ? ':checked' : ''; ?>" ).val();
 <?php
                     $additional_shipping_inputs[$current_input_name] = $variable_name;
                 }
@@ -286,24 +286,24 @@ if (!$is_virtual_order) {
                     shippingError = true;
                 },
             }).done(function( response ) {
-                $( '#orderTotalDivs' ).html(response.orderTotalHtml);
+                jQuery( '#orderTotalDivs' ).html(response.orderTotalHtml);
                 
                 var shippingError = false;
-                $( '#otshipping, #otshipping+br' ).show ();
+                jQuery( '#otshipping, #otshipping+br' ).show ();
                 if (response.status != 'ok') {
                     if (response.status == 'timeout') {
                         alert( sessionTimeoutErrorMessage );
-                        $(location).attr( 'href', timeoutUrl );
+                        jQuery(location).attr( 'href', timeoutUrl );
                     }
                     
                     shippingError = true;
                     if (response.status == 'invalid') {
-                        $( '#checkoutShippingMethod input[name=shipping]' ).prop( 'checked', false );
-                        $( '#checkoutShippingChoices' ).html( response.shippingHtml );
-                        $( '#checkoutShippingChoices' ).on( 'click', 'input[name=shipping]', function ( event ) {
+                        jQuery( '#checkoutShippingMethod input[name=shipping]' ).prop( 'checked', false );
+                        jQuery( '#checkoutShippingChoices' ).html( response.shippingHtml );
+                        jQuery( '#checkoutShippingChoices' ).on( 'click', 'input[name=shipping]', function ( event ) {
                             changeShippingSubmitForm( 'shipping-only', event );
                         });
-                        $( '#otshipping, #otshipping+br' ).hide ();
+                        jQuery( '#otshipping, #otshipping+br' ).hide ();
                         focusOnShipping();
                     }
                     if (response.errorMessage != '') {
@@ -320,7 +320,7 @@ if (!$is_virtual_order) {
                     } else {
                         zcLog2Console ('Form submitted, orderConfirmed ('+orderConfirmed+')');
                         if (orderConfirmed) {
-                            $( '#confirm-order' ).attr( 'disabled', true );
+                            jQuery( '#confirm-order' ).attr( 'disabled', true );
 <?php   
 if ($flagOnSubmit) { 
 ?>
@@ -328,10 +328,10 @@ if ($flagOnSubmit) {
                             zcLog2Console ('Form checked, passed ('+formPassed+')');
                             
                             if (formPassed == true) {
-                                $( 'form[name="checkout_payment"]' ).unbind( 'submit' ).submit();
+                                jQuery( 'form[name="checkout_payment"]' ).unbind( 'submit' ).submit();
                             }
                             
-                            $( '#confirm-order' ).attr('disabled', false);
+                            jQuery( '#confirm-order' ).attr('disabled', false);
                             return false;
 <?php 
 } 
@@ -343,11 +343,11 @@ if ($flagOnSubmit) {
         }           
     }
     
-    $( '#checkoutShippingMethod input[name=shipping]' ).click(function( event ) {
+    jQuery( '#checkoutShippingMethod input[name=shipping]' ).click(function( event ) {
         changeShippingSubmitForm ('shipping-only', event);
     });
     
-    $( 'form[name="checkout_payment"]' ).submit(function( event ) {
+    jQuery( 'form[name="checkout_payment"]' ).submit(function( event ) {
         zcLog2Console( 'Submitting form, orderConfirmed ('+orderConfirmed+')' );
         if (orderConfirmed) {
             changeShippingSubmitForm ('submit', event);
