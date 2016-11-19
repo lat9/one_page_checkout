@@ -5,11 +5,18 @@
 //
 ?>
 <?php 
-echo $payment_modules->javascript_validation(); 
+echo $payment_modules->javascript_validation();
+
+// -----
+// Gather the count of enabled shipping- and payment-methods, so that only applicable sections are displayed.
+//
+$shipping_module_available = (zen_count_shipping_modules () > 0);
+$enabled_payment_modules = $payment_modules->selection();
+$payment_module_available = ($payment_modules->in_special_checkout() || count ($enabled_payment_modules > 0));
 ?>
 <div class="centerColumn" id="checkoutPayment">
 <?php
-  echo zen_draw_form ('checkout_payment', zen_href_link (FILENAME_CHECKOUT_ONE_CONFIRMATION, '', 'SSL'), 'post', 'id="checkout_payment"') . zen_draw_hidden_field ('action', 'process'); 
+  echo zen_draw_form ('checkout_payment', zen_href_link (FILENAME_CHECKOUT_ONE_CONFIRMATION, '', 'SSL'), 'post', 'id="checkout_payment"') . zen_draw_hidden_field ('action', 'process') . zen_draw_hidden_field ('javascript_enabled', '0', 'id="javascript-enabled"'); 
 ?>
   <h1 id="checkoutOneHeading"><?php echo HEADING_TITLE; ?></h1>
 <?php
@@ -68,18 +75,19 @@ if ($is_virtual_order) {
 <?php
 // -----
 // Process the "credit-selection", e.g. coupon-code entry, gift-voucher redeem-code, block(s) for the active
-// order-totals.
+// order-totals -- so long as there is a shipping method available.
 //
-$credit_selection =  $order_total_modules->credit_selection();
-for ($i = 0, $n = count ($credit_selection); $i < $n; $i++) {
-    if (isset ($_GET['credit_class_error_code']) && $_GET['credit_class_error_code'] == $credit_selection[$i]['id']) {
+if ($shipping_module_available) {
+    $credit_selection =  $order_total_modules->credit_selection();
+    for ($i = 0, $n = count ($credit_selection); $i < $n; $i++) {
+        if (isset ($_GET['credit_class_error_code']) && $_GET['credit_class_error_code'] == $credit_selection[$i]['id']) {
 ?>
     <div class="messageStackError"><?php echo zen_output_string_protected ($_GET['credit_class_error']); ?></div>
 
 <?php
-    }
-    $ot_class = str_replace ('ot_', '', $credit_selection[$i]['id']);
-    for ($j = 0, $n2 = count ($credit_selection[$i]['fields']); $j < $n2; $j++) {
+        }
+        $ot_class = str_replace ('ot_', '', $credit_selection[$i]['id']);
+        for ($j = 0, $n2 = count ($credit_selection[$i]['fields']); $j < $n2; $j++) {
 ?>
     <div class="checkoutOne<?php echo ucfirst ($ot_class); ?>">
       <fieldset>
@@ -91,6 +99,7 @@ for ($i = 0, $n = count ($credit_selection); $i < $n; $i++) {
       </fieldset>
     </div>
 <?php
+        }
     }
 }
 ?>   
@@ -162,99 +171,106 @@ if ($is_virtual_order) {
 }  //-Order is not "virtual", display full shipping-method block
 ?>
   </div>
-  
+<?php
+// -----
+// Don't display the payment-method block if there is no shipping method available.
+//
+if ($shipping_method_available) {
+?>
   <div id="checkoutPaymentMethod" class="floatingBox forward clearRight">
     <fieldset>
       <legend><?php echo TABLE_HEADING_PAYMENT_METHOD; ?></legend>
 <?php 
-// ** BEGIN PAYPAL EXPRESS CHECKOUT **
-if (!$payment_modules->in_special_checkout()) {
-// ** END PAYPAL EXPRESS CHECKOUT ** 
-    if (SHOW_ACCEPTED_CREDIT_CARDS != '0') {
-        if (SHOW_ACCEPTED_CREDIT_CARDS == '1') {
-            echo TEXT_ACCEPTED_CREDIT_CARDS . zen_get_cc_enabled();
-      
-        } elseif (SHOW_ACCEPTED_CREDIT_CARDS == '2') {
-            echo TEXT_ACCEPTED_CREDIT_CARDS . zen_get_cc_enabled ('IMAGE_');
-      
-        }
+    // ** BEGIN PAYPAL EXPRESS CHECKOUT **
+    if (!$payment_modules->in_special_checkout()) {
+    // ** END PAYPAL EXPRESS CHECKOUT ** 
+        if (SHOW_ACCEPTED_CREDIT_CARDS != '0') {
+            if (SHOW_ACCEPTED_CREDIT_CARDS == '1') {
+                echo TEXT_ACCEPTED_CREDIT_CARDS . zen_get_cc_enabled();
+          
+            } elseif (SHOW_ACCEPTED_CREDIT_CARDS == '2') {
+                echo TEXT_ACCEPTED_CREDIT_CARDS . zen_get_cc_enabled ('IMAGE_');
+          
+            }
 ?>
       <br class="clearBoth" />
 <?php 
     } 
 
-    $selection = $payment_modules->selection();
+        $selection = $enabled_payment_modules;
 
-    if (sizeof($selection) > 1) {
+        if (sizeof($selection) > 1) {
 ?>
       <p class="important"><?php echo TEXT_SELECT_PAYMENT_METHOD; ?></p>
 <?php
-    } elseif (sizeof($selection) == 0) {
+        } elseif (sizeof($selection) == 0) {
 ?>
       <p class="important"><?php echo TEXT_NO_PAYMENT_OPTIONS_AVAILABLE; ?></p>
 
 <?php
-    }
-
-    $radio_buttons = 0;
-    for ($i=0, $n=sizeof($selection); $i<$n; $i++) {
-        if (sizeof($selection) > 1) {
-            if (empty($selection[$i]['noradio'])) {
-                echo zen_draw_radio_field('payment', $selection[$i]['id'], ($selection[$i]['id'] == $_SESSION['payment'] ? true : false), 'id="pmt-'.$selection[$i]['id'].'"');
-            }
-        } else {
-            echo zen_draw_hidden_field('payment', $selection[$i]['id'], 'id="pmt-'.$selection[$i]['id'].'"');
         }
+
+        $radio_buttons = 0;
+        for ($i=0, $n=sizeof($selection); $i<$n; $i++) {
+            if (sizeof($selection) > 1) {
+                if (empty($selection[$i]['noradio'])) {
+                    echo zen_draw_radio_field('payment', $selection[$i]['id'], ($selection[$i]['id'] == $_SESSION['payment'] ? true : false), 'id="pmt-'.$selection[$i]['id'].'"');
+                }
+            } else {
+                echo zen_draw_hidden_field('payment', $selection[$i]['id'], 'id="pmt-'.$selection[$i]['id'].'"');
+            }
 ?>
       <label for="pmt-<?php echo $selection[$i]['id']; ?>" class="radioButtonLabel"><?php echo $selection[$i]['module']; ?></label>
 
 <?php
-        if (defined ('MODULE_ORDER_TOTAL_COD_STATUS') && MODULE_ORDER_TOTAL_COD_STATUS == 'true' and $selection[$i]['id'] == 'cod') {
+            if (defined ('MODULE_ORDER_TOTAL_COD_STATUS') && MODULE_ORDER_TOTAL_COD_STATUS == 'true' and $selection[$i]['id'] == 'cod') {
 ?>
       <div class="alert"><?php echo TEXT_INFO_COD_FEES; ?></div>
 <?php
-        }
+            }
 ?>
       <br class="clearBoth" />
 
 <?php
-        if (isset($selection[$i]['error'])) {
+            if (isset($selection[$i]['error'])) {
 ?>
       <div><?php echo $selection[$i]['error']; ?></div>
 
 <?php
-        } elseif (isset($selection[$i]['fields']) && is_array($selection[$i]['fields'])) {
+            } elseif (isset($selection[$i]['fields']) && is_array($selection[$i]['fields'])) {
 ?>
 
       <div class="ccinfo">
 <?php
-            for ($j=0, $n2=sizeof($selection[$i]['fields']); $j<$n2; $j++) {
+                for ($j=0, $n2=sizeof($selection[$i]['fields']); $j<$n2; $j++) {
 ?>
         <label <?php echo (isset($selection[$i]['fields'][$j]['tag']) ? 'for="'.$selection[$i]['fields'][$j]['tag'] . '" ' : ''); ?>class="inputLabelPayment"><?php echo $selection[$i]['fields'][$j]['title']; ?></label><?php echo $selection[$i]['fields'][$j]['field']; ?>
         <br class="clearBoth" />
 <?php
-            }
+                }
 ?>
       </div>
       <br class="clearBoth" />
 <?php
-        }
-        $radio_buttons++;
+            }
+            $radio_buttons++;
 
-    }
-// ** BEGIN PAYPAL EXPRESS CHECKOUT **
-} else {
+        }
+    // ** BEGIN PAYPAL EXPRESS CHECKOUT **
+    } else {
 ?>
     <p><?php echo ${$_SESSION['payment']}->title; ?></p>
     <input type="hidden" name="payment" value="<?php echo $_SESSION['payment']; ?>" />
 <?php
-}
-// ** END PAYPAL EXPRESS CHECKOUT **
+    }
+    // ** END PAYPAL EXPRESS CHECKOUT **
 ?>
     </fieldset>
   </div>
+<?php
+}  //-Shipping-method available, display payment block.
+?> 
   <div class="clearBoth"></div>
-  
   <div id="checkoutOneShoppingCart">
     <fieldset id="checkoutOneCartGroup">
       <legend><?php echo HEADING_PRODUCTS; ?></legend>
@@ -336,24 +352,28 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
   </div>
   <div class="clearBoth"></div>
 <?php
-if (TEXT_CHECKOUT_ONE_INSTRUCTIONS != '') {
+// -----
+// Check to see that at least one shipping-method and one payment-method is enabled; if not, don't render the instructions, conditions or submit-button.
+//
+if ($shipping_module_available && $payment_module_available) {
+    if (TEXT_CHECKOUT_ONE_INSTRUCTIONS != '') {
 ?>
   <div id="instructions">
     <fieldset>
 <?php
-    if (TEXT_CHECKOUT_ONE_INSTRUCTION_LABEL != '') {
+        if (TEXT_CHECKOUT_ONE_INSTRUCTION_LABEL != '') {
 ?>
       <legend><?php echo TEXT_CHECKOUT_ONE_INSTRUCTION_LABEL; ?></legend>
 <?php
-    }
+        }
 ?>
       <p><?php echo TEXT_CHECKOUT_ONE_INSTRUCTIONS; ?></p>
     </fieldset>
   </div>
 <?php
-}
+    }
 
-if (DISPLAY_CONDITIONS_ON_CHECKOUT == 'true') {
+    if (DISPLAY_CONDITIONS_ON_CHECKOUT == 'true') {
 ?>
   <div id="conditions-div">
     <fieldset>
@@ -363,14 +383,9 @@ if (DISPLAY_CONDITIONS_ON_CHECKOUT == 'true') {
     </fieldset>
   </div>
 <?php
-}
-
-// -----
-// Check to see that at least one shipping-method and one payment-method is enabled; if not, don't render the submit button.
-//
-if (zen_count_shipping_modules () > 0 && ($payment_modules->in_special_checkout() || count ($selection) > 0)) {
+    }
 ?>
-  <div id="checkoutOneSubmit" class="buttonRow forward"><?php echo zen_image_submit (BUTTON_IMAGE_CHECKOUT_ONE_CONFIRM, BUTTON_CHECKOUT_ONE_CONFIRM_ALT, 'id="confirm-order" name="confirm_order" onclick="submitFunction(' .zen_user_has_gv_account($_SESSION['customer_id']).','.$order->info['total'] . '); setOrderConfirmed (1);"') . zen_draw_hidden_field ('order_confirmed', '1', 'id="confirm-the-order"') . zen_draw_hidden_field ('javascript_enabled', '0', 'id="javascript-enabled"'); ?></div>
+  <div id="checkoutOneSubmit" class="buttonRow forward"><?php echo zen_image_submit (BUTTON_IMAGE_CHECKOUT_ONE_CONFIRM, BUTTON_CHECKOUT_ONE_CONFIRM_ALT, 'id="confirm-order" name="confirm_order" onclick="submitFunction(' .zen_user_has_gv_account($_SESSION['customer_id']).','.$order->info['total'] . '); setOrderConfirmed (1);"') . zen_draw_hidden_field ('order_confirmed', '1', 'id="confirm-the-order"'); ?></div>
   <div id="checkoutOneEmail" class="forward clearRight"><?php echo sprintf (TEXT_CONFIRMATION_EMAILS_SENT_TO, $order->customer['email_address']); ?></div>
 <?php
 }
