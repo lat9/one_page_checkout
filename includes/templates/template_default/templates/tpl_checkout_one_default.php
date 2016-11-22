@@ -175,7 +175,7 @@ if ($is_virtual_order) {
 // -----
 // Don't display the payment-method block if there is no shipping method available.
 //
-if ($shipping_method_available) {
+if ($shipping_module_available) {
 ?>
   <div id="checkoutPaymentMethod" class="floatingBox forward clearRight">
     <fieldset>
