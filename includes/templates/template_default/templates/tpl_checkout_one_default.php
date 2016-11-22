@@ -10,7 +10,7 @@ echo $payment_modules->javascript_validation();
 // -----
 // Gather the count of enabled shipping- and payment-methods, so that only applicable sections are displayed.
 //
-$shipping_module_available = (zen_count_shipping_modules () > 0);
+$shipping_module_available = ($free_shipping || $is_virtual_order || zen_count_shipping_modules () > 0);
 $enabled_payment_modules = $payment_modules->selection();
 $payment_module_available = ($payment_modules->in_special_checkout() || count ($enabled_payment_modules > 0));
 ?>
