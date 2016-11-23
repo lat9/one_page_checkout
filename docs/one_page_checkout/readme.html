@@ -121,7 +121,7 @@ th { background-color: #eee; }
                 </ol>
               </div>
               <p><em>One-Page Checkout's</em> installation loads all the plugin's files into the folders associated with the <em>template_default</em> template's use; that way, the processing is available for <b>all</b> templates you might use in your store.  If you make changes to those default files, you'll use the Zen Cart &quot;override&quot; system to make your updates.  For example, if you're adding a top-of-page message, you'll copy the file /includes/languages/english/checkout_one.php to the /includes/languages/english/YOUR_TEMPLATE folder and make your changes there.</p>
-              <p>The plugin has been validated on Zen Cart 1.5.4 and Zen Cart 1.5.5a, using the following shipping, order-total and payment methods:</p>
+              <p>The plugin has been validated on Zen Cart 1.5.4, Zen Cart 1.5.5a and Zen Cart 1.5.5b, using the following shipping, order-total and payment methods:</p>
               <div class="multi-list">
                 <h3>Shipping Methods</h3>
                 <ol>
@@ -164,6 +164,7 @@ th { background-color: #eee; }
                   <li>Ceon Manual Card</li>
                   <li>Stripe-Pay</li>
                   <li>Sage Pay Form</li>
+                  <li>First Data Hosted Checkout Payment Pages</li>
                 </ol>
               </div>
               <div class="clearBoth"></div>
@@ -355,7 +356,7 @@ th { background-color: #eee; }
             <div id="files">
               <p><b>Notes:</b><p>
               <ul>
-                <li>The files present in the &quot;zc155a&quot; folder are required <b>only if</b> you're installing/upgrading this plugin on either Zen Cart 1.5.5 or 1.5.5a.</li>
+                <li>The files present in the &quot;zc155a&quot; folder are required <b>only if</b> you're installing/upgrading this plugin on either Zen Cart 1.5.5 or 1.5.5a &mdash; the change is in the Zen Cart 1.5.5b core.</li>
               </ul>
               <p>The plugin provides the following files in its distribution zip-file:<p>
               <ol>
@@ -401,11 +402,13 @@ th { background-color: #eee; }
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a> Changes to the plugin's default templates are identified in <span class="template-changed">this</span> color; remember to merge those changes with any template-override version you might have created!</p>
               <ul>
-                <li>v1.0.9, 2016-11-xx:<ul>
+                <li>v1.0.9, 2016-11-23:<ul>
                   <li>BUGFIX: No payment modules displayed on the checkout_one page.</li>
                   <li>BUGFIX: No confirmation button for virtual-orders or orders with free shipping</li>
+                  <li>BUGFIX: Missing <code class="no-pad">$order_totals</code> variable, required by some payment methods (e.g. firstdata_hco).</li>
                   <li>The following files were affected:<ol>
                     <li><span class="template-changed">/includes/templates/template_default/templates/tpl_checkout_one_default.php</span></li>
+                    <li><span class="template-changed">/includes/templates/template_default/templates/tpl_checkout_one_confirmation_default.php</span></li>
                   </ol></li>
                 </ul></li>
                 <li>v1.0.8, 2016-11-19:<ul>
