@@ -173,13 +173,19 @@ if ($confirmation_required) {
     </table>
     <hr />
 <?php
-    if (MODULE_ORDER_TOTAL_INSTALLED) {
-        $order_totals = $order_total_modules->process();
+}  //-Display confirmation information, if required
+
+// -----
+// Some payment modules (notably firstdata_hco) make use of the $order_totals object, so make sure it's available whether or not confirmation is required on this page.
+//
+if (MODULE_ORDER_TOTAL_INSTALLED) {
+    $order_totals = $order_total_modules->process();
+    if ($confirmation_required) {
 ?>
     <div id="orderTotals"><?php $order_total_modules->output(); ?></div>
 <?php
     }
-}  //-Display confirmation information, if required
+}
 ?>
     <br class="clearBoth" />
 <?php
