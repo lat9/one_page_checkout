@@ -81,13 +81,29 @@ class checkout_one_observer extends base
         }
     }
     
-    public function hashSession ()
+    public function hashSession ($current_order_total)
     {
         $session_data = $_SESSION;
         if (isset ($session_data['shipping'])) {
            unset ($session_data['shipping']['extras']);
         }
         unset ($session_data['shipping_billing'], $session_data['comments']);
+        
+        // -----
+        // The ot_gv order-total in Zen Cart 1.5.4 sets its session-variable to either 0 or '0.00', which results in
+        // false change-detection by this function.  As such, if the order-total's variable is present in the session
+        // and is 0, set the variable to a "known" representation of 0!
+        //
+        if (isset ($session_data['cot_gv']) && $session_data['cot_gv'] == 0) {
+            $session_data['cot_gv'] = '0.00';
+        }
+        
+        // -----
+        // Add the order's current total to the blob that's being hashed, so that changes in the total based on
+        // payment-module selection can be properly detected (e.g. COD fee).
+        //
+        $session_data['order_current_total'] = $current_order_total;
+        
         $hash_values = var_export ($session_data, true);
         $this->debug_message ("hashSession returning an md5 of $hash_values", false, 'checkout_one_observer');
         return md5 ($hash_values);
