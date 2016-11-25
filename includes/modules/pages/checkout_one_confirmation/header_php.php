@@ -96,8 +96,6 @@ if (DISPLAY_CONDITIONS_ON_CHECKOUT == 'true') {
     }
 }
 
-$session_start_hash = $checkout_one->hashSession ();
-
 $shipping_billing = ($_POST['javascript_enabled'] != '0' && isset ($_POST['shipping_billing']) && $_POST['shipping_billing'] == '1');
 $_SESSION['shipping_billing'] = $shipping_billing;
 if ($shipping_billing) {
@@ -112,6 +110,12 @@ $total_count = $_SESSION['cart']->count_contents();
 
 require (DIR_WS_CLASSES . 'order.php');
 $order = new order;
+
+// -----
+// Generate a starting hash of the session information, so that we can check to see if anything has changed
+// after processing the order-total modules.
+//
+$session_start_hash = $checkout_one->hashSession ($order->info['total']);
 
 $checkout_one->debug_message ('Initial order information:' . print_r ($order, true));
 
@@ -226,7 +230,7 @@ if ($order_confirmed) {
 // If so, redirect back to the checkout_one page so that the customer sees what they're confirming on the next pass through the
 // confirmation page.
 //
-if ($checkout_one->hashSession () != $session_start_hash) {
+if ($checkout_one->hashSession ($order->info['total']) != $session_start_hash) {
     $error = true;
     $messageStack->add_session ('checkout_payment', ERROR_NOJS_ORDER_CHANGED, 'error');
 }
