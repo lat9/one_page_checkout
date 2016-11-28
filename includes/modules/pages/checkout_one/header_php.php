@@ -242,7 +242,7 @@ if (!$is_virtual_order) {
     // a javascript force-selection method, also automatically select the cheapest shipping
     // method if more than one module is now enabled
     if (!isset ($_SESSION['shipping']) || !isset($_SESSION['shipping']['id']) || $_SESSION['shipping']['id'] == '') {
-        if (zen_count_shipping_modules() > 1) {
+        if (zen_count_shipping_modules() >= 1) {
             $_SESSION['shipping'] = $shipping_modules->cheapest();
         } elseif (count ($quotes) > 0 && count ($quotes[0]['methods']) > 0 && !$shipping_selection_changed) {
             $_SESSION['shipping'] = array ( 

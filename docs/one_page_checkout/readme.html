@@ -405,8 +405,10 @@ th { background-color: #eee; }
                 <li>v1.0.10, 2016-12-xx:<ul>
                   <li>BUGFIX: Correct interaction with Zen Cart 1.5.4 version of <code class="no-pad">ot_gv</code>.</li>
                   <li>BUGFIX: Re-instate check for a change in the order's total during confirmation.</li>
+                  <li>BUGFIX: Cheapest shipping not selected if only one shipping-method is available.</li>
                   <li>The following files were affected:<ol>
                     <li>/includes/classes/observers/class.checkout_one_observer.php</li>
+                    <li>/includes/modules/pages/checkout_one/header_php.php</li>
                     <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
                     <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                   </ol></li>
