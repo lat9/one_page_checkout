@@ -115,7 +115,7 @@ $order = new order;
 // Generate a starting hash of the session information, so that we can check to see if anything has changed
 // after processing the order-total modules.
 //
-$session_start_hash = $checkout_one->hashSession ($order->info['total']);
+$session_start_hash = $checkout_one->hashSession ($_POST['current_order_total']);
 
 $checkout_one->debug_message ('Initial order information:' . print_r ($order, true));
 
@@ -131,7 +131,7 @@ if ($order->content_type != 'virtual') {
     // -----
     // Determine free shipping conditions.
     //
-    $free_shipping = $checkout_one->isCartFreeShipping ();
+    $free_shipping = $checkout_one->isOrderFreeShipping ();
 
     // -----
     // Handle selected shipping module quote.
@@ -230,7 +230,7 @@ if ($order_confirmed) {
 // If so, redirect back to the checkout_one page so that the customer sees what they're confirming on the next pass through the
 // confirmation page.
 //
-if ($checkout_one->hashSession ($order->info['total']) != $session_start_hash) {
+if ($checkout_one->hashSession ($currencies->format ($order->info['total'])) != $session_start_hash) {
     $error = true;
     $messageStack->add_session ('checkout_payment', ERROR_NOJS_ORDER_CHANGED, 'error');
 }
@@ -250,7 +250,7 @@ if ($error || $messageStack->size('checkout_payment') > 0 || !$order_confirmed) 
             }
         }
     }
-    $checkout_one->debug_message ("Something causing redirection back to checkout_one, error ($error), order_confirmed ($order_confirmed)" . print_r ($messageStack->messages, true));
+    $checkout_one->debug_message ("Something causing redirection back to checkout_one, error ($error), order_confirmed ($order_confirmed)" . print_r ($messageStack->messages, true) . print_r ($order, true));
     zen_redirect (zen_href_link (FILENAME_CHECKOUT_ONE, '', 'SSL'));
 }
 

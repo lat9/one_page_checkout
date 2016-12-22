@@ -46,7 +46,7 @@ th { background-color: #eee; }
 .right-pane { width: 49%; float: right; }
 .multi-list { width: 32%; float: left; }
 .box-border { margin: 0 20px; border: 1px solid #444; border-radius: 6px; }
-.template-changed { color: #7d1b7e; }
+.template-changed { color: #f52887; }
 
 .etabs { margin: 0; padding: 0; }
 .tab { display: inline-block; zoom:1; *display:inline; background: #eee; border: solid 1px #999; border-bottom: none; border-radius: 4px 4px 0 0; margin: 0; }
@@ -73,7 +73,7 @@ th { background-color: #eee; }
 
 <body>
   <h1>One-Page Checkout <span class="smaller">for Zen Cart v1.5.4 (and later)</span></h1>
-  <h3>Version 1.0.10 by lat9</h3>
+  <h3>Version 1.0.11 by lat9</h3>
   <h3>Copyright &copy; 2013-2016 <a href="http://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
   <p><b>Credits:</b></p>
   <ol>
@@ -402,6 +402,18 @@ th { background-color: #eee; }
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a> Changes to the plugin's default templates are identified in <span class="template-changed">this</span> color; remember to merge those changes with any template-override version you might have created!</p>
               <ul>
+                <li>v1.0.11, 2016-12-xx:<ul>
+                  <li>BUGFIX: Correct checkout &quot;loop&quot; when <b>Free Shipping for Orders Over</b> is enabled in the shipping order-total.</li>
+                  <li>BUGFIX: Correct checkout &quot;loop&quot; when a shipping module's cost is taxed.</li>
+                  <li>The following files were affected:<ol>
+                    <li>/includes/classes/observers/class.checkout_one_observer.php</li>
+                    <li>/includes/modules/pages/checkout_one/header_php.php</li>
+                    <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
+                    <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
+                    <li><span class="template-changed">/includes/templates/template_default/templates/tpl_checkout_one_default.php</span></li>
+                    <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
+                  </ol></li>
+                </ul></li>
                 <li>v1.0.10, 2016-12-07:<ul>
                   <li>BUGFIX: Correct interaction with Zen Cart 1.5.4 version of <code class="no-pad">ot_gv</code>.</li>
                   <li>BUGFIX: Re-instate check for a change in the order's total during confirmation.</li>
