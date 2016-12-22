@@ -61,7 +61,8 @@ function submitFunction($gv,$total)
     if (arg_count == 2) {
         var ot_total = document.getElementById( 'ottotal' );
         var total = ot_total.children[0].textContent.substr (1);
-        zcLog2Console( 'Current order total: '+total );
+        zcLog2Console( 'Current order total: '+total+', text: '+ot_total.children[0].textContent );
+        document.getElementById( 'current-order-total' ).value = ot_total.children[0].textContent;
         if (total == 0) {
             zcLog2Console( 'Order total is 0, setting submitter' );
             submitter = 1;
@@ -195,6 +196,10 @@ jQuery(document).ready(function(){
     if (jQuery( '#orderTotalDivs' ).length == 0) {
         elementsMissing = true;
         zcLog2Console ( 'Missing #orderTotalDivs' );
+    }
+    if (jQuery( '#current-order-total' ).length == 0) {
+        elementsMissing = true;
+        zcLog2Console ( 'Missing #current-order-total' );
     }
 <?php
 if (!$is_virtual_order) {
