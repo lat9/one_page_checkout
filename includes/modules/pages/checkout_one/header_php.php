@@ -163,7 +163,7 @@ if ($_SESSION['cart']->get_content_type () == 'virtual') {
 // -----
 // Check to see if the order qualifies for free-shipping and, if so, set that shipping method into the customer's session.
 //
-$free_shipping = $checkout_one->isCartFreeShipping ();
+$free_shipping = $checkout_one->isOrderFreeShipping ($_SESSION['sendto']);
 if ($free_shipping) {
     $_SESSION['shipping'] = array ( 'id' => 'free_free', 'title' => FREE_SHIPPING_TITLE, 'cost' => 0 );
 }
