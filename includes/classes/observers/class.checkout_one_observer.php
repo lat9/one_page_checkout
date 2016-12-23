@@ -87,7 +87,7 @@ class checkout_one_observer extends base
         if (isset ($session_data['shipping'])) {
            unset ($session_data['shipping']['extras']);
         }
-        unset ($session_data['shipping_billing'], $session_data['comments']);
+        unset ($session_data['shipping_billing'], $session_data['comments'], $session_data['navigation']);
         
         // -----
         // The ot_gv order-total in Zen Cart 1.5.4 sets its session-variable to either 0 or '0.00', which results in
@@ -97,6 +97,24 @@ class checkout_one_observer extends base
         if (isset ($session_data['cot_gv']) && $session_data['cot_gv'] == 0) {
             $session_data['cot_gv'] = '0.00';
         }
+        
+        // -----
+        // Some of the payment methods (e.g. ceon_manual_card) and possibly shipping/order_totals update
+        // information into the session upon their processing ... and ultimately cause the hash on entry
+        // to be different from the hash on exit.  Simply update the following list with the variables that
+        // can be safely ignored in the hash.
+        //
+        unset (
+            $session_data['ceon_manual_card_card_holder'],
+            $session_data['ceon_manual_card_card_type'],
+            $session_data['ceon_manual_card_card_expiry_month'],
+            $session_data['ceon_manual_card_card_expiry_year'],
+            $session_data['ceon_manual_card_card_cv2_number_not_present'],
+            $session_data['ceon_manual_card_card_start_month'],
+            $session_data['ceon_manual_card_card_start_year'],
+            $session_data['ceon_manual_card_card_issue_number'],
+            $session_data['ceon_manual_card_data_entered']
+        );
         
         // -----
         // Add the order's current total to the blob that's being hashed, so that changes in the total based on
