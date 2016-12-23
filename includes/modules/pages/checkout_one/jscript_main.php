@@ -141,6 +141,7 @@ function collectsCardDataOnsite(paymentValue)
                 jQuery('#navBreadCrumb').html(response.breadCrumbHtml);
                 jQuery('#checkoutPayment').before(response.confirmationHtml);
                 jQuery(document).attr('title', response.pageTitle);
+                jQuery(document).scrollTop( 0 );
             });
         } else {
             zcLog2Console( ' ... it does not, submitting.' );
@@ -176,6 +177,7 @@ function doCollectsCardDataOnsite(paymentValue)
         jQuery('#navBreadCrumb').html(response.breadCrumbHtml);
         jQuery('#checkoutPayment').before(response.confirmationHtml);
         jQuery(document).attr('title', response.pageTitle);
+        jQuery(document).scrollTop( 0 );
     });
 }
 
