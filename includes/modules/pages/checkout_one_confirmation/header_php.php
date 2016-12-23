@@ -221,6 +221,11 @@ if ($order_confirmed) {
 }
 
 // -----
+// Now, process the order-totals so that the order's total is properly calculated for the hash-check below.
+//
+$order_total_modules->process ();
+
+// -----
 // Check to see that the order's total value hasn't been changed by the confirmation-page's processing.  This can happen if:
 //
 // 1) The customer's disabled javascript in their browser, check to see if the session-related information has changed.  This would
@@ -250,7 +255,7 @@ if ($error || $messageStack->size('checkout_payment') > 0 || !$order_confirmed) 
             }
         }
     }
-    $checkout_one->debug_message ("Something causing redirection back to checkout_one, error ($error), order_confirmed ($order_confirmed)" . print_r ($messageStack->messages, true) . print_r ($order, true));
+    $checkout_one->debug_message ("Something causing redirection back to checkout_one, error ($error), order_confirmed ($order_confirmed)" . print_r ($messageStack->messages, true) . print_r ($ot_total, true));
     zen_redirect (zen_href_link (FILENAME_CHECKOUT_ONE, '', 'SSL'));
 }
 
