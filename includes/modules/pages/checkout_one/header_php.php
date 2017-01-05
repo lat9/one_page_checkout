@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2016, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2017, Vinos de Frutas Tropicales.  All rights reserved.
 //
 // -----
 // This should be first line of the script:
@@ -211,15 +211,25 @@ if (!$is_virtual_order) {
 
     // get all available shipping quotes
     $quotes = $shipping_modules->quote();
-
+    
+    // -----
+    // If a shipping-method was previously selected, check that it is still valid (in case a zone restriction has disabled it, etc). 
+    //
+    // Also take this opportunity to see if the selected module's cost has changed.  If it has, just update the current method's
+    // price for the display.
+    //
     $shipping_selection_changed = false;
-    // check that the currently selected shipping method is still valid (in case a zone restriction has disabled it, etc)
     if (isset ($_SESSION['shipping'])) {
+        $selected_shipping_cost = 0;
+        $selected_shipping_elements = explode ('_', $_SESSION['shipping']['id']);
         $checklist = array();
         foreach ($quotes as $key => $val) {
             if ($val['methods'] != '') {
                 foreach ($val['methods'] as $key2 => $method) {
                     $checklist[] = $val['id'] . '_' . $method['id'];
+                    if ($val['id'] == $selected_shipping_elements[0] && $method['id'] == $selected_shipping_elements[1]) {
+                        $_SESSION['shipping']['cost'] = $method['cost'];
+                    }
                 }
             }
         }

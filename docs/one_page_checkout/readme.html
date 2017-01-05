@@ -73,8 +73,8 @@ th { background-color: #eee; }
 
 <body>
   <h1>One-Page Checkout <span class="smaller">for Zen Cart v1.5.4 (and later)</span></h1>
-  <h3>Version 1.0.11 by lat9</h3>
-  <h3>Copyright &copy; 2013-2016 <a href="http://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
+  <h3>Version 1.0.12 by lat9</h3>
+  <h3>Copyright &copy; 2013-2017 <a href="http://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
   <p><b>Credits:</b></p>
   <ol>
     <li>The checkout-confirmation loading .gif file was created using the tool at <a href="http://preloaders.net/en/free" target="_blank">http://preloaders.net/en/free</a>.</li>
@@ -402,6 +402,12 @@ th { background-color: #eee; }
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a> Changes to the plugin's default templates are identified in <span class="template-changed">this</span> color; remember to merge those changes with any template-override version you might have created!</p>
               <ul>
+                <li>v1.0.12, 2017-01-xx:<ul>
+                  <li>BUGFIX: Shipping cost not updated if shopping-cart change results in a cost-change to the selected shipping-module.</li>
+                  <li>The following files were affected:<ol>
+                    <li>/includes/modules/pages/checkout_one/header_php.php</li>
+                    <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
+                  </ol></li>
                 <li>v1.0.11, 2016-12-29:<ul>
                   <li>CHANGE: Position cursor on top-of-page when displaying the &quot;collectsCardDataOnsite&quot; confirmation.</li>
                   <li>CHANGE: Correct interoperation with <b><em>Ceon Manual Card</em></b> payment method.</li>

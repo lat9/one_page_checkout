@@ -1,14 +1,14 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2016, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2017, Vinos de Frutas Tropicales.  All rights reserved.
 //
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
 }
 
-define ('CHECKOUT_ONE_CURRENT_VERSION', '1.0.11');
-define ('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2016-12-29');
+define ('CHECKOUT_ONE_CURRENT_VERSION', '1.0.12-beta1');
+define ('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2017-01-xx');
 $version_release_date = CHECKOUT_ONE_CURRENT_VERSION . ' (' . CHECKOUT_ONE_CURRENT_UPDATE_DATE . ')';
 
 $configurationGroupTitle = 'One-Page Checkout Settings';
