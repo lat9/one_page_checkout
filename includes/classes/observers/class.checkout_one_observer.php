@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2016, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2017, Vinos de Frutas Tropicales.  All rights reserved.
 //
 if (!defined('IS_ADMIN_FLAG')) {
   die('Illegal Access');
@@ -120,7 +120,14 @@ class checkout_one_observer extends base
         // Add the order's current total to the blob that's being hashed, so that changes in the total based on
         // payment-module selection can be properly detected (e.g. COD fee).
         //
-        $session_data['order_current_total'] = $current_order_total;
+        // Some currenciues use a non-ASCII symbol for its symbol, e.g. £.  To ensure that we don't get into
+        // a checkout-loop, make sure that the order's current total is scrubbed to convert any "HTML entities"
+        // into their character representation.
+        //
+        // This is needed since the order's current total, as passed into the confirmation page, is created by
+        // javascript that captures the character representation of any symbols.
+        //
+        $session_data['order_current_total'] = html_entity_decode ($current_order_total, ENT_COMPAT, CHARSET);
         
         $hash_values = var_export ($session_data, true);
         $this->debug_message ("hashSession returning an md5 of $hash_values", false, 'checkout_one_observer');
