@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2016, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2017, Vinos de Frutas Tropicales.  All rights reserved.
 //
 
 // This should be first line of the script:
@@ -221,9 +221,10 @@ if ($order_confirmed) {
 }
 
 // -----
-// Now, process the order-totals so that the order's total is properly calculated for the hash-check below.
+// Now, process the order-totals so that the order's total is properly calculated for the hash-check below. Some payment modules 
+// (notably firstdata_hco) make use of the $order_totals object, so make sure it's available whether or not confirmation is required on this page.
 //
-$order_total_modules->process ();
+$order_totals = $order_total_modules->process ();
 
 // -----
 // Check to see that the order's total value hasn't been changed by the confirmation-page's processing.  This can happen if:

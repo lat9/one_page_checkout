@@ -405,9 +405,12 @@ th { background-color: #eee; }
                 <li>v1.0.12, 2017-01-xx:<ul>
                   <li>BUGFIX: Shipping cost not updated if shopping-cart change results in a cost-change to the selected shipping-module.</li>
                   <li>BUGFIX: Checkout loop if order's currency's symbol uses an &quot;htmlentity&quot;, e.g. &amp;pound;.</li>
+                  <li>BUGFIX: Order-totals duplicated on confirmation page.</li>
                   <li>The following files were affected:<ol>
                     <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                     <li>/includes/modules/pages/checkout_one/header_php.php</li>
+                    <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
+                    <li><span class="template-changed">/includes/templates/template_default/templates/tpl_checkout_one_confirmation_default.php</span></li>
                     <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                   </ol></li>
                 <li>v1.0.11, 2016-12-29:<ul>

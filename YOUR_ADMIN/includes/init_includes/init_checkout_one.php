@@ -7,7 +7,7 @@ if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
 }
 
-define ('CHECKOUT_ONE_CURRENT_VERSION', '1.0.12-beta1');
+define ('CHECKOUT_ONE_CURRENT_VERSION', '1.0.12-beta2');
 define ('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2017-01-xx');
 $version_release_date = CHECKOUT_ONE_CURRENT_VERSION . ' (' . CHECKOUT_ONE_CURRENT_UPDATE_DATE . ')';
 

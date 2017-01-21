@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2016, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2017, Vinos de Frutas Tropicales.  All rights reserved.
 //
 
 // -----
@@ -176,10 +176,9 @@ if ($confirmation_required) {
 }  //-Display confirmation information, if required
 
 // -----
-// Some payment modules (notably firstdata_hco) make use of the $order_totals object, so make sure it's available whether or not confirmation is required on this page.
+// Some payment modules (notably firstdata_hco) make use of the $order_totals object which has been set by the page's header processing.
 //
 if (MODULE_ORDER_TOTAL_INSTALLED) {
-    $order_totals = $order_total_modules->process();
     if ($confirmation_required) {
 ?>
     <div id="orderTotals"><?php $order_total_modules->output(); ?></div>
