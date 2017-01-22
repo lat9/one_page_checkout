@@ -73,7 +73,7 @@ th { background-color: #eee; }
 
 <body>
   <h1>One-Page Checkout <span class="smaller">for Zen Cart v1.5.4 (and later)</span></h1>
-  <h3>Version 1.0.12 by lat9</h3>
+  <h3>Version 1.1.0 by lat9</h3>
   <h3>Copyright &copy; 2013-2017 <a href="http://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
   <p><b>Credits:</b></p>
   <ol>
@@ -174,7 +174,8 @@ th { background-color: #eee; }
               <p>Once you've installed the plugin, an additional item is available in your admin's <em>Configuration</em> menu: <b>One-Page Checkout Settings</b>.  The following settings are available:</p>
               <ul>
                 <li><em>Version/Release Date</em>.  This display-only field shows the plugin's current version and release date.</li>
-                <li><em>Enable One-Page Checkout?</em>.  Choose whether (true) or not (false, <em>the default</em>) to enable the one-page checkout handling for your store.</li>
+                <li><em>Enable One-Page Checkout?</em>.  Choose <em>true</em> to enable for all customers, <em>false</em> to disable (default) or <em>conditional</em> to enable the processing only for customers identified by <b>Enable: Customer List</b>.</li>
+                <li><em>Enable: Customer List</em>. When you <em>conditionally</em> enable the plugin, use this setting to limit the customers for which the plugin is enabled. Leave the setting blank (the default) to <em>disable</em> the plugin for all customers or identify a comma-separated list of customer_id values for whom the plugin is to be <em>enabled</em>. <span class="smaller">(Added in v1.1.0)</span></li>
                 <li><em>Update Shipping AJAX Time-out</em>.  Use this setting to adjust the timeout to use when the plugin requests an update to the shipping quotes on the "checkout_one" page. The default setting of 5000 (5 seconds) should work for most stores. If your store has enabled multiple external shipping methods (e.g. USPS, UPS and FedEx), you might need to increase this value. <span class="smaller">(Added in v1.0.3)</span></li>
                 <li><em>Enable One-Page Checkout Debug?</em>. When enabled, debug files named myDEBUG-one_page_checkout-<em>xx</em>.log are created in your /logs folder (<em>xx</em> is the customer_id for the checkout). Use the <b>true</b> or <b>full</b> settings in combination with the <em>Debug: Customer List</em> setting to limit the customers for which the debug-action is taken.  Setting the value to <b>full</b> will also set the PHP error-level for the checkout_one page's processing so that <b>all</b> PHP errors are logged.</li>
                 <li><em>Debug: Customer List</em>. When you enable the plugin's debug, use this setting to limit the customers for which the debug-logs are generated.  Leave the setting blank (the default) to debug <b>all</b> customers or identify a comma-separated list of customer_id values to limit the debug to just those customers.</li>
@@ -402,10 +403,11 @@ th { background-color: #eee; }
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a> Changes to the plugin's default templates are identified in <span class="template-changed">this</span> color; remember to merge those changes with any template-override version you might have created!</p>
               <ul>
-                <li>v1.0.12, 2017-01-xx:<ul>
+                <li>v1.1.0, 2017-01-xx:<ul>
                   <li>BUGFIX: Shipping cost not updated if shopping-cart change results in a cost-change to the selected shipping-module.</li>
                   <li>BUGFIX: Checkout loop if order's currency's symbol uses an &quot;htmlentity&quot;, e.g. &amp;pound;.</li>
                   <li>BUGFIX: Order-totals duplicated on confirmation page.</li>
+                  <li>CHANGE: Add configuration setting to &quot;conditionally&quot; enable the plugin for a list of customer_id values.</li>
                   <li>The following files were affected:<ol>
                     <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                     <li>/includes/modules/pages/checkout_one/header_php.php</li>

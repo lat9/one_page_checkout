@@ -7,7 +7,7 @@ if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
 }
 
-define ('CHECKOUT_ONE_CURRENT_VERSION', '1.0.12-beta2');
+define ('CHECKOUT_ONE_CURRENT_VERSION', '1.1.0-beta1');
 define ('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2017-01-xx');
 $version_release_date = CHECKOUT_ONE_CURRENT_VERSION . ' (' . CHECKOUT_ONE_CURRENT_UPDATE_DATE . ')';
 
@@ -40,7 +40,7 @@ if (!defined ('CHECKOUT_ONE_ENABLED')) {
 
 if (!defined ('CHECKOUT_ONE_MODULE_VERSION')) {
     $db->Execute ("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, set_function) VALUES ('Version/Release Date', 'CHECKOUT_ONE_MODULE_VERSION', '" . $version_release_date . "', 'The One-Page Checkout version number and release date.', $cgi, now(), 1, 'trim(')");
-    define ('CHECKOUT_ONE_MODULE_VERSION', $version_release_date);
+    define ('CHECKOUT_ONE_MODULE_VERSION', '0.0.0');
 }
 
 if (!defined ('CHECKOUT_ONE_SHIPPING_TIMEOUT')) {
@@ -60,6 +60,29 @@ if (defined ('CHECKOUT_ONE_DEBUG') && strpos (CHECKOUT_ONE_DEBUG, '<b>full</b>')
             SET configuration_description = 'When enabled, debug files named myDEBUG-one_page_checkout-<em>xx</em>.log are created in your /logs folder (<em>xx</em> is the customer_id for the checkout).  Use the <b>true</b> or <b>full</b> settings in combination with the <em>Debug: Customer List</em> setting to limit the customers for which the debug-action is taken.  Setting the value to <b>full</b> will also set the PHP error-level for the checkout so that <b>all</b> PHP errors are logged.<br /><br />Default: <b>false</b>',
                 set_function = 'zen_cfg_select_option(array(\'true\', \'false\', \'full\'),'
           WHERE configuration_key = 'CHECKOUT_ONE_DEBUG' LIMIT 1"
+    );
+}
+
+// -----
+// Version-specific updates follow ...
+//
+if (version_compare (CHECKOUT_ONE_MODULE_VERSION, '1.1.0', '<')) {
+    // -----
+    // v1.1.0:  Update the 'Enable' setting to include a value that is conditional on the newly-added customer-id list.
+    //
+    $db->Execute (
+        "UPDATE " . TABLE_CONFIGURATION . "
+            SET configuration_description = 'Enable the one-page checkout processing for your store? Choose <em>true</em> to enable for all customers, <em>false</em> to disable or <em>conditional</em> to enable the processing only for customers identified by <b>Enable: Customer List</b>.<br /><br />Default: <b>false</b>',
+                set_function = 'zen_cfg_select_option(array(\'true\', \'conditional\', \'false\'),',
+                last_modified = now()
+          WHERE configuration_key = 'CHECKOUT_ONE_ENABLED'
+          LIMIT 1"
+    );
+    $db->Execute (
+        "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
+            ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) 
+            VALUES 
+            ( 'Enable: Customer List', 'CHECKOUT_ONE_ENABLE_CUSTOMERS_LIST', '', 'When you <em>conditionally</em> enable the plugin, use this setting to limit the customers for which the plugin is enabled.  Leave the setting blank (the default) to <em>disable</em> the plugin for all customers or identify a comma-separated list of customer_id values for whom the plugin is to be <em>enabled</em>.<br />', $cgi, now(), 11, NULL, NULL)"
     );
 }
 
