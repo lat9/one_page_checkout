@@ -24,7 +24,7 @@ if (!(defined ('CHECKOUT_ONE_ENABLED') && is_object ($checkout_one) && $checkout
 // constant will be updated as additional payment-methods that make use of that interface are identified.
 //
 if (!defined ('CHECKOUT_ONE_CONFIRMATION_REQUIRED')) {
-    define ('CHECKOUT_ONE_CONFIRMATION_REQUIRED', 'eway_rapid,stripepay');
+    define ('CHECKOUT_ONE_CONFIRMATION_REQUIRED', 'eway_rapid,stripepay,gps');
 }
 
 // if there is nothing in the customers cart, redirect them to the shopping_cart page
