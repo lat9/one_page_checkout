@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2016, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2017, Vinos de Frutas Tropicales.  All rights reserved.
 //
 class zcAjaxOnePageCheckout extends base
 {
@@ -10,7 +10,7 @@ class zcAjaxOnePageCheckout extends base
     //
     public function updateShipping ()
     {
-        if (!(defined ('CHECKOUT_ONE_ENABLED') && CHECKOUT_ONE_ENABLED == 'true')) {
+        if (!(defined ('CHECKOUT_ONE_ENABLED') && (CHECKOUT_ONE_ENABLED == 'true' || CHECKOUT_ONE_ENABLED == 'conditional'))) {
             trigger_error ('Invalid request; One-Page Checkout processing is not installed or not enabled.', E_USER_ERROR);
         }
         // -----
