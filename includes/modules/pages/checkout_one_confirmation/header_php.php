@@ -236,7 +236,7 @@ $order_totals = $order_total_modules->process ();
 // If so, redirect back to the checkout_one page so that the customer sees what they're confirming on the next pass through the
 // confirmation page.
 //
-if ($checkout_one->hashSession ($currencies->format ($order->info['total'])) != $session_start_hash) {
+if ($order_confirmed && $checkout_one->hashSession ($currencies->format ($order->info['total'])) != $session_start_hash) {
     $error = true;
     $messageStack->add_session ('checkout_payment', ERROR_NOJS_ORDER_CHANGED, 'error');
 }
