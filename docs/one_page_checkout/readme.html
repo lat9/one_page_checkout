@@ -414,10 +414,14 @@ th { background-color: #eee; }
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a> Changes to the plugin's default templates are identified in <span class="template-changed">this</span> color; remember to merge those changes with any template-override version you might have created!</p>
               <ul>
                 <li>v1.1.1, 2017-04-xx:<ul>
+                  <li>BUGFIX: Correct checkout-loop after a 100%-off coupon is applied to an order.</li>
                   <li>CHANGE: Document that the <em>YourSite</em> template and <em>ot_prowebsoptions</em> order-total are incompatible.</li>
                   <li>CHANGE: Document that the <em>NoChex</em> and <em>Authorize.net/SIM</em> payment methods are compatible.</li>
                   <li>BUGFIX: Unwanted &quot;Your order has changed&quot; message received after applying a credit-class order-total to the order.</li>
+                  <li>BUGFIX: Correct conditionally-enabling the plugin causes checkout-loop.</li>
                   <li>The following files were affected:<ol>
+                    <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
+                    <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                     <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
                     <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                   </ol></li>
