@@ -7,7 +7,7 @@ if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
 }
 
-define ('CHECKOUT_ONE_CURRENT_VERSION', '1.1.1-beta1');
+define ('CHECKOUT_ONE_CURRENT_VERSION', '1.2.0-beta1');
 define ('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2017-04-xx');
 $version_release_date = CHECKOUT_ONE_CURRENT_VERSION . ' (' . CHECKOUT_ONE_CURRENT_UPDATE_DATE . ')';
 
@@ -47,10 +47,6 @@ if (!defined ('CHECKOUT_ONE_SHIPPING_TIMEOUT')) {
     $db->Execute ("INSERT INTO " . TABLE_CONFIGURATION . " ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) VALUES ( 'Update Shipping AJAX Time-out', 'CHECKOUT_ONE_SHIPPING_TIMEOUT', '5000', 'Enter the timeout to use for the plugin\'s request to update the shipping quotes on the &quot;checkout_one&quot; page. The default setting of 5000 (5 seconds) <em>should work</em> for most stores.  If your store has enabled multiple external shipping methods (e.g. USPS, UPS <b>and</b> FedEx), you might need to increase this value.<br />', $cgi, now(), 15, NULL, NULL)");
 }
 
-if (CHECKOUT_ONE_MODULE_VERSION != $version_release_date) {
-    $db->Execute ("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '$version_release_date', last_modified = now() WHERE configuration_key = 'CHECKOUT_ONE_MODULE_VERSION' LIMIT 1");
-}
-
 // -----
 // If not already updated, update the configuration of the plugin's debug setting.  Starting with v1.0.1, there are now three settings.
 //
@@ -84,6 +80,10 @@ if (version_compare (CHECKOUT_ONE_MODULE_VERSION, '1.1.0', '<')) {
             VALUES 
             ( 'Enable: Customer List', 'CHECKOUT_ONE_ENABLE_CUSTOMERS_LIST', '', 'When you <em>conditionally</em> enable the plugin, use this setting to limit the customers for which the plugin is enabled.  Leave the setting blank (the default) to <em>disable</em> the plugin for all customers or identify a comma-separated list of customer_id values for whom the plugin is to be <em>enabled</em>.<br />', $cgi, now(), 11, NULL, NULL)"
     );
+}
+
+if (CHECKOUT_ONE_MODULE_VERSION != $version_release_date) {
+    $db->Execute ("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '$version_release_date', last_modified = now() WHERE configuration_key = 'CHECKOUT_ONE_MODULE_VERSION' LIMIT 1");
 }
 
 // -----
