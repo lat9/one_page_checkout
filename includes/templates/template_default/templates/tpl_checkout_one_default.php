@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2016, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2017, Vinos de Frutas Tropicales.  All rights reserved.
 //
 ?>
 <?php 
@@ -275,6 +275,11 @@ if ($shipping_module_available) {
     <fieldset id="checkoutOneCartGroup">
       <legend><?php echo HEADING_PRODUCTS; ?></legend>
       <table border="0" width="100%" cellspacing="0" cellpadding="0" id="cartContentsDisplay">
+        <tr>
+            <td class="edit-button" colspan="<?php echo (sizeof ($order->info['tax_groups']) > 1) ? 3 : 2; ?>">&nbsp;</td>
+            <td class="edit-button"><?php echo '<a href="' . zen_href_link (FILENAME_SHOPPING_CART, '') . '">' . zen_image_button (BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) . '</a>'; ?></td>
+        </tr>
+        
         <tr class="cartTableHeading">
           <th scope="col" id="ccQuantityHeading"><?php echo TABLE_HEADING_QUANTITY; ?></th>
           <th scope="col" id="ccProductsHeading"><?php echo TABLE_HEADING_PRODUCTS; ?></th>

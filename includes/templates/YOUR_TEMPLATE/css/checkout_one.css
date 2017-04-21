@@ -7,6 +7,7 @@ label.inputLabel { width: 110px; }
 #cartOrderTotals { border-top: 1px solid #bbb; border-bottom: 1px solid #bbb; }
 fieldset#checkoutOneCartGroup { padding-bottom: 0; }
 fieldset > #cartContentsDisplay div { margin-right: 0; }
+.edit-button { border-bottom: 1px solid #bbb; text-align: right; }
 @media (max-width: 979px) {
   .floatingBox { width: 95%; float: none; margin: 0 auto; }
 }
