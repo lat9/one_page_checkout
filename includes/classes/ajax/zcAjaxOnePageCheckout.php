@@ -29,6 +29,7 @@ class zcAjaxOnePageCheckout extends base
         
         $error_message = $order_total_html = $shipping_html = '';
         $status = 'ok';
+        $shipping_choose_message = '';
         
         // -----
         // Check for a session timeout (i.e. no more customer_id in the session), returning a specific
@@ -50,6 +51,19 @@ class zcAjaxOnePageCheckout extends base
                 $discount_coupon_query = "SELECT coupon_code FROM " . TABLE_COUPONS . " WHERE coupon_id = :couponID LIMIT 1";
                 $discount_coupon_query = $db->bindVars ($discount_coupon_query, ':couponID', $_SESSION['cc_id'], 'integer');
                 $discount_coupon = $db->Execute ($discount_coupon_query);
+            }
+            
+            // -----
+            // Manage the shipping-address, based on the "Shipping Address, Same as Billing?" checkbox value submitted.
+            //
+            if ($_POST['shipping_is_billing'] == 'true') {
+                $_SESSION['sendto'] = $_SESSION['billto'];
+                $_SESSION['shipping_billing'] = true;
+                $ship_to = 'billing';
+            } else {
+                $_SESSION['sendto'] = $_SESSION['opc_sendto_saved'];
+                $ship_to = 'shipping';
+                $_SESSION['shipping_billing'] = false;
             }
             
             require (DIR_WS_CLASSES . 'order.php');
@@ -82,7 +96,7 @@ class zcAjaxOnePageCheckout extends base
             }        
             $is_virtual_order = ($_SESSION['cart']->get_content_type () == 'virtual');
             
-            $checkout_one->debug_message ("Shipping method change to $module ($method), free_shipping ($free_shipping), virtual order ($is_virtual_order). Current values: " . print_r ($_SESSION['shipping'], true) . PHP_EOL . print_r ($_POST, true), true, 'zcAjaxOnePageCheckout');
+            $checkout_one->debug_message ("Shipping method change to $module ($method), sendto ($ship_to), free_shipping ($free_shipping), virtual order ($is_virtual_order). Current values: " . var_export ($_SESSION['shipping'], true) . PHP_EOL . var_export ($_POST, true), true, 'zcAjaxOnePageCheckout');
 
             if ($free_shipping || $is_virtual_order) {
                 if ($_POST['shipping'] != 'free_free') {
@@ -94,9 +108,29 @@ class zcAjaxOnePageCheckout extends base
                 global ${$module};           
                 require (DIR_WS_CLASSES . 'shipping.php');
                 $shipping_modules = new shipping;
-                
+            
+//-bof-product_delivery_by_postcode (PDP) integration
+                if (function_exists ('zen_get_UKPostcodeFirstPart')) {
+                    global $localdelivery, $storepickup;
+                    
+                    $check_delivery_postcode = $order->delivery['postcode'];
+              
+                    // shorten UK / Canada postcodes to use first part only
+                    $check_delivery_postcode = zen_get_UKPostcodeFirstPart ($check_delivery_postcode);
+
+                    // now check db for allowed postcodes and enable / disable relevant shipping modules
+                    if (!in_array ($check_delivery_postcode, explode (",", MODULE_SHIPPING_LOCALDELIVERY_POSTCODE))) {
+                         $localdelivery = false;
+                    }
+                  
+                    if (!in_array ($check_delivery_postcode, explode (",", MODULE_SHIPPING_STOREPICKUP_POSTCODE))) {
+                        $storepickup = false;
+                    }
+                }
+//-eof-product_delivery_by_postcode (PDP) integration
+    
                 $quote = $shipping_modules->quote ($method, $module);
-                $checkout_one->debug_message ("Current quote for " . $_POST['shipping'] . ": " . print_r ($quote, true) . PHP_EOL);
+                $checkout_one->debug_message ("Current quote for " . $_POST['shipping'] . ": " . var_export ($quote, true) . PHP_EOL);
                 if (isset ($quote[0]['methods'][0]['title']) && isset ($quote[0]['methods'][0]['cost'])) {
                     $_SESSION['shipping'] = array (
                         'id' => $_POST['shipping'],
@@ -115,9 +149,36 @@ class zcAjaxOnePageCheckout extends base
                 $order = new order ();
                 $shipping_modules = new shipping (isset ($_SESSION['shipping']) ? $_SESSION['shipping'] : '');
                 
+//-bof-product_delivery_by_postcode (PDP) integration
+                if (function_exists ('zen_get_UKPostcodeFirstPart')) {
+                    global $localdelivery, $storepickup;
+                    
+                    $check_delivery_postcode = $order->delivery['postcode'];
+              
+                    // shorten UK / Canada postcodes to use first part only
+                    $check_delivery_postcode = zen_get_UKPostcodeFirstPart ($check_delivery_postcode);
+
+                    // now check db for allowed postcodes and enable / disable relevant shipping modules
+                    if (!in_array ($check_delivery_postcode, explode (",", MODULE_SHIPPING_LOCALDELIVERY_POSTCODE))) {
+                         $localdelivery = false;
+                    }
+                  
+                    if (!in_array ($check_delivery_postcode, explode (",", MODULE_SHIPPING_STOREPICKUP_POSTCODE))) {
+                        $storepickup = false;
+                    }
+                }
+//-eof-product_delivery_by_postcode (PDP) integration  
+              
                 $shipping_html = '';
-                if ($status == 'invalid') {
+                if ($status == 'invalid' || $_POST['shipping_request'] == 'shipping-billing') {
                     $quotes = $shipping_modules->quote ();
+                    if (count ($quotes) > 1 && count ($quotes[0]) > 1) {
+                        $shipping_choose_message = TEXT_CHOOSE_SHIPPING_METHOD;
+                    } else {
+                        $shipping_choose_message = TEXT_ENTER_SHIPPING_INFORMATION;
+                    }
+                    $checkout_one->debug_message("Updating shipping section, message ($shipping_choose_message), quotes:" . var_export($quotes, true), false, 'zcAjaxOnePageCheckout');
+                    
                     ob_start ();
                     require ($template->get_template_dir ('tpl_modules_checkout_one_shipping.php', DIR_WS_TEMPLATE, $current_page_base, 'templates'). '/tpl_modules_checkout_one_shipping.php');
                     $shipping_html = ob_get_clean ();
@@ -138,7 +199,7 @@ class zcAjaxOnePageCheckout extends base
                 }
                 unset ($GLOBALS[_SESSION]['messageToStack']);
 
-                $checkout_one->debug_message ("Shipping method changed: " . print_r ($quote, true) . print_r ($_SESSION['shipping'], true), false, 'zcAjaxOnePageCheckout');
+                $checkout_one->debug_message ("Shipping method changed: " . var_export ($quote, true) . var_export ($_SESSION['shipping'], true), false, 'zcAjaxOnePageCheckout');
             }
 
             require (DIR_WS_CLASSES . 'order_total.php');
@@ -156,8 +217,9 @@ class zcAjaxOnePageCheckout extends base
             'errorMessage' => $error_message,
             'orderTotalHtml' => $order_total_html,
             'shippingHtml' => $shipping_html,
+            'shippingMessage' => $shipping_choose_message,
         );
-        $checkout_one->debug_message ('Returning:' . print_r ($return_array, true) . print_r ($_SESSION['shipping'], true));
+        $checkout_one->debug_message ('Returning:' . var_export ($return_array, true) . var_export ($_SESSION['shipping'], true));
 
         return $return_array;
     }

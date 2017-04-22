@@ -238,13 +238,14 @@ if (!$is_virtual_order) {
         if (shippingSelected.is( ':radio' )) {
             shippingSelected = jQuery( 'input[name=shipping]:checked' );
         }
-        if (shippingSelected.length == 0) {
+        if (shippingSelected.length == 0 && type != 'shipping-billing') {
             alert( '<?php echo ERROR_NO_SHIPPING_SELECTED; ?>' );
             event.preventDefault();
             event.stopPropagation();
             focusOnShipping();
         } else {
             shippingSelected = shippingSelected.val();
+            var shippingIsBilling = jQuery( '#shipping_billing' ).is( ':checked' );
 <?php
     // -----
     // If the current order has generated shipping quotes (i.e. it's got at least one physical product), check to see if a 
@@ -274,6 +275,8 @@ if (!$is_virtual_order) {
                 url: "ajax.php?act=ajaxOnePageCheckout&method=updateShipping",
                 data: {
                     shipping: shippingSelected,
+                    shipping_is_billing: shippingIsBilling,
+                    shipping_request: type,
 <?php
     if (count ($additional_shipping_inputs) != 0) {
         foreach ($additional_shipping_inputs as $current_input_name => $current_input_value) {
@@ -297,7 +300,15 @@ if (!$is_virtual_order) {
                 
                 var shippingError = false;
                 jQuery( '#otshipping, #otshipping+br' ).show ();
-                if (response.status != 'ok') {
+                if (response.status == 'ok') {
+                    if (type == 'shipping-billing') {
+                        jQuery( '#checkoutShippingChoices' ).html( response.shippingHtml );
+                        jQuery( '#checkoutShippingContentChoose' ).html( response.shippingMessage );
+                        jQuery( '#checkoutShippingChoices' ).on( 'click', 'input[name=shipping]', function ( event ) {
+                            changeShippingSubmitForm( 'shipping-only', event );
+                        });                        
+                    }
+                } else {
                     if (response.status == 'timeout') {
                         alert( sessionTimeoutErrorMessage );
                         jQuery(location).attr( 'href', timeoutUrl );
@@ -310,11 +321,11 @@ if (!$is_virtual_order) {
                         jQuery( '#checkoutShippingChoices' ).on( 'click', 'input[name=shipping]', function ( event ) {
                             changeShippingSubmitForm( 'shipping-only', event );
                         });
-                        jQuery( '#otshipping, #otshipping+br' ).hide ();
+                        jQuery( '#otshipping, #otshipping+br' ).hide();
                         focusOnShipping();
                     }
                     if (response.errorMessage != '') {
-                        if (type == 'submit') {
+                        if (type == 'submit' || type == 'shipping-billing') {
                             alert( response.errorMessage );
                         }
                     }
@@ -352,6 +363,13 @@ if ($flagOnSubmit) {
     
     jQuery( '#checkoutShippingMethod input[name=shipping]' ).click(function( event ) {
         changeShippingSubmitForm ('shipping-only', event);
+    });
+    
+    
+    jQuery( '#shipping_billing' ).click(function( event ) {
+        shippingIsBilling();
+        changeShippingSubmitForm( 'shipping-billing', event );
+        
     });
     
     jQuery( 'form[name="checkout_payment"]' ).submit(function( event ) {

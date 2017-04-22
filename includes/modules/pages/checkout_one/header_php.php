@@ -275,6 +275,14 @@ if (isset ($_SESSION['shipping']) && is_array ($_SESSION['shipping'])) {
 
 $checkout_one->debug_message ("CHECKOUT_ONE_AFTER_SHIPPING_QUOTES\n" . var_export ($_SESSION['shipping'], true) . print_r ($order, true) . print_r ($messageStack, true) . print_r ($quotes, true));
 
+// -----
+// Capture the current value of the sendto-address, for possible use by the plugin's AJAX component.
+//
+unset($_SESSION['opc_sendto_saved']);
+if (isset($_SESSION['sendto'])) {
+    $_SESSION['opc_sendto_saved'] = $_SESSION['sendto'];
+}
+
 // Should address-edit button be offered?
 $address_can_be_changed = (MAX_ADDRESS_BOOK_ENTRIES > 1);
 

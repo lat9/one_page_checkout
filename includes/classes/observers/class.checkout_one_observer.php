@@ -61,7 +61,7 @@ class checkout_one_observer extends base
                 break;
       
             case 'NOTIFY_HEADER_END_CHECKOUT_SUCCESS':
-                unset ($GLOBALS[_SESSION]['shipping_billing']);
+                unset ($_SESSION['shipping_billing'], $_SESSION['opc_sendto_saved']);
                 break;
  
             default:
