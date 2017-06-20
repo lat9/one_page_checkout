@@ -7,8 +7,8 @@ if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
 }
 
-define ('CHECKOUT_ONE_CURRENT_VERSION', '1.2.0');
-define ('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2017-04-23');
+define ('CHECKOUT_ONE_CURRENT_VERSION', '1.2.1-beta1');
+define ('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2017-06-xx');
 $version_release_date = CHECKOUT_ONE_CURRENT_VERSION . ' (' . CHECKOUT_ONE_CURRENT_UPDATE_DATE . ')';
 
 $configurationGroupTitle = 'One-Page Checkout Settings';
