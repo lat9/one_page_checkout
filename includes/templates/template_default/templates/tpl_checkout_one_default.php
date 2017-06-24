@@ -32,7 +32,10 @@ foreach ($messages_to_check as $page_check) {
     }
 }
 ?>
+<!--bof left-hand floating box -->
   <div id="checkoutOneLeft" class="floatingBox back">
+  
+<!--bof billing-address block -->
     <div id="checkoutOneBillto">
       <fieldset>
         <legend><?php echo TITLE_BILLING_ADDRESS; ?></legend>
@@ -46,6 +49,9 @@ if (!$flagDisablePaymentAddressChange) {
 ?>
       </fieldset> 
     </div>
+<!--eof billing-address block -->
+
+<!--bof shipping-address block -->
 <?php
 // -----
 // Display shipping-address information **only if** the order contains at least one physical product (i.e. it's not virtual).
@@ -67,11 +73,16 @@ if ($is_virtual_order) {
     </div>
 <?php
 }
-?>    
+?>
+<!--eof shipping-address block -->
+
+<!--bof comments block -->
     <div id="checkoutComments">
       <fieldset class="shipping" id="comments"><legend><?php echo TABLE_HEADING_COMMENTS; ?></legend><?php echo zen_draw_textarea_field('comments', '45', '3'); ?></fieldset>
     </div>
- 
+<!--eof comments block -->
+
+<!--bof credit-selection block -->
 <?php
 // -----
 // Process the "credit-selection", e.g. coupon-code entry, gift-voucher redeem-code, block(s) for the active
@@ -102,9 +113,13 @@ if ($shipping_module_available) {
         }
     }
 }
-?>   
+?>
+<!--eof credit-selection block -->
+
   </div>
-  
+<!--eof left-hand floating box -->
+
+<!--bof shipping-method choices -->
   <div id="checkoutShippingMethod" class="floatingBox forward">   
 <?php
 // -----
@@ -171,6 +186,9 @@ if ($is_virtual_order) {
 }  //-Order is not "virtual", display full shipping-method block
 ?>
   </div>
+<!--eof shipping-method choices -->
+
+<!--bof payment-method choices -->
 <?php
 // -----
 // Don't display the payment-method block if there is no shipping method available.
@@ -270,7 +288,11 @@ if ($shipping_module_available) {
 <?php
 }  //-Shipping-method available, display payment block.
 ?> 
+<!--eof payment-method choices -->
+
   <div class="clearBoth"></div>
+  
+<!--bof shopping-cart block -->
   <div id="checkoutOneShoppingCart">
     <fieldset id="checkoutOneCartGroup">
       <legend><?php echo HEADING_PRODUCTS; ?></legend>
@@ -355,7 +377,11 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
       </table>
     </fieldset>
   </div>
+<!--eof shopping-cart block -->
+
   <div class="clearBoth"></div>
+
+<!--bof instructions-conditions-submit block -->
 <?php
 // -----
 // Check to see that at least one shipping-method and one payment-method is enabled; if not, don't render the instructions, conditions or submit-button.
@@ -395,6 +421,8 @@ if ($shipping_module_available && $payment_module_available) {
 <?php
 }
 ?>
+<!--eof instructions-conditions-submit block -->
+
   <div class="clearBoth"></div>
 
 </form>
