@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2016, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2017, Vinos de Frutas Tropicales.  All rights reserved.
 //
 ?>
 <script type="text/javascript"><!--
@@ -216,6 +216,14 @@ if (!$is_virtual_order) {
     if (elementsMissing) {
         alert( 'Please contact the store owner; some required elements of this page are missing.' );
     }
+    
+    // -----
+    // Disallow the Enter key (so that all form-submittal actions occur via "click"), except when that
+    // key is pressed within a textarea section.
+    //
+    jQuery(document).on("keypress", ":input:not(textarea)", function(event) {
+        return event.keyCode != 13;
+    });
     
     setOrderConfirmed (0);
     jQuery( '#checkoutOneShippingFlag' ).show();
