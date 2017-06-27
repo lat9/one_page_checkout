@@ -240,7 +240,7 @@ if (!$is_virtual_order) {
         jQuery(window).scrollTop( scrollPos );
     }
 
-    function changeShippingSubmitForm (type, event)
+    function changeShippingSubmitForm (type)
     {
         var shippingSelected = jQuery( 'input[name=shipping]' );
         if (shippingSelected.is( ':radio' )) {
@@ -248,8 +248,6 @@ if (!$is_virtual_order) {
         }
         if (shippingSelected.length == 0 && type != 'shipping-billing') {
             alert( '<?php echo ERROR_NO_SHIPPING_SELECTED; ?>' );
-            event.preventDefault();
-            event.stopPropagation();
             focusOnShipping();
         } else {
             shippingSelected = shippingSelected.val();
@@ -275,10 +273,6 @@ if (!$is_virtual_order) {
     }
 ?>
             zcLog2Console( 'Updating shipping method to '+shippingSelected+', processing type: '+type );
-            if (type == 'submit') {
-                event.preventDefault();
-                event.stopPropagation();
-            }
             zcJS.ajax({
                 url: "ajax.php?act=ajaxOnePageCheckout&method=updateShipping",
                 data: {
@@ -312,8 +306,8 @@ if (!$is_virtual_order) {
                     if (type == 'shipping-billing') {
                         jQuery( '#checkoutShippingChoices' ).html( response.shippingHtml );
                         jQuery( '#checkoutShippingContentChoose' ).html( response.shippingMessage );
-                        jQuery( '#checkoutShippingChoices' ).on( 'click', 'input[name=shipping]', function ( event ) {
-                            changeShippingSubmitForm( 'shipping-only', event );
+                        jQuery( '#checkoutShippingChoices' ).on( 'click', 'input[name=shipping]', function( event ) {
+                            changeShippingSubmitForm( 'shipping-only' );
                         });                        
                     }
                 } else {
@@ -326,39 +320,42 @@ if (!$is_virtual_order) {
                     if (response.status == 'invalid') {
                         jQuery( '#checkoutShippingMethod input[name=shipping]' ).prop( 'checked', false );
                         jQuery( '#checkoutShippingChoices' ).html( response.shippingHtml );
-                        jQuery( '#checkoutShippingChoices' ).on( 'click', 'input[name=shipping]', function ( event ) {
-                            changeShippingSubmitForm( 'shipping-only', event );
+                        jQuery( '#checkoutShippingChoices' ).on( 'click', 'input[name=shipping]', function( event ) {
+                            changeShippingSubmitForm( 'shipping-only' );
                         });
                         jQuery( '#otshipping, #otshipping+br' ).hide();
                         focusOnShipping();
                     }
                     if (response.errorMessage != '') {
-                        if (type == 'submit' || type == 'shipping-billing') {
+                        if (type == 'submit' || type == 'shipping-billing' || type == 'submit-cc') {
                             alert( response.errorMessage );
                         }
                     }
                 }  
                 zcLog2Console( 'Shipping method updated, error: '+shippingError ); 
                 
-                if (type == 'submit') {
+                if (type == 'submit' || type == 'submit-cc') {
                     if (shippingError == true) {
                         zcLog2Console( 'Shipping error, correct to proceed.' );
                     } else {
-                        zcLog2Console ('Form submitted, orderConfirmed ('+orderConfirmed+')');
-                        if (orderConfirmed) {
+                        zcLog2Console ('Form submitted, type ('+type+'), orderConfirmed ('+orderConfirmed+')');
+                        if (type == 'submit-cc') {
+                            jQuery( 'form[name="checkout_payment"]' ).submit();
+                        } else if (orderConfirmed) {
                             jQuery( '#confirm-order' ).attr( 'disabled', true );
-<?php   
+<?php
+// -----
+// If there is at least one payment method available, include the jQuery handling to actually submit the form.
+//   
 if ($flagOnSubmit) { 
 ?>
                             var formPassed = check_form();
                             zcLog2Console ('Form checked, passed ('+formPassed+')');
                             
-                            if (formPassed == true) {
-                                jQuery( 'form[name="checkout_payment"]' ).unbind( 'submit' ).submit();
+                            if (formPassed) {
+                                jQuery( '#confirm-order' ).attr('disabled', false);
+                                jQuery( 'form[name="checkout_payment"]' ).submit();
                             }
-                            
-                            jQuery( '#confirm-order' ).attr('disabled', false);
-                            return false;
 <?php 
 } 
 ?>
@@ -376,15 +373,22 @@ if ($flagOnSubmit) {
     
     jQuery( '#shipping_billing' ).click(function( event ) {
         shippingIsBilling();
-        changeShippingSubmitForm( 'shipping-billing', event );
+        changeShippingSubmitForm( 'shipping-billing' );
         
     });
     
-    jQuery( 'form[name="checkout_payment"]' ).submit(function( event ) {
-        zcLog2Console( 'Submitting form, orderConfirmed ('+orderConfirmed+')' );
-        if (orderConfirmed) {
-            changeShippingSubmitForm ('submit', event);
-        }
+    jQuery( '.opc-cc-submit' ).click(function( event ) {
+        zcLog2Console( 'Submitting credit-class request' );
+        setOrderConfirmed(0);
+        changeShippingSubmitForm( 'submit-cc' );
+    });
+    
+    jQuery( '#confirm-order' ).click(function( event ) {
+        submitFunction(0,0); 
+        setOrderConfirmed (1);
+
+        zcLog2Console( 'Submitting order-creating form' );
+        changeShippingSubmitForm( 'submit' );
     });
 });
 //--></script>

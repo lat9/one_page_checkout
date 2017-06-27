@@ -11,3 +11,4 @@ fieldset > #cartContentsDisplay div { margin-right: 0; }
 @media (max-width: 979px) {
   .floatingBox { width: 95%; float: none; margin: 0 auto; }
 }
+.opc-cc-submit, #confirm-order { cursor: pointer; }

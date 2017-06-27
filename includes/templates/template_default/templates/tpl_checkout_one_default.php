@@ -97,6 +97,19 @@ if ($shipping_module_available) {
 
 <?php
         }
+        // -----
+        // Determine which parameter needs to be submitted on the button-formatting to include a common class to which
+        // a jQuery event handler binds.  When CSS buttons are used, the "secondary class" input must be used; otherwise,
+        // the class is submitted to the function as part of the to-be-created parameter list.
+        //
+        if (strtolower(IMAGE_USE_CSS_BUTTONS) == 'yes') {
+            $secondary_class = 'opc-cc-submit';
+            $additional_parms = '';
+        } else {
+            $secondary_class = '';
+            $additional_parms = ' class="opc-cc-submit"';
+        }
+        
         $ot_class = str_replace ('ot_', '', $credit_selection[$i]['id']);
         for ($j = 0, $n2 = count ($credit_selection[$i]['fields']); $j < $n2; $j++) {
 ?>
@@ -105,7 +118,7 @@ if ($shipping_module_available) {
         <legend><?php echo $credit_selection[$i]['module']; ?></legend><?php echo $credit_selection[$i]['redeem_instructions']; ?>
         <div class="gvBal larger"><?php echo $credit_selection[$i]['checkbox']; ?></div>
         <label class="inputLabel"<?php echo ($credit_selection[$i]['fields'][$j]['tag']) ? ' for="'.$credit_selection[$i]['fields'][$j]['tag'].'"': ''; ?>><?php echo $credit_selection[$i]['fields'][$j]['title']; ?></label><?php echo $credit_selection[$i]['fields'][$j]['field']; ?>
-        <div class="buttonRow forward"><?php echo zen_image_submit (BUTTON_IMAGE_SUBMIT, ALT_TEXT_APPLY_DEDUCTION, 'name="apply_' . $ot_class . '" onclick="setOrderConfirmed (0);"'); ?></div>
+        <div class="buttonRow forward"><?php echo zen_image_button(BUTTON_IMAGE_SUBMIT, ALT_TEXT_APPLY_DEDUCTION, 'name="apply_' . $ot_class . '"' . $additional_parms, $secondary_class); ?></div>
         <div class="clearBoth"></div>
       </fieldset>
     </div>
@@ -416,7 +429,7 @@ if ($shipping_module_available && $payment_module_available) {
 <?php
     }
 ?>
-  <div id="paymentSubmit" class="buttonRow forward"><?php echo zen_image_submit (BUTTON_IMAGE_CHECKOUT_ONE_CONFIRM, BUTTON_CHECKOUT_ONE_CONFIRM_ALT, 'id="confirm-order" name="confirm_order" onclick="submitFunction(' .zen_user_has_gv_account($_SESSION['customer_id']).','.$order->info['total'] . '); setOrderConfirmed (1);"') . zen_draw_hidden_field ('order_confirmed', '1', 'id="confirm-the-order"') . zen_draw_hidden_field ('current_order_total', '0', 'id="current-order-total"'); ?></div>
+  <div id="checkoutOneSubmit" class="buttonRow forward"><?php echo zen_image_button(BUTTON_IMAGE_CHECKOUT_ONE_CONFIRM, BUTTON_CHECKOUT_ONE_CONFIRM_ALT, 'id="confirm-order" name="confirm_order"') . zen_draw_hidden_field ('order_confirmed', '1', 'id="confirm-the-order"') . zen_draw_hidden_field ('current_order_total', '0', 'id="current-order-total"'); ?></div>
   <div id="checkoutOneEmail" class="forward clearRight"><?php echo sprintf (TEXT_CONFIRMATION_EMAILS_SENT_TO, $order->customer['email_address']); ?></div>
 <?php
 }
