@@ -192,7 +192,9 @@ th { background-color: #eee; }
                 <li><em>Version/Release Date</em>.  This display-only field shows the plugin's current version and release date.</li>
                 <li><em>Enable One-Page Checkout?</em>.  Choose <em>true</em> to enable for all customers, <em>false</em> to disable (default) or <em>conditional</em> to enable the processing only for customers identified by <b>Enable: Customer List</b>.</li>
                 <li><em>Enable: Customer List</em>. When you <em>conditionally</em> enable the plugin, use this setting to limit the customers for which the plugin is enabled. Leave the setting blank (the default) to <em>disable</em> the plugin for all customers or identify a comma-separated list of customer_id values for whom the plugin is to be <em>enabled</em>. <span class="smaller">(Added in v1.1.0)</span></li>
-                <li><em>Update Shipping AJAX Time-out</em>.  Use this setting to adjust the timeout to use when the plugin requests an update to the shipping quotes on the "checkout_one" page. The default setting of 5000 (5 seconds) should work for most stores. If your store has enabled multiple external shipping methods (e.g. USPS, UPS and FedEx), you might need to increase this value. <span class="smaller">(Added in v1.0.3)</span></li>
+                <li><em>Update Shipping AJAX Time-out</em>.  Use this setting to adjust the timeout to use when the plugin requests an update to the shipping quotes on the "checkout_one" page. The default setting of 5000 (5 seconds) should work for most stores. If your store has enabled multiple external shipping modules (e.g. USPS, UPS and FedEx), you might need to increase this value. <span class="smaller">(Added in v1.0.3)</span></li>
+                <li><em>Enable Shipping=Billing?</em>.  When enabled, the &quot;checkout_one&quot; page presents the customer with a checkbox-input to indicate that their shipping and billing addresses are the same.  If you don't want that control to be shown, i.e. the billing and shipping addresses are both always displayed, set the value to <em>false</em>.  <span class="smaller">(Added in v1.3.0)</span></li>
+                <li><em>Payment Methods Requiring Confirmation</em>.  There are some payment methods that <strong>require</strong> the confirmation page to be displayed for their proper operation.  You can add to that comma-separated list any of the payment methods used on your store for which you'd like the customer to confirm. <span class="smaller">(Added in v1.3.0)</span></li>
                 <li><em>Enable One-Page Checkout Debug?</em>. When enabled, debug files named myDEBUG-one_page_checkout-<em>xx</em>.log are created in your /logs folder (<em>xx</em> is the customer_id for the checkout). Use the <b>true</b> or <b>full</b> settings in combination with the <em>Debug: Customer List</em> setting to limit the customers for which the debug-action is taken.  Setting the value to <b>full</b> will also set the PHP error-level for the checkout_one page's processing so that <b>all</b> PHP errors are logged.</li>
                 <li><em>Debug: Customer List</em>. When you enable the plugin's debug, use this setting to limit the customers for which the debug-logs are generated.  Leave the setting blank (the default) to debug <b>all</b> customers or identify a comma-separated list of customer_id values to limit the debug to just those customers.</li>
               </ul>
@@ -231,7 +233,7 @@ th { background-color: #eee; }
               
               <fieldset id="billing-shipping">
                 <legend>Billing/Shipping</legend>
-                <p>This section, always located at the top of the left-side pane, displays the order's current billing and shipping addresses.  On initial entry to the page, the <b><em>Shipping Address, same as billing?</em></b> checkbox is checked.  Your customer can change their billing or shipping address (if allowed by the selected payment method) by clicking the associated &quot;Edit&quot; button.</p>
+                <p>This section, always located at the top of the left-side pane, displays the order's current billing and shipping addresses.  On initial entry to the page, the <b><em>Shipping Address, same as billing?</em></b> checkbox is checked &hellip; unless you've configured <em>OPC</em> not to display that checkbox, in which case both addresses are shown.  Your customer can change their billing or shipping address (if allowed by the selected payment method) by clicking the associated &quot;Edit&quot; button.</p>
               </fieldset>
               
               <fieldset id="comments">
@@ -349,6 +351,7 @@ th { background-color: #eee; }
                 <li><em><b>If your store is running Zen Cart v1.5.5 or v1.5.5a:</b></em><ol>
                   <li>Copy the plugin's file <code class="no-pad">/zc155a/includes/classes/payment.php</code> to your store's copy of <code class="no-pad">/includes/classes/payment.php</code>, making sure to merge any currently-existing changes prior to the copy.</li>
                 </ol></li>
+                <li>Now, check your store's current <code class="no-pad">/includes/modules/pages/checkout_payment</code> directory's contents.  The &quot;base&quot; Zen Cart distribution includes two files in that directory: header_php.php and jscript_main.php.  If your directory contains any <b>other</b> files, be sure to copy them to your store's <code class="no-pad">/includes/modules/pages/checkout_one</code> directory.  Those additional files come from plugins and additional payment methods and will be required for those modifications to operate correctly in the one-page checkout.</li>
                 <li>One last item to &quot;tidy up&quot; ... registering the two new checkout pages into the <b>ROBOTS_PAGES_TO_SKIP</b> value.  I don't think this is a high-priority item since the pages' names don't appear on any menus and include it only for completeness!  If you want to make sure that robots aren't indexing the <code class="no-pad">checkout_one</code> and <code class="no-pad">checkout_one_confirmation</code> pages, you'll need to edit your template's version of <code class="no-pad">/includes/languages/english/meta_tags.php</code> and add those two page-names to the end of that constant's comma-separated-list.</li>
               </ol>
             </div>
@@ -373,7 +376,7 @@ th { background-color: #eee; }
             <div id="files">
               <p><b>Notes:</b><p>
               <ul>
-                <li>The files present in the &quot;zc155a&quot; folder are required <b>only if</b> you're installing/upgrading this plugin on either Zen Cart 1.5.5 or 1.5.5a &mdash; the change is in the Zen Cart 1.5.5b core.</li>
+                <li>The files present in the &quot;zc155a&quot; folder are required <b>only if</b> you're installing/upgrading this plugin on either Zen Cart 1.5.5 or 1.5.5a &mdash; the change is in the Zen Cart 1.5.5b (and later) core.</li>
               </ul>
               <p>The plugin provides the following files in its distribution zip-file:<p>
               <ol>
