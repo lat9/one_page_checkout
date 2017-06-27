@@ -62,7 +62,7 @@ if (defined ('CHECKOUT_ONE_DEBUG') && strpos (CHECKOUT_ONE_DEBUG, '<b>full</b>')
 // -----
 // Version-specific updates follow ...
 //
-if (version_compare (CHECKOUT_ONE_MODULE_VERSION, '1.1.0', '<')) {
+if (version_compare(CHECKOUT_ONE_MODULE_VERSION, '1.1.0', '<')) {
     // -----
     // v1.1.0:  Update the 'Enable' setting to include a value that is conditional on the newly-added customer-id list.
     //
@@ -79,6 +79,15 @@ if (version_compare (CHECKOUT_ONE_MODULE_VERSION, '1.1.0', '<')) {
             ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) 
             VALUES 
             ( 'Enable: Customer List', 'CHECKOUT_ONE_ENABLE_CUSTOMERS_LIST', '', 'When you <em>conditionally</em> enable the plugin, use this setting to limit the customers for which the plugin is enabled.  Leave the setting blank (the default) to <em>disable</em> the plugin for all customers or identify a comma-separated list of customer_id values for whom the plugin is to be <em>enabled</em>.<br />', $cgi, now(), 11, NULL, NULL)"
+    );
+}
+
+if (version_compare(CHECKOUT_ONE_MODULE_VERSION, '1.3.0', '<')) {
+    $db->Execute (
+        "INSERT IGNORE INTO " . TABLE_CONFIGURATION . " 
+            ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) 
+            VALUES 
+            ( 'Enable Shipping=Billing?', 'CHECKOUT_ONE_ENABLE_SHIPPING_BILLING', 'true', 'Do you want to enable the <em>Shipping Address, same as Billing</em> for your store?<br /><br />Default: <b>true</b>', $cgi, now(), 20, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),')"
     );
 }
 
