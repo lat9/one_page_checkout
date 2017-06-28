@@ -197,11 +197,19 @@ jQuery(document).ready(function(){
     }
     if (jQuery( '#orderTotalDivs' ).length == 0) {
         elementsMissing = true;
-        zcLog2Console ( 'Missing #orderTotalDivs' );
+        zcLog2Console( 'Missing #orderTotalDivs' );
     }
     if (jQuery( '#current-order-total' ).length == 0) {
         elementsMissing = true;
         zcLog2Console ( 'Missing #current-order-total' );
+    }
+    if (jQuery( '#opc-order-confirm' ).length == 0) {
+        elementsMissing = true;
+        zcLog2Console( 'Missing #opc-order-confirm' );
+    }
+    if (jQuery( '#opc-order-review' ).length == 0) {
+        elementsMissing = true;
+        zcLog2Console( 'Missing #opc-order-review' );
     }
 <?php
 if (!$is_virtual_order) {
@@ -216,14 +224,59 @@ if (!$is_virtual_order) {
     if (elementsMissing) {
         alert( 'Please contact the store owner; some required elements of this page are missing.' );
     }
-    
+<?php    
     // -----
     // Disallow the Enter key (so that all form-submittal actions occur via "click"), except when that
     // key is pressed within a textarea section.
     //
+?>
     jQuery(document).on("keypress", ":input:not(textarea)", function(event) {
         return event.keyCode != 13;
     });
+<?php
+    // -----
+    // The "confirmation_required" array contains a list of payment modules for which, er, confirmation
+    // is required.  This is used to determine whether the "confirm-order" or "review-order" button is displayed.
+    // The $required_list value is created by the page's header_php.php processing.
+    //
+?>
+    var confirmation_required = [<?php echo $required_list; ?>];
+    
+<?php
+    // -----
+    // This function displays either the "review-order" or "confirm-order" (or neither), based
+    // on the currently-selected payment method.
+    //
+?>
+    function setFormSubmitButton()
+    {
+        var payment_module = null;
+        if (document.checkout_payment.payment) {
+            if (document.checkout_payment.payment.length) {
+                for (var i=0; i<document.checkout_payment.payment.length; i++) {
+                    if (document.checkout_payment.payment[i].checked) {
+                        payment_module = document.checkout_payment.payment[i].value;
+                    }
+                }
+            } else if (document.checkout_payment.payment.checked) {
+                payment_module = document.checkout_payment.payment.value;
+            } else if (document.checkout_payment.payment.value) {
+                payment_module = document.checkout_payment.payment.value;
+            }
+        }
+        zcLog2Console( 'setFormSubmitButton, payment-module: '+payment_module );
+        jQuery( '#opc-order-review, #opc-order-confirm' ).hide();
+        if (payment_module != null) {
+            if (confirmation_required.indexOf( payment_module ) == -1) {
+                jQuery( '#opc-order-confirm' ).show();
+                zcLog2Console( 'Showing "confirm"' );
+            } else {
+                jQuery( '#opc-order-review' ).show();
+                zcLog2Console( 'Showing "review"' );
+            }
+        }
+    }
+    setFormSubmitButton();
     
     setOrderConfirmed (0);
     jQuery( '#checkoutOneShippingFlag' ).show();
@@ -366,24 +419,28 @@ if ($flagOnSubmit) {
         }           
     }
     
-    jQuery( '#checkoutShippingMethod input[name=shipping]' ).click(function( event ) {
+    jQuery( '#checkoutShippingMethod input[name=shipping]' ).on( 'click', function( event ) {
         changeShippingSubmitForm ('shipping-only', event);
     });
     
     
-    jQuery( '#shipping_billing' ).click(function( event ) {
+    jQuery( '#shipping_billing' ).on( 'click', function( event ) {
         shippingIsBilling();
         changeShippingSubmitForm( 'shipping-billing' );
         
     });
     
-    jQuery( '.opc-cc-submit' ).click(function( event ) {
+    jQuery( '.opc-cc-submit' ).on( 'click', function( event ) {
         zcLog2Console( 'Submitting credit-class request' );
         setOrderConfirmed(0);
         changeShippingSubmitForm( 'submit-cc' );
     });
     
-    jQuery( '#confirm-order' ).click(function( event ) {
+    jQuery( 'input[name=payment]' ).on( 'change', function() {
+        setFormSubmitButton();
+    });
+    
+    jQuery( '#opc-order-review, #opc-order-confirm' ).on( 'click', function( event ) {
         submitFunction(0,0); 
         setOrderConfirmed (1);
 

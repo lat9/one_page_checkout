@@ -312,7 +312,25 @@ $checkout_one->debug_message ("CHECKOUT_ONE_AFTER_ORDER_TOTAL_PROCESSING\n" . pr
 // load all enabled payment modules
 require (DIR_WS_CLASSES . 'payment.php');
 $payment_modules = new payment;
-$flagOnSubmit = count ($payment_modules->selection());
+$payment_selections = $payment_modules->selection();
+$flagOnSubmit = count ($payment_selections);
+
+// -----
+// Determine if there are any payment modules that either "collectCartDataOnsite" or are in the confirmation-required list.
+//
+// The generated list is used within the /includes/modules/pages/checkout_one/jscript_main.php module to determine what text to
+// display for the order-submittal text/title.
+//
+$confirmation_required = array();
+foreach ($payment_selections as $current_selection) {
+    $current_module = $current_selection['id'];
+    if (isset(${$current_module}->collectsCardDataOnsite) && ${$current_module}->collectsCardDataOnsite == true) {
+        $confirmation_required[] = $current_module;
+    } elseif (in_array($current_module, explode(',', CHECKOUT_ONE_CONFIRMATION_REQUIRED))) {
+        $confirmation_required[] = $current_module;
+    }
+}
+$required_list = '"' . implode('", "', $confirmation_required) . '"';
 
 if (isset($_GET['payment_error']) && is_object(${$_GET['payment_error']}) && ($error = ${$_GET['payment_error']}->get_error())) {
     $messageStack->add ('checkout_payment', $error['error'], 'error');

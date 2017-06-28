@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2016, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2017, Vinos de Frutas Tropicales.  All rights reserved.
 //
 
 define('NAVBAR_TITLE_1', 'Checkout');
@@ -86,6 +86,9 @@ define ('TEXT_CONFIRMATION_EMAILS_SENT_TO', 'Upon order-submittal, a confirmatio
 //
 define ('BUTTON_IMAGE_CHECKOUT_ONE_CONFIRM', 'button_confirm_order.gif');
 define ('BUTTON_CHECKOUT_ONE_CONFIRM_ALT', 'Confirm Order');
+
+define ('BUTTON_IMAGE_CHECKOUT_ONE_REVIEW', 'button_continue_checkout.gif');
+define ('BUTTON_CHECKOUT_ONE_REVIEW_ALT', 'Review Order');
 
 // -----
 // Use these definitions to set any messages you might want to convey to your customers on the checkout-one page.
