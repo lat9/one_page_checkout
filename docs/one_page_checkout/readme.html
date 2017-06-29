@@ -313,9 +313,21 @@ th { background-color: #eee; }
                 </ol></li>
                 <li>Rename the YOUR_ADMIN folder to match your store's admin-folder name.</li>
                 <li>Merge the <span class="corefile">core-file</span> and <span class="template">template-override</span> modifications required by this plugin with your store's existing copy of the file, using the plugin's version of the file if not currently present in your store's file-system.</li>
+                <li><em><b>If your store is running a Zen Cart version less than 1.5.5b, there are a couple of <span class="corefile">core-files</span> that need to be at the ZC1.5.5b version for <em>OPC</em> to operate properly:</b></em><ol>
+                  <li>For Zen Cart 1.5.4, copy the files from the <em>OPC</em> plugin's /zc154 directory:<ol>
+                    <li><span class="corefile">/ajax.php</span> <span class="smaller">(Added in v1.3.0)</span></li>
+                  </ol></li>
+                 <li>For Zen Cart 1.5.5, copy the files from the <em>OPC</em> plugin's /zc155 directory:<ol>
+                    <li><span class="corefile">/ajax.php</span> <span class="smaller">(Added in v1.3.0)</span></li>
+                    <li><span class="corefile">/includes/classes/payment.php</span></li>
+                  </ol></li>
+                  <li>For Zen Cart 1.5.5a, copy the files from the <em>OPC</em> plugin's /zc155a directory:<ol>
+                    <li><span class="corefile">/ajax.php</span> <span class="smaller">(Added in v1.3.0)</span></li>
+                    <li><span class="corefile">/includes/classes/payment.php</span></li>
+                  </ol></li>
+                </ol></li>
                 <li>Sign into your Zen Cart's admin panel.</li>
                 <li>Copy the plugin's files (with the folders renamed as identified in steps <b>A</b> and <b>B</b>) to your store's folder structure:<ol>
-                  <li><span class="corefile">/ajax.php</span></li>
                   <li>/includes/auto_loaders/config.checkout_one.php</li>
                   <li><span class="corefile">/includes/classes/message_stack.php</span></li>
                   <li>/includes/classes/Vinos_Browser.php</li>
@@ -348,10 +360,7 @@ th { background-color: #eee; }
                   <li>/YOUR_ADMIN/includes/languages/english/extra_definitions/checkout_one_name.php</li>
                 </ol></li>
                 <li>Click the &quot;Admin Home&quot; link in your Zen Cart's top admin menu.  This action will cause the plugin's installation script to run.</li>
-                <li><em><b>If your store is running Zen Cart v1.5.5 or v1.5.5a:</b></em><ol>
-                  <li>Copy the plugin's file <code class="no-pad">/zc155a/includes/classes/payment.php</code> to your store's copy of <code class="no-pad">/includes/classes/payment.php</code>, making sure to merge any currently-existing changes prior to the copy.</li>
-                </ol></li>
-                <li>Now, check your store's current <code class="no-pad">/includes/modules/pages/checkout_payment</code> directory's contents.  The &quot;base&quot; Zen Cart distribution includes two files in that directory: header_php.php and jscript_main.php.  If your directory contains any <b>other</b> files, be sure to copy them to your store's <code class="no-pad">/includes/modules/pages/checkout_one</code> directory.  Those additional files come from plugins and additional payment methods and will be required for those modifications to operate correctly in the one-page checkout.</li>
+                <li>Now, check your store's current <code class="no-pad">/includes/modules/pages/checkout_payment</code> directory's contents.  The &quot;base&quot; Zen Cart distribution includes two files in that directory: header_php.php and jscript_main.php.  <b>If your directory contains any other files</b>, be sure to copy them to your store's <code class="no-pad">/includes/modules/pages/checkout_one</code> directory.  Those additional files come from plugins and additional payment methods and will be required for those modifications to operate correctly in the one-page checkout environment.</li>
                 <li>One last item to &quot;tidy up&quot; ... registering the two new checkout pages into the <b>ROBOTS_PAGES_TO_SKIP</b> value.  I don't think this is a high-priority item since the pages' names don't appear on any menus and include it only for completeness!  If you want to make sure that robots aren't indexing the <code class="no-pad">checkout_one</code> and <code class="no-pad">checkout_one_confirmation</code> pages, you'll need to edit your template's version of <code class="no-pad">/includes/languages/english/meta_tags.php</code> and add those two page-names to the end of that constant's comma-separated-list.</li>
               </ol>
             </div>
@@ -380,7 +389,6 @@ th { background-color: #eee; }
               </ul>
               <p>The plugin provides the following files in its distribution zip-file:<p>
               <ol>
-                <li><span class="corefile">/ajax.php</span> <span class="smaller">(Added in v1.0.2)</span></li>
                 <li>/includes/auto_loaders/config.checkout_one.php</li>
                 <li><span class="corefile">/includes/classes/message_stack.php</span></li>
                 <li>/includes/classes/Vinos_Browser.php <span class="smaller">(Added in v1.0.4)</span></li>
@@ -415,6 +423,10 @@ th { background-color: #eee; }
                 <li><span class="corefile removed">/pre_zc155a/ajax.php</span> <span class="smaller">(Removed in v1.0.2)</span></li>
                 <li><span class="corefile removed">/pre_zc155a/includes/templates/template_default/jscript/jscript_framework.php</span> <span class="smaller">(Removed in v1.0.3)</span></li>
                 <li><span class="template removed">/pre_zc155a/includes/templates/YOUR_TEMPLATE/jscript/jscript_framework.php</span> <span class="smaller">(Removed in v1.0.3)</span></li>
+                <li><span class="corefile">/zc154/ajax.php</span> <span class="smaller">(Added in v1.3.0)</span></li>
+                <li><span class="corefile">/zc155/ajax.php</span> <span class="smaller">(Added in v1.3.0)</span></li>
+                <li><span class="corefile">/zc155/includes/classes/payment.php</span> <span class="smaller">(Added in v1.3.0)</span></li>
+                <li><span class="corefile">/zc155a/ajax.php</span> <span class="smaller">(Added in v1.3.0)</span></li>
                 <li><span class="corefile">/zc155a/includes/classes/payment.php</span> <span class="smaller">(Added in v1.0.3)</span></li>
               </ol>
             </div>
@@ -429,6 +441,7 @@ th { background-color: #eee; }
                   <li>CHANGE: Document the interoperability of the ozPost shipping module and the Payeezy payment module.</li>
                   <li>CHANGE: Move payment-modules requiring confirmation to a configurable setting.</li>
                   <li>CHANGE: Recognize payment methods that require confirmation, adjust the submit-button accordingly.</li>
+                  <li>CHANGE: Modify distribution-method of core-file changes; most of those changes were &quot;up-leveling&quot; the current Zen Cart distribution version.</li>
                   <li>The following files were affected:<ol>
                     <li><span class="template-changed">/includes/languages/english/checkout_one.php</span></li>
                     <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
