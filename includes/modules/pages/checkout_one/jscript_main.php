@@ -23,7 +23,12 @@ function couponpopupWindow(url)
     window.open(url,'couponpopupWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=450,height=320,screenX=150,screenY=150,top=150,left=150')
 }
 
-
+<?php
+// -----
+// Used by various payment modules and checkout-confirmation pages; sets the (presumed) submit button with the
+// "btn_submit" id disabled upon the form's submittal.
+//
+?>
 function submitonce()
 {
     var button = document.getElementById("btn_submit");
@@ -32,7 +37,6 @@ function submitonce()
     setTimeout('button_timeout()', 4000);
     return false;
 }
-
 function button_timeout() 
 {
     var button = document.getElementById("btn_submit");
@@ -40,6 +44,12 @@ function button_timeout()
     button.disabled = false;
 }
 
+<?php
+// -----
+// Local to the checkout_one page, provides a common function to log a javascript console
+// message.  The checking is required for older (pre IE-9?) versions of Internet Explorer, which
+// doesn't instantiate the window.console class unless the debug pane is open.
+?>
 function zcLog2Console (message)
 {
     if (window.console) {
@@ -49,6 +59,14 @@ function zcLog2Console (message)
     }
 }
 
+<?php
+// -----
+// Used by the on-page processing and also by various "credit-class" order-totals (e.g. ot_coupon, ot_gb) to
+// initialize the checkout_payment form's submittal.  The (global) "submitter" value is set on return to either
+// null/0 (payment-handling required) or 1 (no payment-handling required) and is used by the Zen Cart payment class
+// to determine whether to "invoke" the selected payment method.
+// 
+?>
 function submitFunction($gv,$total) 
 {
     var arg_count = arguments.length;
@@ -85,6 +103,11 @@ function submitFunction($gv,$total)
     zcLog2Console('submitFunction, on exit submitter='+submitter);
 }
 
+<?php
+// -----
+// Normally used in an onfocus attribute of a payment-module's selection.
+//
+?>
 function methodSelect(theMethod) 
 {
     if (document.getElementById(theMethod)) {
@@ -92,11 +115,27 @@ function methodSelect(theMethod)
     }
 }
 
+<?php
+// -----
+// Not currently used, but might be useful in the future!
+//
+?>
 function setJavaScriptEnabled ()
 {
     document.getElementById( 'javascript-enabled' ).value = '1';
 }
 
+<?php
+// -----
+// Called by the on-click event processor for the "Shipping Address, same as Billing?" checkbox, checks
+// to see that the ship-to address section is present (it's not for virtual orders) and, if so, either
+// hides or shows that address based on the checkbox status.
+//
+// Requires:
+// - checkbox, id="shipping_billing"
+// - CSS classes "hiddenField" and "visibleField".
+//
+?>
 function shippingIsBilling () 
 {
     var shippingAddress = document.getElementById ('checkoutOneShipto');
@@ -181,6 +220,12 @@ function doCollectsCardDataOnsite(paymentValue)
     });
 }
 
+<?php
+// -----
+// Called by various on-page event handlers, sets the flag that's passed to the checkout_one_confirmation page
+// to indicate whether the transition was due to an order-confirmation vs. a credit-class order-total update.
+//
+?>
 var orderConfirmed = 0;
 function setOrderConfirmed (value)
 {
@@ -189,7 +234,19 @@ function setOrderConfirmed (value)
     zcLog2Console ('Setting orderConfirmed ('+value+'), submitter ('+submitter+')');
 }
 
+<?php
+// -----
+// Main processing section, starts when the browser has finished and the page is "ready" ...
+//
+?>
 jQuery(document).ready(function(){
+<?php
+    // -----
+    // There are a bunch of "required" elements for this submit-less form to be properly handled.  Check
+    // to see that they're present, alerting the customer (hopefully the owner!) if any of those elements
+    // are missing.
+    //
+?>
     var elementsMissing = false;
     if (jQuery( 'form[name="checkout_payment"]' ).length == 0) {
         elementsMissing = true;
@@ -419,27 +476,60 @@ if ($flagOnSubmit) {
         }           
     }
     
+<?php
+    // -----
+    // When a shipping-choice is clicked, make the AJAX call to recalculate the order-totals based
+    // on that shipping selection.
+    //
+?>
     jQuery( '#checkoutShippingMethod input[name=shipping]' ).on( 'click', function( event ) {
         changeShippingSubmitForm ('shipping-only', event);
     });
     
-    
+<?php
+    // -----
+    // When the billing=shipping box is clicked, record the current selection and make the AJAX call to
+    // recalculate the order-totals, now that the shipping address might be different.
+    //
+?>
     jQuery( '#shipping_billing' ).on( 'click', function( event ) {
         shippingIsBilling();
         changeShippingSubmitForm( 'shipping-billing' );
         
     });
-    
+
+<?php
+    // -----
+    // The tpl_checkout_one_default.php processing has appled 'class="opc-cc-submit"' to each credit-class
+    // order-total's "Apply" button.  When one of those "Apply" buttons is clicked, note that the order has
+    // **not** been confirmed, make the AJAX call to recalculate the order-totals and submit the form,
+    // causing the transition to (and back from) the checkout_one_confirmation page where that credit-class
+    // processing has recorded its changes.
+    //
+?>
     jQuery( '.opc-cc-submit' ).on( 'click', function( event ) {
         zcLog2Console( 'Submitting credit-class request' );
         setOrderConfirmed(0);
         changeShippingSubmitForm( 'submit-cc' );
     });
     
+<?php
+    // -----
+    // When a different payment method is chosen, determine whether the payment will require a confirmation-
+    // page display, change the form's pseudo-submit button to reflect either "Review" or "Confirm".
+    //
+?>
     jQuery( 'input[name=payment]' ).on( 'change', function() {
         setFormSubmitButton();
     });
     
+<?php
+    // -----
+    // When the form's pseudo-submit button, either "Review" or "Confirm", is clicked, the user is ready
+    // to submit their order.  Set up the various "hidden" fields to reflect the order's current state,
+    // note that this is an order-confirmation request, and cause the order to be submitted.
+    //
+?>
     jQuery( '#opc-order-review, #opc-order-confirm' ).on( 'click', function( event ) {
         submitFunction(0,0); 
         setOrderConfirmed (1);
