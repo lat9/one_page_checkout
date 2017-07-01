@@ -301,8 +301,10 @@ if (!$is_virtual_order) {
     
 <?php
     // -----
-    // This function displays either the "review-order" or "confirm-order" (or neither), based
-    // on the currently-selected payment method.
+    // This function displays either the "review-order" or "confirm-order", based
+    // on the currently-selected payment method.  If no payment method is selected,
+    // the "confirm-order" button is displayed and javascript "injected" by the Zen Cart
+    // payment class will alert if no payment method is currently chosen.
     //
 ?>
     function setFormSubmitButton()
@@ -323,14 +325,12 @@ if (!$is_virtual_order) {
         }
         zcLog2Console( 'setFormSubmitButton, payment-module: '+payment_module );
         jQuery( '#opc-order-review, #opc-order-confirm' ).hide();
-        if (payment_module != null) {
-            if (confirmation_required.indexOf( payment_module ) == -1) {
-                jQuery( '#opc-order-confirm' ).show();
-                zcLog2Console( 'Showing "confirm"' );
-            } else {
-                jQuery( '#opc-order-review' ).show();
-                zcLog2Console( 'Showing "review"' );
-            }
+        if (payment_module == null || confirmation_required.indexOf( payment_module ) == -1) {
+            jQuery( '#opc-order-confirm' ).show();
+            zcLog2Console( 'Showing "confirm"' );
+        } else {
+            jQuery( '#opc-order-review' ).show();
+            zcLog2Console( 'Showing "review"' );
         }
     }
     setFormSubmitButton();
