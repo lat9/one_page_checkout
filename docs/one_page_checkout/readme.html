@@ -99,6 +99,7 @@ th { background-color: #eee; }
         <div class="tab-container" id="inner-container1">
           <ul class="etabs">
             <li class="tab"><a href="#operation">Operation</a></li>
+            <li class="tab"><a href="#details">Payment Method Interoperation</a></li>
             <li class="tab"><a href="#config">Configuration</a></li>
             <li class="tab"><a href="#storefront">What the Customer Sees</a></li>
           </ul>
@@ -185,6 +186,33 @@ th { background-color: #eee; }
                 </ol>
               </div>
               <div class="clearBoth"></div>
+            </div>
+            
+            <div id="details">
+              <p><strong>Note:</strong> The following conventions apply to <em>OPC</em>, v1.3.0 or later.</p>
+              <p>The primary interoperability issue between <em>OPC</em> (or any checkout-page &quot;consolidator&quot;) and a payment-method centers on the collective javascript/jQuery implementation. Newer payment-processors' APIs have become more complicated, resulting in additional jQuery/AJAX constructs within the associated Zen Cart payment-method.</p>
+              <p>That issue arises when the checkout-page and the payment-method bind to the same DOM event, whether it's the submission of the form or a click of a submit-button. The net result is that some jQuery fragment is not run which, in turn, causes the page/payment-method integration to fail (i.e. orders cannot be placed).</p>
+              <p>The following guidelines are <em>assumed</em> by One-Page Checkout in support of interoperation with the varied payment-methods, identifying which selectors each class of module binds to. This will serve to reduce those jQuery event conflicts and lessen the integration headaches for payment-method developers.</p>
+              
+              <h2>Common Page Elements</h2>
+              <p>There are four (4) elements on the &quot;normal&quot; <code class="no-pad">checkout-payment</code> page that have bearing on the page's form submissions:</p>
+              <ol>
+                <li>The form itself, named <code class="no-pad">checkout_payment</code>.</li>
+                <li>The form's submit button.</li>
+                <li>The form's optional credit-class modules' (e.g. coupons, vouchers or reward-points) submit buttons.</li>
+                <li>A global javascript/jQuery variable named <code class="no-pad">submitter</code>. This variable is set by the page to identify whether (0) or not (1) the form's submission requires a payment-method's intervention.  This value is set to 1 (no payment-method required) by the page's processing when one or more of the following conditions is met:<ul>
+                  <li>The order's total value is 0.</li>
+                  <li>A credit-class order-total module's submit-button was clicked.</li>
+                  <li>A gift-certificate has been applied to the order and its associated value &quot;covers&quot; the cost of the order.</li>
+                </ul></li>
+              </ol>
+              
+              <h2>One-Page Checkout Operations</h2>
+              <p><em>OPC</em> renders its data-gathering page (<code class="no-pad">checkout_one</code>) <b>with no button that actually submits the form</b>.  All form submittals are handled via its jQuery processing (<code class="no-pad">/includes/modules/pages/checkout_one/jscript_main.php</code>), allowing <em>OPC</em> to properly sequence the checkout processing.</p>
+              <p>Instead, the page's jQuery processing <em>binds</em> to a click of the form's pseudo-submit buttons (both order-confirmation and credit-class modules' &quot;Apply&quot; buttons).  Upon detecting such a click, the jQuery sets the value of the <code class="no-pad">submitter</code> variable in a manner similar to the <code class="no-pad">checkout_payment</code> page.  Additionally, that processing <strong>disables</strong> the <code class="no-pad">Enter</code> button from acting as a default form-submittal.  If that jQuery processing detects that no non-payment-related issues are present, that processing issues a programmatic submit of the page's form.</p>
+              
+              <h2>Payment-Method Operations</h2>
+              <p>If a payment method requires some special action on the submittal of the <code class="no-pad">checkout_payment</code> form, that payment method should <em>bind</em> <b>only to the form's <code class="no-pad">submit</code> event</b>, performing its actions only when the value of <code class="no-pad">submitter</code> is 0 and the payment-method is currently selected.</p>
             </div>
             
             <div id="config">
