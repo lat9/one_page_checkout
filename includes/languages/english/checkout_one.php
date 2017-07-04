@@ -36,6 +36,16 @@ define('ERROR_NO_SHIPPING_SELECTED', 'You must choose a shipping method for your
 define('JS_ERROR_SESSION_TIMED_OUT', 'Sorry, your session has timed out.\n\nThe items in your cart have been saved and will be restored the next time you log in.');
 define('JS_ERROR_AJAX_TIMEOUT', 'It\\\'s taking a little longer than normal to update your order\\\'s shipping cost.  Please close this message and try again.\n\nIf you continue to receive this message, please contact us.');
 
+// -----
+// This definition is used on the default page display when there is a javascript/jQuery error (or when javascript is disabled).
+// The customer can't checkout via the OPC so we'll give them a link through which they can access the
+// "normal" 3-page checkout process.  
+//
+// NOTE: The %s value in the link is filled in by the checkout_one page's template to contain
+// a link back to the checkout_shipping page with OPC disabled.
+//
+define('TEXT_NOSCRIPT_JS_ERROR', 'Sorry, but our expedited checkout process cannot be used.  Click <a href="%s">here</a> to use our alternate checkout process.');
+
 // ----- From checkout_payment -----
 
 define('TABLE_HEADING_BILLING_ADDRESS', 'Billing Address');

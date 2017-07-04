@@ -13,8 +13,21 @@ echo $payment_modules->javascript_validation();
 $shipping_module_available = ($free_shipping || $is_virtual_order || zen_count_shipping_modules () > 0);
 $enabled_payment_modules = $payment_modules->selection();
 $payment_module_available = ($payment_modules->in_special_checkout() || count ($enabled_payment_modules > 0));
+
+// -----
+// The following content is initially visible and then hidden if the page's javascript/jQuery processing loads
+// without error.
+//
+$nojs_link = zen_href_link(FILENAME_CHECKOUT_SHIPPING, 'opctype=jserr', 'SSL');
 ?>
-<div class="centerColumn" id="checkoutPayment">
+<div class="centerColumn" id="checkoutPaymentNoJs"><?php echo sprintf(TEXT_NOSCRIPT_JS_ERROR, $nojs_link); ?></div>
+
+<?php
+// -----
+// Start main form ...
+//
+?>
+<div class="centerColumn" id="checkoutPayment" style="display:none;">
 <?php
   echo zen_draw_form ('checkout_payment', zen_href_link (FILENAME_CHECKOUT_ONE_CONFIRMATION, '', 'SSL'), 'post', 'id="checkout_payment"') . zen_draw_hidden_field ('action', 'process') . zen_draw_hidden_field ('javascript_enabled', '0', 'id="javascript-enabled"'); 
 ?>

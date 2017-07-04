@@ -210,7 +210,10 @@ th { background-color: #eee; }
             
             <div id="storefront">
               <p>When you've enabled the <em>One-Page Checkout</em>, the customer will see a single-page <em>similar to</em> the image below; the actual layout will depend on the template that is currently active for your store.  The customer uses the form to apply any coupon (or gift-certificate) codes, choose their shipping and payment methods and then clicks that &quot;Confirm Order&quot; button &hellip; which takes them to a transitional confirmation page and subsequently to the &quot;checkout_success&quot; page.  If they've chosen a payment method that accepts credit-cards onsite, then an additional confirmation page is displayed from which the customer re-confirms their order.</p>
-              <p><strong>Note:</strong> Starting with v1.0.4, customers that access your site using a version of <b><em>Internet Explorer</em> less than 9.0</b> will continue to see the &quot;traditional&quot; multi-page version of the checkout process.</p>
+              <p><strong>Notes:</strong><ol>
+                  <li>Starting with v1.0.4, customers that access your site using a version of <b><em>Internet Explorer</em> less than 9.0</b> will continue to see the &quot;traditional&quot; multi-page version of the checkout process.</li>
+                  <li>Starting with v1.3.0, this page uses jQuery to handle the submittal of the checkout-related form.  If the customer has disabled javascript in their browser or if there's a jQuery-related error on the page, <em>the customer is unable to checkout via <b>OPC</b></em>.  In this case, the plugin displays a message to the customer with a link to the multi-page checkout handling so that they can still checkout.</li>
+               </ol></p>
               <p>Click on an area in the image to view additional information about that section, or just scroll down to see that information.</p>
               <img class="wide" src="checkout_one.jpg" alt="The One-Page Checkout page" title="What the customer sees" usemap="#image-map" />
               <map name="image-map">
@@ -434,7 +437,7 @@ th { background-color: #eee; }
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a> Changes to the plugin's default templates are identified in <span class="template-changed">this</span> color; remember to merge those changes with any template-override version you might have created!</p>
               <ul>
-                <li>v1.3.0, 2017-06-xx:<ul>
+                <li>v1.3.0, 2017-07-xx:<ul>
                   <li>CHANGE: Standardize processing flow through &quot;checkout_one&quot; page.</li>
                   <li>CHANGE: Add HTML comments around &quot;significant&quot; sections in the <em>OPC</em> main template.</li>
                   <li>CHANGE: Add configuration control to enable/disable the <em>Shipping Address, same as Billing</em> support.</li>
@@ -442,7 +445,9 @@ th { background-color: #eee; }
                   <li>CHANGE: Move payment-modules requiring confirmation to a configurable setting.</li>
                   <li>CHANGE: Recognize payment methods that require confirmation, adjust the submit-button accordingly.</li>
                   <li>CHANGE: Modify distribution-method of core-file changes; most of those changes were &quot;up-leveling&quot; the current Zen Cart distribution version.</li>
+                  <li>CHANGE: Provide an alternate link to the &quot;normal&quot; multi-page checkout if a jQuery error is detected on the <em>OPC</em> initial page.</li>
                   <li>The following files were affected:<ol>
+                    <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                     <li><span class="template-changed">/includes/languages/english/checkout_one.php</span></li>
                     <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
                     <li>/includes/modules/pages/checkout_one/header_php.php</li>

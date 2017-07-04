@@ -537,5 +537,14 @@ if ($flagOnSubmit) {
         zcLog2Console( 'Submitting order-creating form' );
         changeShippingSubmitForm( 'submit' );
     });
+
+<?php
+    // -----
+    // If we get here successfully, the jQuery processing for the page looks OK so we'll hide the
+    // alternate-checkout link section and display the "normal" checkout form.
+    //
+?>
+    jQuery( '#checkoutPaymentNoJs' ).hide();
+    jQuery( '#checkoutPayment' ).show();
 });
 //--></script>

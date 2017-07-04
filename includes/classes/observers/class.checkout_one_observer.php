@@ -14,13 +14,41 @@ class checkout_one_observer extends base
         global $current_page_base;
         $this->enabled = false;
         
-        require (DIR_WS_CLASSES . 'Vinos_Browser.php');
+        // -----
+        // Determine if the current session browser is an Internet Explorer version less than 9 (that don't properly support
+        // jQuery).
+        //
+        require DIR_WS_CLASSES . 'Vinos_Browser.php';
         $browser = new Vinos_Browser ();
         $unsupported_browser = ($browser->getBrowser () == Vinos_Browser::BROWSER_IE && $browser->getVersion () < 9);
         $this->browser = $browser->getBrowser() . '::' . $browser->getVersion ();
         
+        // -----
+        // The 'opctype' variable is applied to the checkout_shipping page's link by the checkout_one page's alternate link
+        // (available if there's a jQuery error affecting that page's ability to perform a 1-page checkout).
+        //
+        // If that's set, set a session variable to override the OPC processing, allowing the customer to check out!  As a
+        // developer "assist", that value can be reset by supplying &opctype=retry to any link to try again.
+        //
+        if (isset($_GET['opctype'])) {
+            if ($_GET['opctype'] == 'jserr') {
+                $_SESSION['opc_error'] = true;
+            }
+            if ($_GET['opctype'] == 'retry') {
+                unset($_SESSION['opc_error']);
+            }
+        }
+        
+        // -----
+        // Determine whether the OPC should be enabled.  It's enabled if:
+        //
+        // - No previous jQuery error on the checkout_one page has been detected.
+        // - The plugin's database configuration is available and set for either
+        //   - Full enablement
+        //   - Conditional enablement and the current customer is in the conditional-customers list
+        //
         $plugin_enabled = false;
-        if (defined ('CHECKOUT_ONE_ENABLED')) {
+        if (defined('CHECKOUT_ONE_ENABLED') && !isset($_SESSION['opc_error'])) {
             if (CHECKOUT_ONE_ENABLED == 'true') {
                 $plugin_enabled = true;
             } elseif (CHECKOUT_ONE_ENABLED == 'conditional' && isset ($_SESSION['customer_id'])) {
@@ -30,6 +58,11 @@ class checkout_one_observer extends base
             }
         }
         
+        // -----
+        // If the current browser is supported and the plugin's environment is supportable, then the processing for the
+        // OPC is enabled.  We'll attach notifiers to the various elements of the 3-page checkout to consolidate that
+        // processing into a single page.
+        //
         if (!$unsupported_browser && $plugin_enabled) {
             $this->enabled = true;
             $this->debug = (CHECKOUT_ONE_DEBUG == 'true' || CHECKOUT_ONE_DEBUG == 'full');
