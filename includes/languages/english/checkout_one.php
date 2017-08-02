@@ -49,7 +49,7 @@ define('TEXT_NOSCRIPT_JS_ERROR', 'Sorry, but our expedited checkout process cann
 // ----- From checkout_payment -----
 
 define('TABLE_HEADING_BILLING_ADDRESS', 'Billing Address');
-define('TEXT_SELECTED_BILLING_DESTINATION', 'Your billing address is shown above. The billing address should match the address on your credit card statement. You can change the billing address by clicking the <em>Change Address</em> button.');  //-20130916-lat9
+define('TEXT_SELECTED_BILLING_DESTINATION', 'Your billing address is shown above. The billing address should match the address on your credit card statement. You can change the billing address by clicking the <em>Change Address</em> button.');
 define('TITLE_BILLING_ADDRESS', 'Billing Address:');
 
 define('TABLE_HEADING_PAYMENT_METHOD', 'Payment Method');
@@ -65,7 +65,7 @@ define('TITLE_CONTINUE_CHECKOUT_PROCEDURE', '<strong>Continue to Step 3</strong>
 define('TEXT_CONTINUE_CHECKOUT_PROCEDURE', '- to confirm your order.');
 
 define('TABLE_HEADING_CONDITIONS', '<span class="termsconditions">Terms and Conditions</span>');
-define('TEXT_CONDITIONS_DESCRIPTION', '<span class="termsdescription">Please acknowledge the terms and conditions bound to this order by ticking the following box. The terms and conditions can be read <a href="' . zen_href_link(FILENAME_CONDITIONS, '', 'SSL') . '"><span class="pseudolink">here</span></a>.');
+define('TEXT_CONDITIONS_DESCRIPTION', '<span class="termsdescription">Please acknowledge the terms and conditions bound to this order by ticking the following box. The terms and conditions can be read <a href="' . zen_href_link(FILENAME_CONDITIONS, '', 'SSL') . '"><span class="pseudolink">here</span></a>.</span>');
 define('TEXT_CONDITIONS_CONFIRM', '<span class="termsiagree">I have read and agreed to the terms and conditions bound to this order.</span>');
 
 define('TEXT_CHECKOUT_AMOUNT_DUE', 'Total Amount Due: ');
