@@ -324,9 +324,7 @@ $flagOnSubmit = count ($payment_selections);
 $confirmation_required = array();
 foreach ($payment_selections as $current_selection) {
     $current_module = $current_selection['id'];
-    if (isset(${$current_module}->collectsCardDataOnsite) && ${$current_module}->collectsCardDataOnsite == true) {
-        $confirmation_required[] = $current_module;
-    } elseif (in_array($current_module, explode(',', CHECKOUT_ONE_CONFIRMATION_REQUIRED))) {
+    if (in_array($current_module, explode(',', CHECKOUT_ONE_CONFIRMATION_REQUIRED))) {
         $confirmation_required[] = $current_module;
     }
 }

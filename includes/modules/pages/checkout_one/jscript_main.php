@@ -8,6 +8,15 @@
 var selected;
 var submitter = null;
 
+<?php
+// -----
+// The "confirmation_required" array contains a list of payment modules for which, er, confirmation
+// is required.  This is used to determine whether the "confirm-order" or "review-order" button is displayed.
+// The $required_list value is created by the page's header_php.php processing.
+//
+?>
+var confirmation_required = [<?php echo $required_list; ?>];
+    
 function concatExpiresFields(fields) 
 {
     return jQuery(":input[name=" + fields[0] + "]").val() + jQuery(":input[name=" + fields[1] + "]").val();
@@ -50,7 +59,7 @@ function button_timeout()
 // message.  The checking is required for older (pre IE-9?) versions of Internet Explorer, which
 // doesn't instantiate the window.console class unless the debug pane is open.
 ?>
-function zcLog2Console (message)
+function zcLog2Console(message)
 {
     if (window.console) {
         if (typeof(console.log) == 'function') {
@@ -61,7 +70,7 @@ function zcLog2Console (message)
 
 <?php
 // -----
-// Used by the on-page processing and also by various "credit-class" order-totals (e.g. ot_coupon, ot_gb) to
+// Used by the on-page processing and also by various "credit-class" order-totals (e.g. ot_coupon, ot_gv) to
 // initialize the checkout_payment form's submittal.  The (global) "submitter" value is set on return to either
 // null/0 (payment-handling required) or 1 (no payment-handling required) and is used by the Zen Cart payment class
 // to determine whether to "invoke" the selected payment method.
@@ -181,6 +190,14 @@ function collectsCardDataOnsite(paymentValue)
                 jQuery('#checkoutPayment').before(response.confirmationHtml);
                 jQuery(document).attr('title', response.pageTitle);
                 jQuery(document).scrollTop( 0 );
+                if (confirmation_required.indexOf( paymentValue ) == -1) {
+                    zcLog2Console( 'Preparing to submit form, since confirmation is not required for "'+paymentValue+'", per the required list: "'+confirmation_required );
+                    jQuery('#checkoutOneLoading').show();
+                    jQuery('#checkoutConfirmationDefault').hide();
+                    jQuery('form[name="checkout_confirmation"]')[0].submit();
+                } else {
+                    zcLog2Console( 'Confirmation required, displaying for '+paymentValue+'.' );
+                }
             });
         } else {
             zcLog2Console( ' ... it does not, submitting.' );
@@ -190,24 +207,28 @@ function collectsCardDataOnsite(paymentValue)
     return false;
 }
 
+var lastPaymentValue = null;
+
 function doesCollectsCardDataOnsite(paymentValue)
 {
     zcLog2Console( 'Checking doesCollectsCardDataOnsite('+paymentValue+') ...' );
     if (jQuery('#'+paymentValue+'_collects_onsite').val()) {
         if (jQuery('#pmt-'+paymentValue).is(':checked')) {
             zcLog2Console( '... it does!' );
+            lastPaymentValue = paymentValue;
             return true;
         }
     }
     zcLog2Console( '... it does not.' );
+    lastPaymentValue = null;
     return false;
 }
 
-function doCollectsCardDataOnsite(paymentValue)
+function doCollectsCardDataOnsite()
 {
     var str = jQuery('form[name="checkout_payment"]').serializeArray();
 
-    zcLog2Console( 'doCollectsCardDataOnsite('+paymentValue+')' );
+    zcLog2Console( 'doCollectsCardDataOnsite for '+lastPaymentValue );
     zcJS.ajax({
         url: "ajax.php?act=ajaxPayment&method=prepareConfirmation",
         data: str
@@ -217,6 +238,14 @@ function doCollectsCardDataOnsite(paymentValue)
         jQuery('#checkoutPayment').before(response.confirmationHtml);
         jQuery(document).attr('title', response.pageTitle);
         jQuery(document).scrollTop( 0 );
+        if (confirmation_required.indexOf( lastPaymentValue ) == -1) {
+            zcLog2Console( 'Preparing to submit form, since confirmation is not required for "'+lastPaymentValue+'", per the required list: "'+confirmation_required );
+            jQuery('#checkoutOneLoading').show();
+            jQuery('#checkoutConfirmationDefault').hide();
+            jQuery('form[name="checkout_confirmation"]')[0].submit();
+        } else {
+            zcLog2Console( 'Confirmation required, displaying for '+lastPaymentValue+'.' );
+        }
     });
 }
 
@@ -290,15 +319,6 @@ if (!$is_virtual_order) {
     jQuery(document).on("keypress", ":input:not(textarea)", function(event) {
         return event.keyCode != 13;
     });
-<?php
-    // -----
-    // The "confirmation_required" array contains a list of payment modules for which, er, confirmation
-    // is required.  This is used to determine whether the "confirm-order" or "review-order" button is displayed.
-    // The $required_list value is created by the page's header_php.php processing.
-    //
-?>
-    var confirmation_required = [<?php echo $required_list; ?>];
-    
 <?php
     // -----
     // This function displays either the "review-order" or "confirm-order", based

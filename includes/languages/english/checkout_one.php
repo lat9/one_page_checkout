@@ -49,7 +49,7 @@ define('TEXT_NOSCRIPT_JS_ERROR', 'Sorry, but our expedited checkout process cann
 // ----- From checkout_payment -----
 
 define('TABLE_HEADING_BILLING_ADDRESS', 'Billing Address');
-define('TEXT_SELECTED_BILLING_DESTINATION', 'Your billing address is shown above. The billing address should match the address on your credit card statement. You can change the billing address by clicking the <em>Change Address</em> button.');
+define('TEXT_SELECTED_BILLING_DESTINATION', 'Your billing address is shown above. The billing address should match the address on your credit card statement. You can change the billing address by clicking the <em>Change Address</em> button.');  //-20130916-lat9
 define('TITLE_BILLING_ADDRESS', 'Billing Address:');
 
 define('TABLE_HEADING_PAYMENT_METHOD', 'Payment Method');
@@ -99,6 +99,9 @@ define ('BUTTON_CHECKOUT_ONE_CONFIRM_ALT', 'Confirm Order');
 
 define ('BUTTON_IMAGE_CHECKOUT_ONE_REVIEW', 'button_continue_checkout.gif');
 define ('BUTTON_CHECKOUT_ONE_REVIEW_ALT', 'Review Order');
+
+define ('CHECKOUT_ONE_LOADING', 'confirmation_one_loading.gif');
+define ('CHECKOUT_ONE_LOADING_ALT', 'Please wait ...');
 
 // -----
 // Use these definitions to set any messages you might want to convey to your customers on the checkout-one page.
