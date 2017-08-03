@@ -125,7 +125,7 @@ if ($shipping_module_available) {
             $additional_parms = '';
         } else {
             $secondary_class = '';
-            $additional_parms = ' class="opc-cc-submit"';
+            $additional_parms = 'name="apply_' . $ot_class . '"' . ' class="opc-cc-submit"';
         }
         
         $ot_class = str_replace ('ot_', '', $credit_selection[$i]['id']);
@@ -136,7 +136,7 @@ if ($shipping_module_available) {
         <legend><?php echo $credit_selection[$i]['module']; ?></legend><?php echo $credit_selection[$i]['redeem_instructions']; ?>
         <div class="gvBal larger"><?php echo $credit_selection[$i]['checkbox']; ?></div>
         <label class="inputLabel"<?php echo ($credit_selection[$i]['fields'][$j]['tag']) ? ' for="'.$credit_selection[$i]['fields'][$j]['tag'].'"': ''; ?>><?php echo $credit_selection[$i]['fields'][$j]['title']; ?></label><?php echo $credit_selection[$i]['fields'][$j]['field']; ?>
-        <div class="buttonRow forward"><?php echo zen_image_button(BUTTON_IMAGE_SUBMIT, ALT_TEXT_APPLY_DEDUCTION, 'name="apply_' . $ot_class . '"' . $additional_parms, $secondary_class); ?></div>
+        <div class="buttonRow forward"><?php echo zen_image_button(BUTTON_IMAGE_SUBMIT, ALT_TEXT_APPLY_DEDUCTION, $additional_parms, $secondary_class); ?></div>
         <div class="clearBoth"></div>
       </fieldset>
     </div>
@@ -468,3 +468,5 @@ if ($shipping_module_available && $payment_module_available) {
 
 </form>
 </div>
+  
+<div id="checkoutOneLoading" style="display: none;"><?php echo zen_image($template->get_template_dir(CHECKOUT_ONE_LOADING, DIR_WS_TEMPLATE, $current_page_base ,'images') . '/' . CHECKOUT_ONE_LOADING, CHECKOUT_ONE_LOADING_ALT); ?></div>
