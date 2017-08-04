@@ -16,7 +16,12 @@ var submitter = null;
 //
 ?>
 var confirmation_required = [<?php echo $required_list; ?>];
-    
+
+<?php
+// -----
+// These functions are "legacy", carried over from the like-named module in /includes/modules/pages/checkout_payment
+//
+?>
 function concatExpiresFields(fields) 
 {
     return jQuery(":input[name=" + fields[0] + "]").val() + jQuery(":input[name=" + fields[1] + "]").val();
@@ -68,6 +73,22 @@ function zcLog2Console(message)
     }
 }
 
+<?php
+// -----
+// Check to see if multiple versions of jQuery have been loaded.  If so, log a console message and set a
+// "global" variable for the document-ready portion of the script to check.
+//
+?>
+var jQueryMultipleOrMissing = true;
+if (typeof jQuery != 'undefined') {
+    $.noConflict();
+    zcLog2Console( 'Checking for multiple jQuery versions ...' );
+    if (typeof $ != 'undefined' && jQuery.fn.jquery != $.fn.jquery) {
+        zcLog2Console( 'Multiple (or missing) jQuery versions detected ('+jQuery.fn.jquery+', '+$.fn.jquery+'); alternate checkout required.' );
+    } else {
+        jQueryMultipleOrMissing = false;
+    }
+}
 <?php
 // -----
 // Used by the on-page processing and also by various "credit-class" order-totals (e.g. ot_coupon, ot_gv) to
@@ -557,14 +578,21 @@ if ($flagOnSubmit) {
         zcLog2Console( 'Submitting order-creating form' );
         changeShippingSubmitForm( 'submit' );
     });
-
+    
 <?php
     // -----
-    // If we get here successfully, the jQuery processing for the page looks OK so we'll hide the
-    // alternate-checkout link section and display the "normal" checkout form.
+    // Check to see if multiple versions of jQuery have been loaded or if jQuery hasn't been loaded at all.  
+    // If so, a console message was logged in previous processing in this module; we'll keep the "alternate-
+    // checkout" message on-page. Otherwise, the jQuery processing for the page looks OK so we'll hide the 
+    // alternate-checkout link section and display the "normal" OPC form.
     //
 ?>
-    jQuery( '#checkoutPaymentNoJs' ).hide();
-    jQuery( '#checkoutPayment' ).show();
+    if (typeof jQuery != 'undefined') {
+        zcLog2Console( 'Checking for multiple jQuery versions ...' );
+        if (!jQueryMultipleOrMissing) {
+            jQuery( '#checkoutPaymentNoJs' ).hide();
+            jQuery( '#checkoutPayment' ).show();
+        }
+    }
 });
 //--></script>
