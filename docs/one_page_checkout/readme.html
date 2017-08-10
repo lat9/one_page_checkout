@@ -88,7 +88,7 @@ th { background-color: #eee; }
   <div class="tab-container" id="outer-container">
     <ul class="etabs">
       <li class="tab"><a href="#overview">Overview</a></li>
-      <li class="tab"><a href="#installation">Installation and Updates</a></li>
+      <li class="tab"><a href="#installation">Installation and Troubleshooting</a></li>
       <li class="tab"><a href="#version">Change History</a></li>
     </ul>
     
@@ -320,12 +320,13 @@ th { background-color: #eee; }
       </div>
       
       <div id="installation">
-        <p>This section identifies the procedure you'll use to install/update or remove the plugin for your Zen Cart.</p>
+        <p>This section identifies the procedure you'll use to install/update or remove the plugin for your Zen Cart and also gives some hints and tips regarding troubleshooting an installation.</p>
 
         <div class="tab-container" id="inner-container2">
           <ul class="etabs">
             <li class="tab"><a href="#install">Installation and Updates</a></li>
             <li class="tab"><a href="#remove">Uninstall</a></li>
+            <li class="tab"><a href="#trouble">Troubleshooting</a></li>
           </ul>
           <div class="panel-container">
             <div id="install">
@@ -345,7 +346,7 @@ th { background-color: #eee; }
                 </ol></li>
                 <li>Rename the YOUR_ADMIN folder to match your store's admin-folder name.</li>
                 <li>Merge the <span class="corefile">core-file</span> and <span class="template">template-override</span> modifications required by this plugin with your store's existing copy of the file, using the plugin's version of the file if not currently present in your store's file-system.</li>
-                <li><em><b>If your store is running a Zen Cart version less than 1.5.5b, there are a couple of <span class="corefile">core-files</span> that need to be at the ZC1.5.5b version for <em>OPC</em> to operate properly:</b></em><ol>
+                <li><em><b>If your store is running a Zen Cart version less than 1.5.5b, there are a couple of <span class="corefile">core-files</span> that need to be at the ZC1.5.5b version for <em>OPC</em> to operate properly:</b></em> <span class="smaller">(If your store is running a Zen Cart version of 1.5.5c or later, continue the installation/upgrade with step <b>E</b>.)</span><ol>
                   <li>For Zen Cart 1.5.4, copy the files from the <em>OPC</em> plugin's /zc154 directory:<ol>
                     <li><span class="corefile">/ajax.php</span> <span class="smaller">(Added in v1.3.0)</span></li>
                   </ol></li>
@@ -401,6 +402,15 @@ th { background-color: #eee; }
               <p>First, delete the files that were copied to your Zen Cart installation's file-system. Then use your admin's <em>Tools-&gt;Run SQL Patches</em> to run the file <code class="no-pad">/docs/checkout_one/uninstall/checkout_one_uninstall.sql</code>.</p>
             </div>
             
+            <div id="trouble">
+              <p><em>One-Page Checkout</em> relies <em><b>heavily</b></em> on your store to load <b>a single version</b> of jQuery for its use during the checkout processing.  If your store uses plugin payment-, shipping- or order-total-modules, you'll need to validate the <em>OPC</em> to make sure that your store is capable of supporting its processing.  That's why the <em>OPC</em>'s initial installation sets the plugin's configuration as <em><b>Disabled</b></em>, to give a store-owner the opportunity to make sure that his/her store's environment is compatible with the one-page checkout process.</p>
+              <p><em>OPC</em>'s jQuery handling makes use of your browser's &quot;Console&quot; to identify its progress throughout the checkout process.  On most up-to-date browsers, you can view the browser's console by pressing the F12 key and then clicking on the &quot;Console&quot; tab that is shown (usually at the bottom of the viewed page). It's important that there are no jQuery errors reported within that console as those can lead to a variety of symptoms:</p>
+              <ol>
+                <li>The <code class="no-pad">checkout_one</code> page shows the message &quot;Sorry, but our expedited checkout process cannot be used.  Click here to use our alternate checkout process.&quot;, where the link presented is back to the multi-page-checkout process.</li>
+                <li>The above message is not displayed, but the <em>Review</em> or <em>Confirm</em> buttons are inoperative upon click.  Note that this symptom is <em>usually</em> associated with multiple jQuery versions being loaded by your store's template and/or plugins.</li>
+              </ol>
+            </div>
+                        
           </div>
         </div>
       </div>
@@ -471,6 +481,7 @@ th { background-color: #eee; }
                   <li>CHANGE: Enable payment methods that &quot;collect credit-card data on-site&quot; to be <em>one-page</em>, too!</li>
                   <li>BUGFIX: Correct HTML validation error when CSS buttons are configured for the store.</li>
                   <li>CHANGE: Check for multiple versions of jQuery and direct the customer to the &quot;alternate&quot; checkout if found.</li>
+                  <li>CHANGE: Modify the &quot;confirmation email will be sent to&quot; language text, removing any reference to order-submittal to reduce potential customer confusion.</li>
                   <li>The following files were affected:<ol>
                     <li>/includes/languages/english/checkout_one.php</li>
                     <li>/includes/modules/pages/checkout_one/header_php.php</li>
