@@ -89,7 +89,7 @@ define('OUT_OF_STOCK_CAN_CHECKOUT', 'Products marked with ' . STOCK_MARK_PRODUCT
 define ('TEXT_USE_BILLING_FOR_SHIPPING', 'Shipping Address, Same as Billing?');
 define ('ALT_TEXT_APPLY_DEDUCTION', 'Apply');
 
-define ('TEXT_CONFIRMATION_EMAILS_SENT_TO', 'Upon order-submittal, a confirmation email will be sent to <b>%s</b>.');  //-The %s is filled in with the customer's email address
+define ('TEXT_CONFIRMATION_EMAILS_SENT_TO', 'A confirmation of this order will be emailed to <b>%s</b>.');  //-The %s is filled in with the customer's email address
 
 // -----
 // You can modify this definition to change the name of the image-button/alt-text used to confirm the customer's order.
