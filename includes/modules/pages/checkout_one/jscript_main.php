@@ -316,10 +316,10 @@ if (!$is_virtual_order) {
                     if (confirmation_required.indexOf( paymentValue ) == -1) {
                         zcLog2Console( 'Preparing to submit form, since confirmation is not required for "'+paymentValue+'", per the required list: "'+confirmation_required );
                         jQuery('#checkoutOneLoading').show();
-                        jQuery('#checkoutConfirmationDefault').hide();
                         jQuery('form[name="checkout_confirmation"]')[0].submit();
                     } else {
                         zcLog2Console( 'Confirmation required, displaying for '+paymentValue+'.' );
+                        jQuery('#checkoutConfirmDefault').show();
                     }
                 });
             } else {

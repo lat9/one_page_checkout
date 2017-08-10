@@ -13,5 +13,6 @@ fieldset > #cartContentsDisplay div { margin-right: 0; }
 }
 .opc-cc-submit, #opc-order-confirm, #opc-order-review { cursor: pointer; }
 
-#checkoutOneLoading { position: relative; height: 95vh; top: 50%; left: 50%; }
+#checkoutConfirmDefault { display: none; }
+#checkoutOneLoading { position: relative; height: 95vh; top: 50%; left: 50%; display: none; }
 #checkoutPaymentNoJs { text-align: center; border: 1px solid red; width: 95%; margin: 0 auto; }
