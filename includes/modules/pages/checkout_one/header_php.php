@@ -316,7 +316,7 @@ $payment_selections = $payment_modules->selection();
 $flagOnSubmit = count ($payment_selections);
 
 // -----
-// Determine if there are any payment modules that either "collectCartDataOnsite" or are in the confirmation-required list.
+// Determine if there are any payment modules that are in the confirmation-required list.
 //
 // The generated list is used within the /includes/modules/pages/checkout_one/jscript_main.php module to determine what text to
 // display for the order-submittal text/title.
