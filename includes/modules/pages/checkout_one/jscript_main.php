@@ -7,7 +7,6 @@
 <script type="text/javascript"><!--
 var selected;
 var submitter = null;
-
 <?php
 // -----
 // The "confirmation_required" array contains a list of payment modules for which, er, confirmation
@@ -70,23 +69,6 @@ function zcLog2Console(message)
         if (typeof(console.log) == 'function') {
             console.log (message);
         }
-    }
-}
-
-<?php
-// -----
-// Check to see if multiple versions of jQuery have been loaded.  If so, log a console message and set a
-// "global" variable for the document-ready portion of the script to check.
-//
-?>
-var jQueryMultipleOrMissing = true;
-if (typeof jQuery != 'undefined') {
-    $.noConflict();
-    zcLog2Console( 'Checking for multiple jQuery versions ...' );
-    if (typeof $ != 'undefined' && jQuery.fn.jquery != $.fn.jquery) {
-        zcLog2Console( 'Multiple (or missing) jQuery versions detected ('+jQuery.fn.jquery+', '+$.fn.jquery+'); alternate checkout required.' );
-    } else {
-        jQueryMultipleOrMissing = false;
     }
 }
 <?php
@@ -178,96 +160,6 @@ function shippingIsBilling ()
             shippingAddress.setAttribute ('className', 'visibleField');
         }
     }
-}
-
-<?php
-// -----
-// The "collectsCartDataOnsite" interface built into Zen Cart magically transformed between
-// Zen Cart 1.5.4 and 1.5.5, so this module for the One-Page Checkout plugin includes both
-// forms.  That way, if a payment module was written for 1.5.4 it'll work, ditto for those
-// written for the 1.5.5 method.
-//
-// Zen Cart 1.5.4 uses the single-function approach (collectsCardDataOnsite) while the 1.5.5
-// approach splits the functions int "doesCollectsCardDataOnsite" and "doCollectsCardDataOnsite".
-// 
-?>
-function collectsCardDataOnsite(paymentValue)
-{
-    zcLog2Console( 'Checking collectsDardDataOnsite('+paymentValue+') ...' );
-    zcJS.ajax({
-        url: "ajax.php?act=ajaxPayment&method=doesCollectsCardDataOnsite",
-        data: {paymentValue: paymentValue}
-    }).done(function( response ) {
-        if (response.data == true) {
-            zcLog2Console( ' ... it does!' );
-            var str = jQuery('form[name="checkout_payment"]').serializeArray();
-
-            zcJS.ajax({
-                url: "ajax.php?act=ajaxPayment&method=prepareConfirmation",
-                data: str
-            }).done(function( response ) {
-                jQuery('#checkoutPayment').hide();
-                jQuery('#navBreadCrumb').html(response.breadCrumbHtml);
-                jQuery('#checkoutPayment').before(response.confirmationHtml);
-                jQuery(document).attr('title', response.pageTitle);
-                jQuery(document).scrollTop( 0 );
-                if (confirmation_required.indexOf( paymentValue ) == -1) {
-                    zcLog2Console( 'Preparing to submit form, since confirmation is not required for "'+paymentValue+'", per the required list: "'+confirmation_required );
-                    jQuery('#checkoutOneLoading').show();
-                    jQuery('#checkoutConfirmationDefault').hide();
-                    jQuery('form[name="checkout_confirmation"]')[0].submit();
-                } else {
-                    zcLog2Console( 'Confirmation required, displaying for '+paymentValue+'.' );
-                }
-            });
-        } else {
-            zcLog2Console( ' ... it does not, submitting.' );
-            jQuery('form[name="checkout_payment"]')[0].submit();
-        }
-    });
-    return false;
-}
-
-var lastPaymentValue = null;
-
-function doesCollectsCardDataOnsite(paymentValue)
-{
-    zcLog2Console( 'Checking doesCollectsCardDataOnsite('+paymentValue+') ...' );
-    if (jQuery('#'+paymentValue+'_collects_onsite').val()) {
-        if (jQuery('#pmt-'+paymentValue).is(':checked')) {
-            zcLog2Console( '... it does!' );
-            lastPaymentValue = paymentValue;
-            return true;
-        }
-    }
-    zcLog2Console( '... it does not.' );
-    lastPaymentValue = null;
-    return false;
-}
-
-function doCollectsCardDataOnsite()
-{
-    var str = jQuery('form[name="checkout_payment"]').serializeArray();
-
-    zcLog2Console( 'doCollectsCardDataOnsite for '+lastPaymentValue );
-    zcJS.ajax({
-        url: "ajax.php?act=ajaxPayment&method=prepareConfirmation",
-        data: str
-    }).done(function( response ) {
-        jQuery('#checkoutPayment').hide();
-        jQuery('#navBreadCrumb').html(response.breadCrumbHtml);
-        jQuery('#checkoutPayment').before(response.confirmationHtml);
-        jQuery(document).attr('title', response.pageTitle);
-        jQuery(document).scrollTop( 0 );
-        if (confirmation_required.indexOf( lastPaymentValue ) == -1) {
-            zcLog2Console( 'Preparing to submit form, since confirmation is not required for "'+lastPaymentValue+'", per the required list: "'+confirmation_required );
-            jQuery('#checkoutOneLoading').show();
-            jQuery('#checkoutConfirmationDefault').hide();
-            jQuery('form[name="checkout_confirmation"]')[0].submit();
-        } else {
-            zcLog2Console( 'Confirmation required, displaying for '+lastPaymentValue+'.' );
-        }
-    });
 }
 
 <?php
@@ -389,6 +281,95 @@ if (!$is_virtual_order) {
     {
         var scrollPos =  jQuery( "#checkoutShippingMethod" ).offset().top;
         jQuery(window).scrollTop( scrollPos );
+    }
+<?php
+    // -----
+    // The "collectsCartDataOnsite" interface built into Zen Cart magically transformed between
+    // Zen Cart 1.5.4 and 1.5.5, so this module for the One-Page Checkout plugin includes both
+    // forms.  That way, if a payment module was written for 1.5.4 it'll work, ditto for those
+    // written for the 1.5.5 method.
+    //
+    // Zen Cart 1.5.4 uses the single-function approach (collectsCardDataOnsite) while the 1.5.5
+    // approach splits the functions int "doesCollectsCardDataOnsite" and "doCollectsCardDataOnsite".
+    // 
+?>
+    collectsCardDataOnsite = function(paymentValue)
+    {
+        zcLog2Console( 'Checking collectsDardDataOnsite('+paymentValue+') ...' );
+        zcJS.ajax({
+            url: "ajax.php?act=ajaxPayment&method=doesCollectsCardDataOnsite",
+            data: {paymentValue: paymentValue}
+        }).done(function( response ) {
+            if (response.data == true) {
+                zcLog2Console( ' ... it does!' );
+                var str = jQuery('form[name="checkout_payment"]').serializeArray();
+
+                zcJS.ajax({
+                    url: "ajax.php?act=ajaxPayment&method=prepareConfirmation",
+                    data: str
+                }).done(function( response ) {
+                    jQuery('#checkoutPayment').hide();
+                    jQuery('#navBreadCrumb').html(response.breadCrumbHtml);
+                    jQuery('#checkoutPayment').before(response.confirmationHtml);
+                    jQuery(document).attr('title', response.pageTitle);
+                    jQuery(document).scrollTop( 0 );
+                    if (confirmation_required.indexOf( paymentValue ) == -1) {
+                        zcLog2Console( 'Preparing to submit form, since confirmation is not required for "'+paymentValue+'", per the required list: "'+confirmation_required );
+                        jQuery('#checkoutOneLoading').show();
+                        jQuery('#checkoutConfirmationDefault').hide();
+                        jQuery('form[name="checkout_confirmation"]')[0].submit();
+                    } else {
+                        zcLog2Console( 'Confirmation required, displaying for '+paymentValue+'.' );
+                    }
+                });
+            } else {
+                zcLog2Console( ' ... it does not, submitting.' );
+                jQuery('form[name="checkout_payment"]')[0].submit();
+            }
+        });
+        return false;
+    }
+
+    var lastPaymentValue = null;
+
+    doesCollectsCardDataOnsite = function(paymentValue)
+    {
+        zcLog2Console( 'Checking doesCollectsCardDataOnsite('+paymentValue+') ...' );
+        if (jQuery('#'+paymentValue+'_collects_onsite').val()) {
+            if (jQuery('#pmt-'+paymentValue).is(':checked')) {
+                zcLog2Console( '... it does!' );
+                lastPaymentValue = paymentValue;
+                return true;
+            }
+        }
+        zcLog2Console( '... it does not.' );
+        lastPaymentValue = null;
+        return false;
+    }
+
+    doCollectsCardDataOnsite = function()
+    {
+        var str = jQuery('form[name="checkout_payment"]').serializeArray();
+
+        zcLog2Console( 'doCollectsCardDataOnsite for '+lastPaymentValue );
+        zcJS.ajax({
+            url: "ajax.php?act=ajaxPayment&method=prepareConfirmation",
+            data: str
+        }).done(function( response ) {
+            jQuery('#checkoutPayment').hide();
+            jQuery('#navBreadCrumb').html(response.breadCrumbHtml);
+            jQuery('#checkoutPayment').before(response.confirmationHtml);
+            jQuery(document).attr('title', response.pageTitle);
+            jQuery(document).scrollTop( 0 );
+            if (confirmation_required.indexOf( lastPaymentValue ) == -1) {
+                zcLog2Console( 'Preparing to submit form, since confirmation is not required for "'+lastPaymentValue+'", per the required list: "'+confirmation_required );
+                jQuery('#checkoutOneLoading').show();
+                jQuery('#checkoutConfirmationDefault').hide();
+                jQuery('form[name="checkout_confirmation"]')[0].submit();
+            } else {
+                zcLog2Console( 'Confirmation required, displaying for '+lastPaymentValue+'.' );
+            }
+        });
     }
 
     function changeShippingSubmitForm (type)
@@ -581,18 +562,11 @@ if ($flagOnSubmit) {
     
 <?php
     // -----
-    // Check to see if multiple versions of jQuery have been loaded or if jQuery hasn't been loaded at all.  
-    // If so, a console message was logged in previous processing in this module; we'll keep the "alternate-
-    // checkout" message on-page. Otherwise, the jQuery processing for the page looks OK so we'll hide the 
-    // alternate-checkout link section and display the "normal" OPC form.
+    // If we get here successfully, the jQuery processing for the page looks OK so we'll hide the
+    // alternate-checkout link and display the "normal" one-page checkout form.
     //
 ?>
-    if (typeof jQuery != 'undefined') {
-        zcLog2Console( 'Checking for multiple jQuery versions ...' );
-        if (!jQueryMultipleOrMissing) {
-            jQuery( '#checkoutPaymentNoJs' ).hide();
-            jQuery( '#checkoutPayment' ).show();
-        }
-    }
+    jQuery( '#checkoutPaymentNoJs' ).hide();
+    jQuery( '#checkoutPayment' ).show();
 });
 //--></script>
