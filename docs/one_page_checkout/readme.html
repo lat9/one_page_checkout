@@ -73,7 +73,7 @@ th { background-color: #eee; }
 
 <body>
   <h1>One-Page Checkout <span class="smaller">for Zen Cart v1.5.4 (and later)</span></h1>
-  <h3>Version 1.4.0 by lat9</h3>
+  <h3>Version 1.4.1 by lat9</h3>
   <h3>Copyright &copy; 2013-2017 <a href="http://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
   <p><b>Credits:</b></p>
   <ol>
@@ -476,6 +476,13 @@ th { background-color: #eee; }
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a> <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!</p>
               <ul>
+                <li>v1.4.1, 2017-10-xx:<ul>
+                  <li>BUGFIX: Correct display of confirmation page when a payment method &quot;collects credit card data onsite&quot; and is configured to display its confirmation page.</li>
+                  <li>The following files were affected:<ol>
+                    <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
+                    <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
+                  </ol></li>
+                </ul></li>
                 <li>v1.4.0, 2017-08-12:<ul>
                   <li>BUGFIX: Correct HTML validation error when the &quot;Terms and Conditions&quot; block is present.</li>
                   <li>CHANGE: Enable payment methods that &quot;collect credit-card data on-site&quot; to be <em>one-page</em>, too!</li>

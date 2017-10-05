@@ -368,6 +368,7 @@ if (!$is_virtual_order) {
                 jQuery('form[name="checkout_confirmation"]')[0].submit();
             } else {
                 zcLog2Console( 'Confirmation required, displaying for '+lastPaymentValue+'.' );
+                jQuery('#checkoutConfirmDefault').show();
             }
         });
     }
