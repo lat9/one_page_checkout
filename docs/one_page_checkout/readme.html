@@ -380,7 +380,6 @@ th { background-color: #eee; }
                   <li>/includes/templates/template_default/css/checkout_one.css</li>
                   <li>/includes/templates/template_default/css/checkout_one_confirmation.css</li>
                   <li>/includes/templates/template_default/images/confirmation_one_loading.gif</li>
-                  <li><span class="corefile">/includes/templates/template_default/jscript/jscript_framework.php</span></li>
                   <li>/includes/templates/template_default/templates/tpl_checkout_one_confirmation_default.php</li>
                   <li>/includes/templates/template_default/templates/tpl_checkout_one_default.php</li>
                   <li>/includes/templates/template_default/templates/tpl_modules_checkout_one_shipping.php</li>
@@ -451,13 +450,12 @@ th { background-color: #eee; }
                 <li>/includes/templates/template_default/css/checkout_one.css</li>
                 <li>/includes/templates/template_default/css/checkout_one_confirmation.css</li>
                 <li>/includes/templates/template_default/images/confirmation_one_loading.gif</li>
-                <li><span class="corefile">/includes/templates/template_default/jscript/jscript_framework.php</span> <span class="smaller">(Added in v1.0.3, the ZC1.5.5a version of the file)</span></li>
                 <li>/includes/templates/template_default/templates/tpl_checkout_one_confirmation_default.php</li>
                 <li>/includes/templates/template_default/templates/tpl_checkout_one_default.php</li>
                 <li>/includes/templates/template_default/templates/tpl_modules_checkout_one_shipping.php <span class="smaller">(Added in v1.0.2)</span></li>
                 <li>/includes/templates/YOUR_TEMPLATE/css/checkout_one.css</li>
                 <li>/includes/templates/YOUR_TEMPLATE/css/checkout_one_confirmation.css</li>
-                <li><span class="template">/includes/templates/YOUR_TEMPLATE/jscript/jscript_framework.php</span> <span class="smaller">(Added in v1.0.3, the ZC1.5.5a version of the file)</span></li>
+                <li><span class="template">/includes/templates/YOUR_TEMPLATE/jscript/jscript_framework.php</span> <span class="smaller">(Added in v1.0.3, the ZC1.5.5a version of the file, with modifications to produce valid HTML)</span></li>
                 <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_ajax_checkout_confirmation_default.php</span> <span class="smaller">(Added in v1.0.3)</span></li>
                 <li>/YOUR_ADMIN/includes/auto_loaders/config.checkout_one.php</li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
@@ -477,9 +475,12 @@ th { background-color: #eee; }
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a> <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!</p>
               <ul>
                 <li>v1.4.1, 2017-10-xx:<ul>
-                  <li>BUGFIX: Correct display of confirmation page when a payment method &quot;collects credit card data onsite&quot; and is configured to display its confirmation page.</li>
+                  <li>BUGFIX: Correct display of confirmation page when a payment method &quot;collects credit-card data onsite&quot; and is configured to display its confirmation page.</li>
+                  <li>BUGFIX: Errors from &quot;collects credit-card data onsite&quot; payment methods not displayed.</li>
                   <li>The following files were affected:<ol>
                     <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
+                    <li><span class="template-changed">/includes/templates/YOUR_TEMPLATE/jscript/jscript_framework.php</li></li>
+                    <li><span class="removed">/includes/templates/template_default/jscript/jscript_framework.php</span> <span class="smaller">(Removed from this distribution <em>only</em>.)</span></li>
                     <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                   </ol></li>
                 </ul></li>
@@ -723,7 +724,7 @@ th { background-color: #eee; }
                   <li>BUGFIX: Enable support for payment methods (like eWay Rapid) that insert form-handling HTML into their &quot;process_button&quot; function's output.</li>
                   <li>BUGFIX: On initial entry, the order's total sometimes didn't include the proper shipping cost.</li>
                   <li>CHANGE: Additional debug configuration added to enable strict PHP processing for the <em>One-Page Checkout</em> page.</li>
-                  <li>CHANGE: Provide pre-integration of the <a href="http://vinosdefrutastropicales.com/index.php?main_page=product_info&cPath=2_7&products_id=46" target="_blank">Products' Options' Stock Manager</a>; yes, it's a shameless plug!</li>
+                  <li>CHANGE: Provide pre-integration of the <a href="https://vinosdefrutastropicales.com/index.php?main_page=product_info&cPath=2_7&products_id=46" target="_blank">Products' Options' Stock Manager</a>; yes, it's a shameless plug!</li>
                   <li>The following files were affected:<ol>
                     <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                     <li>/includes/languages/english/checkout_one_confirmation.php</li>
