@@ -403,7 +403,14 @@ th { background-color: #eee; }
             
             <div id="trouble">
               <p><em>One-Page Checkout</em> relies <em><b>heavily</b></em> on your store to load <b>a single version</b> of jQuery for its use during the checkout processing.  If your store uses plugin payment-, shipping- or order-total-modules, you'll need to validate the <em>OPC</em> to make sure that your store is capable of supporting its processing.  That's why the <em>OPC</em>'s initial installation sets the plugin's configuration as <em><b>Disabled</b></em>, to give a store-owner the opportunity to make sure that his/her store's environment is compatible with the one-page checkout process.</p>
-              <p><em>OPC</em>'s jQuery handling makes use of your browser's &quot;Console&quot; to identify its progress throughout the checkout process.  On most up-to-date browsers, you can view the browser's console by pressing the F12 key and then clicking on the &quot;Console&quot; tab that is shown (usually at the bottom of the viewed page). It's important that there are no jQuery errors reported within that console as those can lead to a variety of symptoms:</p>
+              <p><em>OPC</em>'s jQuery handling makes use of your browser's &quot;Console&quot; to identify its progress throughout the checkout process.  On most up-to-date browsers, you can view the browser's console by pressing the F12 key and then clicking on the &quot;Console&quot; tab that is shown (usually at the bottom of the viewed page).</p>
+              
+              <h3>Some required elements on this page are missing</h3>
+              <p>If you receive a javascript alert reading <em>Please contact the store owner; some required elements of this page are missing.</em>, then your template-override version of <code class="no-pad">/includes/templates/YOUR_TEMPLATE/templates/tpl_checkout_one_default.php</code> is missing one or more of the HTML <code class="no-pad">id</code> elements that <em>OPC</em> requires for its proper operation.</p>
+              <p>Follow the instructions above to view the browser's console-log; the missing elements are identified there.  You'll need to compare your template-override version of the file with the version present in the <code class="no-pad">/includes/templates/template_default/templates</code> directory, adding those required elements back!</p>
+              
+              <h3>Check for jQuery Errors</h3>
+              <p>It's important that there are no jQuery errors reported within the browser-console as those can lead to a variety of symptoms:</p>
               <ol>
                 <li>The <code class="no-pad">checkout_one</code> page shows the message &quot;Sorry, but our expedited checkout process cannot be used.  Click here to use our alternate checkout process.&quot;, where the link presented is back to the multi-page-checkout process.</li>
                 <li>The above message is not displayed, but the <em>Review</em> or <em>Confirm</em> buttons are inoperative upon click.  Note that this symptom is <em>usually</em> associated with multiple jQuery versions being loaded by your store's template and/or plugins.</li>
@@ -477,6 +484,7 @@ th { background-color: #eee; }
                 <li>v1.4.1, 2017-10-xx:<ul>
                   <li>BUGFIX: Correct display of confirmation page when a payment method &quot;collects credit-card data onsite&quot; and is configured to display its confirmation page.</li>
                   <li>BUGFIX: Errors from &quot;collects credit-card data onsite&quot; payment methods not displayed.</li>
+                  <li>CHANGE: Updated the <em>Troubleshooting</em> section in this readme, to identify where to find what &quot;required elements&quot; are missing.</li>
                   <li>The following files were affected:<ol>
                     <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
                     <li><span class="template-changed">/includes/templates/YOUR_TEMPLATE/jscript/jscript_framework.php</li></li>
