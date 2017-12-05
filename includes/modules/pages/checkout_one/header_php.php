@@ -17,6 +17,7 @@ if (!(defined('CHECKOUT_ONE_ENABLED') && is_object($checkout_one) && $checkout_o
 
 require_once DIR_WS_CLASSES . 'http_client.php';
 
+require DIR_WS_MODULES . zen_get_module_directory('require_languages.php');
 
 $checkout_one->debug_message(sprintf('CHECKOUT_ONE_ENTRY, version (%s), Zen Cart version (%s), template (%s)', CHECKOUT_ONE_MODULE_VERSION, PROJECT_VERSION_MAJOR . '.' . PROJECT_VERSION_MINOR, $template_dir));
 
@@ -52,6 +53,7 @@ if (!isset($_SESSION['customer_id']) || !$_SESSION['customer_id']) {
 //
 if ($_SESSION['customers_authorization'] != 0) {
     $messageStack->add_session('header', TEXT_AUTHORIZATION_PENDING_CHECKOUT, 'caution');
+    zen_redirect(zen_href_link(FILENAME_DEFAULT));
 }
 
 // Validate Cart for checkout
@@ -251,6 +253,7 @@ if (!$is_virtual_order) {
     if (!isset($_SESSION['shipping']) || !isset($_SESSION['shipping']['id']) || $_SESSION['shipping']['id'] == '') {
         if (zen_count_shipping_modules() >= 1) {
             $_SESSION['shipping'] = $shipping_modules->cheapest();
+        } elseif (count($quotes) > 0 && count($quotes[0]['methods']) > 0 && !$shipping_selection_changed) {
             $_SESSION['shipping'] = array ( 
                 'id' => $quotes[0]['id'] . '_' . $quotes[0]['methods'][0]['id'], 
                 'title' => $quotes[0]['title'] . ' (' . $quotes[0]['methods'][0]['title'] . ')', 
@@ -308,6 +311,16 @@ $checkout_one->debug_message("CHECKOUT_ONE_AFTER_ORDER_TOTAL_PROCESSING\n" . pri
 // load all enabled payment modules
 require DIR_WS_CLASSES . 'payment.php';
 $payment_modules = new payment;
+
+// -----
+// Check to see if we're in "special checkout", i.e. the payment's being made via the PayPal Express
+// Checkout's "shortcut" button.  If so, "reset" the payment modules to include **only** the payment
+// method presumed to be recorded in the current customer's session.
+//
+if ($payment_modules->in_special_checkout()) {
+    unset($payment_modules);
+    $payment_modules = new payment($_SESSION['payment']);
+}
 $payment_selections = $payment_modules->selection();
 $flagOnSubmit = count($payment_selections);
 
