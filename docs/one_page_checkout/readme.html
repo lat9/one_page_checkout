@@ -47,6 +47,10 @@ th { background-color: #eee; }
 .multi-list { width: 32%; float: left; }
 .box-border { margin: 0 20px; border: 1px solid #444; border-radius: 6px; }
 .template-changed { color: #8ba6ca; font-weight: bold; }
+.scroll { overflow-x: scroll; }
+pre.scroll { border: 1px solid #666; padding: 5px; }
+.new-code { font-weight: bold; color: red; }
+#details h2 { border-top: 1px solid #666; }
 
 .etabs { margin: 0; padding: 0; }
 .tab { display: inline-block; zoom:1; *display:inline; background: #eee; border: solid 1px #999; border-bottom: none; border-radius: 4px 4px 0 0; margin: 0; }
@@ -177,13 +181,14 @@ th { background-color: #eee; }
                   <li>First Data Hosted Checkout Payment Pages</li>
                   <li>Layaway Plan</li>
                   <li>NoChex</li>
-                  <li>Payeezy (payeezyjszc)</li>
+                  <li>Payeezy (payeezyjszc) <span class="smaller">(See below<sup>1</sup> for v0.96 and earlier)</span></li>
                   <li>PayPal Express Checkout (paypalwpp)</li>
                   <li>Purchase Order (purchaseorders)</li>
                   <li>Sage Pay Form</li>
-                  <li>Square (square)</li>
+                  <li>Square (square) <span class="smaller">(See below<sup>1</sup> for v0.90 and earlier)</span></li>
                   <li>Stripe-Pay</li>
                 </ol>
+                <sup>1</sup>Requires patching to interoperate with the <em>PayPal Express Checkout</em> &quot;shortcut&quot; button processing.  See the &quot;Payment Method Interoperation&quot; tab for additional information.
               </div>
               <div class="clearBoth"></div>
             </div>
@@ -193,6 +198,20 @@ th { background-color: #eee; }
               <p>The primary interoperability issue between <em>OPC</em> (or any checkout-page &quot;consolidator&quot;) and a payment-method centers on the collective javascript/jQuery implementation. Newer payment-processors' APIs have become more complicated, resulting in additional jQuery/AJAX constructs within the associated Zen Cart payment-method.</p>
               <p>That issue arises when the checkout-page and the payment-method bind to the same DOM event, whether it's the submission of the form or a click of a submit-button. The net result is that some jQuery fragment is not run which, in turn, causes the page/payment-method integration to fail (i.e. orders cannot be placed).</p>
               <p>The following guidelines are <em>assumed</em> by One-Page Checkout in support of interoperation with the varied payment-methods, identifying which selectors each class of module binds to. This will serve to reduce those jQuery event conflicts and lessen the integration headaches for payment-method developers.</p>
+              
+              <h2><code class="no-pad">checkout_payment</code>-loaded jscript modules</h2>
+              <p>When a payment module requires a separate javascript/jQuery &quot;helper&quot; on the <code class="no-pad">checkout_payment</code> page, that separately-loaded script must be sensitive to the Zen Cart implementation of the <em>PayPal Express Checkout</em> &quot;shortcut button&quot;.  Specifically, when the customer is checking-out via that &quot;shortcut&quot;, <b>the only payment-method that is formatted</b> for the customer's use is that for <em>PayPal Express Checkout</em>. The Zen Cart payment-class method <code class="no-pad">in_special_checkout</code> can be used by a payment module's separately-loaded script to determine a case where that script should not be loaded.</p>
+              <p>There are two known cases of this interoperability issue:</p>
+              <ol>
+                <li><a href="https://www.zen-cart.com/downloads.php?do=file&id=156" target="_blank">Square</a>, v0.90 and earlier, <code class="no-pad">/includes/modules/pages/checkout_payment/jscript_square.php</code>.  As reported in the payment-method's Zen Cart <a href="https://www.zen-cart.com/showthread.php?222449-Square-Payment-Module-for-Zen-Cart-Support-Thread&p=1339138#post1339138" target="_blank">support thread</a>, the code fragment highlighted below must be incorporated to correct the interoperability issue:<br />
+                <pre class="no-pad scroll">if (<span class="new-code">$payment_modules->in_special_checkout() || </span>!defined(MODULE_PAYMENT_SQUARE_STATUS) || MODULE_PAYMENT_SQUARE_STATUS != 'True' || (!defined('MODULE_PAYMENT_SQUARE_APPLICATION_ID') || MODULE_PAYMENT_SQUARE_ACCESS_TOKEN == '')) {
+    return false;
+}</pre></li>
+                <li><a href="https://www.zen-cart.com/downloads.php?do=file&id=2050" target="_blank">Payeezy JS</a>, v0.96 and earlier, <code class="no-pad">/includes/modules/pages/checkout_payment/jscript_payeezy.php</code>.  As reported in the payment-method's <a href="https://github.com/zencart/payeezyjs/issues/1" target="_blank">GitHub repository</a>, the code fragment highlighted below must be incorporated to correct the interoperability issue:<br /><pre class="no-pad scroll">if (<span class="new-code">$payment_modules->in_special_checkout() || </span>!defined(MODULE_PAYMENT_PAYEEZYJSZC_STATUS) || MODULE_PAYMENT_PAYEEZYJSZC_STATUS != 'True' || (!defined('MODULE_PAYMENT_PAYEEZYJSZC_JSSECURITY_KEY') && !defined('MODULE_PAYMENT_PAYEEZYJSZC_JSSECURITY_KEY_SANDBOX') )) {
+	return false;
+}</pre></li>
+              </ol>
+              <p>If your site required a scripting patch, as described above, be sure to copy the updated jscript file to <code class="no-pad">/includes/modules/pages/checkout_one</code>!</p>
               
               <h2>Common Page Elements</h2>
               <p>There are four (4) elements on the &quot;normal&quot; <code class="no-pad">checkout-payment</code> page that have bearing on the page's form submissions:</p>
@@ -483,7 +502,7 @@ th { background-color: #eee; }
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a> <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!</p>
               <ul>
                 <li>v1.4.2, 2017-12-xx:<ul>
-                  <li>BUGFIX: Correct interaction of PayPal Express Checkout's shortcut button.</li>
+                  <li>BUGFIX: Correct interaction of PayPal Express Checkout's shortcut button.  See this readme's <em>Overview / Payment Method Interoperation</em> tab for additional information.</li>
                   <li>The following files were affected:<ol>
                     <li>/includes/modules/pages/checkout_one/header_php.php</li>
                     <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
