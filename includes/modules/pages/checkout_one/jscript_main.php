@@ -51,6 +51,7 @@ echo $input_array . '}';
 <script type="text/javascript"><!--
 var selected;
 var submitter = null;
+
 // -----
 // These functions are "legacy", carried over from the like-named module in /includes/modules/pages/checkout_payment
 //
@@ -159,7 +160,10 @@ function methodSelect(theMethod)
 //
 function setJavaScriptEnabled ()
 {
-    document.getElementById( 'javascript-enabled' ).value = '1';
+    var jsEnabled = document.getElementById( 'javascript-enabled' );
+    if (jsEnabled) {
+        jsEnabled.value = '1';
+    }
 }
 
 // -----
@@ -238,6 +242,12 @@ jQuery(document).ready(function(){
     if (elementsMissing) {
         alert( 'Please contact the store owner; some required elements of this page are missing.' );
     }
+    
+    // -----
+    // Perform some page-load type operations, initializing the "environment".
+    //
+    shippingIsBilling();
+    setJavaScriptEnabled();
   
     // -----
     // Disallow the Enter key (so that all form-submittal actions occur via "click"), except when that

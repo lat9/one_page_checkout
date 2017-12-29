@@ -1,1 +1,0 @@
-shippingIsBilling (); setJavaScriptEnabled ();

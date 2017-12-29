@@ -27,7 +27,7 @@ $nojs_link = zen_href_link(FILENAME_CHECKOUT_SHIPPING, 'opctype=jserr', 'SSL');
 // Start main form ...
 //
 ?>
-<div class="centerColumn" id="checkoutPayment" style="display:none;">
+<div class="centerColumn opc-base" id="checkoutPayment" style="display:none;">
 <?php
   echo zen_draw_form ('checkout_payment', zen_href_link (FILENAME_CHECKOUT_ONE_CONFIRMATION, '', 'SSL'), 'post', 'id="checkout_payment"') . zen_draw_hidden_field ('action', 'process') . zen_draw_hidden_field ('javascript_enabled', '0', 'id="javascript-enabled"'); 
 ?>
@@ -97,6 +97,7 @@ require $template->get_template_dir('tpl_modules_opc_submit_block.php', DIR_WS_T
 
 echo '</form>';
 ?>
+    <div class="opc-overlay"></div>
 </div>
   
 <div id="checkoutOneLoading" style="display: none;"><?php echo zen_image($template->get_template_dir(CHECKOUT_ONE_LOADING, DIR_WS_TEMPLATE, $current_page_base ,'images') . '/' . CHECKOUT_ONE_LOADING, CHECKOUT_ONE_LOADING_ALT); ?></div>
