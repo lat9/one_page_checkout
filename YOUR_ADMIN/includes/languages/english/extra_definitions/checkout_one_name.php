@@ -8,4 +8,4 @@ define('BOX_TOOLS_CHECKOUT_ONE', 'One-Page Checkout Settings');
 define('ERROR_STORESIDE_CONFIG', 'The <em>One-Page Checkout</em> plugin has been disabled.  The file &quot;%s&quot; is required for the plugin\'s proper operation.');
 
 define('TEXT_OPC_INSTALLED', 'The <em>One-Page Checkout</em> plugin [%s] has been successfully installed.');
-define('TEXT_OPC_UPDATED', 'The <em>One-Page Checkout</em> plugin was successfully upgraded from [%1$s] to [%2$x].');
+define('TEXT_OPC_UPDATED', 'The <em>One-Page Checkout</em> plugin was successfully upgraded from [%1$s] to [%2$s].');
