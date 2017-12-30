@@ -23,7 +23,7 @@ H1, H2, H3, H4 { font-weight: bold; }
 h1 { font-size: 20px; }
 h2 { font-size: 16px; }
 fieldset { padding: 10px; margin-top: 5px; }
-legend { background-color: #eee; border: 1px solid #666; padding: 3px; border-radius: 4px; }
+legend { background-color: #eee; border: 1px solid #666; padding: 3px 5px; border-radius: 4px; }
 pre, code { padding-left: 25px; font-family: Courier; font-size: 12pt; }
 pre.no-pad, code.no-pad { padding: 0; margin: 0; }
 ol li, ul li, ul li ul li { margin: 5px 0; padding: 0; }
@@ -265,57 +265,73 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
                </ol></p>
               <p>Click on an area in the image to view additional information about that section, or just scroll down to see that information.</p>
               <img class="wide" src="checkout_one.jpg" alt="The One-Page Checkout page" title="What the customer sees" usemap="#image-map" />
+
               <map name="image-map">
-                 <area alt="Give your customers some guidance" title="Upper Message" href="#upper-message" shape="poly" coords="9,87,1401,89,1401,131,9,131" />
-                 <area alt="Billing/Shipping Address" title="Billing/Shipping Address" href="#billing-shipping" shape="poly" coords="11,137,692,136,693,384,9,383" />
-                 <area alt="Order Comments" title="Order Comments" href="#comments" shape="poly" coords="9,384,695,384,695,533,8,535" />
-                 <area alt="Order Credits" title="Order Credits" href="#order-credits" shape="poly" coords="11,549,693,552,698,793,15,790" />
-                 <area alt="Shopping Cart" title="Shopping Cart" href="#cart" shape="poly" coords="10,806,1403,806,1401,1021,9,1024" />
-                 <area alt="Shipping Method" title="Shipping Method" href="#shipping" shape="poly" coords="721,135,1406,135,1408,454,725,444" />
-                 <area alt="Payment Method" title="Payment Method" href="#payment" shape="poly" coords="721,467,1406,467,1409,664,722,659" />
-                 <area alt="Pre-confirmation Message" title="Pre-confirmation Message" href="#pre-confirm" shape="poly" coords="10,1041,1406,1037,1402,1176,14,1170" />
-                 <area alt="Terms and Conditions" title="Terms and Conditions" href="#conditions" shape="poly" coords="12,1186,1405,1186,1405,1316,11,1316" />
-                 <area alt="Order Confirmation" title="Order Confirmation" href="#confirm" shape="poly" coords="14,1318,1404,1322,1408,1404,18,1398" />
+                    <area alt="Billing Address" title="Billing Address" href="#billing" shape="poly" coords="11,136,692,138,695,334,11,334" />
+                    <area alt="Shipping Address" title="Shipping Address" href="#shipping" shape="poly" coords="11,339,694,340,692,387,13,386" />
+                    <area alt="Comments" title="Comments" href="#comments" shape="poly" coords="13,389,693,385,693,529,13,528" />
+                    <area alt="Shipping Methods" title="Shipping Methods" href="#shipping" shape="poly" coords="724,137,1403,137,1404,449,724,449" />
+                    <area alt="Payment Methods" title="Payment Methods" href="#payment" shape="poly" coords="722,468,1406,468,1404,658,722,659" />
+                    <area alt="Order Credits" title="Order Credits" href="#order-credits"  shape="poly" coords="12,552,693,552,694,787,14,787" />
+                    <area alt="Shopping Cart" title="Shopping Cart" href="#cart" shape="poly" coords="13,808,1405,807,1404,1021,13,1022" />
+                    <area alt="Pre-confirmation Message" title="Pre-confirmation Message" href="#pre-confirm" shape="poly" coords="12,1041,1406,1042,1404,1166,10,1168" />
+                    <area alt="Terms and Conditions" title="Terms and Conditions" href="#conditions" shape="poly" coords="10,1187,1404,1187,1405,1311,15,1314" />
+                    <area alt="Order Confirmation" title="Order Confirmation" href="#confirm" shape="poly" coords="10,1327,1408,1330,1411,1403,12,1402" />
+                    <area alt="Give your customers some guidance" title="Upper Message" href="#upper-message" shape="poly" coords="14,83,1396,78,1402,129,13,127" />
               </map>
               
               <fieldset id="upper-message">
                 <legend>Upper Message</legend>
                 <p>The <em>Upper Message</em> section <em>conditionally</em> displays at the very top of the page.  This message, which defaults to empty text, can be customized by editing the <code class="no-pad">TEXT_CHECKOUT_ONE_TOP_INSTRUCTIONS</code> definition, present in <code class="no-pad">/includes/languages/english/checkout_one.php</code>.  If you're going to change the text, you should copy that file to <code class="no-pad">/includes/languages/YOUR_LANGUAGE/YOUR_TEMPLATE/checkout_one.php</code> before making your edits.</p>
+                <p>This section is formatted by <code class="no-pad">/includes/templates/template_default/templates/tpl_checkout_one_default.php</code>.</p>
               </fieldset>
               
-              <fieldset id="billing-shipping">
-                <legend>Billing/Shipping</legend>
-                <p>This section, always located at the top of the left-side pane, displays the order's current billing and shipping addresses.  On initial entry to the page, the <b><em>Shipping Address, same as billing?</em></b> checkbox is checked &hellip; unless you've configured <em>OPC</em> not to display that checkbox, in which case both addresses are shown.  Your customer can change their billing or shipping address (if allowed by the selected payment method) by clicking the associated &quot;Edit&quot; button.</p>
+              <fieldset id="billing">
+                <legend>Billing-Address Block</legend>
+                <p>This section, always displayed, is formatted by <code class="no-pad">/includes/templates/template_default/templates/tpl_modules_opc_billing_address.php</code>.</p>
+                <p>The plugin's default layout displays this block at the top of the left-side pane and displays the order's current billing address.  If allowed by the selected payment method, this block includes an &quot;Edit&quot; button, allowing the customer to change their billing address.</p>
+              </fieldset>
+              
+              <fieldset id="shipping">
+                <legend>Shipping-Address Block</legend>
+                <p>This section, displayed <em>only if</em> the order includes at least one physical (i.e. shippable) product, is formatted by <code class="no-pad">/includes/templates/template_default/templates/tpl_modules_opc_shipping_address.php</code>.</p>
+                <p>The plugin's default layout displays this block in the left-side pane just under the <em>Billing-Address Block</em>.  On initial entry to the page, the <b><em>Shipping Address, same as billing?</em></b> checkbox is checked &hellip; unless you've configured <em>OPC</em> not to display that checkbox.  The shipping address is displayed when that checkbox is unchecked. If allowed by the selected payment method, this block includes an &quot;Edit&quot; button, allowing the customer to change their shipping address.</p>
               </fieldset>
               
               <fieldset id="comments">
                 <legend>Order Comments</legend>
-                <p>This section, always located just below the <em>Billing/Shipping</em> section in the left-side pane, displays a textbox field into which the customer enters any comments pertinent to the order.</p>
+                <p>This section, always displayed, is formatted by <code class="no-pad">/includes/templates/template_default/templates/tpl_modules_opc_comments.php</code>.</p>
+                <p>The plugin's default layout displays this block in the left-side pane just under the <em>Shipping-Address Block</em>, including a textbox field into which the customer enters any comments pertinent to the order.</p>
               </fieldset>
                
               <fieldset id="order-credits">
                 <legend>Order Credits</legend>
-                <p>This section displays <em>conditionally</em> in the left-side pane, just below the <b><em>Order Comments</em></b> section, if your store has enabled any order-credit type &quot;order-totals&quot;, e.g. coupons or gift certificates.</p>
+                <p>This section is displayed <em>only if</em> your store has enabled any credit-class &quot;order-totals&quot;, e.g. coupons or gift certificates; its formatting is provided by <code class="no-pad">/includes/templates/template_default/templates/tpl_modules_opc_credit_selections.php</code>.</p>
+                <p>The plugin's default layout displays this block in the left-side pane just under the <em>Order Comments</em>.</p>
               </fieldset>   
                
               <fieldset id="shipping">
-                <legend>Shipping</legend>
-                <p>If the current order contains at least one <b>physical</b> product, this section displays at the top of the right-side pane and contains the shipping methods that are currently valid for the order.  When the customer changes the shipping-method selection, a teeny AJAX message is sent back to the store to allow the order's totals-block to be re-built.</p>
+                <legend>Shipping-Method Selection</legend>
+                <p>This section, displayed <em>only if</em> the current order contains at least one physical (i.e. shippable) product, is formatted by <code class="no-pad">/includes/templates/template_default/templates/tpl_modules_opc_shipping_choices.php</code>.</p>
+                <p>The plugin's default layout displays this block at the top of the right-side pane and contains the shipping methods that are currently valid for the order.  When the customer changes the shipping-method selection, a teeny AJAX message is sent back to your store to allow the order's totals-block to be re-built.</p>
               </fieldset>   
                 
               <fieldset id="payment">
-                <legend>Payment</legend>
-                <p>This section displays in the right-side pane, just below the <b><em>Shipping</em></b> section.</p>
+                <legend>Payment-Method Selection</legend>
+                <p>This section, always displayed, is formatted by <code class="no-pad">/includes/templates/template_default/templates/tpl_modules_opc_payment_choices.php</code>.</p>
+                <p>The plugin's default layout displays this block in the right-hand pane, just below the <em>Shipping-Method Selection</em> block (if present) and contains the payment methods that are currently valid for the order.</p>
               </fieldset>
               
               <fieldset id="cart" class="clearBoth">
                 <legend>Shopping Cart / Order Totals</legend>
-                <p>This section displays full-screen width, just below the upper panes, and identifies the order's current product list and totals.</p>
+                <p>This section, always displayed, is formatted by <code class="no-pad">/includes/templates/template_default/templates/tpl_modules_opc_shopping_cart.php</code>.</p>
+                <p>The plugin's default layout displays this block full-screen width, just below the upper panes, and identifies the order's current product list and totals.</p>
               </fieldset>
               
               <fieldset id="pre-confirm">
                 <legend>Pre-Confirmation Message</legend>
-                <p>This section <em>conditionally</em> displays full-screen width, just below the <b><em>Shopping Cart</em></b> section.  If you want to display a pre-confirmation message to your customers, you'll need to change a couple of language-file constants present in <code class="no-pad">/includes/languages/english/checkout_one.php</code>.</p>
+                <p>This section, displayed under the conditions described below, is formatted by <code class="no-pad">/includes/templates/template_default/templates/tpl_modules_opc_instructions.php</code>.</p>
+                <p>The plugin's default layout displays this block full-screen width, just below the <b><em>Shopping Cart</em></b> section.  If you want to display a pre-confirmation message to your customers, you'll need to change a couple of language-file constants present in <code class="no-pad">/includes/languages/english/checkout_one.php</code>.</p>
                 <p>If you're going to change the text, you should copy that file to <code class="no-pad">/includes/languages/YOUR_LANGUAGE/YOUR_TEMPLATE/checkout_one.php</code> before making your edits; two constants are &quot;involved&quot;:</p>
                 <ol>
                   <li><em>TEXT_CHECKOUT_ONE_INSTRUCTIONS</em>.  This constant, if not empty, results in the <code class="no-pad">fieldset</code> being displayed, with the text you've entered surrounded by a <code class="no-pad">p</code> tag.</li>
@@ -325,12 +341,14 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
               
               <fieldset id="conditions">
                 <legend>Terms and Condition</legend>
-                <p>This section <em>conditionally</em> displays full-screen width, just above the <b><em>Order Confirmation</em></b> section, based on your store's setting of <em>Configuration-&gt;Regulations-&gt;Confirm Terms and Conditions During Checkout Procedure</em>.</p>
+                <p>This section, displayed under the conditions described below, is formatted by <code class="no-pad">/includes/templates/template_default/templates/tpl_modules_opc_conditions.php</code>.</p>
+                <p>The plugin's default layout displays this block full-screen width, just above the <b><em>Order Confirmation</em></b> section, based on your store's setting of <em>Configuration-&gt;Regulations-&gt;Confirm Terms and Conditions During Checkout Procedure</em>.</p>
               </fieldset>
                
               <fieldset id="confirm">
                 <legend>Order Confirmation</legend>
-                <p>This section displays full-screen width as the last element of the page, containing the order-confirmation submit-button and shows the customer the email-address to which the order-confirmation email will be sent.</p>
+                <p>This section, always displayed, is formatted by <code class="no-pad">/includes/templates/template_default/templates/tpl_modules_opc_submit_block.php</code>.</p>
+                <p>The plugin's default layout displays this block full-screen width as the last element of the page, containing the order-confirmation submit-buttons and shows the customer the email-address to which the order-confirmation email will be sent.</p>
               </fieldset>
                            
             </div>
@@ -403,6 +421,16 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
                   <li>/includes/templates/template_default/templates/tpl_checkout_one_confirmation_default.php</li>
                   <li>/includes/templates/template_default/templates/tpl_checkout_one_default.php</li>
                   <li>/includes/templates/template_default/templates/tpl_modules_checkout_one_shipping.php</li>
+                  <li>/includes/templates/template_default/templates/tpl_modules_opc_billing_address.php</li>
+                  <li>/includes/templates/template_default/templates/tpl_modules_opc_comments.php</li>
+                  <li>/includes/templates/template_default/templates/tpl_modules_opc_conditions.php</li>
+                  <li>/includes/templates/template_default/templates/tpl_modules_opc_credit_selections.php</li>
+                  <li>/includes/templates/template_default/templates/tpl_modules_opc_instructions.php</li>
+                  <li>/includes/templates/template_default/templates/tpl_modules_opc_payment_choices.php</li>
+                  <li>/includes/templates/template_default/templates/tpl_modules_opc_shipping_address.php</li>
+                  <li>/includes/templates/template_default/templates/tpl_modules_opc_shipping_choices.php</li>
+                  <li>/includes/templates/template_default/templates/tpl_modules_opc_shopping_cart.php</li>
+                  <li>/includes/templates/template_default/templates/tpl_modules_opc_submit_block.php</li>
                   <li>/includes/templates/YOUR_TEMPLATE/css/checkout_one.css</li>
                   <li>/includes/templates/YOUR_TEMPLATE/css/checkout_one_confirmation.css</li>
                   <li><span class="template">/includes/templates/YOUR_TEMPLATE/jscript/jscript_framework.php</span></li>
