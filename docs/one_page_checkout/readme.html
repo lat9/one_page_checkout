@@ -53,6 +53,9 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
 .new-code { font-weight: bold; color: red; }
 #details h2 { border-top: 1px solid #666; }
 
+#config tr td:first-child { font-style: italic; }
+#config tr td:last-child, #config tr th:last-child { text-align: center; }
+
 .etabs { margin: 0; padding: 0; }
 .tab { display: inline-block; zoom:1; *display:inline; background: #eee; border: solid 1px #999; border-bottom: none; border-radius: 4px 4px 0 0; margin: 0; }
 .tab a { font-size: 14px; line-height: 2em; display: block; padding: 0 10px; outline: none; }
@@ -79,7 +82,7 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
 <body>
   <h1>One-Page Checkout <span class="smaller">for Zen Cart v1.5.4 (and later)</span></h1>
   <h3>Version 1.5.0 by lat9</h3>
-  <h3>Copyright &copy; 2013-2017 <a href="https://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
+  <h3>Copyright &copy; 2013-2018 <a href="https://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
   <p><b>Credits:</b></p>
   <ol>
     <li>The checkout-confirmation loading .gif file was created using the tool at <a href="http://preloaders.net/en/free" target="_blank">http://preloaders.net/en/free</a>.</li>
@@ -237,16 +240,58 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
             
             <div id="config">
               <p>Once you've installed the plugin, an additional item is available in your admin's <em>Configuration</em> menu: <b>One-Page Checkout Settings</b>.  The following settings are available:</p>
-              <ul>
-                <li><em>Version/Release Date</em>.  This display-only field shows the plugin's current version and release date.</li>
-                <li><em>Enable One-Page Checkout?</em>.  Choose <em>true</em> to enable for all customers, <em>false</em> to disable (default) or <em>conditional</em> to enable the processing only for customers identified by <b>Enable: Customer List</b>.</li>
-                <li><em>Enable: Customer List</em>. When you <em>conditionally</em> enable the plugin, use this setting to limit the customers for which the plugin is enabled. Leave the setting blank (the default) to <em>disable</em> the plugin for all customers or identify a comma-separated list of customer_id values for whom the plugin is to be <em>enabled</em>. <span class="smaller">(Added in v1.1.0)</span></li>
-                <li><em>Update Shipping AJAX Time-out</em>.  Use this setting to adjust the timeout to use when the plugin requests an update to the shipping quotes on the "checkout_one" page. The default setting of 5000 (5 seconds) should work for most stores. If your store has enabled multiple external shipping modules (e.g. USPS, UPS and FedEx), you might need to increase this value. <span class="smaller">(Added in v1.0.3)</span></li>
-                <li><em>Enable Shipping=Billing?</em>.  When enabled, the &quot;checkout_one&quot; page presents the customer with a checkbox-input to indicate that their shipping and billing addresses are the same.  If you don't want that control to be shown, i.e. the billing and shipping addresses are both always displayed, set the value to <em>false</em>.  <span class="smaller">(Added in v1.3.0)</span></li>
-                <li><em>Payment Methods Requiring Confirmation</em>.  There are some payment methods that <strong>require</strong> the confirmation page to be displayed for their proper operation.  You can add to that comma-separated list any of the payment methods used on your store for which you'd like the customer to confirm. <span class="smaller">(Added in v1.3.0)</span></li>
-                <li><em>Enable One-Page Checkout Debug?</em>. When enabled, debug files named myDEBUG-one_page_checkout-<em>xx</em>.log are created in your /logs folder (<em>xx</em> is the customer_id for the checkout). Use the <b>true</b> or <b>full</b> settings in combination with the <em>Debug: Customer List</em> setting to limit the customers for which the debug-action is taken.  Setting the value to <b>full</b> will also set the PHP error-level for the checkout_one page's processing so that <b>all</b> PHP errors are logged.</li>
-                <li><em>Debug: Customer List</em>. When you enable the plugin's debug, use this setting to limit the customers for which the debug-logs are generated.  Leave the setting blank (the default) to debug <b>all</b> customers or identify a comma-separated list of customer_id values to limit the debug to just those customers.</li>
-              </ul>
+              <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Version Added</th>
+                </tr>
+                <tr>
+                    <td>Version/Release Date</td>
+                    <td>This display-only field shows the plugin's current version and release date.</td>
+                    <td>1.0.0</td>
+                </tr>
+                <tr>
+                    <td>Enable One-Page Checkout?</td>
+                    <td>Choose <em>true</em> to enable for all customers, <em>false</em> to disable (default) or <em>conditional</em> to enable the processing only for customers identified by <b>Enable: Customer List</b>.</td>
+                    <td>1.0.0</td>
+                </tr>
+                <tr>
+                    <td>Enable: Customer List</td>
+                    <td>When you <em>conditionally</em> enable the plugin, use this setting to limit the customers for which the plugin is enabled. Leave the setting blank (the default) to <em>disable</em> the plugin for all customers or identify a comma-separated list of customer_id values for whom the plugin is to be <em>enabled</em>.</td>
+                    <td>1.1.0</td>
+                </tr>
+                <tr>
+                    <td>Update Shipping AJAX Time-out</td>
+                    <td>Use this setting to adjust the timeout to use when the plugin requests an update to the shipping quotes on the "checkout_one" page. The default setting of 5000 (5 seconds) should work for most stores. If your store has enabled multiple external shipping modules (e.g. USPS, UPS and FedEx), you might need to increase this value.</td>
+                    <td>1.0.3</td>
+                </tr>
+                <tr>
+                    <td>Enable Shipping=Billing?</td>
+                    <td>When enabled, the &quot;checkout_one&quot; page presents the customer with a checkbox-input to indicate that their shipping and billing addresses are the same.  If you don't want that control to be shown, i.e. the billing and shipping addresses are both always displayed, set the value to <em>false</em>.</td>
+                    <td>1.3.0</td>
+                </tr>
+                <tr>
+                    <td>Payment Methods Requiring Confirmation</td>
+                    <td>There are some payment methods that <strong>require</strong> the confirmation page to be displayed for their proper operation.  You can add to that comma-separated list any of the payment methods used on your store for which you'd like the customer to confirm.</td>
+                    <td>1.3.0</td>
+                </tr>
+                <tr>
+                    <td>Load Minified Script Files?</td>
+                    <td>Should the plugin load the minified version of its jQuery scripts, reducing the page-load time for the <code class="no-pad">checkout_one</code> page?  Default: <em>true</em>.</td>
+                    <td>1.5.0</td>
+                </tr>
+                <tr>
+                    <td>Enable One-Page Checkout Debug?</td>
+                    <td>When enabled, debug files named myDEBUG-one_page_checkout-<em>xx</em>.log are created in your /logs folder (<em>xx</em> is the customer_id for the checkout). Use the <b>true</b> or <b>full</b> settings in combination with the <em>Debug: Customer List</em> setting to limit the customers for which the debug-action is taken.  Setting the value to <b>full</b> will also set the PHP error-level for the checkout_one page's processing so that <b>all</b> PHP errors are logged.</td>
+                    <td>1.0.0</td>
+                </tr>
+                <tr>
+                    <td>Debug: Customer List</td>
+                    <td>When you enable the plugin's debug, use this setting to limit the customers for which the debug-logs are generated.  Leave the setting blank (the default) to debug <b>all</b> customers or identify a comma-separated list of customer_id values to limit the debug to just those customers.</td>
+                    <td>1.0.0</td>
+                </tr>
+              </table>
               <p>There are also a couple of constants present in the plugin's language file (/includes/languages/english/checkout_one.php) that you can use to control the <code class="no-pad">checkout_one</code> page's display.  Each of these values are an empty string (i.e. no display produced) as-shipped by the plugin.</p>
               <ol>
                 <li><b>TEXT_CHECKOUT_ONE_TOP_INSTRUCTIONS</b>.  This constant, echoed within a <code class="no-pad">p</code> tag, defines any upper-page instructions you might want to give to your customers.</li>
@@ -411,6 +456,8 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
                   <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_gv.php</span></li>
                   <li><span class="template">/includes/languages/english/YOUR_TEMPLATE/checkout_confirmation.php</span></li>
                   <li>/includes/modules/pages/checkout_one/header_php.php</li>
+                  <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
+                  <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
                   <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
                   <li>/includes/modules/pages/checkout_one/on_load_main.js</li>
                   <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
@@ -498,6 +545,8 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
                 <li><span class="template">/includes/languages/english/YOUR_TEMPLATE/checkout_confirmation.php</span></li>
                 <li>/includes/languages/english/extra_definitions/checkout_one_extra_definitions.php <span class="smaller">(Added in v1.0.8)</span></li>
                 <li>/includes/modules/pages/checkout_one/header_php.php</li>
+                <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js <span class="smaller">(Added in v1.5.0)</span></li>
+                <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js <span class="smaller">(Added in v1.5.0)</span></li>
                 <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
                 <li><span class="removed">/includes/modules/pages/checkout_one/on_load_main.js</span> <span class="smaller">(Removed/stubbed-out in v1.5.0)</span></li>
                 <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
@@ -545,6 +594,8 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
                     <li>CHANGE: Split major template-blocks on the <code class="no-pad">checkout_one</code> page into separate files.</li>
                     <li>CHANGE: Update the <code class="no-pad">checkout_one</code> page's jQuery to allow the major processing to be a separate file.</li>
                     <li>The following files were affected:<ol>
+                        <li><span class="added">/includes/modules/pages/checkout_one/jquery.checkout_one.js</span></li>
+                        <li><span class="added">/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</span></li>
                         <li>/includes/pages/checkout_one/jscript_main.php</li>
                         <li>/includes/pages/checkout_one/on_load_main.js <span class="smaller">(No longer used; empty file)</span></li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_checkout_one_default.php</span></li>

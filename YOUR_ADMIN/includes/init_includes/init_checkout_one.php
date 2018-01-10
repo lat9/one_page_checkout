@@ -1,14 +1,14 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2017, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2018, Vinos de Frutas Tropicales.  All rights reserved.
 //
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
 }
 
-define('CHECKOUT_ONE_CURRENT_VERSION', '1.5.0-beta1');
-define('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2017-12-21');
+define('CHECKOUT_ONE_CURRENT_VERSION', '1.5.0-beta2');
+define('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2018-01-10');
 
 if (isset($_SESSION['admin_id'])) {
     $version_release_date = CHECKOUT_ONE_CURRENT_VERSION . ' (' . CHECKOUT_ONE_CURRENT_UPDATE_DATE . ')';
@@ -100,6 +100,15 @@ if (isset($_SESSION['admin_id'])) {
         );
     }
 
+    if (version_compare(CHECKOUT_ONE_MODULE_VERSION, '1.5.0', '<')) {
+        $db->Execute(
+            "INSERT IGNORE INTO " . TABLE_CONFIGURATION . " 
+                ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) 
+                VALUES 
+                ( 'Load Minified Script File?', 'CHECKOUT_ONE_MINIFIED_SCRIPT', 'true', 'Should the plugin load the minified version of its jQuery script, reducing the page-load time for the <code>checkout_one</code> page?<br /><br />Default: <b>true</b>.', $cgi, now(), 25, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),')"
+        );
+    }
+    
     if (CHECKOUT_ONE_MODULE_VERSION != '0.0.0' && CHECKOUT_ONE_MODULE_VERSION != $version_release_date) {
         $messageStack->add(sprintf(TEXT_OPC_UPDATED, CHECKOUT_ONE_MODULE_VERSION, $version_release_date), 'success');
         $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '$version_release_date', last_modified = now() WHERE configuration_key = 'CHECKOUT_ONE_MODULE_VERSION' LIMIT 1");
