@@ -7,6 +7,7 @@ Unlike its predecessors, there is no `no_account` page provided for *OPC-GC*.  I
 Page Name | Modifications
 -------------  | -------------
 [address_book](address_book_page.md) | Recognizes when a customer-account does not yet have a defined primary address (i.e. the customer has registered for an account).
+[checkout_one](checkout_one_page.md) | Updated to gather guest-customer contact information and provide full support for the plugin's temporary billing- and shipping-addresses.
 [checkout_success](checkout_success_page.md) | Recognizes when an order has been placed by a guest.  The guest has the opportunity to "convert" to a fully-registered account by supplying an account password.
 [create_account](create_account_page.md) | Displays a modified form for entry, requiring only the non-address-related elements for the customer.
 [create_account_success](create_account_success_page.md) | Displays a modified version of the page when the just-created account is for a registered-account only.

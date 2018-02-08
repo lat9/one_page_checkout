@@ -10,7 +10,8 @@ v2.0.0 continues that fee-less tradition, with the introduction of the following
 
 - ***Guest checkout***. Enables a store to provide a fast-path through its checkout process.  An *OPC-GC* customer's information is gathered and saved for *only the current order*.  In this checkout path, the `create_account`, `checkout_shipping`, `checkout_payment` and `checkout_confirmation` steps are combined in a single, AJAX-aided `checkout_one` page.
 
-- ***Registered accounts***.  Enables a store to gather *minimal* information from a customer in its account-creation processing.  An *OPC-RA* customer has all the benefits of a regular store customer, but they have not yet provided any address-related information.  They can sign up for newsletters, product notifications and wishlists &hellip; just like full-account holders.  When an *OPC-RA* customer checks out, the `checkout_one` page's processing requires that they supply that address information. 
+- ***Registered accounts***.  Enables a store to gather *minimal* information from a customer in its account-creation processing.  An *OPC-RA* customer has all the benefits of a regular store customer, but they have not yet provided any address-related information.  They can sign up for newsletters, product notifications and wishlists &hellip; just like full-account holders.  When an *OPC-RA* customer checks out, the `checkout_one` page's processing requires that they supply that address information.
+
 - ***Temporary addresses***.  A non-guest-customer has the option of using an address *only for the current order*.  
 
 Refer to the links below for additional information.
