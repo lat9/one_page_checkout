@@ -21,7 +21,7 @@ There are a couple of optional elements displayed with this block:
 
 The address-gathering within the page has been updated for v2.0.0, now displaying a full address form when an order's billing and/or shipping addresses are changed.  That display changes depending on the [mode](address_management.md) in which the checkout is being processed.
 
-### Guest Checkout ###
+## Guest Checkout ##
 
 For a guest-checkout, once the customer has supplied their **Contact Information**, the **Billing Address** block is given focus.  Since the customer has no saved addresses &mdash; they're a *guest* &mdash; neither the saved-address dropdown nor the *Save this Address* checkbox are displayed. 
 
@@ -31,7 +31,7 @@ For a guest-checkout, once the customer has supplied their **Contact Information
 
 ----------
 
-### Registered-Account Checkout ###
+## Registered-Account Checkout ##
 
 When a *registered-account* customer enters the checkout process, the first step is to collect the billing- and shipping-address to be used for the order &hellip; so the **Billing Address** block is given focus.  Unlike the handling for guest-checkout, the customer is given the opportunity to save the entered address(es) in their *Address Book*.
 
@@ -43,7 +43,7 @@ When a *registered-account* customer enters the checkout process, the first step
 
 ----------
 
-### Full-Account Checkout ###
+## Full-Account Checkout ##
 
 When a customer with a full-account (i.e. they've saved at least one address to their *Address Book*) enters the checkout process, their "Primary Address" is initially displayed in the **Billing Address** block.  The top of the address-gathering form includes a drop-down selection of their current *Address Book* entries.
 
