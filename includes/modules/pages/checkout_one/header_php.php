@@ -65,17 +65,13 @@ if ($_SESSION['valid_to_checkout'] == false) {
 }
 
 // Stock Check
-$flagAnyOutOfStock = false;
-$stock_check = array ();
-if (STOCK_CHECK == 'true') {
-    for ($i = 0, $n = count ($products_array); $i < $n; $i++) {
-        if ($stock_check[$i] = zen_check_stock($products_array[$i]['id'], $products_array[$i]['quantity'])) {
-            $flagAnyOutOfStock = true;
+if (STOCK_CHECK == 'true' && STOCK_ALLOW_CHECKOUT != 'true') {
+    foreach ($products_array as $current_product) {
+        $qtyAvailable = zen_get_products_stock($current_product['id']);
+        // compare against product inventory, and against mixed=YES
+        if ($qtyAvailable < $current_product['quantity'] || $qtyAvailable < $_SESSION['cart']->in_cart_mixed($current_product['id'])) {
+            zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
         }
-    }
-    // Out of Stock
-    if (STOCK_ALLOW_CHECKOUT != 'true' && $flagAnyOutOfStock == true) {
-        zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
     }
 }
 unset ($products_array);
