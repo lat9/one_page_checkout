@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2017, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2018, Vinos de Frutas Tropicales.  All rights reserved.
 //
 // -----
 // This should be first line of the script:
@@ -137,7 +137,7 @@ if (isset($_SESSION['cart']->cartID)) {
         $_SESSION['cartID'] = $_SESSION['cart']->cartID;
     }
 } else {
-    zen_redirect(zen_href_link(FILENAME_TIME_OUT));
+    zen_redirect(zen_href_link(FILENAME_TIME_OUT, '', 'SSL'));
 }
 
 // -----
