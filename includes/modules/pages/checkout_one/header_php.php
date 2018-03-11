@@ -180,7 +180,7 @@ if (!$is_virtual_order) {
     $shipping_modules = new shipping;
     
 //-bof-product_delivery_by_postcode (PDP) integration
-    if (function_exists('zen_get_UKPostcodeFirstPart')) {
+    if (defined('MODULE_SHIPPING_LOCALDELIVERY_POSTCODE') && defined('MODULE_SHIPPING_STOREPICKUP_POSTCODE') && function_exists('zen_get_UKPostcodeFirstPart')) {
         $check_delivery_postcode = $order->delivery['postcode'];
   
         // shorten UK / Canada postcodes to use first part only
