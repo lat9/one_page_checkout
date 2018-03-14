@@ -1,0 +1,10 @@
+.opc-block-2 { width: 50%; float: left; }
+.opc-block-3 { width: 33.33%; float: left; }
+.opc-block > div, .opc-block > label { padding: 7px; }
+.opc-block hr { width: 95%; }
+.opc-head { font-size: larger; font-weight: bold; }
+.opc-label { padding-top: 5px; }
+
+@media (max-width:767px){
+    .opc-block { width: 100%; }
+}

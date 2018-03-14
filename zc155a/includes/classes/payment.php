@@ -155,7 +155,7 @@ class payment extends base {
        $js =  $js .'    alert(error_message);' . "\n";
        $js =  $js . '    return false;' . "\n";
        $js =  $js .'  } else {' . "\n";
-       $js =  $js .' var result = true '  . "\n";
+       $js =  $js .' var result = true; '  . "\n";
        if ($this->doesCollectsCardDataOnsite == true && PADSS_AJAX_CHECKOUT == '1') {
          $js .= '      result = !(doesCollectsCardDataOnsite(payment_value));' . "\n";
        }
@@ -176,10 +176,7 @@ class payment extends base {
           $selection = $GLOBALS[$class]->selection();
           if (isset($GLOBALS[$class]->collectsCardDataOnsite) && $GLOBALS[$class]->collectsCardDataOnsite == true) {
             $selection['fields'][] = array('title' => '',
-//-bof-one_page_checkout-lat9  *** 1 of 1 ***
-//                                         'field' => zen_draw_hidden_field($this->code . '_collects_onsite', 'true', 'id="' . $this->code. '_collects_onsite"'),
-                                         'field' => zen_draw_hidden_field($class . '_collects_onsite', 'true', 'id="' . $class. '_collects_onsite"'),
-//-eof-one_page_checkout-lat9  *** 1 of 1 ***
+                                         'field' => zen_draw_hidden_field($class . '_collects_onsite', 'true', 'id="' . $class . '_collects_onsite"'),
                                          'tag' => '');
 
           }

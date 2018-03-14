@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="icon" href="../vinos_favicon.ico" type="image/x-icon" />
-<link href="http://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
 <title>One-Page Checkout</title>
 
 <style type="text/css">
@@ -12,7 +12,7 @@
 a, a:active, a:visited { color: #006666; text-decoration: none; }
 a:hover { color:#00CC99; text-decoration: underline; }
 BODY, P, H1, H2, H3, H4, H5, H6, LI, TD, DD, DT, pre, code, img, table, #outer-container {
-  font-family: Roboto, Verdana, AvantGarde, Tahoma, Arial, sans-serif;
+  font-family: Lato, Verdana, AvantGarde, Tahoma, Arial, sans-serif;
   font-size: 12pt;
   color: black;
   padding: 0px;
@@ -23,7 +23,7 @@ H1, H2, H3, H4 { font-weight: bold; }
 h1 { font-size: 20px; }
 h2 { font-size: 16px; }
 fieldset { padding: 10px; margin-top: 5px; }
-legend { background-color: #eee; border: 1px solid #666; padding: 3px 5px; border-radius: 4px; }
+legend { background-color: #eee; border: 1px solid #666; padding: 3px; border-radius: 4px; }
 pre, code { padding-left: 25px; font-family: Courier; font-size: 12pt; }
 pre.no-pad, code.no-pad { padding: 0; margin: 0; }
 ol li, ul li, ul li ul li { margin: 5px 0; padding: 0; }
@@ -52,9 +52,11 @@ th { background-color: #eee; }
 pre.scroll { border: 1px solid #666; padding: 5px; }
 .new-code { font-weight: bold; color: red; }
 #details h2 { border-top: 1px solid #666; }
-
-#config tr td:first-child { font-style: italic; }
-#config tr td:last-child, #config tr th:last-child { text-align: center; }
+#config th:last-child, #config td:last-child { text-align: center; }
+#storefront .wrap { width: 50%; float: left; }
+#storefront .wrap > div { border: 1px solid #444; margin: 5px; }
+#storefront .wrap h3 { background-color: #77bfc7; padding: 0 5px; }
+#storefront .wrap:nth-child(even) { clear: both; }
 
 .etabs { margin: 0; padding: 0; }
 .tab { display: inline-block; zoom:1; *display:inline; background: #eee; border: solid 1px #999; border-bottom: none; border-radius: 4px 4px 0 0; margin: 0; }
@@ -65,7 +67,7 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
 .tab-container .panel-container { background: #fff; border: solid #666 1px; padding: 10px; border-radius: 0 4px 4px 4px; }
 .panel-container { margin-bottom: 10px; }
 @media (max-width: 979px) {
-  .multi-list { width: 95%; float: none; margin: 0 auto; }
+  .multi-list, #storefront .wrap { width: 95%; float: none; margin: 0 auto; }
 }
 -->
 </style>
@@ -80,8 +82,8 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
 </head>
 
 <body>
-  <h1>One-Page Checkout <span class="smaller">for Zen Cart v1.5.4 (and later)</span></h1>
-  <h3>Version 1.5.0 by lat9</h3>
+  <h1>One-Page Checkout &hellip; with Guest &hellip; <span class="smaller">for Zen Cart v1.5.4 (and later)</span></h1>
+  <h3>Version 2.0.0 by lat9</h3>
   <h3>Copyright &copy; 2013-2018 <a href="https://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
   <p><b>Credits:</b></p>
   <ol>
@@ -89,7 +91,11 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
     <li>The HTML map that helps to describe the sections of the checkout_one page in this document was created using the tool at <a href="http://imagemap-generator.dariodomi.de/" target="_blank">http://imagemap-generator.dariodomi.de/</a>.</li>
     <li>Responsive image-map handling courtesy of <a href="https://github.com/davidjbradshaw/image-map-resizer" target="_blank">https://github.com/davidjbradshaw/image-map-resizer</a>.</li>
     <li>Browser detection class courtesy of <a href="https://github.com/cbschuld/Browser.php" target="_blank">https://github.com/cbschuld/Browser.php</a>.</li>
+    <li>Simple CSS overlay courtesy of <a href="https://github.com/KorenLeslieCohen/simple-css-overlay" target="_blank">https://github.com/KorenLeslieCohen/simple-css-overlay</a>.</li>
+    <li>Guest checkout, especially the <code class="no-pad">orders_status</code> page's processing, based on the <a href="https://www.zen-cart.com/showthread.php?196995-COWOA-%28for-ZC-v1-5-x%29">COWOA</a> (by @DivaVocals, @countrycharm and others) and <a href="https://www.zen-cart.com/downloads.php?do=file&id=2131">COWAA</a> (by @davewest) plugins.</li>
   </ol>
+  <hr />
+  <p>Additional information (especially for features introduced in <em>OPC v2.0.0</em> can be found in the plugin's <a href="https://lat9.github.io/one_page_checkout/" target="_blank">github.io page</a>.</li>
   <hr />
   <p>Current Support Thread at Zen Cart Forums: <a href="https://www.zen-cart.com/showthread.php?220781-One-Page-Checkout-Support-Thread">https://www.zen-cart.com/showthread.php?220781-One-Page-Checkout-Support-Thread</a></p>
   
@@ -114,6 +120,7 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
           <div class="panel-container">
             <div id="operation">
               <p>This plugin streamlines the flow that your customers see during your store's checkout process, combining the handling required for the <code class="no-pad">checkout_shipping</code>, <code class="no-pad">checkout_payment</code> and <code class="no-pad">checkout_confirmation</code> into a single-page display.</p>
+              <p>Starting with v2.0.0, your customers can also <em>Checkout as Guest</em>!</p>
               <div class="box-border">
                 <p>The plugin's design utilizes <b><i>standard Zen Cart</i></b> HTML/CSS layout when rendering its new pages, so the look-and-feel of your store gets &quot;inherited&quot;.  Some templates make <em>drastic</em>  modifications to that layout &mdash; removing those <em>standard</em> HTML/CSS selectors &mdash; which causes this plugin's newly-added pages to display improperly.  The following templates are known to be incompatible with the <em>One-Page Checkout</em> plugin:<p>
                 <ol>
@@ -142,7 +149,7 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
                 </ol>
               </div>
               <p><em>One-Page Checkout's</em> installation loads all the plugin's files into the folders associated with the <em>template_default</em> template's use; that way, the processing is available for <b>all</b> templates you might use in your store.  If you make changes to those default files, you'll use the Zen Cart &quot;override&quot; system to make your updates.  For example, if you're adding a top-of-page message, you'll copy the file /includes/languages/english/checkout_one.php to the /includes/languages/english/YOUR_TEMPLATE folder and make your changes there.</p>
-              <p>The plugin has been validated on Zen Cart 1.5.4 and Zen Cart 1.5.5a through Zen Cart 1.5.5e, using the following shipping, order-total and payment methods:</p>
+              <p>The plugin has been validated on Zen Cart 1.5.4 and Zen Cart 1.5.5a through Zen Cart 1.5.5f, using the following shipping, order-total and payment methods:</p>
               <div class="multi-list">
                 <h3>Shipping Methods</h3>
                 <ol>
@@ -310,7 +317,6 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
                </ol></p>
               <p>Click on an area in the image to view additional information about that section, or just scroll down to see that information.</p>
               <img class="wide" src="checkout_one.jpg" alt="The One-Page Checkout page" title="What the customer sees" usemap="#image-map" />
-
               <map name="image-map">
                     <area alt="Billing Address" title="Billing Address" href="#billing" shape="poly" coords="11,136,692,138,695,334,11,334" />
                     <area alt="Shipping Address" title="Shipping Address" href="#shipping" shape="poly" coords="11,339,694,340,692,387,13,386" />
@@ -325,56 +331,56 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
                     <area alt="Give your customers some guidance" title="Upper Message" href="#upper-message" shape="poly" coords="14,83,1396,78,1402,129,13,127" />
               </map>
               
-              <fieldset id="upper-message">
-                <legend>Upper Message</legend>
+              <div class="wrap" id="upper-message"><div>
+                <h3>Upper Message</h3>
                 <p>The <em>Upper Message</em> section <em>conditionally</em> displays at the very top of the page.  This message, which defaults to empty text, can be customized by editing the <code class="no-pad">TEXT_CHECKOUT_ONE_TOP_INSTRUCTIONS</code> definition, present in <code class="no-pad">/includes/languages/english/checkout_one.php</code>.  If you're going to change the text, you should copy that file to <code class="no-pad">/includes/languages/YOUR_LANGUAGE/YOUR_TEMPLATE/checkout_one.php</code> before making your edits.</p>
                 <p>This section is formatted by <code class="no-pad">/includes/templates/template_default/templates/tpl_checkout_one_default.php</code>.</p>
-              </fieldset>
+              </div></div>
               
-              <fieldset id="billing">
-                <legend>Billing-Address Block</legend>
+              <div class="wrap" id="billing"><div>
+                <h3>Billing-Address Block</h3>
                 <p>This section, always displayed, is formatted by <code class="no-pad">/includes/templates/template_default/templates/tpl_modules_opc_billing_address.php</code>.</p>
                 <p>The plugin's default layout displays this block at the top of the left-side pane and displays the order's current billing address.  If allowed by the selected payment method, this block includes an &quot;Edit&quot; button, allowing the customer to change their billing address.</p>
-              </fieldset>
+              </div></div>
               
-              <fieldset id="shipping">
-                <legend>Shipping-Address Block</legend>
+              <div class="wrap" id="shipping"><div>
+                <h3>Shipping-Address Block</h3>
                 <p>This section, displayed <em>only if</em> the order includes at least one physical (i.e. shippable) product, is formatted by <code class="no-pad">/includes/templates/template_default/templates/tpl_modules_opc_shipping_address.php</code>.</p>
                 <p>The plugin's default layout displays this block in the left-side pane just under the <em>Billing-Address Block</em>.  On initial entry to the page, the <b><em>Shipping Address, same as billing?</em></b> checkbox is checked &hellip; unless you've configured <em>OPC</em> not to display that checkbox.  The shipping address is displayed when that checkbox is unchecked. If allowed by the selected payment method, this block includes an &quot;Edit&quot; button, allowing the customer to change their shipping address.</p>
-              </fieldset>
+              </div></div>
               
-              <fieldset id="comments">
-                <legend>Order Comments</legend>
+              <div class="wrap" id="comments"><div>
+                <h3>Order Comments</h3>
                 <p>This section, always displayed, is formatted by <code class="no-pad">/includes/templates/template_default/templates/tpl_modules_opc_comments.php</code>.</p>
                 <p>The plugin's default layout displays this block in the left-side pane just under the <em>Shipping-Address Block</em>, including a textbox field into which the customer enters any comments pertinent to the order.</p>
-              </fieldset>
+              </div></div>
                
-              <fieldset id="order-credits">
-                <legend>Order Credits</legend>
+              <div class="wrap" id="order-credits"><div>
+                <h3>Order Credits</h3>
                 <p>This section is displayed <em>only if</em> your store has enabled any credit-class &quot;order-totals&quot;, e.g. coupons or gift certificates; its formatting is provided by <code class="no-pad">/includes/templates/template_default/templates/tpl_modules_opc_credit_selections.php</code>.</p>
                 <p>The plugin's default layout displays this block in the left-side pane just under the <em>Order Comments</em>.</p>
-              </fieldset>   
+              </div></div>   
                
-              <fieldset id="shipping">
-                <legend>Shipping-Method Selection</legend>
+              <div class="wrap" id="shipping"><div>
+                <h3>Shipping-Method Selection</h3>
                 <p>This section, displayed <em>only if</em> the current order contains at least one physical (i.e. shippable) product, is formatted by <code class="no-pad">/includes/templates/template_default/templates/tpl_modules_opc_shipping_choices.php</code>.</p>
                 <p>The plugin's default layout displays this block at the top of the right-side pane and contains the shipping methods that are currently valid for the order.  When the customer changes the shipping-method selection, a teeny AJAX message is sent back to your store to allow the order's totals-block to be re-built.</p>
-              </fieldset>   
+              </div></div>   
                 
-              <fieldset id="payment">
-                <legend>Payment-Method Selection</legend>
+              <div class="wrap" id="payment"><div>
+                <h3>Payment-Method Selection</h3>
                 <p>This section, always displayed, is formatted by <code class="no-pad">/includes/templates/template_default/templates/tpl_modules_opc_payment_choices.php</code>.</p>
                 <p>The plugin's default layout displays this block in the right-hand pane, just below the <em>Shipping-Method Selection</em> block (if present) and contains the payment methods that are currently valid for the order.</p>
-              </fieldset>
+              </div></div>
               
-              <fieldset id="cart" class="clearBoth">
-                <legend>Shopping Cart / Order Totals</legend>
+              <div class="wrap" id="cart"><div>
+                <h3>Shopping Cart / Order Totals</h3>
                 <p>This section, always displayed, is formatted by <code class="no-pad">/includes/templates/template_default/templates/tpl_modules_opc_shopping_cart.php</code>.</p>
                 <p>The plugin's default layout displays this block full-screen width, just below the upper panes, and identifies the order's current product list and totals.</p>
-              </fieldset>
+              </div></div>
               
-              <fieldset id="pre-confirm">
-                <legend>Pre-Confirmation Message</legend>
+              <div class="wrap" id="pre-confirm"><div>
+                <h3>Pre-Confirmation Message</h3>
                 <p>This section, displayed under the conditions described below, is formatted by <code class="no-pad">/includes/templates/template_default/templates/tpl_modules_opc_instructions.php</code>.</p>
                 <p>The plugin's default layout displays this block full-screen width, just below the <b><em>Shopping Cart</em></b> section.  If you want to display a pre-confirmation message to your customers, you'll need to change a couple of language-file constants present in <code class="no-pad">/includes/languages/english/checkout_one.php</code>.</p>
                 <p>If you're going to change the text, you should copy that file to <code class="no-pad">/includes/languages/YOUR_LANGUAGE/YOUR_TEMPLATE/checkout_one.php</code> before making your edits; two constants are &quot;involved&quot;:</p>
@@ -382,19 +388,21 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
                   <li><em>TEXT_CHECKOUT_ONE_INSTRUCTIONS</em>.  This constant, if not empty, results in the <code class="no-pad">fieldset</code> being displayed, with the text you've entered surrounded by a <code class="no-pad">p</code> tag.</li>
                   <li><em>TEXT_CHECKOUT_ONE_INSTRUCTION_LABEL</em>.  This constant, if not empty, is displayed as the fieldset's <code class="no-pad">label</code>.</li>
                 </ol>
-              </fieldset>
+              </div></div>
               
-              <fieldset id="conditions">
-                <legend>Terms and Condition</legend>
+              <div class="wrap" id="conditions"><div>
+                <h3>Terms and Condition</h3>
                 <p>This section, displayed under the conditions described below, is formatted by <code class="no-pad">/includes/templates/template_default/templates/tpl_modules_opc_conditions.php</code>.</p>
                 <p>The plugin's default layout displays this block full-screen width, just above the <b><em>Order Confirmation</em></b> section, based on your store's setting of <em>Configuration-&gt;Regulations-&gt;Confirm Terms and Conditions During Checkout Procedure</em>.</p>
-              </fieldset>
+              </div></div>
                
-              <fieldset id="confirm">
-                <legend>Order Confirmation</legend>
+              <div class="wrap" id="confirm"><div>
+                <h3>Order Confirmation</h3>
                 <p>This section, always displayed, is formatted by <code class="no-pad">/includes/templates/template_default/templates/tpl_modules_opc_submit_block.php</code>.</p>
                 <p>The plugin's default layout displays this block full-screen width as the last element of the page, containing the order-confirmation submit-buttons and shows the customer the email-address to which the order-confirmation email will be sent.</p>
-              </fieldset>
+              </div></div>
+              
+              <div class="clearBoth"></div>
                            
             </div>
             
@@ -416,20 +424,42 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
               <hr />
               <p><b>Notes:</b></p>
               <ol>
-                <li>These instructions have changed <b>significantly</b> for v1.0.3 of the <em>One-Page Checkout</em> plugin!  Please make sure that you've read the full instructions before beginning your installation or upgrade.</li>
+                <li>These instructions have changed <b>significantly</b> for v1.0.3 and v2.0.0 of the <em>One-Page Checkout</em> plugin!  Please make sure that you've read the full instructions before beginning your installation or upgrade.</li>
                 <li>When you're upgrading the plugin, make sure to merge any of the plugin's base template and language files with any template-override versions that you might have created!</li>
               </ol>
               <hr />
               <p>There are <span class="corefile">core-file</span> and <span class="template">template-override</span> changes required by this plugin; you should <strong>always</strong> backup your cart's database and files prior to making any changes.  Unzip the plugin's package file and then:</p>
-              <ol type="A">
-                <li>Rename the YOUR_TEMPLATE folders (3 of them) to match your store's template name:<ol type="a">
+              <ol type="A"> 
+                <li>Rename the YOUR_TEMPLATE folders <b>(5 of them)</b> to match your store's template name:<ol type="a">
                   <li>/includes/languages/english/YOUR_TEMPLATE</li>
+                  <li>/includes/languages/english/html_includes/YOUR_TEMPLATE</li>
                   <li>/includes/languages/english/modules/order_total/YOUR_TEMPLATE</li>
+                  <li>/includes/modules/YOUR_TEMPLATE</li>
                   <li>/includes/templates/YOUR_TEMPLATE</li>
                 </ol></li>
                 <li>Rename the YOUR_ADMIN folder to match your store's admin-folder name.</li>
-                <li>Merge the <span class="corefile">core-file</span> and <span class="template">template-override</span> modifications required by this plugin with your store's existing copy of the file, using the plugin's version of the file if not currently present in your store's file-system.</li>
-                <li><em><b>If your store is running a Zen Cart version less than 1.5.5b, there are a couple of <span class="corefile">core-files</span> that need to be at the ZC1.5.5b version for <em>OPC</em> to operate properly:</b></em> <span class="smaller">(If your store is running a Zen Cart version of 1.5.5c or later, continue the installation/upgrade with step <b>E</b>.)</span><ol>
+                <li>Merge the <span class="template">template-override</span> modifications required by this plugin with your store's existing copy of each file, using the plugin's version of the file if not currently present in your store's file-system.<ol>
+                  <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_coupon.php</span></li>
+                  <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_gv.php</span></li>
+                  <li><span class="template">/includes/languages/english/YOUR_TEMPLATE/checkout_confirmation.php</span></li>
+                  <li><span class="template">/includes/modules/YOUR_TEMPLATE/downloads.php</span></li>
+                  <li><span class="template">/includes/templates/YOUR_TEMPLATE/jscript/jscript_framework.php</span></li>
+                  <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_ajax_checkout_confirmation_default.php</span></li>
+                  <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_modules_downloads.php</span></li>
+                  <li>If your store plans to use the <em>guest-checkout</em> functionality of <em>OPC</em> v2.0.0 and later, you'll need to update your current template's <code class="no-pad">common/tpl_header.php</code> module to modify the display of the <code class="no-pad">account</code> and <code class="no-pad">logoff</code> pages' links during a guest checkout.  <em>OPC</em> provides two versions of that modification:<ol type="a">
+                    <li>If your template is based on the Zen Cart <code class="no-pad">classic</code> template, merge your template's file with <span class="template">/includes/templates/YOUR_TEMPLATE/common/tpl_header.php</span>.</li>
+                    <li>If your template is based on the Zen Cart <code class="no-pad">responsive_classic</code> template, merge your template's file with <span class="template">/includes/templates/YOUR_RC_CLONE/common/tpl_header.php</span>.</li>
+                    <li>For all other templates, determine which of the above files most closely matches your template's version of the file for the merge.</li>
+                  </ol></li>
+                </ol></li>
+                <li>Merge the <span class="corefile">core-file</span> overrides required for <em>all</em> supported Zen Cart versions with your current store files:<ol>
+                    <li><span class="corefile">/includes/classes/order.php</span></li>
+                    <li><span class="corefile">/includes/classes/message_stack.php</span></li>
+                    <li><span class="corefile">/includes/modules/order_total/ot_coupon.php</span></li>
+                    <li><span class="corefile">/includes/modules/pages/download/header_php.php</span></li>
+                    <li><span class="corefile">/includes/modules/pages/login/header_php.php</span></li>
+                </ol></li>
+                <li><em><b>If your store is running a Zen Cart version less than 1.5.5b, there are a couple of additional <span class="corefile">core-files</span> that need to be at the ZC1.5.5b version for <em>OPC</em> to operate properly:</b></em>. If your store is running a Zen Cart version of 1.5.5c or later, continue the installation/upgrade with step <b>F</b>.<ol>
                   <li>For Zen Cart 1.5.4, copy the files from the <em>OPC</em> plugin's /zc154 directory:<ol>
                     <li><span class="corefile">/ajax.php</span> <span class="smaller">(Added in v1.3.0)</span></li>
                   </ol></li>
@@ -442,52 +472,102 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
                     <li><span class="corefile">/includes/classes/payment.php</span></li>
                   </ol></li>
                 </ol></li>
-                <li>Sign into your Zen Cart's admin panel.</li>
-                <li>Copy the plugin's files (with the folders renamed as identified in steps <b>A</b> and <b>B</b>) to your store's folder structure:<ol>
+                <li><em><b>If you store is running a Zen Cart version less than 1.5.6 and you want to quickly identify those orders placed by guests</b></em>, there are additional edits required for <code class="no-pad corefile">/YOUR_ADMIN/orders.php</code>.  See <a href="https://github.com/lat9/one_page_checkout/blob/master/pages/admin_orders_configuration.md" target="_blank">these</a> instructions on the <em>OPC</em> GitHub repository.</li>
+                <li>Sign into your Zen Cart's admin panel.  Due the the number of files that require uploading, I suggest that you place the site into <em>Maintenance Mode</em> by setting <b><i>Configuration-&gt;Website Maintenance-&gt;Down for Maintenance: ON/OFF</i></b> to <em>true</em>.</li>
+                <li>Copy the plugin's files &mdash; with the folders renamed as identified in steps <b>A</b> and <b>B</b> and the file-merges performed as identified in steps <b>C</b>, <b>D</b> and <b>E</b> &mdash; to your store's directory structure.  You'll use either your webhost's cPanel File Manager or an FTP program (like WinSCP or FileZilla) to perform this copy.<ol>
                   <li>/includes/auto_loaders/config.checkout_one.php</li>
+                  <li>/includes/classes/OnePageCheckout.php</li>
+                  <li><span class="corefile">/includes/classes/order.php</span></li>
                   <li><span class="corefile">/includes/classes/message_stack.php</span></li>
                   <li>/includes/classes/Vinos_Browser.php</li>
                   <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
                   <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                   <li>/includes/extra_datafiles/checkout_one_filenames.php</li>
+                  <li>/includes/functions/extra_functions/one_page_checkout_functions.php</li>
+                  <li>/includes/langauges/english/address_book_register.php</li>
                   <li>/includes/languages/english/checkout_one.php</li>
                   <li>/includes/languages/english/checkout_one_confirmation.php</li>
+                  <li>/includes/languages/english/checkout_process_guest.php</li>
+                  <li>/includes/languages/english/checkout_success_guest.php</li>
+                  <li>/includes/languages/english/create_account_register.php</li>
+                  <li>/includes/langauges/english/create_account_success_register.php</li>
+                  <li>/includes/languages/english/login_guest.php</li>
+                  <li>/includes/languages/english/order_status.php</li>
+                  <li>/includes/languages/english/extra_definitions/checkout_one_extra_definitions.php</li>
+                  <li>/includes/languages/english/html_includes/define_checkout_success_guest.php</li>
+                  <li>/includes/languages/english/html_includes/YOUR_TEMPLATE/define_checkout_success_guest.php</li>
                   <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_coupon.php</span></li>
                   <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_gv.php</span></li>
                   <li><span class="template">/includes/languages/english/YOUR_TEMPLATE/checkout_confirmation.php</span></li>
+                  <li><span class="corefile">/includes/modules/order_total/ot_coupon.php</span></li>
+                  <li>/includes/modules/pages/address_book/header_php_address_book_register.php</li>
+                  <li>/includes/modules/pages/address_book/main_template_vars.php</li>
                   <li>/includes/modules/pages/checkout_one/header_php.php</li>
                   <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
                   <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
+                  <li>/includes/modules/pages/checkout_one/jquery.checkout_one_addr.js</li>
+                  <li>/includes/modules/pages/checkout_one/jquery.checkout_one_addr.min.js</li>
                   <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
                   <li>/includes/modules/pages/checkout_one/on_load_main.js</li>
                   <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
                   <li>/includes/modules/pages/checkout_one_confirmation/jscript_main.php</li>
+                  <li>/includes/modules/pages/checkout_success/header_php_guest.php</li>
+                  <li>/includes/modules/pages/checkout_success/main_template_vars.php</li>
+                  <li>/includes/modules/pages/create_account/header_php_create_account_register.php</li>
+                  <li>/includes/modules/pages/create_account/jscript_form_check_register.php</li>
+                  <li>/includes/modules/pages/create_account/main_template_vars.php</li>
+                  <li>/includes/modules/pages/create_account_success/header_php_create_account_success_register.php</li>
+                  <li>/includes/modules/pages/create_account_success/main_template_vars.php</li>
+                  <li><span class="corefile">/includes/modules/pages/login/header_php.php</span></li>
+                  <li>/includes/modules/pages/login/header_php_login_guest.php</li>
+                  <li>/includes/modules/pages/login/main_template_vars.php</li>
+                  <li>/includes/modules/pages/order_status/header_php.php</li>
+                  <li><span class="template">/includes/modules/YOUR_TEMPLATE/downloads.php</span></li>
                   <li>/includes/templates/template_default/css/checkout_one.css</li>
                   <li>/includes/templates/template_default/css/checkout_one_confirmation.css</li>
+                  <li>/includes/templates/template_default/css/checkout_success.css</li>
+                  <li>/includes/templates/template_default/css/create_account.css</li>
+                  <li>/includes/templates/template_default/css/login.css</li>
                   <li>/includes/templates/template_default/images/confirmation_one_loading.gif</li>
+                  <li>/includes/templates/template_default/templates/tpl_address_book_register.php</li>
                   <li>/includes/templates/template_default/templates/tpl_checkout_one_confirmation_default.php</li>
                   <li>/includes/templates/template_default/templates/tpl_checkout_one_default.php</li>
+                  <li>/includes/templates/template_default/templates/tpl_checkout_success_guest.php</li>
+                  <li>/includes/templates/template_default/templates/tpl_create_account_register.php</li>
+                  <li>/includes/templates/template_default/templates/tpl_create_account_success_register.php</li>
+                  <li>/includes/templates/template_default/templates/tpl_login_guest.php</li>
                   <li>/includes/templates/template_default/templates/tpl_modules_checkout_one_shipping.php</li>
+                  <li>/includes/templates/template_default/templates/tpl_modules_opc_address_block.php</li>
                   <li>/includes/templates/template_default/templates/tpl_modules_opc_billing_address.php</li>
                   <li>/includes/templates/template_default/templates/tpl_modules_opc_comments.php</li>
                   <li>/includes/templates/template_default/templates/tpl_modules_opc_conditions.php</li>
                   <li>/includes/templates/template_default/templates/tpl_modules_opc_credit_selections.php</li>
+                  <li>/includes/templates/template_default/templates/tpl_modules_opc_customer_info.php</li>
                   <li>/includes/templates/template_default/templates/tpl_modules_opc_instructions.php</li>
                   <li>/includes/templates/template_default/templates/tpl_modules_opc_payment_choices.php</li>
                   <li>/includes/templates/template_default/templates/tpl_modules_opc_shipping_address.php</li>
                   <li>/includes/templates/template_default/templates/tpl_modules_opc_shipping_choices.php</li>
                   <li>/includes/templates/template_default/templates/tpl_modules_opc_shopping_cart.php</li>
                   <li>/includes/templates/template_default/templates/tpl_modules_opc_submit_block.php</li>
+                  <li>/includes/templates/template_default/templates/tpl_order_status_default.php</li>
+                  <li><span class="template">/includes/templates/YOUR_TEMPLATE/common/tpl_header.php</span></li>
                   <li>/includes/templates/YOUR_TEMPLATE/css/checkout_one.css</li>
                   <li>/includes/templates/YOUR_TEMPLATE/css/checkout_one_confirmation.css</li>
+                  <li>/includes/templates/YOUR_TEMPLATE/css/checkout_success.css</li>
+                  <li>/includes/templates/YOUR_TEMPLATE/css/create_account.css</li>
+                  <li>/includes/templates/YOUR_TEMPLATE/css/login.css</li>
                   <li><span class="template">/includes/templates/YOUR_TEMPLATE/jscript/jscript_framework.php</span></li>
                   <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_ajax_checkout_confirmation_default.php</span></li>
+                  <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_modules_downloads.php</span></li>
                   <li>/YOUR_ADMIN/includes/auto_loaders/config.checkout_one.php</li>
+                  <li>/YOUR_ADMIN/includes/classes/observers/CheckoutOneAdminObserver.php</li>
                   <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                   <li>/YOUR_ADMIN/includes/languages/english/extra_definitions/checkout_one_name.php</li>
                 </ol></li>
                 <li>Click the &quot;Admin Home&quot; link in your Zen Cart's top admin menu.  This action will cause the plugin's installation script to run.</li>
                 <li>Now, check your store's current <code class="no-pad">/includes/modules/pages/checkout_payment</code> directory's contents.  The &quot;base&quot; Zen Cart distribution includes two files in that directory: header_php.php and jscript_main.php.  <b>If your directory contains any other files</b>, be sure to copy them to your store's <code class="no-pad">/includes/modules/pages/checkout_one</code> directory.  Those additional files come from plugins and additional payment methods and will be required for those modifications to operate correctly in the one-page checkout environment.</li>
+                <li>If you placed your store into <em>Maintenance Mode</em>, as suggested at step <b>G</b>, you can now safely take your site out of <em>Maintenance Mode</em>.</li>
+                <li>Note that the plugin, upon initial installation, defaults its enabling settings to <em>false</em>; see the <em>Overview / Configuration</em> tab of this readme for additional information.</li>
                 <li>One last item to &quot;tidy up&quot; ... registering the two new checkout pages into the <b>ROBOTS_PAGES_TO_SKIP</b> value.  I don't think this is a high-priority item since the pages' names don't appear on any menus and include it only for completeness!  If you want to make sure that robots aren't indexing the <code class="no-pad">checkout_one</code> and <code class="no-pad">checkout_one_confirmation</code> pages, you'll need to edit your template's version of <code class="no-pad">/includes/languages/english/meta_tags.php</code> and add those two page-names to the end of that constant's comma-separated-list.</li>
               </ol>
             </div>
@@ -529,50 +609,98 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
               <p><b>Notes:</b><p>
               <ul>
                 <li>The files present in the &quot;zc155a&quot; folder are required <b>only if</b> you're installing/upgrading this plugin on either Zen Cart 1.5.5 or 1.5.5a &mdash; the required changes are present in the Zen Cart 1.5.5b (and later) core.</li>
+                <li>Unless otherwise noted, all changes to Zen Cart <span class="corefile">core files</span> use the version shipped in Zen Cart 1.5.5f as their change-basis.</li>
               </ul>
               <p>The plugin provides the following files in its distribution zip-file:<p>
               <ol>
                 <li>/includes/auto_loaders/config.checkout_one.php</li>
                 <li><span class="corefile">/includes/classes/message_stack.php</span></li>
+                <li><span class="corefile">/includes/classes/order.php</span> <span class="smaller">(Added in v2.0.0, one marked change section)</span></li>
+                <li>/includes/classes/OnePageCheckout.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/classes/Vinos_Browser.php <span class="smaller">(Added in v1.0.4)</span></li>
                 <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
                 <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                 <li>/includes/extra_datafiles/checkout_one_filenames.php</li>
+                <li>/includes/functions/extra_functions/one_page_checkout_functions.php <span class="smaller">(Added in v2.0.0)</span></li>
+                <li>/includes/languages/english/address_book_register.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/languages/english/checkout_one.php</li>
                 <li>/includes/languages/english/checkout_one_confirmation.php</li>
+                <li>/includes/languages/english/checkout_process_guest.php <span class="smaller">(Added in v2.0.0)</span></li>
+                <li>/includes/languages/english/checkout_success_guest.php <span class="smaller">(Added in v2.0.0)</span></li>
+                <li>/includes/languages/english/create_account_register.php <span class="smaller">(Added in v2.0.0)</span></li>
+                <li>/includes/languages/english/create_account_success_register.php <span class="smaller">(Added in v2.0.0)</span></li>
+                <li>/includes/languages/english/login_guest.php <span class="smaller">(Added in v2.0.0)</span></li>
+                <li>/includes/languages/english/order_status.php <span class="smaller">(Added in v2.0.0)</span></li>
+                <li>/includes/languages/english/extra_definitions/checkout_one_extra_definitions.php <span class="smaller">(Added in v1.0.8)</span></li>
+                <li>/includes/languages/english/html_includes/define_checkout_success_guest.php <span class="smaller">(Added in v2.0.0)</span></li>
+                <li>/includes/languages/english/html_includes/YOUR_TEMPLATE/define_checkout_success_guest.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_coupon.php</span></li>
                 <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_gv.php</span></li>
                 <li><span class="template">/includes/languages/english/YOUR_TEMPLATE/checkout_confirmation.php</span></li>
-                <li>/includes/languages/english/extra_definitions/checkout_one_extra_definitions.php <span class="smaller">(Added in v1.0.8)</span></li>
+                <li><span class="corefile">/includes/modules/order_total/ot_coupon.php</span> <span class="smaller">(Added in v2.0.0, one marked change section)</span></li>
+                <li>/includes/modules/pages/address_book/header_php_address_book_register.php <span class="smaller">(Added in v2.0.0)</span></li>
+                <li>/includes/modules/pages/address_book/main_template_vars.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/modules/pages/checkout_one/header_php.php</li>
                 <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js <span class="smaller">(Added in v1.5.0)</span></li>
                 <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js <span class="smaller">(Added in v1.5.0)</span></li>
+                <li>/includes/modules/pages/checkout_one/jquery.checkout_one_addr.js <span class="smaller">(Added in v2.0.0)</span></li>
+                <li>/includes/modules/pages/checkout_one/jquery.checkout_one_addr.min.js <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
                 <li><span class="removed">/includes/modules/pages/checkout_one/on_load_main.js</span> <span class="smaller">(Removed/stubbed-out in v1.5.0)</span></li>
                 <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
                 <li>/includes/modules/pages/checkout_one_confirmation/jscript_main.php</li>
+                <li>/includes/modules/pages/checkout_success/header_php_guest.php <span class="smaller">(Added in v2.0.0)</span></li>
+                <li>/includes/modules/pages/checkout_success/main_template_vars.php <span class="smaller">(Added in v2.0.0)</span></li>
+                <li>/includes/modules/pages/create_account/header_php_create_account_register.php <span class="smaller">(Added in v2.0.0)</span></li>
+                <li>/includes/modules/pages/create_account/jscript_form_check_register.php <span class="smaller">(Added in v2.0.0)</span></li>
+                <li>/includes/modules/pages/create_account/main_template_vars.php <span class="smaller">(Added in v2.0.0)</span></li>
+                <li>/includes/modules/pages/create_account_success/header_php_create_account_success_register.php <span class="smaller">(Added in v2.0.0)</span></li>
+                <li>/includes/modules/pages/create_account_success/main_template_vars.php <span class="smaller">(Added in v2.0.0)</span></li>
+                <li><span class="corefile">/includes/modules/pages/download/header_php.php</span> <span class="smaller">(Added in v2.0.0, this is the zc156 version of the file)</span>
+                <li><span class="corefile">/includes/modules/pages/login/header_php.php</span> <span class="smaller">(Added in v2.0.0, one marked change section)</span></li>
+                <li>/includes/modules/pages/login/header_php_login_guest.php <span class="smaller">(Added in v2.0.0)</span></li>
+                <li>/includes/modules/pages/login/main_template_vars.php <span class="smaller">(Added in v2.0.0)</span></li>
+                <li>/includes/modules/pages/order_status/header_php.php <span class="smaller">(Added in v2.0.0)</span></li>
+                <li><span class="template">/includes/modules/YOUR_TEMPLATE/downloads.php</span> <span class="smaller">(Added in v2.0.0, this is the zc156 version of the file)</span></li>
                 <li>/includes/templates/template_default/css/checkout_one.css</li>
                 <li>/includes/templates/template_default/css/checkout_one_confirmation.css</li>
+                <li>/includes/templates/template_default/css/checkout_success.css <span class="smaller">(Added in v2.0.0)<span></li>
+                <li>/includes/templates/template_default/css/create_account.css <span class="smaller">(Added in v2.0.0)<span></li>
+                <li>/includes/templates/template_default/css/login.css <span class="smaller">(Added in v2.0.0)<span></li>
                 <li>/includes/templates/template_default/images/confirmation_one_loading.gif</li>
                 <li><span class="corefile removed">/includes/templates/template_default/jscript/jscript_framework.php</span> <span class="smaller">(Removed from this distribution in v1.4.1)</span></li>
+                <li>/includes/templates/template_default/templates/tpl_address_book_register.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/templates/template_default/templates/tpl_checkout_one_confirmation_default.php</li>
                 <li>/includes/templates/template_default/templates/tpl_checkout_one_default.php</li>
+                <li>/includes/templates/template_default/templates/tpl_checkout_success_guest.php <span class="smaller">(Added in v2.0.0)</span></li>
+                <li>/includes/templates/template_default/templates/tpl_create_account_register.php <span class="smaller">(Added in v2.0.0)</span></li>
+                <li>/includes/templates/template_default/templates/tpl_create_account_success_register.php <span class="smaller">(Added in v2.0.0)</span></li>
+                <li>/includes/templates/template_default/templates/tpl_login_guest.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/templates/template_default/templates/tpl_modules_checkout_one_shipping.php <span class="smaller">(Added in v1.0.2)</span></li>
+                <li>/includes/templates/template_default/templates/tpl_modules_opc_address_block.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/templates/template_default/templates/tpl_modules_opc_billing_address.php <span class="smaller">(Added in v1.5.0)</span></li>
                 <li>/includes/templates/template_default/templates/tpl_modules_opc_comments.php <span class="smaller">(Added in v1.5.0)</span></li>
                 <li>/includes/templates/template_default/templates/tpl_modules_opc_conditions.php <span class="smaller">(Added in v1.5.0)</span></li>
                 <li>/includes/templates/template_default/templates/tpl_modules_opc_credit_selections.php <span class="smaller">(Added in v1.5.0)</span></li>
+                <li>/includes/templates/template_default/templates/tpl_modules_opc_customer_info.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/templates/template_default/templates/tpl_modules_opc_instructions.php <span class="smaller">(Added in v1.5.0)</span></li>
                 <li>/includes/templates/template_default/templates/tpl_modules_opc_payment_choices.php <span class="smaller">(Added in v1.5.0)</span></li>
                 <li>/includes/templates/template_default/templates/tpl_modules_opc_shipping_address.php <span class="smaller">(Added in v1.5.0)</span></li>
                 <li>/includes/templates/template_default/templates/tpl_modules_opc_shipping_choices.php <span class="smaller">(Added in v1.5.0)</span></li>
                 <li>/includes/templates/template_default/templates/tpl_modules_opc_shopping_cart.php <span class="smaller">(Added in v1.5.0)</span></li>
                 <li>/includes/templates/template_default/templates/tpl_modules_opc_submit_block.php <span class="smaller">(Added in v1.5.0)</span></li>
+                <li>/includes/templates/template_default/templates/tpl_order_status_default.php <span class="smaller">(Added in v2.0.0)</span></li>
+                <li><span class="template">/includes/templates/YOUR_RC_CLONE/common/tpl_header.php</span> <span class="smaller">(Added in v2.0.0)</span></li>
+                <li><span class="template">/includes/templates/YOUR_TEMPLATE/common/tpl_header.php</span> <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/templates/YOUR_TEMPLATE/css/checkout_one.css</li>
                 <li>/includes/templates/YOUR_TEMPLATE/css/checkout_one_confirmation.css</li>
+                <li>/includes/templates/YOUR_TEMPLATE/css/checkout_success.css <span class="smaller">(Added in v2.0.0)<span></li>
+                <li>/includes/templates/YOUR_TEMPLATE/css/create_account.css <span class="smaller">(Added in v2.0.0)<span></li>
+                <li>/includes/templates/YOUR_TEMPLATE/css/login.css <span class="smaller">(Added in v2.0.0)</span></li>
                 <li><span class="template">/includes/templates/YOUR_TEMPLATE/jscript/jscript_framework.php</span> <span class="smaller">(Added in v1.0.3, the ZC1.5.5a version of the file, with modifications to produce valid HTML)</span></li>
-                <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_ajax_checkout_confirmation_default.php</span> <span class="smaller">(Added in v1.0.3)</span></li>
+                <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_ajax_checkout_confirmation_default.php</span> <span class="smaller">(Added in v1.0.3)</span></li>             <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_modules_downloads.php</span> <span class="smaller">(Added in v2.0.0, this is the zc156 version of the file)</span></li>
                 <li>/YOUR_ADMIN/includes/auto_loaders/config.checkout_one.php</li>
+                <li>/YOUR_ADMIN/includes/classes/observers/CheckoutOneAdminObserver.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                 <li>/YOUR_ADMIN/includes/languages/english/extra_definitions/checkout_one_name.php</li>
                 <li><span class="corefile removed">/pre_zc155a/ajax.php</span> <span class="smaller">(Removed in v1.0.2)</span></li>
@@ -587,8 +715,87 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
             </div>
             
             <div id="changes">
-              <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a> <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!</p>
+              <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a> <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color.</p>
               <ul>
+                <li>v2.0.0, 2018-03-xx:<ul>
+                    <li>CHANGE: Add processing to enable <em>guest-checkout</em>.</li>
+                    <li>BUGFIX: &quot;Align&quot; STOCK_CHECK clause in shipping checks with <code class="no-pad">checkout_shipping</code> current handling.</li>
+                    <li>BUGFIX: Redirects to the <code class="no-pad">time_out</code> pages via SSL protocol.</li>
+                    <li>The following files were affected:<ol>
+                        <li>/includes/auto_loaders/config.checkout_one.php</li>
+                        <li><span class="added">/includes/classes/OnePageCheckout.php</span></li>
+                        <li><span class="corefile">/includes/classes/order.php</span> <span class="smaller">(Added, one notifier)</span></li>
+                        <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
+                        <li>/includes/classes/observers/class.checkout_one_observer.php</li>
+                        <li>/includes/extra_datafiles/checkout_one_filenames.php</li>
+                        <li><span class="added">/includes/functions/extra_functions/one_page_checkout_functions.php</span></li>
+                        <li><span class="added">/includes/languages/english/address_book_register.php</span></li>
+                        <li>/includes/languages/english/checkout_one.php</li>
+                        <li><span class="added">/includes/languages/english/checkout_process_guest.php</span></li>
+                        <li><span class="added">/includes/languages/english/checkout_success_guest.php</span></li>
+                        <li><span class="added">/includes/languages/english/create_account_register.php</span></li>
+                        <li><span class="added">/includes/languages/english/create_account_success_register.php</span></li>
+                        <li><span class="added">/includes/languages/english/login_guest.php</span></li>
+                        <li><span class="added">/includes/languages/english/order_status.php</span></li>
+                        <li>/includes/languages/english/extra_definitions/checkout_one_extra_definitions.php</li>
+                        <li><span class="added">/includes/languages/english/html_includes/define_checkout_success_guest.php</span></li>
+                        <li><span class="added">/includes/languages/english/html_includes/YOUR_TEMPLATE/define_checkout_success_guest.php</span></li>
+                        <li><span class="corefile">/includes/modules/order_total/ot_coupon.php</span> <span class="smaller">(Added, one notifier)</span></li>
+                        <li><span class="added">/includes/modules/pages/address_book/header_php_address_book_register.php</span></li>
+                        <li><span class="added">/includes/modules/pages/address_book/main_template_vars.php</span></li>
+                        <li>/includes/modules/pages/checkout_one/header_php.php</li>
+                        <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
+                        <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
+                        <li><span class="added">/includes/modules/pages/checkout_one/jquery.checkout_one_addr.js</span></li>
+                        <li><span class="added">/includes/modules/pages/checkout_one/jquery.checkout_one_addr.min.js</span></li>
+                        <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
+                        <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
+                        <li><span class="added">/includes/modules/pages/address_book/main_template_vars.php</span></li>
+                        <li><span class="added">/includes/modules/pages/checkout_success/header_php_guest.php</span></li>
+                        <li><span class="added">/includes/modules/pages/checkout_success/main_template_vars.php</span></li>
+                        <li><span class="added">/includes/modules/pages/create_account/header_php_create_account_register.php</span></li>
+                        <li><span class="added">/includes/modules/pages/create_account/jscript_form_check_register.php</span></li>
+                        <li><span class="added">/includes/modules/pages/create_account/main_template_vars.php</span></li>
+                        <li><span class="added">/includes/modules/pages/create_account_success/header_php_create_account_success_register.php</span></li>
+                        <li><span class="added">/includes/modules/pages/create_account_success/main_template_vars.php</span></li>
+                        <li><span class="corefile">/includes/modules/pages/download/header_php.php</span> <span class="smaller">(Added, zc156 version with timeout pages in SSL)</span></li>
+                        <li><span class="corefile">/includes/modules/pages/login/header_php.php</span> <span class="smaller">(Added, one notifier)</span></li>
+                        <li><span class="added">/includes/modules/pages/login/header_php_guest.php</li>
+                        <li><span class="added">/includes/modules/pages/login/main_template_vars.php</span></li>
+                        <li><span class="added">/includes/modules/pages/order_status/header_php.php</span></li>
+                        <li><span class="template">/includes/modules/YOUR_TEMPLATE/downloads.php</span> <span class="smaller">(Added, using the zc156 version)</span></li>
+                        <li>/includes/templates/template_default/css/checkout_one.css</li>
+                        <li><span class="added">/includes/templates/template_default/css/checkout_success.css</span></li>
+                        <li><span class="added">/includes/templates/template_default/css/create_account.css</span></li>
+                        <li><span class="added">/includes/templates/template_default/css/login.css</span></li>
+                        <li><span class="added">/includes/templates/template_default/tpl_address_book_register.php</span></li>
+                        <li><span class="template-changed">/includes/templates/template_default/templates/tpl_checkout_one_default.php</span></li>
+                        <li><span class="added">/includes/templates/template_default/tpl_checkout_success_guest.php</span></li>
+                        <li><span class="added">/includes/templates/template_default/tpl_create_account_register.php</span></li>
+                        <li><span class="added">/includes/templates/template_default/tpl_create_account_success_register.php</span></li>
+                        <li><span class="added">/includes/templates/template_default/templates/tpl_login_guest.php</span></li>
+                        <li><span class="added">/includes/templates/template_default/templates/tpl_modules_opc_address_block.php</span></li>
+                        <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_billing_address.php</span></li>
+                        <li><span class="template-changed">/includes/templates/template_default/tpl_modules_opc_credit_selections.php</span></li>
+                        <li><span class="added">/includes/templates/template_default/tpl_modules_opc_customer_info.php</span></li>
+                        <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_payment_choices.php</span></li>
+                        <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_shipping_address.php</span></li>
+                        <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_shopping_cart.php</span></li>
+                        <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_submit_block.php</span></li>
+                        <li><span class="added">/includes/templates/template_default/templates/tpl_order_status_default.php</span></li>
+                        <li><span class="template">/includes/templates/YOUR_RC_CLONE/common/tpl_header.php</span> <span class="smaller">(Added)</span></li>
+                        <li><span class="template">/includes/templates/YOUR_TEMPLATE/common/tpl_header.php</span> <span class="smaller">(Added)</span></li>
+                        <li><span class="template-changed">/includes/templates/YOUR_TEMPLATE/css/checkout_one.css</span></li>
+                        <li><span class="template-changed">/includes/templates/YOUR_TEMPLATE/css/checkout_success.css</span> <span class="smaller">(Added)</span></li>
+                        <li><span class="template-changed">/includes/templates/YOUR_TEMPLATE/css/create_account.css</span> <span class="smaller">(Added)</span></li>
+                        <li><span class="template-changed">/includes/templates/YOUR_TEMPLATE/css/login.css</span> <span class="smaller">(Added)</span></li>
+                        <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_modules_download.php <span class="smaller">(Added, using the zc156 version)</span></li>
+                        <li>/YOUR_ADMIN/includes/auto_loaders/config.checkout_one.php</li>
+                        <li><span class="added">/YOUR_ADMIN/includes/classes/observers/OnePageCheckoutAdminObserver.php</span></li>
+                        <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
+                        <li>/YOUR_ADMIN/includes/languages/english/extra_definitions/checkout_one_name.php</li>
+                    </ol></li>
+                </ul>
                 <li>v1.5.0, 2018-01-10:<ul>
                     <li>CHANGE: Defer installation until an admin is logged in.</li>
                     <li>CHANGE: Split major template-blocks on the <code class="no-pad">checkout_one</code> page into separate files.</li>

@@ -51,7 +51,7 @@ function zcLog2Console(message)
 {
     if (window.console) {
         if (typeof(console.log) == 'function') {
-            console.log (message);
+            console.log(message);
         }
     }
 }
@@ -111,7 +111,7 @@ function methodSelect(theMethod)
 // -----
 // Not currently used, but might be useful in the future!
 //
-function setJavaScriptEnabled ()
+function setJavaScriptEnabled()
 {
     var jsEnabled = document.getElementById( 'javascript-enabled' );
     if (jsEnabled) {
@@ -128,16 +128,16 @@ function setJavaScriptEnabled ()
 // - checkbox, id="shipping_billing"
 // - CSS classes "hiddenField" and "visibleField".
 //
-function shippingIsBilling () 
+function shippingIsBilling() 
 {
-    var shippingAddress = document.getElementById ('checkoutOneShipto');
+    var shippingAddress = document.getElementById('checkoutOneShipto');
     if (shippingAddress) {
-        if (document.getElementById ('shipping_billing').checked) {
+        if (document.getElementById('shipping_billing').checked) {
             shippingAddress.className = 'hiddenField';
-            shippingAddress.setAttribute ('className', 'hiddenField'); 
+            shippingAddress.setAttribute('className', 'hiddenField'); 
         } else {
             shippingAddress.className = 'visibleField';
-            shippingAddress.setAttribute ('className', 'visibleField');
+            shippingAddress.setAttribute('className', 'visibleField');
         }
     }
 }
@@ -151,7 +151,7 @@ function setOrderConfirmed (value)
 {
     orderConfirmed = value;
     jQuery('#confirm-the-order').val( value );
-    zcLog2Console ('Setting orderConfirmed ('+value+'), submitter ('+submitter+')');
+    zcLog2Console('Setting orderConfirmed ('+value+'), submitter ('+submitter+')');
 }
 
 // -----
@@ -186,18 +186,19 @@ jQuery(document).ready(function(){
     }
 
     if (!virtual_order) {
-    if (jQuery( '#otshipping' ).length == 0) {
-        elementsMissing = true;
-        zcLog2Console ( 'Missing #otshipping' );
+        if (jQuery( '#otshipping' ).length == 0) {
+            elementsMissing = true;
+            zcLog2Console ( 'Missing #otshipping' );
+        }
     }
-}
 
     if (elementsMissing) {
         alert( 'Please contact the store owner; some required elements of this page are missing.' );
     }
-    
+
     // -----
-    // Perform some page-load type operations, initializing the "environment".
+    // Perform some page-load type operations, initializing the "environment".  These functions
+    // were performed by the on_load_main.js file from prior versions.
     //
     shippingIsBilling();
     setJavaScriptEnabled();
@@ -244,11 +245,10 @@ jQuery(document).ready(function(){
     }
     setFormSubmitButton();
     
-    setOrderConfirmed (0);
+    setOrderConfirmed(0);
     jQuery( '#checkoutOneShippingFlag' ).show();
     
-    zcLog2Console ( 'jQuery version: '+jQuery().jquery );
-    
+    zcLog2Console( 'jQuery version: '+jQuery().jquery );
     
     function focusOnShipping ()
     {
@@ -264,7 +264,7 @@ jQuery(document).ready(function(){
     //
     // Zen Cart 1.5.4 uses the single-function approach (collectsCardDataOnsite) while the 1.5.5
     // approach splits the functions int "doesCollectsCardDataOnsite" and "doCollectsCardDataOnsite".
-    // 
+    //
     collectsCardDataOnsite = function(paymentValue)
     {
         zcLog2Console( 'Checking collectsDardDataOnsite('+paymentValue+') ...' );
@@ -345,7 +345,7 @@ jQuery(document).ready(function(){
         });
     }
 
-    function changeShippingSubmitForm (type)
+    function changeShippingSubmitForm(type)
     {
         var shippingSelected = jQuery( 'input[name=shipping]' );
         if (shippingSelected.is( ':radio' )) {
@@ -387,12 +387,12 @@ jQuery(document).ready(function(){
                 jQuery( '#orderTotalDivs' ).html(response.orderTotalHtml);
                 
                 var shippingError = false;
-                jQuery( '#otshipping, #otshipping+br' ).show ();
+                jQuery( '#otshipping, #otshipping+br' ).show();
                 if (response.status == 'ok') {
                     if (type == 'shipping-billing') {
                         jQuery( '#checkoutShippingChoices' ).html( response.shippingHtml );
                         jQuery( '#checkoutShippingContentChoose' ).html( response.shippingMessage );
-                        jQuery( '#checkoutShippingChoices' ).on( 'click', 'input[name=shipping]', function( event ) {
+                        jQuery( '#checkoutShippingChoices' ).on('click', 'input[name=shipping]', function( event ) {
                             changeShippingSubmitForm( 'shipping-only' );
                         });                        
                     }
@@ -432,16 +432,16 @@ jQuery(document).ready(function(){
                             
                             // -----
                             // If there is at least one payment method available, submit the form.
-                            //   
+                            //
                             if (flagOnSubmit) {
-                            var formPassed = check_form();
-                            zcLog2Console ('Form checked, passed ('+formPassed+')');
-                            
-                            if (formPassed) {
-                                jQuery( '#confirm-order' ).attr('disabled', false);
-                                jQuery( 'form[name="checkout_payment"]' ).submit();
+                                var formPassed = check_form();
+                                zcLog2Console ('Form checked, passed ('+formPassed+')');
+                                
+                                if (formPassed) {
+                                    jQuery( '#confirm-order' ).attr('disabled', false);
+                                    jQuery( 'form[name="checkout_payment"]' ).submit();
+                                }
                             }
-} 
                         }
                     }
                 }
@@ -453,38 +453,37 @@ jQuery(document).ready(function(){
     // When a shipping-choice is clicked, make the AJAX call to recalculate the order-totals based
     // on that shipping selection.
     //
-    jQuery( '#checkoutShippingMethod input[name=shipping]' ).on( 'click', function( event ) {
-        changeShippingSubmitForm ('shipping-only', event);
+    jQuery('#checkoutShippingMethod input[name=shipping]').on('click', function( event ) {
+        changeShippingSubmitForm('shipping-only', event);
     });
     
     // -----
     // When the billing=shipping box is clicked, record the current selection and make the AJAX call to
     // recalculate the order-totals, now that the shipping address might be different.
     //
-    jQuery( '#shipping_billing' ).on( 'click', function( event ) {
+    jQuery( '#shipping_billing' ).on('click', function( event ) {
         shippingIsBilling();
-        changeShippingSubmitForm( 'shipping-billing' );
-        
+        changeShippingSubmitForm('shipping-billing');
     });
 
     // -----
-    // The tpl_checkout_one_default.php processing has appled 'class="opc-cc-submit"' to each credit-class
+    // The tpl_checkout_one_default.php processing has applied 'class="opc-cc-submit"' to each credit-class
     // order-total's "Apply" button.  When one of those "Apply" buttons is clicked, note that the order has
     // **not** been confirmed, make the AJAX call to recalculate the order-totals and submit the form,
     // causing the transition to (and back from) the checkout_one_confirmation page where that credit-class
     // processing has recorded its changes.
     //
-    jQuery( '.opc-cc-submit' ).on( 'click', function( event ) {
-        zcLog2Console( 'Submitting credit-class request' );
+    jQuery('.opc-cc-submit').on('click', function( event ) {
+        zcLog2Console('Submitting credit-class request');
         setOrderConfirmed(0);
-        changeShippingSubmitForm( 'submit-cc' );
+        changeShippingSubmitForm('submit-cc');
     });
     
     // -----
     // When a different payment method is chosen, determine whether the payment will require a confirmation-
     // page display, change the form's pseudo-submit button to reflect either "Review" or "Confirm".
     //
-    jQuery( 'input[name=payment]' ).on( 'change', function() {
+    jQuery('input[name=payment]').on('change', function() {
         setFormSubmitButton();
     });
     
@@ -493,18 +492,298 @@ jQuery(document).ready(function(){
     // to submit their order.  Set up the various "hidden" fields to reflect the order's current state,
     // note that this is an order-confirmation request, and cause the order to be submitted.
     //
-    jQuery( '#opc-order-review, #opc-order-confirm' ).on( 'click', function( event ) {
+    jQuery('#opc-order-review, #opc-order-confirm').on('click', function( event ) {
         submitFunction(0,0); 
-        setOrderConfirmed (1);
+        setOrderConfirmed(1);
 
-        zcLog2Console( 'Submitting order-creating form' );
+        zcLog2Console('Submitting order-creating form');
         changeShippingSubmitForm( 'submit' );
     });
     
+    // -----
+    // Monitor the billing- and shipping-address blocks for changes.
+    //
+    jQuery(document).on('change', '#select-address-bill', function(event) {
+        useSelectedAddress('bill', this.value);
+    });
+    jQuery(document).on('change', '#select-address-ship', function(event) {
+        useSelectedAddress('ship', this.value);
+    });
+    function useSelectedAddress(which, address_id)
+    {
+        zcLog2Console('useSelectedAddress('+which+', '+address_id+')');
+        zcJS.ajax({
+            url: "ajax.php?act=ajaxOnePageCheckout&method=setAddressFromSavedSelections",
+            data: {
+                which: which,
+                address_id: address_id
+            },
+            timeout: shippingTimeout,
+            error: function (jqXHR, textStatus, errorThrown) {
+                zcLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
+                if (textStatus == 'timeout') {
+                    alert(ajaxTimeoutErrorMessage);
+                }
+            },
+        }).done(function( response ) {
+            location.reload();
+        });
+    }
+    
+    jQuery(document).on('change', '#checkoutOneBillto input, #checkoutOneBillto select:not(#select-address-bill)', function(event) {
+        jQuery(this).addClass('opc-changed');
+        jQuery('#checkoutOneBillto .opc-buttons').show();
+        jQuery('#checkoutPayment > .opc-overlay').addClass('active');
+        jQuery('#checkoutOneBillto').addClass('opc-view');
+    });
+    jQuery(document).on('click', '#opc-bill-cancel', function(event) {
+        restoreAddressValues('bill', '#checkoutOneBillto');
+        jQuery('#checkoutPayment > .opc-overlay').removeClass('active');
+        jQuery('#checkoutOneBillto').removeClass('opc-view');
+        jQuery('#checkoutOneBillto .opc-buttons').hide();
+    });
+    jQuery(document).on('click', '#opc-bill-save', function(event) {
+        saveAddressValues('bill', '#checkoutOneBillto');
+    });
+    jQuery(document).on('change', '#checkoutOneShipto input, #checkoutOneShipto select:not(#select-address-ship)', function(event) {
+        jQuery(this).addClass('opc-changed');
+        jQuery('#checkoutOneShipto .opc-buttons').show();
+        jQuery('#checkoutPayment > .opc-overlay').addClass('active');
+        jQuery('#checkoutOneShipto').removeClass('visibleField');
+        jQuery('#checkoutOneShipto').addClass('opc-view');
+    });
+    jQuery(document).on('click', '#opc-ship-cancel', function(event) {
+        restoreAddressValues('ship', '#checkoutOneShipto');
+        jQuery('#checkoutPayment > .opc-overlay').removeClass('active');
+        jQuery('#checkoutOneShipto').removeClass('opc-view');
+        jQuery('#checkoutOneShipto .opc-buttons').hide();
+    });
+    jQuery(document).on('click', '#opc-ship-save', function(event) {
+        saveAddressValues('ship', '#checkoutOneShipto');
+    });    
+    function restoreAddressValues(which, address_block)
+    {
+        zcLog2Console('restoreAddressValues('+which+', '+address_block+')');
+        zcJS.ajax({
+            url: "ajax.php?act=ajaxOnePageCheckout&method=restoreAddressValues",
+            data: {
+                which: which
+            },
+            timeout: shippingTimeout,
+            error: function (jqXHR, textStatus, errorThrown) {
+                zcLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
+                if (textStatus == 'timeout') {
+                    alert(ajaxTimeoutErrorMessage);
+                }
+            },
+        }).done(function( response ) {
+            jQuery(address_block).html(response.addressHtml);
+            if (typeof initializeStateZones != 'undefined') {
+                initializeStateZones();
+            }
+        });
+    }
+    
+    function saveAddressValues(which, address_block)
+    {
+        zcLog2Console('saveAddressValues('+which+', '+address_block+')');
+        var gender = jQuery('input[name="gender['+which+']"]').val(),
+            company = jQuery('input[name="company['+which+']"]').val(),
+            firstname = jQuery('input[name="firstname['+which+']"]').val(),
+            lastname = jQuery('input[name="lastname['+which+']"]').val(),
+            street_address = jQuery('input[name="street_address['+which+']"]').val(),
+            suburb = jQuery('input[name="suburb['+which+']"]').val(),
+            city = jQuery('input[name="city['+which+']"]').val(),
+            state = jQuery('input[name="state['+which+']"]').val(),
+            zone_id = jQuery('select[name="zone_id['+which+']"] option:selected').val(),
+            postcode = jQuery('input[name="postcode['+which+']"]').val(),
+            zone_country_id = jQuery('select[name="zone_country_id['+which+']"] option:selected').val(),
+            shipping_billing = jQuery('#shipping_billing').is(':checked'),
+            add_address = jQuery('#opc-add-'+which).prop('checked');
+
+        zcJS.ajax({
+            url: "ajax.php?act=ajaxOnePageCheckout&method=validateAddressValues",
+            data: {
+                which: which,
+                gender: gender,
+                company: company,
+                firstname: firstname,
+                lastname: lastname,
+                street_address: street_address,
+                suburb: suburb,
+                city: city,
+                state: state,
+                zone_id: zone_id,
+                postcode: postcode,
+                zone_country_id: zone_country_id,
+                shipping_billing: shipping_billing,
+                add_address: add_address
+            },
+            timeout: shippingTimeout,
+            error: function (jqXHR, textStatus, errorThrown) {
+                zcLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
+                if (textStatus == 'timeout') {
+                    alert(ajaxTimeoutErrorMessage);
+                }
+            },
+        }).done(function( response ) {
+            var messageBlock = '#messages-'+which;
+            // -----
+            // If the response returns a non-empty array of messages, there were one or more
+            // "issues" with the submitted information.  Highlight the errant fields and display
+            // the messages at the bottom of the active address-block.
+            //
+            if (response.messages.length != 0) {
+                var focusSet = false;
+                jQuery(messageBlock).html('<ul></ul>').addClass('opc-error');
+                jQuery(address_block+' input, '+address_block+' select').removeClass('opc-error');
+                jQuery.each(response.messages, function(field_name, message) {
+                    jQuery(messageBlock+' ul').append('<li>'+message+'</li>');
+                    if (jQuery('input[name="'+field_name+'['+which+']"]').length) {
+                        jQuery('input[name="'+field_name+'['+which+']"]').addClass('opc-error').removeClass('opc-changed');
+                        if (!focusSet) {
+                            focusSet = true;
+                            jQuery('input[name="'+field_name+'['+which+']"]').focus();
+                        }
+                    } else {
+                        jQuery('select[name="'+field_name+'['+which+']"]').addClass('opc-error').removeClass('opc-changed');
+                        if (!focusSet) {
+                            focusSet = true;
+                            jQuery('select[name="'+field_name+'['+which+']"]').focus();
+                        }
+                    }
+                });
+            // -----
+            // Otherwise, the address-update was successful.  Since the shipping, payment and order-total
+            // modules might have address-related dependencies, simply hard-refresh (i.e. from the
+            // server) the page's display to allow that processing to do its thing.
+            //
+            } else {
+                window.location.reload(true);
+            }
+        });
+    }
+
     // -----
     // If we get here successfully, the jQuery processing for the page looks OK so we'll hide the
     // alternate-checkout link and display the "normal" one-page checkout form.
     //
     jQuery( '#checkoutPaymentNoJs' ).hide();
     jQuery( '#checkoutPayment' ).show();
+    
+    // -----
+    // If the checkout process is currently being performed in "guest" mode, make sure that any
+    // required fields in the guest-login block are currently filled-in and, if not, give focus
+    // to the first required input in that block.
+    //
+    var guestInputsOk = true;
+    jQuery('#checkoutOneGuestInfo').find('input').each(function() {
+        if (jQuery(this).prop('required') && jQuery(this).val() == '') {
+            jQuery('#checkoutOneGuestInfo .opc-buttons').show();
+            jQuery('#opc-guest-cancel').hide();
+            jQuery('#checkoutPayment > .opc-overlay').addClass('active');
+            jQuery('#checkoutOneGuestInfo').addClass('opc-view');
+            jQuery(this).focus();
+            guestInputsOk = false;
+            return false;
+        }
+    });
+    
+    // -----
+    // If the guest customer-information inputs are OK (or not required), make sure
+    // that the billing-address block's required fields are all set, too.
+    //
+    if (guestInputsOk) {
+        jQuery('#checkoutOneBillto').find('input').each(function() {
+            if (jQuery(this).prop('required') && jQuery(this).val() == '') {
+                jQuery('#checkoutOneBillto .opc-buttons').show();
+                jQuery('#opc-bill-cancel').hide();
+                jQuery('#checkoutPayment > .opc-overlay').addClass('active');
+                jQuery('#checkoutOneBillto').addClass('opc-view');
+                jQuery(this).focus();
+                return false;
+            }
+        });
+    }
+    
+    // -----
+    // Monitor the guest customer-information block's inputs for change.
+    //
+    jQuery(document).on('change', '#checkoutOneGuestInfo input', function(event) {
+        jQuery(this).addClass('opc-changed');
+        jQuery('#checkoutOneGuestInfo .opc-buttons').show();
+        jQuery('#checkoutPayment > .opc-overlay').addClass('active');
+        jQuery('#checkoutOneGuestInfo').addClass('opc-view');
+    });
+    jQuery(document).on('click', '#opc-guest-cancel', function(event) {
+        restoreCustomerInfo();
+        jQuery('#checkoutPayment > .opc-overlay').removeClass('active');
+        jQuery('#checkoutOneGuestInfo').removeClass('opc-view');
+        jQuery('#checkoutOneGuestInfo .opc-buttons').hide();
+    });
+    jQuery(document).on('click', '#opc-guest-save', function(event) {
+        saveCustomerInfo();
+    });
+    function restoreCustomerInfo()
+    {
+        zcLog2Console('restoreCustomerInfo, starts ...');
+        zcJS.ajax({
+            url: "ajax.php?act=ajaxOnePageCheckout&method=restoreCustomerInfo",
+            timeout: shippingTimeout,
+            error: function (jqXHR, textStatus, errorThrown) {
+                zcLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
+                if (textStatus == 'timeout') {
+                    alert(ajaxTimeoutErrorMessage);
+                }
+            },
+        }).done(function( response ) {
+            jQuery('#checkoutOneGuestInfo').html(response.infoHtml);
+        });
+    }
+    
+    function saveCustomerInfo()
+    {
+        zcLog2Console('saveCustomerInfo, starts ...');
+
+        zcJS.ajax({
+            url: "ajax.php?act=ajaxOnePageCheckout&method=validateCustomerInfo",
+            data: jQuery('#checkoutOneGuestInfo input, #checkoutOneGuestInfo select').serialize(),
+            timeout: shippingTimeout,
+            error: function (jqXHR, textStatus, errorThrown) {
+                zcLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
+                if (textStatus == 'timeout') {
+                    alert(ajaxTimeoutErrorMessage);
+                }
+            },
+        }).done(function( response ) {
+            var messageBlock = '#messages-guest';
+            // -----
+            // If the response returns a non-empty array of messages, there were one or more
+            // "issues" with the submitted information.  Highlight the errant fields and display
+            // the messages at the bottom of the guest-information block.
+            //
+            if (response.messages.length != 0) {
+                var focusSet = false;
+                jQuery(messageBlock).html('<ul></ul>').addClass('opc-error');
+                jQuery('#checkoutOneGuestInfo input').removeClass('opc-error');
+                jQuery.each(response.messages, function(field_name, message) {
+                    jQuery(messageBlock+' ul').append('<li>'+message+'</li>');
+                    if (jQuery('input[name="'+field_name+'"]').length) {
+                        jQuery('input[name="'+field_name+'"]').addClass('opc-error').removeClass('opc-changed');
+                        if (!focusSet) {
+                            focusSet = true;
+                            jQuery('input[name="'+field_name+'"]').focus();
+                        }
+                    }
+                });
+            // -----
+            // Otherwise, the information-update was successful.  Since the shipping, payment and order-total
+            // modules might have address-related dependencies, simply hard-refresh (i.e. from the
+            // server) the page's display to allow that processing to do its thing.
+            //
+            } else {
+                window.location.reload(true);
+            }
+        });
+    }
 });

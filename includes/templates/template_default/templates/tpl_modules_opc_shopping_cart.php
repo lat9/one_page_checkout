@@ -10,8 +10,8 @@
       <legend><?php echo HEADING_PRODUCTS; ?></legend>
       <table border="0" width="100%" cellspacing="0" cellpadding="0" id="cartContentsDisplay">
         <tr>
-            <td class="edit-button" colspan="<?php echo (sizeof ($order->info['tax_groups']) > 1) ? 3 : 2; ?>">&nbsp;</td>
-            <td class="edit-button"><?php echo '<a href="' . zen_href_link (FILENAME_SHOPPING_CART, '') . '">' . zen_image_button (BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) . '</a>'; ?></td>
+            <td class="edit-button" colspan="<?php echo (count($order->info['tax_groups']) > 1) ? 3 : 2; ?>">&nbsp;</td>
+            <td class="edit-button"><?php echo '<a href="' . zen_href_link(FILENAME_SHOPPING_CART) . '">' . zen_image_button(BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) . '</a>'; ?></td>
         </tr>
         
         <tr class="cartTableHeading">
@@ -19,7 +19,7 @@
           <th scope="col" id="ccProductsHeading"><?php echo TABLE_HEADING_PRODUCTS; ?></th>
 <?php
 // If there are tax groups, display the tax columns for price breakdown
-if (sizeof ($order->info['tax_groups']) > 1) {
+if (count($order->info['tax_groups']) > 1) {
 ?>
           <th scope="col" id="ccTaxHeading"><?php echo HEADING_TAX; ?></th>
 <?php
@@ -29,7 +29,7 @@ if (sizeof ($order->info['tax_groups']) > 1) {
         </tr>
 <?php 
 // now loop thru all products to display quantity and price
-for ($i = 0, $n = count ($order->products); $i < $n; $i++) {
+for ($i = 0, $n = count($order->products); $i < $n; $i++) {
     $last_row_class = $order->products[$i]['rowClass'];
 ?>
         <tr class="<?php echo $order->products[$i]['rowClass']; ?>">
@@ -41,7 +41,7 @@ for ($i = 0, $n = count ($order->products); $i < $n; $i++) {
 ?>
             <ul class="cartAttribsList">
 <?php
-        for ($j = 0, $n2 = count ($order->products[$i]['attributes']); $j<$n2; $j++) {
+        for ($j = 0, $n2 = count($order->products[$i]['attributes']); $j<$n2; $j++) {
 ?>
               <li><?php echo $order->products[$i]['attributes'][$j]['option'] . ': ' . nl2br(zen_output_string_protected($order->products[$i]['attributes'][$j]['value'])); ?></li>
 <?php
@@ -81,7 +81,7 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
     $row_class = ($last_row_class == 'rowEven') ? 'rowOdd' : 'rowEven';
 ?>     
         <tr class="<?php echo $row_class; ?>" id="cartOrderTotals">
-            <td colspan="<?php echo (count ($order->info['tax_groups']) > 1) ? 4 : 3; ?>" id="orderTotalDivs"><?php $order_total_modules->process (); $order_total_modules->output (); ?></td>
+            <td colspan="<?php echo (count($order->info['tax_groups']) > 1) ? 4 : 3; ?>" id="orderTotalDivs"><?php $order_total_modules->process (); $order_total_modules->output(); ?></td>
         </tr>
 <?php
 }

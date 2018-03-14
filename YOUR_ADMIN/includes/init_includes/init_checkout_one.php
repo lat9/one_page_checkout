@@ -7,8 +7,16 @@ if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
 }
 
-define('CHECKOUT_ONE_CURRENT_VERSION', '1.5.0');
-define('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2018-01-10');
+// -----
+// Note: The Configuration->One-Page Checkout Settings sort-orders are grouped as follows, enabling the settings to be "grouped":
+//
+// 1-29 ...... Basic settings
+// 30-499 .... Guest-checkout settings
+// 500-599 ... Registered-account settings
+// 1000+ ..... Debug settings
+//
+define('CHECKOUT_ONE_CURRENT_VERSION', '2.0.0-beta2');
+define('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2018-03-13');
 
 if (isset($_SESSION['admin_id'])) {
     $version_release_date = CHECKOUT_ONE_CURRENT_VERSION . ' (' . CHECKOUT_ONE_CURRENT_UPDATE_DATE . ')';
@@ -99,16 +107,87 @@ if (isset($_SESSION['admin_id'])) {
                 ( 'Payment Methods Requiring Confirmation', 'CHECKOUT_ONE_CONFIRMATION_REQUIRED', 'eway_rapid,stripepay,gps', 'Identify (using a comma-separated list) the payment modules on your store that require confirmation.  If your store requires confirmation on all orders, simply list all payment modules used by your store.<br /><br />Default: <code>eway_rapid,stripepay,gps</code>', $cgi, now(), 21, NULL, NULL)"
         );
     }
-
-    if (version_compare(CHECKOUT_ONE_MODULE_VERSION, '1.5.0', '<')) {
+    
+    // -----
+    // v2.0.0:
+    //
+    // - Various guest-checkout options.
+    // - Update debug-related sort-orders to "make room" for the guest-checkout options.
+    // - Add 'is_guest_order' field to the orders table in the database.
+    //
+    if (version_compare(CHECKOUT_ONE_MODULE_VERSION, '2.0.0', '<')) {
         $db->Execute(
             "INSERT IGNORE INTO " . TABLE_CONFIGURATION . " 
                 ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) 
                 VALUES 
-                ( 'Load Minified Script Files?', 'CHECKOUT_ONE_MINIFIED_SCRIPT', 'true', 'Should the plugin load the minified version of its jQuery scripts, reducing the page-load time for the <code>checkout_one</code> page?<br /><br />Default: <b>true</b>.', $cgi, now(), 25, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),')"
+                ( 'Order Status: Slamming Control', 'CHECKOUT_ONE_ORDER_STATUS_SLAM_COUNT', '3', 'Identify the number of back-to-back errors that your store allows when a customer is checking their order\\'s status via the <code>order_status</code> page (default: <b>3</b>).  When the customer has reached that threshold, they will be redirected to the <code>time_out</code> page.<br /><br />', $cgi, now(), 25, NULL, NULL)"
         );
+        $db->Execute(
+            "INSERT IGNORE INTO " . TABLE_CONFIGURATION . " 
+                ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) 
+                VALUES 
+                ( 'Enable Guest Checkout?', 'CHECKOUT_ONE_ENABLE_GUEST', 'false', 'Do you want to enable <em>Guest Checkout</em> for your store?<br /><br />Default: <b>false</b>', $cgi, now(), 30, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),')"
+        );
+        $db->Execute(
+            "INSERT IGNORE INTO " . TABLE_CONFIGURATION . " 
+                ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) 
+                VALUES 
+                ( 'Guest Checkout: Require Email Confirmation?', 'CHECKOUT_ONE_GUEST_EMAIL_CONFIRMATION', 'true', 'Should a guest-customer be required to confirm their email address when placing an order?<br /><br />Default: <b>true</b>', $cgi, now(), 40, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),')"
+        );
+        $db->Execute(
+            "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
+                ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) 
+                VALUES 
+                ( 'Guest Checkout: Pages Allowed Post-Checkout', 'CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED', '', 'Identify (using a comma-separated list, intervening blanks are OK) the pages that are <em>allowed</em> once a guest has completed their checkout.  When the guest navigates from the <code>checkout_success</code> page to any page <em><b>not in this list</b></em>, their guest-customer session is reset.<br /><br />For example, if your store provides a pop-up print invoice, you would include the name of that page in this list.<br />', $cgi, now(), 50, NULL, NULL)"
+        );
+        $db->Execute(
+            "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
+                ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) 
+                VALUES 
+                ( 'Guest Checkout: Disallowed Pages', 'CHECKOUT_ONE_GUEST_PAGES_DISALLOWED', 'account, account_edit, account_history, account_history_info, account_newsletters, account_notifications, account_password, address_book, address_book_process, create_account_success, gv_redeem, gv_send, password_forgotten, product_reviews_write, unsubscribe', 'Identify (using a comma-separated list, intervening blanks are OK) the pages that are <em>disallowed</em> during guest-checkout.<br /><br />These pages <em>normally</em> require a logged-in customer prior to display, e.g. <code>account</code>.  <b>Do not</b> include the <code>login</code>, <code>create_account</code> or <code>logoff</code> pages in this list!<br />', $cgi, now(), 100, NULL, NULL)"
+        );
+        $db->Execute(
+            "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
+                ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) 
+                VALUES 
+                ( 'Guest Checkout: Disallowed <em>Credit Class</em> Order-Totals', 'CHECKOUT_ONE_ORDER_TOTALS_DISALLOWED_FOR_GUEST', 'ot_gv', 'Identify (using a comma-separated list, intervening blanks are OK) any <em>credit-class</em> order-totals that are <em>disallowed</em> during guest-checkout.<br /><br />These order-totals <em>normally</em> require a customer-account for their processing, e.g. <code>ot_gv</code>.<br />', $cgi, now(), 105, NULL, NULL)"
+        );
+        $db->Execute(
+            "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
+                ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) 
+                VALUES 
+                ( 'Guest Checkout: Disallowed Payment Methods', 'CHECKOUT_ONE_PAYMENTS_DISALLOWED_FOR_GUEST', 'moneyorder, cod', 'Identify (using a comma-separated list, intervening blanks are OK) any payment methods that are <em>disallowed</em> during guest-checkout.<br /><br />These payment methods <em>normally</em> have no validation of purchase &mdash; e.g. <code>moneyorder</code> and <code>cod</code> &mdash; and can, if left enabled, result in unwanted <em>spam purchases</em>.<br />', $cgi, now(), 110, NULL, NULL)"
+        );
+        $db->Execute(
+            "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
+                ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) 
+                VALUES 
+                ( 'Enable Account Registration?', 'CHECKOUT_ONE_ENABLE_REGISTERED_ACCOUNTS', 'false', 'Do you want your store\\'s <code>create_account</code> processing to create a <em>registered</em> rather than a <em>full</em> account?<br /><br />Default: <b>false</b>', $cgi, now(), 500, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),')"
+        );
+        $db->Execute(
+            "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
+                ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) 
+                VALUES 
+                ( 'Login-Page Layout', 'CHECKOUT_ONE_LOGIN_LAYOUT', 'L;P,G,C;B', 'When you enable the plugin\\'s <em>Guest Checkout</em> and/or <em>Account Registration</em>, an alternate formatting of the storefront <code>login</code> page is displayed.  Use this setting to control the 3-column layout of that modified page.<br /><br />The value is an encoded string, identifying which block should be displayed in which column.  Columns are delimited by a semi-colon (;) and the top-to-bottom column layout is in the order specified by the block-elements\\' left-to-right order.<br /><br />The block elements are:<ul><li><b>L</b> ... (required) The email/password login block.</li><li><b>P</b> ... (optional) The PayPal Express Checkout shortcut-button block.</li><li><b>G</b> ... (required) The guest-checkout block.</li><li><b>C</b> ... (required) The create-account block.</li><li><b>B</b> ... (optional) The \"Account Benefits\" block.</li></ul>Default: <b>L;P,G,C;B</b>', $cgi, now(), 26, NULL, NULL)"
+        );
+        $db->Execute(
+            "UPDATE " . TABLE_CONFIGURATION . "
+                SET sort_order = 1000
+              WHERE configuration_key = 'CHECKOUT_ONE_DEBUG'
+              LIMIT 1"
+        );
+        $db->Execute(
+            "UPDATE " . TABLE_CONFIGURATION . "
+                SET sort_order = 1001
+              WHERE configuration_key = 'CHECKOUT_ONE_DEBUG_EXTRA'
+              LIMIT 1"
+        );
+        
+        if (!$sniffer->field_exists(TABLE_ORDERS, 'is_guest_order')) {
+            $db->Execute("ALTER TABLE " . TABLE_ORDERS . " ADD COLUMN is_guest_order tinyint(1) NOT NULL default 0");
+        }
     }
-    
+
     if (CHECKOUT_ONE_MODULE_VERSION != '0.0.0' && CHECKOUT_ONE_MODULE_VERSION != $version_release_date) {
         $messageStack->add(sprintf(TEXT_OPC_UPDATED, CHECKOUT_ONE_MODULE_VERSION, $version_release_date), 'success');
         $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '$version_release_date', last_modified = now() WHERE configuration_key = 'CHECKOUT_ONE_MODULE_VERSION' LIMIT 1");
@@ -118,10 +197,88 @@ if (isset($_SESSION['admin_id'])) {
     // Register the plugin's configuration page for display on the menus.
     //
     if (!zen_page_key_exists('configOnePageCheckout')) {
-        $next_sort = $db->Execute('SELECT MAX(sort_order) as max_sort FROM ' . TABLE_ADMIN_PAGES . " WHERE menu_key='configuration'", false, false, 0, true);
+        $next_sort = $db->Execute(
+            "SELECT MAX(sort_order) AS max_sort 
+               FROM " . TABLE_ADMIN_PAGES . " 
+              WHERE menu_key='configuration'", 
+              false, 
+              false, 
+              0, 
+              true
+        );
         zen_register_admin_page('configOnePageCheckout', 'BOX_TOOLS_CHECKOUT_ONE', 'FILENAME_CONFIGURATION', "gID=$cgi", 'configuration', 'Y', $next_sort->fields['max_sort'] + 1);
     }
-
+        
+    // -----
+    // Make sure that the guest-/temporary-address indexes have been registered (in case the store-owner
+    // somehow removes those settings).
+    //
+    if (defined('CHECKOUT_ONE_GUEST_CUSTOMER_ID')) {
+        $guest_customer_id = CHECKOUT_ONE_GUEST_CUSTOMER_ID;
+    } else {
+        $sql_data_array = array(
+            'customers_firstname' => 'Guest',
+            'customers_lastname' => 'Customer, **do not remove**'
+        );
+        zen_db_perform(TABLE_CUSTOMERS, $sql_data_array);
+        $guest_customer_id = zen_db_insert_id();
+        $db->Execute(
+            "INSERT IGNORE INTO " . TABLE_CONFIGURATION . " 
+                ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) 
+                VALUES 
+                ( 'Guest Checkout: Customer ID', 'CHECKOUT_ONE_GUEST_CUSTOMER_ID', '$guest_customer_id', 'This (hidden) value identifies the customers-table entry that is used as the pseudo-customers_id for any guest checkout in your store.', 6, now(), 30, NULL, NULL)"
+        );
+        $sql_data_array = array(
+            'customers_info_id' => $guest_customer_id,
+            'customers_info_date_account_created' => 'now()'
+        );
+        zen_db_perform(TABLE_CUSTOMERS_INFO, $sql_data_array);
+    }
+    
+    if (!defined('CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID')) {
+        $sql_data_array = array(
+            'customers_id' => $guest_customer_id,
+            'entry_firstname' => 'Guest',
+            'entry_lastname' => 'Customer, **do not remove**',
+            'entry_street_address' => 'Default billing address',
+            'entry_country_id' => (int)STORE_COUNTRY,
+            'entry_zone_id' => (int)STORE_ZONE
+        );
+        zen_db_perform(TABLE_ADDRESS_BOOK, $sql_data_array);
+        $address_book_id = zen_db_insert_id();
+        $db->Execute(
+            "INSERT IGNORE INTO " . TABLE_CONFIGURATION . " 
+                ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) 
+                VALUES 
+                ( 'Guest Checkout: Billing-Address ID', 'CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID', '$address_book_id', 'This (hidden) value identifies the address_book-table entry that is used as the pseudo-billing-address entry for any guest checkout in your store.', 6, now(), 30, NULL, NULL)"
+        );
+        $db->Execute(
+            "UPDATE " . TABLE_CUSTOMERS . "
+                SET customers_default_address_id = $address_book_id
+              WHERE customers_id = $guest_customer_id
+              LIMIT 1"
+        );
+    }
+    
+    if (!defined('CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID')) {
+        $sql_data_array = array(
+            'customers_id' => $guest_customer_id,
+            'entry_firstname' => 'Guest',
+            'entry_lastname' => 'Customer, **do not remove**',
+            'entry_street_address' => 'Default shipping address',
+            'entry_country_id' => (int)STORE_COUNTRY,
+            'entry_zone_id' => (int)STORE_ZONE
+        );
+        zen_db_perform(TABLE_ADDRESS_BOOK, $sql_data_array);
+        $address_book_id = zen_db_insert_id();
+        $db->Execute(
+            "INSERT IGNORE INTO " . TABLE_CONFIGURATION . " 
+                ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) 
+                VALUES 
+                ( 'Guest Checkout: Shipping-Address ID', 'CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID', '$address_book_id', 'This (hidden) value identifies the address_book-table entry that is used as the pseudo-shipping-address entry for any guest checkout in your store, if different from the billing address.', 6, now(), 30, NULL, NULL)"
+        );
+    }
+        
     // -----
     // Now, check to make sure that the currently-active template's folder includes the jscript_framework.php file and disable the One-Page Checkout if
     // that file's not found.

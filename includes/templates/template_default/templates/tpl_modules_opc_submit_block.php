@@ -18,7 +18,13 @@ if ($shipping_module_available && $payment_module_available) {
     <span id="opc-order-review"><?php echo zen_image_button(BUTTON_IMAGE_CHECKOUT_ONE_REVIEW, BUTTON_CHECKOUT_ONE_REVIEW_ALT); ?></span>
     <?php echo zen_draw_hidden_field('order_confirmed', '1', 'id="confirm-the-order"') . zen_draw_hidden_field ('current_order_total', '0', 'id="current-order-total"'); ?>
   </div>
+<?php
+    if (!empty($order->customer['email_address'])) {
+?>
   <div id="checkoutOneEmail" class="forward clearRight"><?php echo sprintf(TEXT_CONFIRMATION_EMAILS_SENT_TO, $order->customer['email_address']); ?></div>
+<?php
+    }
+?>
   <div class="clearBoth"></div>
 <!--eof submit block -->
 <?php

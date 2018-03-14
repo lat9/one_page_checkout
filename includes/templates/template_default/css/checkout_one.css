@@ -1,3 +1,11 @@
+select, fieldset select { margin-left: 0; height: 40px; }
+
+#checkoutConfirmDefault { display: none; }
+#checkoutOneLoading { position: relative; height: 95vh; top: 50%; left: 50%; display: none; }
+#checkoutPaymentNoJs { text-align: center; border: 1px solid red; width: 95%; margin: 0 auto; }
+
+#messages-bill, #messages-ship { margin-top: 10px; }
+
 th#ccProductsHeading { text-align: left; }
 th#ccTotalHeading { text-align: right; }
 .floatingBox  { width: 49%; }
@@ -7,12 +15,30 @@ label.inputLabel { width: 110px; }
 #cartOrderTotals { border-top: 1px solid #bbb; border-bottom: 1px solid #bbb; }
 fieldset#checkoutOneCartGroup { padding-bottom: 0; }
 fieldset > #cartContentsDisplay div { margin-right: 0; }
-.edit-button { border-bottom: 1px solid #bbb; text-align: right; }
+
+#choices-bill, #choices-ship { text-align: right; }
+#select-address-bill, #select-address-ship { width: auto; }
+
+.edit-button { text-align: right; }
+.opc-buttons { display: none; }
+.opc-buttons > div:first-child { float: left; }
+.opc-buttons::after { clear: both; }
+
+.opc-changed { border: 1px solid #0000ff; }
+.opc-error { border: 2px solid red; }
+.opc-right { text-align: right; }
+.opc-view { position: relative; z-index: 2; box-shadow: 3px 3px 5px 6px #ccc; }
+.opc-cc-submit, #opc-order-confirm, #opc-order-review, #opc-bill-cancel, #opc-bill-save, #opc-ship-cancel, #opc-ship-save, #opc-guest-cancel, #opc-guest-save { cursor: pointer; }
+.opc-base, .opc-credit { position: relative; }
+.opc-overlay.active { background: #dcdcdc; height: 100%; width: 100%; opacity: 0.5; top: 0; left: 0; position: absolute; padding: 0; z-index: 1; }
+.buttonRow.opc-buttons { clear: both; }
+
+.back { float: left; }
+.forward { float: right; }
+.hiddenField { display: none; }
+.visibleField { display: inline; }
+span.alert { padding-left: 0.5em; }
+
 @media (max-width: 979px) {
   .floatingBox { width: 95%; float: none; margin: 0 auto; }
 }
-.opc-cc-submit, #opc-order-confirm, #opc-order-review { cursor: pointer; }
-
-#checkoutConfirmDefault { display: none; }
-#checkoutOneLoading { position: relative; height: 95vh; top: 50%; left: 50%; display: none; }
-#checkoutPaymentNoJs { text-align: center; border: 1px solid red; width: 95%; margin: 0 auto; }

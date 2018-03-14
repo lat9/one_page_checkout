@@ -1,21 +1,43 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2017, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2018, Vinos de Frutas Tropicales.  All rights reserved.
 //
 ?>
 <!--bof billing-address block -->
     <div id="checkoutOneBillto">
       <fieldset>
         <legend><?php echo TITLE_BILLING_ADDRESS; ?></legend>
-        <address><?php echo zen_address_format($order->billing['format_id'], $order->billing, 1, ' ', '<br />'); ?></address>
-<?php 
-if (!$flagDisablePaymentAddressChange) { 
+<?php
+$opc_address_type = 'bill';
+$opc_disable_address_change = $flagDisablePaymentAddressChange;
+require $template->get_template_dir('tpl_modules_opc_address_block.php', DIR_WS_TEMPLATE, $current_page_base, 'templates'). '/tpl_modules_opc_address_block.php';
+
+if (!$flagDisablePaymentAddressChange) {
+    $cancel_title = 'title="' . BUTTON_CANCEL_CHANGES_TITLE . '"';
+    $save_title = 'title="' . BUTTON_SAVE_CHANGES_TITLE . '"';
+    $show_add_address = $_SESSION['opc']->showAddAddressField();
+    $parameters = ($show_add_address) ? '' : ' class="hiddenField"';
 ?>
-        <div class="buttonRow forward"><?php echo '<a href="' . zen_href_link(FILENAME_CHECKOUT_PAYMENT_ADDRESS, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) . '</a>'; ?></div>
+        <div class="buttonRow opc-buttons">
+            <div>
+                <?php echo zen_draw_checkbox_field("add_address['bill']", '1', false, 'id="opc-add-bill"' . $parameters); ?>
+<?php
+    if ($show_add_address) {
+?>
+                <label class="checkboxLabel" for="add_address['bill']" title="<?php echo TITLE_ADD_TO_ADDRESS_BOOK; ?>"><?php echo TEXT_ADD_TO_ADDRESS_BOOK; ?></label>
+<?php
+    }
+?>
+            </div>
+            <div class="opc-right">
+                <span id="opc-bill-cancel"><?php echo zen_image_button(BUTTON_IMAGE_CANCEL, BUTTON_CANCEL_CHANGES_ALT, $cancel_title); ?></span>
+                <span id="opc-bill-save"><?php echo zen_image_button(BUTTON_IMAGE_UPDATE, BUTTON_SAVE_CHANGES_ALT, $save_title); ?></span>
+            </div>
+        </div>
 <?php 
 } 
 ?>
-      </fieldset> 
+      </fieldset>
     </div>
 <!--eof billing-address block -->

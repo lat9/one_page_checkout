@@ -11,3 +11,14 @@ $autoLoadConfig[200][] = array(
     'autoType'  => 'init_script',
     'loadFile'  => 'init_checkout_one.php'
 );
+
+$autoLoadConfig[200][] = array(
+    'autoType' => 'class',
+    'loadFile' => 'observers/OnePageCheckoutAdminObserver.php',
+    'classPath' => DIR_WS_CLASSES
+);
+$autoLoadConfig[200][] = array(
+    'autoType' => 'classInstantiate',
+    'className' => 'OnePageCheckoutAdminObserver',
+    'objectName' => 'opcAdmin'
+);

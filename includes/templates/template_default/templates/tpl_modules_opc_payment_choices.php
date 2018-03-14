@@ -3,6 +3,10 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
 // Copyright (C) 2013-2017, Vinos de Frutas Tropicales.  All rights reserved.
 //
+// Note: This formatting has changed in v2.0.0+ of OPC, in support of the guest-checkout path.
+// The $enabled_payment_modules variable must be handled using foreach, since numerical keys
+// might have been removed if the payment method is not supported for guest-checkout!!
+//
 ?>
 <!--bof payment-method choices -->
 <?php
@@ -32,12 +36,13 @@ if ($shipping_module_available) {
     } 
 
         $selection = $enabled_payment_modules;
+        $num_selections = count($selection);
 
-        if (sizeof($selection) > 1) {
+        if ($num_selections > 1) {
 ?>
       <p class="important"><?php echo TEXT_SELECT_PAYMENT_METHOD; ?></p>
 <?php
-        } elseif (sizeof($selection) == 0) {
+        } elseif ($num_selections == 0) {
 ?>
       <p class="important"><?php echo TEXT_NO_PAYMENT_OPTIONS_AVAILABLE; ?></p>
 
@@ -45,19 +50,20 @@ if ($shipping_module_available) {
         }
 
         $radio_buttons = 0;
-        for ($i=0, $n=sizeof($selection); $i<$n; $i++) {
-            if (sizeof($selection) > 1) {
-                if (empty($selection[$i]['noradio'])) {
-                    echo zen_draw_radio_field('payment', $selection[$i]['id'], ($selection[$i]['id'] == $_SESSION['payment'] ? true : false), 'id="pmt-'.$selection[$i]['id'].'"');
+        foreach ($selection as $current_method) {
+            $payment_id = $current_method['id'];
+            if ($num_selections > 1) {
+                if (empty($current_method['noradio'])) {
+                    echo zen_draw_radio_field('payment', $payment_id, ($payment_id == $_SESSION['payment'] ? true : false), 'id="pmt-' . $payment_id . '"');
                 }
             } else {
-                echo zen_draw_hidden_field('payment', $selection[$i]['id'], 'id="pmt-'.$selection[$i]['id'].'"');
+                echo zen_draw_hidden_field('payment', $payment_id, 'id="pmt-' . $payment_id . '"');
             }
 ?>
-      <label for="pmt-<?php echo $selection[$i]['id']; ?>" class="radioButtonLabel"><?php echo $selection[$i]['module']; ?></label>
+      <label for="pmt-<?php echo $payment_id; ?>" class="radioButtonLabel"><?php echo $current_method['module']; ?></label>
 
 <?php
-            if (defined ('MODULE_ORDER_TOTAL_COD_STATUS') && MODULE_ORDER_TOTAL_COD_STATUS == 'true' and $selection[$i]['id'] == 'cod') {
+            if (defined('MODULE_ORDER_TOTAL_COD_STATUS') && MODULE_ORDER_TOTAL_COD_STATUS == 'true' and $payment_id == 'cod') {
 ?>
       <div class="alert"><?php echo TEXT_INFO_COD_FEES; ?></div>
 <?php
@@ -66,19 +72,19 @@ if ($shipping_module_available) {
       <br class="clearBoth" />
 
 <?php
-            if (isset($selection[$i]['error'])) {
+            if (isset($current_method['error'])) {
 ?>
-      <div><?php echo $selection[$i]['error']; ?></div>
+      <div><?php echo $current_method['error']; ?></div>
 
 <?php
-            } elseif (isset($selection[$i]['fields']) && is_array($selection[$i]['fields'])) {
+            } elseif (isset($current_method['fields']) && is_array($current_method['fields'])) {
 ?>
 
       <div class="ccinfo">
 <?php
-                for ($j=0, $n2=sizeof($selection[$i]['fields']); $j<$n2; $j++) {
+                foreach ($current_method['fields'] as $current_field) {
 ?>
-        <label <?php echo (isset($selection[$i]['fields'][$j]['tag']) ? 'for="'.$selection[$i]['fields'][$j]['tag'] . '" ' : ''); ?>class="inputLabelPayment"><?php echo $selection[$i]['fields'][$j]['title']; ?></label><?php echo $selection[$i]['fields'][$j]['field']; ?>
+        <label <?php echo (isset($current_field['tag']) ? 'for="' . $current_field['tag'] . '" ' : ''); ?>class="inputLabelPayment"><?php echo $current_field['title']; ?></label><?php echo $current_field['field']; ?>
         <br class="clearBoth" />
 <?php
                 }
