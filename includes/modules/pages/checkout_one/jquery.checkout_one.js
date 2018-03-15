@@ -172,17 +172,25 @@ jQuery(document).ready(function(){
         elementsMissing = true;
         zcLog2Console( 'Missing #orderTotalDivs' );
     }
-    if (jQuery( '#current-order-total' ).length == 0) {
-        elementsMissing = true;
-        zcLog2Console ( 'Missing #current-order-total' );
-    }
-    if (jQuery( '#opc-order-confirm' ).length == 0) {
-        elementsMissing = true;
-        zcLog2Console( 'Missing #opc-order-confirm' );
-    }
-    if (jQuery( '#opc-order-review' ).length == 0) {
-        elementsMissing = true;
-        zcLog2Console( 'Missing #opc-order-review' );
+    
+    // -----
+    // Account for the fact that some portions of the page aren't rendered if no
+    // shipping is available and don't check for these known-to-be-missing blocks
+    // in that "corner-case".
+    //
+    if (shippingAvailable) {
+        if (jQuery( '#current-order-total' ).length == 0) {
+            elementsMissing = true;
+            zcLog2Console ( 'Missing #current-order-total' );
+        }
+        if (jQuery( '#opc-order-confirm' ).length == 0) {
+            elementsMissing = true;
+            zcLog2Console( 'Missing #opc-order-confirm' );
+        }
+        if (jQuery( '#opc-order-review' ).length == 0) {
+            elementsMissing = true;
+            zcLog2Console( 'Missing #opc-order-review' );
+        }
     }
 
     if (!virtual_order) {

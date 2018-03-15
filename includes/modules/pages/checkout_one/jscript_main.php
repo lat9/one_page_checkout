@@ -23,6 +23,7 @@ var noShippingSelectedError = '<?php echo ERROR_NO_SHIPPING_SELECTED; ?>';
 var flagOnSubmit = <?php echo ($flagOnSubmit) ? 'true' : 'false'; ?>;
 var shippingTimeout = <?php echo (int)((defined ('CHECKOUT_ONE_SHIPPING_TIMEOUT')) ? CHECKOUT_ONE_SHIPPING_TIMEOUT : 5000); ?>;
 var textPleaseSelect = '<?php echo PLEASE_SELECT; ?>';
+var shippingAvailable = <?php echo ($shipping_module_available) ? 'true' : 'false'; ?>;
 <?php
 // -----
 // If dropdown states are to be displayed, include that json-formatted array of countries/zones.

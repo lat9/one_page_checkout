@@ -4,7 +4,7 @@
 // Copyright (C) 2013-2016, Vinos de Frutas Tropicales.  All rights reserved.
 //
 // -----
-// This module is used by both the plugin's tpl_checkout_one_default.php template and by the plugin's AJAX handler (zcAjaxOnePageCheckout.php) to render
+// This module is used by both the plugin's tpl_modules_opc_shipping_choices.php template and by the plugin's AJAX handler (zcAjaxOnePageCheckout.php) to render
 // the contents of the order's shipping section.
 //
             $radio_buttons = 0;
