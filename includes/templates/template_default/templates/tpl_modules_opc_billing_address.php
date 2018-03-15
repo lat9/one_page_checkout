@@ -5,7 +5,7 @@
 //
 ?>
 <!--bof billing-address block -->
-    <div id="checkoutOneBillto">
+    <div id="checkoutOneBillto"<?php echo ($flagDisablePaymentAddressChange) ? ' class="opc-base"' : ''; ?>>
       <fieldset>
         <legend><?php echo TITLE_BILLING_ADDRESS; ?></legend>
 <?php
@@ -39,5 +39,8 @@ if (!$flagDisablePaymentAddressChange) {
 } 
 ?>
       </fieldset>
+
+      <div class="opc-overlay<?php echo ($flagDisablePaymentAddressChange) ? ' active' : ''; ?>"></div>
+
     </div>
 <!--eof billing-address block -->
