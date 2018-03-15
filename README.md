@@ -14,10 +14,4 @@ v2.0.0 continues that fee-less tradition, with the introduction of the following
 
 - ***Temporary addresses***.  A non-guest-customer has the option of using an address *only for the current order*.  
 
-Refer to the links below for additional information.
-
-## Additional Information ###
-
-[Storefront Considerations](pages/storefront.md)
-
-[Admin Considerations](pages/admin.md)
+Additional documentation can be found [here](https://lat9.github.io/one_page_checkout).
