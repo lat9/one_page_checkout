@@ -114,7 +114,7 @@ class zcAjaxOnePageCheckout extends base
                 $shipping_modules = new shipping;
             
 //-bof-product_delivery_by_postcode (PDP) integration
-                if (function_exists('zen_get_UKPostcodeFirstPart')) {
+                if (defined('MODULE_SHIPPING_LOCALDELIVERY_POSTCODE') && defined('MODULE_SHIPPING_STOREPICKUP_POSTCODE') && function_exists('zen_get_UKPostcodeFirstPart')) {
                     global $localdelivery, $storepickup;
                     
                     $check_delivery_postcode = $order->delivery['postcode'];
