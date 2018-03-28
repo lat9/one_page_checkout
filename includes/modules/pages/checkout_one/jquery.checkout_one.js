@@ -275,7 +275,7 @@ jQuery(document).ready(function(){
     //
     collectsCardDataOnsite = function(paymentValue)
     {
-        zcLog2Console( 'Checking collectsDardDataOnsite('+paymentValue+') ...' );
+        zcLog2Console( 'Checking collectsCardDataOnsite('+paymentValue+') ...' );
         zcJS.ajax({
             url: "ajax.php?act=ajaxPayment&method=doesCollectsCardDataOnsite",
             data: {paymentValue: paymentValue}
