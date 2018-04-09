@@ -108,6 +108,15 @@ if (isset($_SESSION['admin_id'])) {
         );
     }
     
+    if (!defined('CHECKOUT_ONE_MINIFIED_SCRIPT')) {
+        $db->Execute(
+            "INSERT IGNORE INTO " . TABLE_CONFIGURATION . " 
+                ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) 
+                VALUES 
+                ( 'Load Minified Script Files?', 'CHECKOUT_ONE_MINIFIED_SCRIPT', 'true', 'Should the plugin load the minified version of its jQuery scripts, reducing the page-load time for the <code>checkout_one</code> page?<br /><br />Default: <b>true</b>.', $cgi, now(), 25, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),')"
+        );
+    }
+    
     // -----
     // v2.0.0:
     //
