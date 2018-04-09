@@ -120,7 +120,7 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
           <div class="panel-container">
             <div id="operation">
               <p>This plugin streamlines the flow that your customers see during your store's checkout process, combining the handling required for the <code class="no-pad">checkout_shipping</code>, <code class="no-pad">checkout_payment</code> and <code class="no-pad">checkout_confirmation</code> into a single-page display.</p>
-              <p>Starting with v2.0.0, your customers can also <em>Checkout as Guest</em>!</p>
+              <p>Starting with v2.0.0, your customers can also <em>Checkout as Guest</em> or create <em>Registered Accounts</em>!  The <em>Checkout as Guest</em> feature provides customers with a more streamlined checkout experience (no account-creation required), while <em>Registered Accounts</em> enable your customers to create their account with minimal information (no physical address required), making it easier for your customers to sign up for &quot;newsletter-only&quot; accounts.</p>
               <div class="box-border">
                 <p>The plugin's design utilizes <b><i>standard Zen Cart</i></b> HTML/CSS layout when rendering its new pages, so the look-and-feel of your store gets &quot;inherited&quot;.  Some templates make <em>drastic</em>  modifications to that layout &mdash; removing those <em>standard</em> HTML/CSS selectors &mdash; which causes this plugin's newly-added pages to display improperly.  The following templates are known to be incompatible with the <em>One-Page Checkout</em> plugin:<p>
                 <ol>
@@ -284,9 +284,54 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
                     <td>1.3.0</td>
                 </tr>
                 <tr>
+                    <td>Order Status: Slamming Control</td>
+                    <td>Identify the number of back-to-back errors that your store allows when a customer is checking an order's status via the <code class="no-pad">order_status</code> page (default: <b>3</b>).  When the customer has reached that threshold, they will be redirected to the <code class="no-pad">time_out</code> page.</td>
+                    <td>2.0.0</td>
+                </tr>
+                <tr>
                     <td>Load Minified Script Files?</td>
-                    <td>Should the plugin load the minified version of its jQuery scripts, reducing the page-load time for the <code class="no-pad">checkout_one</code> page?  Default: <em>true</em>.</td>
+                    <td>Should the plugin load the <em>minified</em> version of its jQuery scripts, reducing the page-load time for the <code class="no-pad">checkout_one</code> page?  Default: <em>true</em>.</td>
                     <td>1.5.0</td>
+                </tr>
+                <tr>
+                    <td>Enable Guest Checkout?</td>
+                    <td>When enabled (i.e. set to <b>true</b>), customers can checkout without creating an account using the OPC's <em>guest checkout</em>.  Note that the overall <em>One-Page Checkout</em> must also be enabled!</td>
+                    <td>2.0.0</td>
+                </tr>
+                <tr>
+                    <td>Guest Checkout: Require Email Confirmation?</td>
+                    <td>When a <em>guest</em> checks out, are they required to confirm their email address?  Default: <b>true</b>.</td>
+                    <td>2.0.0</td>
+                </tr>
+                <tr>
+                    <td>Guest Checkout: Pages Allowed Post-Checkout</td>
+                    <td>Identify (using a comma-separated list, intervening blanks are OK) the pages that are <em>allowed</em> once a guest has completed their checkout.  When the guest navigates from the <code class="no-pad">checkout_success</code> page to any page <em><b>not in this list</b></em>, their guest-customer session is reset.<br /><br />For example, if your store provides a pop-up print invoice, you would include the name of that page in this list.  Default: <em>empty</em>.</td>
+                    <td>2.0.0</td>
+                </tr>
+                <tr>
+                    <td>Guest Checkout: Disallowed Pages</td>
+                    <td>Identify (using a comma-separated list, intervening blanks are OK) the pages that are <em>disallowed</em> during guest-checkout. These pages <em>normally</em> require a logged-in customer prior to display, e.g. <code class="no-pad">account</code>.  <b>Do not</b> include the <code class="no-pad">login</code>, <code class="no-pad">create_account</code> or <code class="no-pad">logoff</code> pages in this list!<br /><br />Default: <b>account, account_edit, account_history, account_history_info, account_newsletters, account_notifications, account_password, address_book, address_book_process, create_account_success, gv_redeem, gv_send, password_forgotten, product_reviews_write, unsubscribe</b>.</td>
+                    <td>2.0.0</td>
+                </tr>
+                <tr>
+                    <td>Guest Checkout: Disallowed <em>Credit Class</em> Order-Totals</td>
+                    <td>Identify (using a comma-separated list, intervening blanks are OK) any <em>credit-class</em> order-totals that are <em>disallowed</em> during guest-checkout.  These order-totals <em>normally</em> require a customer-account for their processing, e.g. <code class="no-pad">ot_gv</code>, the default value.</td>
+                    <td>2.0.0</td>
+                </tr>
+                <tr>
+                    <td>Guest Checkout: Disallowed Payment Methods</td>
+                    <td>Identify (using a comma-separated list, intervening blanks are OK) any payment methods that are <em>disallowed</em> during guest-checkout.  These payment methods <em>normally</em> have no validation of purchase &mdash; e.g. <code class="no-pad">moneyorder</code> and <code class="no-pad">cod</code> &mdash; and can, if left enabled, result in unwanted <em>spam purchases</em>.  Default: <b>moneyorder, cod</b>.</td>
+                    <td>2.0.0</td>
+                </tr>
+                <tr>
+                    <td>Enable Account Registration?</td>
+                    <td>Do you want your store's <code class="no-pad">create_account</code> processing to create a <em>registered</em> rather than a <em>full</em> account?  Default: <b>false</b>.</td>
+                    <td>2.0.0</td>
+                </tr>
+                <tr>
+                    <td>Login-Page Layout</td>
+                    <td>When you enable the plugin's <em>Guest Checkout</em> and/or <em>Account Registration</em>, an alternate formatting of the storefront <code class="no-pad">login</code> page is displayed.  Use this setting to control the 3-column layout of that modified page.  The value is an encoded string, identifying which block(s) should be displayed in which column.  Columns are delimited by a semi-colon (;) and the top-to-bottom column layout is in the order specified by the block-elements' left-to-right order.<br /><br />The block elements are:<ul><li><b>L</b> ... (required) The email/password login block.</li><li><b>P</b> ... (optional) The PayPal Express Checkout shortcut-button block.</li><li><b>G</b> ... (required) The guest-checkout block.</li><li><b>C</b> ... (required) The create-account block.</li><li><b>B</b> ... (optional) The &quot;Account Benefits&quot; block.</li></ul>Default: <b>L;P,G,C;B</b></td>
+                    <td>2.0.0</td>
                 </tr>
                 <tr>
                     <td>Enable One-Page Checkout Debug?</td>
@@ -717,7 +762,7 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a> <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color.</p>
               <ul>
-                <li>v2.0.0, 2018-03-xx:<ul>
+                <li>v2.0.0, 2018-04-xx:<ul>
                     <li>CHANGE: Add processing to enable <em>guest-checkout</em>.</li>
                     <li>BUGFIX: &quot;Align&quot; STOCK_CHECK clause in shipping checks with <code class="no-pad">checkout_shipping</code> current handling.</li>
                     <li>BUGFIX: Redirects to the <code class="no-pad">time_out</code> pages via SSL protocol.</li>
