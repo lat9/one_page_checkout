@@ -14,6 +14,8 @@ if ($_SESSION['opc']->isGuestCheckout()) {
     $telephone_field_len = zen_set_field_length(TABLE_CUSTOMERS, 'customers_telephone', '40');
     $telephone_required = ((int)ENTRY_TELEPHONE_MIN_LENGTH > 0) ? ' required' : '';
     $telephone_value = $_SESSION['opc']->getGuestTelephone();
+    
+    $dob_value = $_SESSION['opc']->getGuestDateOfBirth();
 ?>
 <!--bof billing-address block -->
     <div id="checkoutOneGuestInfo">
@@ -41,7 +43,7 @@ if ($_SESSION['opc']->isGuestCheckout()) {
       $dob_required = (((int)ENTRY_DOB_MIN_LENGTH) > 0) ? ' required' : '';
 ?>
             <label class="inputLabel" for="dob"><?php echo ENTRY_DATE_OF_BIRTH; ?></label>
-            <?php echo zen_draw_input_field('dob','', 'id="dob" placeholder="' . ENTRY_DATE_OF_BIRTH_TEXT . '"' . $dob_required); ?>
+            <?php echo zen_draw_input_field('dob', $dob_value, 'id="dob" placeholder="' . ENTRY_DATE_OF_BIRTH_TEXT . '"' . $dob_required); ?>
             <br class="clearBoth" />
 <?php
   }

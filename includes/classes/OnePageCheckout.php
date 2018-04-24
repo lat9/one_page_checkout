@@ -359,6 +359,18 @@ class OnePageCheckout extends base
     }
     
     /* -----
+    ** This function, called by the guest customer-information block's formatting, returns the
+    ** guest's currently-set date-of-birth.
+    */
+    public function getGuestDateOfBirth()
+    {
+        if (!isset($this->guestCustomerInfo)) {
+            trigger_error("Guest customer-info not set during guest checkout.", E_USER_ERROR);
+        }
+        return (isset($this->guestCustomerInfo['dob'])) ? $this->guestCustomerInfo['dob'] : '';
+    }
+    
+    /* -----
     ** This function, called by tpl_modules_opc_credit_selections.php, returns a boolean
     ** indication as to whether (true) or not (false) the specified order-total is
     ** "authorized" for use.  If guest-checkout is active, some order-total modules might
@@ -951,6 +963,7 @@ class OnePageCheckout extends base
         
         $dob = '';
         if (ACCOUNT_DOB == 'true') {
+            $dob = zen_db_prepare_input($_POST['dob']);
             if (ENTRY_DOB_MIN_LENGTH > 0 or !empty($_POST['dob'])) {
                 // Support ISO-8601 style date
                 if (preg_match('/^([0-9]{4})(|-|\/)([0-9]{2})\2([0-9]{2})$/', $dob)) {
@@ -986,7 +999,6 @@ class OnePageCheckout extends base
                 $this->guestCustomerInfo = array_merge($this->guestCustomerInfo, $additional_fields);
             }
         }
-        
         return $messages;
     }
     
