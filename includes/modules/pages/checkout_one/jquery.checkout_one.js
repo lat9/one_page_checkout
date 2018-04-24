@@ -73,9 +73,13 @@ function submitFunction($gv,$total)
     zcLog2Console( 'submitFunction, '+arg_count+' arguments: '+arg_list );
     if (arg_count == 2) {
         var ot_total = document.getElementById( 'ottotal' );
-        var total = ot_total.children[0].textContent.substr (1);
-        zcLog2Console( 'Current order total: '+total+', text: '+ot_total.children[0].textContent );
-        document.getElementById( 'current-order-total' ).value = ot_total.children[0].textContent;
+        var value_index = 0;
+        if (ot_total.tagName != 'DIV') {
+            value_index = 1;
+        }
+        var total = ot_total.children[value_index].textContent.substr(1);
+        zcLog2Console( 'Current order total: '+total+', text: '+ot_total.children[value_index].textContent );
+        document.getElementById( 'current-order-total' ).value = ot_total.children[value_index].textContent;
         if (total == 0) {
             zcLog2Console( 'Order total is 0, setting submitter' );
             submitter = 1;

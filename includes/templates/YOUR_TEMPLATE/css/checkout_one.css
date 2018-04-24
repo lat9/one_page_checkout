@@ -10,6 +10,7 @@ th#ccProductsHeading { text-align: left; }
 th#ccTotalHeading { text-align: right; }
 .floatingBox  { width: 49%; }
 .clearRight { clear: right; }
+.clearBoth { clear: both; }
 label.inputLabel { width: 110px; }
 #cartContentsDisplay  th, #cartContentsDisplay td { padding: 0.5em 1em; }
 #cartOrderTotals { border-top: 1px solid #bbb; border-bottom: 1px solid #bbb; }
