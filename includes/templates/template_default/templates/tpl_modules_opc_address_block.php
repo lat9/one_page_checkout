@@ -39,10 +39,10 @@ if (ACCOUNT_GENDER == 'true') {
     $field_name = "gender[$which]";
     $male_id = "gender-male-$which";
     $female_id = "gender-female-$which";
-    echo zen_draw_radio_field ($field_name, 'm', ($address['gender'] == 'm'), "id=\"$male_id\"") . 
-    "<label class=\"radioButtonLabel\" for=\"$male_id\">" . MALE . '</label>' . 
+    echo '<div class="custom-control custom-radio custom-control-inline">' . zen_draw_radio_field ($field_name, 'm', ($address['gender'] == 'm'), "id=\"$male_id\"") . 
+    "<label class=\"custom-control-label radioButtonLabel\" for=\"$male_id\">" . MALE . '</label></div><div class="custom-control custom-radio custom-control-inline">' . 
     zen_draw_radio_field ($field_name, 'f', ($address['gender'] == 'f'), "id=\"$female_id\"") . 
-    "<label class=\"radioButtonLabel\" for=\"$female_id\">" . FEMALE . '</label>' . 
+    "<label class=\"custom-control-label radioButtonLabel\" for=\"$female_id\">" . FEMALE . '</label></div>' . 
     (zen_not_null(ENTRY_GENDER_TEXT) ? '<span class="alert">' . ENTRY_GENDER_TEXT . '</span>': ''); 
 ?>
       <br class="clearBoth" />
