@@ -34,10 +34,12 @@
           <div class="important forward"><?php echo $currencies->format (zen_add_tax ($quotes[$i]['methods'][$j]['cost'], $quotes[$i]['tax'])) . zen_draw_hidden_field ('shipping', $shipping_method); ?></div>
 <?php
                             }
+                            echo '<div class="custom-control custom-radio">';        
                             echo zen_draw_radio_field('shipping', $shipping_method, $checked, 'id="ship-'.$quotes[$i]['id'] . '-' . str_replace(' ', '-', $quotes[$i]['methods'][$j]['id']) .'"'); 
 ?>
-          <label for="ship-<?php echo $quotes[$i]['id'] . '-' . str_replace(' ', '-', $quotes[$i]['methods'][$j]['id']); ?>" class="checkboxLabel" id="<?php echo str_replace (' ', '-', $shipping_method); ?>-title"><?php echo $quotes[$i]['methods'][$j]['title']; ?></label>
-          <br class="clearBoth" />
+          <label for="ship-<?php echo $quotes[$i]['id'] . '-' . str_replace(' ', '-', $quotes[$i]['methods'][$j]['id']); ?>" class="custom-control-label radioButtonLabel" id="<?php echo str_replace (' ', '-', $shipping_method); ?>-title"><?php echo $quotes[$i]['methods'][$j]['title']; ?></label>
+                    </div>
+                    <br class="clearBoth" />
 <?php
                             $radio_buttons++;
                         }
