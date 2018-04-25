@@ -50,6 +50,7 @@ if ($shipping_module_available) {
         }
 
         $radio_buttons = 0;
+        echo '<div class="custom-control custom-radio">';
         foreach ($selection as $current_method) {
             $payment_id = $current_method['id'];
             if ($num_selections > 1) {
@@ -60,8 +61,8 @@ if ($shipping_module_available) {
                 echo zen_draw_hidden_field('payment', $payment_id, 'id="pmt-' . $payment_id . '"');
             }
 ?>
-      <label for="pmt-<?php echo $payment_id; ?>" class="radioButtonLabel"><?php echo $current_method['module']; ?></label>
-
+      <label for="pmt-<?php echo $payment_id; ?>" class="custom-control-label radioButtonLabel"><?php echo $current_method['module']; ?></label>
+      </div>
 <?php
             if (defined('MODULE_ORDER_TOTAL_COD_STATUS') && MODULE_ORDER_TOTAL_COD_STATUS == 'true' and $payment_id == 'cod') {
 ?>
