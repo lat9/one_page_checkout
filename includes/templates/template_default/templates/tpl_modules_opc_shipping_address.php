@@ -16,8 +16,8 @@ if ($is_virtual_order) {
         echo zen_draw_checkbox_field('shipping_billing', '1', false, 'id="shipping_billing" style="display: none;"');
     } else {
 ?>
-    <div id="checkoutOneShippingFlag" style="display: none;"><?php echo  zen_draw_checkbox_field('shipping_billing', '1', $shipping_billing, 'id="shipping_billing"');?>
-      <label class="checkboxLabel" for="shipping_billing"><?php echo TEXT_USE_BILLING_FOR_SHIPPING; ?></label>
+    <div id="checkoutOneShippingFlag" class="custom-control custom-checkbox" style="display: none;"><?php echo  zen_draw_checkbox_field('shipping_billing', '1', $shipping_billing, 'id="shipping_billing"');?>
+      <label class="custom-control-label checkboxLabel" for="shipping_billing"><?php echo TEXT_USE_BILLING_FOR_SHIPPING; ?></label>
     </div>
 <?php
     }
