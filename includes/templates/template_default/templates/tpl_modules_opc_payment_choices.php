@@ -52,7 +52,7 @@ if ($shipping_module_available) {
         $radio_buttons = 0;
 
         foreach ($selection as $current_method) {
-         echo '<div class="custom-control custom-radio">'; 
+        echo '<div class="custom-control custom-radio">'; 
             $payment_id = $current_method['id'];
             if ($num_selections > 1) {
                 if (empty($current_method['noradio'])) {
