@@ -126,7 +126,6 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
                   <li>YourStore (themeforest)</li>
                 </ol>
                 <p>v2.0.0 of One-Page Checkout has been validated with the <a href="https://www.zen-cart.com/downloads.php?do=file&id=2191" target="_blank">ZCA Bootstrap Template</a>, <b>v1.0.4</b>.  Since that template uses a table-based layout for the order-totals' formatting, you'll need to make a template-override change to <code class="no-pad">includes/templates/template_default/templates/tpl_modules_opc_shopping_cart.php</code>, wrapping the order-totals' output with table tags:</p>
-                <hr />
                 <pre class="scroll">
 if (MODULE_ORDER_TOTAL_INSTALLED) {
     $row_class = ($last_row_class == 'rowEven') ? 'rowOdd' : 'rowEven';
