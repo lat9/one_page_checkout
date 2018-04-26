@@ -40,8 +40,11 @@ if ($offer_account_creation) {
 <?php
     if (ACCOUNT_NEWSLETTER_STATUS != 0) {
 ?>
-            <?php echo zen_draw_checkbox_field('newsletter', '1', $newsletter, 'id="newsletter-checkbox"'); ?>
-            <label class="checkboxLabel" for="newsletter-checkbox"> <?php echo ENTRY_NEWSLETTER; ?></label><?php echo(zen_not_null(ENTRY_NEWSLETTER_TEXT) ? '<span class="alert">' . ENTRY_NEWSLETTER_TEXT . '</span>': ''); ?>
+            <div class="custom-control custom-checkbox">
+                <?php echo zen_draw_checkbox_field('newsletter', '1', $newsletter, 'id="newsletter-checkbox"'); ?>
+                <label class="custom-control-label checkboxLabel" for="newsletter-checkbox"> <?php echo ENTRY_NEWSLETTER; ?></label>
+            </div>
+            <?php echo(zen_not_null(ENTRY_NEWSLETTER_TEXT) ? '<span class="alert">' . ENTRY_NEWSLETTER_TEXT . '</span>': ''); ?>
 <?php 
     } 
 ?>       
