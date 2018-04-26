@@ -88,8 +88,6 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
   <p><b>Credits:</b></p>
   <ol>
     <li>The checkout-confirmation loading .gif file was created using the tool at <a href="http://preloaders.net/en/free" target="_blank">http://preloaders.net/en/free</a>.</li>
-    <li>The HTML map that helps to describe the sections of the checkout_one page in this document was created using the tool at <a href="http://imagemap-generator.dariodomi.de/" target="_blank">http://imagemap-generator.dariodomi.de/</a>.</li>
-    <li>Responsive image-map handling courtesy of <a href="https://github.com/davidjbradshaw/image-map-resizer" target="_blank">https://github.com/davidjbradshaw/image-map-resizer</a>.</li>
     <li>Browser detection class courtesy of <a href="https://github.com/cbschuld/Browser.php" target="_blank">https://github.com/cbschuld/Browser.php</a>.</li>
     <li>Simple CSS overlay courtesy of <a href="https://github.com/KorenLeslieCohen/simple-css-overlay" target="_blank">https://github.com/KorenLeslieCohen/simple-css-overlay</a>.</li>
     <li>Guest checkout, especially the <code class="no-pad">orders_status</code> page's processing, based on the <a href="https://www.zen-cart.com/showthread.php?196995-COWOA-%28for-ZC-v1-5-x%29">COWOA</a> (by @DivaVocals, @countrycharm and others) and <a href="https://www.zen-cart.com/downloads.php?do=file&id=2131">COWAA</a> (by @davewest) plugins.</li>
@@ -127,6 +125,20 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
                   <li>Tableau (numinix)</li>
                   <li>YourStore (themeforest)</li>
                 </ol>
+                <p>v2.0.0 of One-Page Checkout has been validated with the <a href="https://www.zen-cart.com/downloads.php?do=file&id=2191" target="_blank">ZCA Bootstrap Template</a>, <b>v1.0.4</b>.  Since that template uses a table-based layout for the order-totals' formatting, you'll need to make a template-override change to <code class="no-pad">includes/templates/template_default/templates/tpl_modules_opc_shopping_cart.php</code>, wrapping the order-totals' output with table tags:</p>
+                <hr />
+                <pre class="scroll">
+if (MODULE_ORDER_TOTAL_INSTALLED) {
+    $row_class = ($last_row_class == 'rowEven') ? 'rowOdd' : 'rowEven';
+//-bof-opc/bootstrap, added &lt;table&gt;&lt;/table&gt; since the order totals are displayed as table-rows.
+?>     
+        &lt;tr class="&lt;?php echo $row_class; ?&gt;" id="cartOrderTotals"&gt;
+            &lt;td colspan="&lt;?php echo (count($order-&gt;info['tax_groups']) &gt; 1) ? 4 : 3; ?&gt;" id="orderTotalDivs"&gt;<b style="color: red;">&lt;table width="100%"&gt;</b>&lt;?php $order_total_modules-&gt;process (); $order_total_modules-&gt;output(); ?&gt;<b style="color: red;">&lt;/table&gt;</b>&lt;/td&gt;
+        &lt;/tr&gt;
+&lt;?php
+//-eof-opc/bootstrap
+}
+                </pre>
               </div>
               <br />
               <div class="box-border">
