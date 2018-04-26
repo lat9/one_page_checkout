@@ -1,6 +1,7 @@
 # *Checkout One* Page #
 
-*OPC-GC/RA*'s `checkout_one` page guides a customer through the checkout process using jQuery and AJAX handlers.  The majority of this page's display is documented in the plugin's readme; this section identifies the changes specific to the support for guest-checkout and temporary addresses. 
+*OPC-GC/RA*'s `checkout_one` page guides a customer through the checkout process using jQuery and AJAX handlers.  The majority of this page's display is documented in the plugin's readme; this section identifies the changes specific to the support for guest-checkout and temporary addresses.
+
 
 ## Gathering Contact Information ##
 
@@ -64,3 +65,89 @@ Clicking *Cancel* results in any address changes being discarded, with the previ
 ![](images/checkout_one_addr_fa_change.jpg)
 
 ----------
+
+## Common Page Elements
+
+The overall `checkout_one` page displays in a manner similar to:
+
+----------
+
+![](images/checkout_one.jpg)
+
+----------
+
+The formatting of the Billing Address (and Shipping Address) blocks are as described above; additional blocks are described in the following subsections.
+
+### Upper Message
+
+The *Upper Message* section *conditionally* displays at the very top of the page.  This message, which defaults to empty text, can be customized by editing the TEXT_CHECKOUT_ONE_TOP_INSTRUCTIONS definition, present in `includes/languages/english/checkout_one.php`.  If you're going to change the text, you should copy that file to `includes/languages/YOUR_LANGUAGE/YOUR_TEMPLATE/checkout_one.php` before making your edits.
+
+This section is formatted by `includes/templates/template_default/templates/tpl_checkout_one_default.php`.
+
+### Billing Address Block
+
+This block, always displayed, is formatted by `includes/templates/template_default/templates/tpl_modules_opc_billing_address.php` and the presentation depends on the mode in which the checkout is being used (as described in document sections, above).
+
+The plugin's default layout displays this block at the top of the left-side pane and displays the order's current filling address.  If allowed by the selected payment method, this block includes a `Edit` button, allowing the customer to change their billing address.
+
+### Shipping Address Block
+
+This block, displayed only if the order includes at least one physical (i.e. shippable) product, is formatted by `includes/templates/template_default/templates/tpl_modules_opc_shipping_address.php`.
+
+The plugin's default layout displays this block in the left-side pane just under the <em>Billing-Address Block</em>.  On initial entry to the page, the <b><em>Shipping Address, same as billing?</em></b> checkbox is checked &hellip; unless you've configured <em>OPC</em> not to display that checkbox.  The shipping address is displayed when that checkbox is unchecked. If allowed by the selected payment method, this block includes an &quot;Edit&quot; button, allowing the customer to change their shipping address.
+
+### Order Comments
+
+This section, always displayed, is formatted by `includes/templates/template_default/templates/tpl_modules_opc_comments.php`.
+
+The plugin's default layout displays this block in the left-side pane just under the <em>Shipping-Address Block</em>, including a textbox field into which the customer enters any comments pertinent to the order.
+
+### Order Credits
+
+This section is displayed <em>only if</em> your store has enabled any credit-class &quot;order-totals&quot;, e.g. coupons or gift certificates; its formatting is provided by `includes/templates/template_default/templates/tpl_modules_opc_credit_selections.php`.
+
+The plugin's default layout displays this block in the left-side pane just under the <em>Order Comments</em>.
+
+### Shipping Method Selection
+
+This section, displayed <em>only if</em> the current order contains at least one physical (i.e. shippable) product, is formatted by `includes/templates/template_default/templates/tpl_modules_opc_shipping_choices.php`.
+
+The plugin's default layout displays this block at the top of the right-side pane and contains the shipping methods that are currently valid for the order.  When the customer changes the shipping-method selection, a teeny AJAX message is sent back to your store to allow the order's totals-block to be re-built.
+
+### Payment Method Selection
+
+ This section, always displayed, is formatted by `includes/templates/template_default/templates/tpl_modules_opc_payment_choices.php`.
+
+The plugin's default layout displays this block in the right-hand pane, just below the <em>Shipping-Method Selection</em> block (if present) and contains the payment methods that are currently valid for the order.
+
+### Shopping Cart / Order Totals
+
+This section, always displayed, is formatted by `includes/templates/template_default/templates/tpl_modules_opc_shopping_cart.php`.
+
+The plugin's default layout displays this block full-screen width, just below the upper panes, and identifies the order's current product list and totals.
+
+### Pre-Confirmation Message
+
+This section, displayed under the conditions described below, is formatted by `includes/templates/template_default/templates/tpl_modules_opc_instructions.php`.
+
+The plugin's default layout displays this block full-screen width, just below the <b><em>Shopping Cart</em></b> section.  If you want to display a pre-confirmation message to your customers, you'll need to change a couple of language-file constants present in `includes/languages/english/checkout_one.php`.
+
+If you're going to change the text, you should copy that file to `includes/languages/YOUR_LANGUAGE/YOUR_TEMPLATE/checkout_one.php` before making your edits; two constants are &quot;involved&quot;:
+
+1. <em>TEXT_CHECKOUT_ONE_INSTRUCTIONS</em>.  This constant, if not empty, results in the `fieldset` being displayed, with the text you've entered surrounded by a `p` tag
+1. <em>TEXT_CHECKOUT_ONE_INSTRUCTION_LABEL</em>.  This constant, if not empty, is displayed as the fieldset's `label`.
+
+### Terms and Conditions
+
+This section, displayed under the conditions described below, is formatted by `includes/templates/template_default/templates/tpl_modules_opc_conditions.php`.
+
+The plugin's default layout displays this block full-screen width, just above the <b><em>Order Confirmation</em></b> section, based on your store's setting of <em>Configuration-&gt;Regulations-&gt;Confirm Terms and Conditions During Checkout Procedure</em>.
+
+### Order Confirmation
+
+This section, always displayed, is formatted by `includes/templates/template_default/templates/tpl_modules_opc_submit_block.php`.
+
+The plugin's default layout displays this block full-screen width as the last element of the page, containing the order-confirmation submit-buttons and shows the customer the email-address to which the order-confirmation email will be sent.
+
+
+
