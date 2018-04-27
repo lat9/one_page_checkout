@@ -18,6 +18,8 @@ There are a couple of optional elements displayed with this block:
 1. ***Confirm Email***.  Displayed when the store has set the *OPC*'s configuration setting **Guest Checkout: Require Email Confirmation?** to *true*.
 1. ***Date of Birth***.  Displayed when the store has set **Configuration->Customer Details->Date of Birth** to *true*.
 
+While the ***Telephone*** element is *always* displayed, its value is required only when the store has set **Configuration->Minimum Values->Telephone Number** to a value greater than 0.
+
 ## Updating Addresses (Billing and Shipping) ##
 
 The address-gathering within the page has been updated for v2.0.0, now displaying a full address form when an order's billing and/or shipping addresses are changed.  That display changes depending on the [mode](address_management.md) in which the checkout is being processed.

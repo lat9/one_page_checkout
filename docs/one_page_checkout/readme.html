@@ -33,7 +33,7 @@ textarea { width: 100%; }
 .corefile { color: red; }
 .template { color: green; }
 .forward { float: right; }
-.added { color: blue; }
+.added { color: #342d7e; }
 .removed { text-decoration: line-through; }
 .back { float: back; }
 .clearBoth { clear: both; }
@@ -118,7 +118,7 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
           <div class="panel-container">
             <div id="operation">
               <p>This plugin streamlines the flow that your customers see during your store's checkout process, combining the handling required for the <code class="no-pad">checkout_shipping</code>, <code class="no-pad">checkout_payment</code> and <code class="no-pad">checkout_confirmation</code> into a single-page display.</p>
-              <p>Starting with v2.0.0, your customers can also <em>Checkout as Guest</em> or create <em>Registered Accounts</em>!  The <em>Checkout as Guest</em> feature provides customers with a more streamlined checkout experience (no account-creation required), while <em>Registered Accounts</em> enable your customers to create their account with minimal information (no physical address required), making it easier for your customers to sign up for &quot;newsletter-only&quot; accounts.</p>
+              <p>Starting with v2.0.0, your customers can also <em>Checkout as Guest</em> or create <em>Registered Accounts</em>!  The <em>Checkout as Guest</em> feature provides customers with a more streamlined checkout experience (no account-creation required), while <em>Registered Accounts</em> enable your customers to create their account with minimal information (no address-book record required), making it easier for your customers to sign up for &quot;newsletter-only&quot; accounts and other account-holder features that your store might have.</p>
               <div class="box-border">
                 <p>The plugin's design utilizes <b><i>standard Zen Cart</i></b> HTML/CSS layout when rendering its new pages, so the look-and-feel of your store gets &quot;inherited&quot;.  Some templates make <em>drastic</em>  modifications to that layout &mdash; removing those <em>standard</em> HTML/CSS selectors &mdash; which causes this plugin's newly-added pages to display improperly.  The following templates are known to be incompatible with the <em>One-Page Checkout</em> plugin:<p>
                 <ol>
@@ -366,7 +366,7 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
             </div>
             
             <div id="storefront">
-              <p>When you've enabled the <em>One-Page Checkout</em>, the customer will see a single-page <em>similar to</em> the image below; the actual layout will depend on the template that is currently active for your store and the <em>OPC</em> options that you have enabled.  The customer uses the form to apply any coupon (or gift-certificate) codes, choose their shipping and payment methods and then clicks that &quot;Confirm Order&quot; button &hellip; which takes them to a transitional confirmation page and subsequently to the &quot;checkout_success&quot; page.  If they've chosen a payment method that accepts credit-cards onsite, then an additional confirmation page is displayed from which the customer re-confirms their order.</p>
+              <p>When you've enabled the <em>One-Page Checkout</em>, the customer will see a single-page <em>similar to</em> the images shown in the plugin's <a href="https://lat9.github.io/one_page_checkout/pages/checkout_one_page.html" target="_blank">additional documentation</a>; the actual layout will depend on the template that is currently active for your store and the <em>OPC</em> options that you have enabled.  The customer uses the form to apply any coupon (or gift-certificate) codes, choose their shipping and payment methods and then clicks that &quot;Confirm Order&quot; button &hellip; which takes them to a transitional confirmation page and subsequently to the &quot;checkout_success&quot; page.  If they've chosen a payment method that accepts credit-cards onsite, then an additional confirmation page is displayed from which the customer re-confirms their order.</p>
               <p><strong>Notes:</strong><ol>
                   <li>Starting with v1.0.4, customers that access your site using a version of <b><em>Internet Explorer</em> less than 9.0</b> will continue to see the &quot;traditional&quot; multi-page version of the checkout process.</li>
                   <li>Starting with v1.3.0, this page uses jQuery to handle the submittal of the checkout-related form.  If the customer has disabled javascript in their browser or if there's a jQuery-related error on the page, <em>the customer is unable to checkout via <b>OPC</b></em>.  In this case, the plugin displays a message to the customer with a link to the multi-page checkout handling so that they can still checkout.</li>
@@ -688,11 +688,13 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a> <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color.</p>
               <ul>
-                <li>v2.0.0, 2018-04-xx:<ul>
-                    <li>CHANGE: Add processing to enable <em>guest-checkout</em>.</li>
+                <li>v2.0.0, 2018-04-27:<ul>
+                    <li>CHANGE: Add processing to enable <em>guest-checkout</em> and <em>registered-accounts</em> features.</li>
+                    <li>CHANGE: Enable interoperation with the <em>ZCA Bootstrap Template</em>.</li>
                     <li>BUGFIX: &quot;Align&quot; STOCK_CHECK clause in shipping checks with <code class="no-pad">checkout_shipping</code> current handling.</li>
                     <li>BUGFIX: Redirects to the <code class="no-pad">time_out</code> pages via SSL protocol.</li>
                     <li>BUGFIX: Correct integration with <em>Product Delivery by Postcode</em>.</li>
+                    <li>BUGFIX: Correct integration with the <em>PayPal Express Checkout</em> shortcut button.</li>
                     <li>The following files were affected:<ol>
                         <li>/includes/auto_loaders/config.checkout_one.php</li>
                         <li><span class="added">/includes/classes/OnePageCheckout.php</span></li>
