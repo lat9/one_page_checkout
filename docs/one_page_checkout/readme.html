@@ -688,6 +688,14 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a> <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color.</p>
               <ul>
+                <li>v2.0.1, 2018-05-xx:<ul>
+                    <li>BUGFIX: T's and C's checkbox not rendered for &quot;ZCA Bootstrap Template&quot;.</li>
+                    <li>BUGFIX: Debug-log generated when no shipping methods are available.</li>
+                    <li>The following files were affected:<ol>
+                        <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_conditions.php</span></li>
+                        <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_shipping_choices.php</span></li>
+                    </ol></li>
+                </ul></li>
                 <li>v2.0.0, 2018-04-27:<ul>
                     <li>CHANGE: Add processing to enable <em>guest-checkout</em> and <em>registered-accounts</em> features.</li>
                     <li>CHANGE: Enable interoperation with the <em>ZCA Bootstrap Template</em>.</li>

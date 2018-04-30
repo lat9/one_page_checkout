@@ -57,11 +57,13 @@ if ($is_virtual_order) {
     <h2 id="checkoutShippingHeadingMethod"><?php echo TITLE_NO_SHIPPING_AVAILABLE; ?></h2>
 <?php
 //-bof-product_delivery_by_postcode (PDP) integration
-        $chk_local_delivery_only = $_SESSION['cart']->in_cart_check('product_is_local_delivery', '1');
-        if ($chk_local_delivery_only) {
+        if ($sniffer->field_exists(TABLE_PRODUCTS, 'product_is_local_delivery')) {
+            $chk_local_delivery_only = $_SESSION['cart']->in_cart_check('product_is_local_delivery', '1');
+            if ($chk_local_delivery_only) {
 ?>
     <div id="cartLocalText"><?php echo TEXT_PRODUCT_LOCAL_DELIVERY_ONLY; ?></div>
 <?php
+            }
         }
 //-eof-product_delivery_by_postcode (PDP) integration
 ?>
