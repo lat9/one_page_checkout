@@ -217,6 +217,21 @@ class zcAjaxOnePageCheckout extends base
             $order_total_modules->output();
             $order_total_html = ob_get_clean();
             ob_flush();
+            
+            // -----
+            // Pull in, also, any changes to the payment-methods available, given the change to shipping.
+            //
+            $shipping_module_available = ($free_shipping || $is_virtual_order || zen_count_shipping_modules() > 0);
+
+            if (!class_exists('payment')) {
+                require DIR_WS_CLASSES . 'payment.php';
+            }
+            $payment_modules = new payment();
+            $enabled_payment_modules = $_SESSION['opc']->validateGuestPaymentMethods($payment_modules->selection());
+            ob_start ();
+            require $template->get_template_dir('tpl_modules_opc_payment_choices.php', DIR_WS_TEMPLATE, $GLOBALS['current_page_base'], 'templates'). '/tpl_modules_opc_payment_choices.php';
+            $payment_html = ob_get_clean();
+            ob_flush();
         }
         
         $return_array = array(
@@ -225,6 +240,7 @@ class zcAjaxOnePageCheckout extends base
             'orderTotalHtml' => $order_total_html,
             'shippingHtml' => $shipping_html,
             'shippingMessage' => $shipping_choose_message,
+            'paymentHtml' => $payment_html,
         );
         $checkout_one->debug_message('updateShipping, returning:' . var_export($return_array, true) . var_export($_SESSION['shipping'], true));
 

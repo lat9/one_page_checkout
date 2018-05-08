@@ -83,7 +83,7 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
 
 <body>
   <h1>One-Page Checkout &hellip; with Guest &hellip; <span class="smaller">for Zen Cart v1.5.4 (and later)</span></h1>
-  <h3>Version 2.0.0 by lat9</h3>
+  <h3>Version 2.0.1 by lat9</h3>
   <h3>Copyright &copy; 2013-2018 <a href="https://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
   <p><b>Credits:</b></p>
   <ol>
@@ -691,7 +691,11 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                 <li>v2.0.1, 2018-05-xx:<ul>
                     <li>BUGFIX: T's and C's checkbox not rendered for &quot;ZCA Bootstrap Template&quot;.</li>
                     <li>BUGFIX: Debug-log generated when no shipping methods are available.</li>
+                    <li>BUGFIX: Recognize that some payment methods are dependent on the shipping-module selected.</li>
                     <li>The following files were affected:<ol>
+                        <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
+                        <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
+                        <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_conditions.php</span></li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_shipping_choices.php</span></li>
                     </ol></li>

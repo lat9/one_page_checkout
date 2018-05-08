@@ -396,10 +396,11 @@ jQuery(document).ready(function(){
                     shippingError = true;
                 },
             }).done(function( response ) {
-                jQuery( '#orderTotalDivs' ).html(response.orderTotalHtml);
+                jQuery('#orderTotalDivs').html(response.orderTotalHtml);
+                jQuery('#checkoutPaymentMethod').replaceWith(response.paymentHtml);
                 
                 var shippingError = false;
-                jQuery( '#otshipping, #otshipping+br' ).show();
+                jQuery('#otshipping, #otshipping+br').show();
                 if (response.status == 'ok') {
                     if (type == 'shipping-billing') {
                         jQuery( '#checkoutShippingChoices' ).html( response.shippingHtml );
