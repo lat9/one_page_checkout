@@ -206,6 +206,12 @@ class zcAjaxOnePageCheckout extends base
                 $checkout_one->debug_message("Shipping method changed: " . var_export($quote, true) . var_export($_SESSION['shipping'], true), false, 'zcAjaxOnePageCheckout');
             }
             $checkout_one->debug_message("Billing/shipping, exit (" . var_export($_POST['shipping_is_billing'], true) . "), " . $_SESSION['sendto'] . ", " . $_SESSION['billto'] . ", " . $_SESSION['opc_sendto_saved'] . ", (" . $_SESSION['shipping_billing'] . ")", 'zcAjaxOnePageCheckout::updateShipping');
+            
+            if (empty($_POST['payment'])) {
+                unset($_SESSION['payment']);
+            } else {
+                $_SESSION['payment'] = $_POST['payment'];
+            }
 
             if (!class_exists('order_total')) {
                 require DIR_WS_CLASSES . 'order_total.php';

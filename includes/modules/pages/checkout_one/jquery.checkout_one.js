@@ -369,11 +369,22 @@ jQuery(document).ready(function(){
         } else {
             shippingSelected = shippingSelected.val();
             var shippingIsBilling = jQuery( '#shipping_billing' ).is( ':checked' );
-            
+            var paymentSelected = jQuery('input[name=payment]');
+            if (paymentSelected.is(':radio')) {
+                paymentSelected = jQuery('input[name=payment]:checked');
+
+            }
+            if (paymentSelected.length == 0) {
+                paymentSelected = '';
+            } else {
+                paymentSelected = paymentSelected.val();
+            }
+
             var shippingData = {
                 shipping: shippingSelected,
                 shipping_is_billing: shippingIsBilling,
-                shipping_request: type
+                shipping_request: type,
+                payment: paymentSelected
             };
             
             if (additionalShippingInputs.length != 0) {
@@ -398,6 +409,9 @@ jQuery(document).ready(function(){
             }).done(function( response ) {
                 jQuery('#orderTotalDivs').html(response.orderTotalHtml);
                 jQuery('#checkoutPaymentMethod').replaceWith(response.paymentHtml);
+                jQuery('input[name=payment]').on('change', function() {
+                    setFormSubmitButton();
+                });
                 
                 var shippingError = false;
                 jQuery('#otshipping, #otshipping+br').show();
