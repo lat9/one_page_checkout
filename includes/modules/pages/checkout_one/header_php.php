@@ -67,17 +67,22 @@ if ($_SESSION['valid_to_checkout'] == false) {
     zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
 }
 
-// Stock Check
-if (STOCK_CHECK == 'true' && STOCK_ALLOW_CHECKOUT != 'true') {
-    foreach ($products_array as $current_product) {
-        $qtyAvailable = zen_get_products_stock($current_product['id']);
-        // compare against product inventory, and against mixed=YES
-        if ($qtyAvailable < $current_product['quantity'] || $qtyAvailable < $_SESSION['cart']->in_cart_mixed($current_product['id'])) {
-            zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
-        }
+// -----
+// Stock Check.  Re-formulated based on the checkout_confirmation page's processing,
+// with modifications to ensure that the array is always populated to prevent PHP Notice
+// generation for an undefined variable.
+//
+// Note: The "assumption" here is that the cart products are a one-to-one map
+// to the products in the to-be-generated order.
+//
+$stock_check = array();
+for ($i = 0, $n = count($products_array); $i < $n; $i++) {
+    $stock_check[$i] = zen_check_stock($products_array[$i]['id'], $products_array[$i]['quantity']);
+    if (STOCK_CHECK == 'true' && STOCK_ALLOW_CHECKOUT != 'true' && !empty($stock_check[$i])) {
+        zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
     }
 }
-unset($products_array);
+//unset($products_array);
 
 // get coupon code
 if (isset ($_SESSION['cc_id'])) {
