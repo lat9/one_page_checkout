@@ -693,12 +693,14 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                     <li>BUGFIX: Debug-log generated when no shipping methods are available.</li>
                     <li>BUGFIX: Recognize that some payment methods are dependent on the shipping-module selected.</li>
                     <li>BUGFIX: Out-of-stock products not notated in the <em>shopping-cart</em> display.</li>
+                    <li>BUGFIX: Correct PHP Notice issued during payment-choices settings.</li>
                     <li>The following files were affected:<ol>
                         <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
                         <li>/includes/modules/pages/checkout_one/header_php.php</li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_conditions.php</span></li>
+                        <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_payment_choices.php</span></li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_shipping_choices.php</span></li>
                     </ol></li>
                 </ul></li>

@@ -56,7 +56,8 @@ if ($shipping_module_available) {
             $payment_id = $current_method['id'];
             if ($num_selections > 1) {
                 if (empty($current_method['noradio'])) {
-                    echo zen_draw_radio_field('payment', $payment_id, ($payment_id == $_SESSION['payment'] ? true : false), 'id="pmt-' . $payment_id . '"');
+                    $is_selected = (isset($_SESSION['payment']) && $payment_id == $_SESSION['payment']);
+                    echo zen_draw_radio_field('payment', $payment_id, $is_selected, 'id="pmt-' . $payment_id . '"');
                 }
             } else {
                 echo zen_draw_hidden_field('payment', $payment_id, 'id="pmt-' . $payment_id . '"');
