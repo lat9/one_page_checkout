@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2017, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2018, Vinos de Frutas Tropicales.  All rights reserved.
 //
 ?>
 <!--bof shipping-address block -->
@@ -27,7 +27,7 @@ if ($is_virtual_order) {
         <legend><?php echo TITLE_SHIPPING_ADDRESS; ?></legend>
 <?php
 $opc_address_type = 'ship';
-$opc_disable_address_change = $editShippingButtonLink;
+$opc_disable_address_change = !$editShippingButtonLink;
 require $template->get_template_dir('tpl_modules_opc_address_block.php', DIR_WS_TEMPLATE, $current_page_base, 'templates'). '/tpl_modules_opc_address_block.php';
 
 if ($editShippingButtonLink) {
