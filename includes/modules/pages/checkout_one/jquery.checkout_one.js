@@ -356,6 +356,18 @@ jQuery(document).ready(function(){
             }
         });
     }
+    
+    // -----
+    // Two "helper" functions, used to indicate "progress" during the various AJAX calls.  The
+    // cursor changes to "wait" when the AJAX call starts and back to "normal" upon return.
+    //   
+    jQuery(document).ajaxStart(function () {
+        jQuery('*').css('cursor', 'wait');
+    });
+
+    jQuery(document).ajaxStop(function () {
+        jQuery('*').css('cursor', '');
+    });
 
     function changeShippingSubmitForm(type)
     {
@@ -393,7 +405,7 @@ jQuery(document).ready(function(){
                 });
                 shippingData = jQuery.extend(shippingData, shippingInputs);
             }
-
+            
             zcLog2Console( 'Updating shipping method to '+shippingSelected+', processing type: '+type );
             zcJS.ajax({
                 url: "ajax.php?act=ajaxOnePageCheckout&method=updateShipping",
@@ -473,7 +485,7 @@ jQuery(document).ready(function(){
                     }
                 }
             });
-        }           
+        }
     }
     
     // -----
@@ -771,7 +783,6 @@ jQuery(document).ready(function(){
     function saveCustomerInfo()
     {
         zcLog2Console('saveCustomerInfo, starts ...');
-
         zcJS.ajax({
             url: "ajax.php?act=ajaxOnePageCheckout&method=validateCustomerInfo",
             data: jQuery('#checkoutOneGuestInfo input, #checkoutOneGuestInfo select').serialize(),
