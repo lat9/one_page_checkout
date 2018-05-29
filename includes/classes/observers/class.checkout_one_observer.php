@@ -302,7 +302,7 @@ class checkout_one_observer extends base
             // -----
             // Issued by the order-class just prior to sending the order-confirmation email.
             //
-            // If we're in "guest checkout", we'll do some reconstruction.
+            // If either the sendto or billto addresses are "temporary", we'll do some reconstruction.
             //
             // On entry:
             //
@@ -311,23 +311,28 @@ class checkout_one_observer extends base
             // $p3 ... (r/w) The current HTML email array.
             //
             case 'NOTIFY_ORDER_INVOICE_CONTENT_READY_TO_SEND':
-                if (zen_in_guest_checkout()) {
+                if ($_SESSION['sendto'] == CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID || $_SESSION['billto'] == CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID) {
                     $order_id = (int)$p1['zf_insert_id'];
                     $email_text = $p2;
                     $html_msg = $p3;
                     
-                    $account_history_link = zen_href_link(FILENAME_ACCOUNT_HISTORY_INFO, "order_id=$order_id", 'SSL', false);
-                    $account_history_link_text = EMAIL_TEXT_INVOICE_URL . ' ' . $account_history_link;
-                    
-                    $order_status_link = zen_href_link(FILENAME_ORDER_STATUS, '', 'SSL');
-                    $order_status_link_text = EMAIL_TEXT_INVOICE_URL_GUEST . ' ' . $order_status_link;
+                    // -----
+                    // If the checkout is for a guest, change the "invoice" link to reference the 'order_status' page.
+                    //
+                    if (zen_in_guest_checkout()) {
+                        $account_history_link = zen_href_link(FILENAME_ACCOUNT_HISTORY_INFO, "order_id=$order_id", 'SSL', false);
+                        $account_history_link_text = EMAIL_TEXT_INVOICE_URL . ' ' . $account_history_link;
+                        
+                        $order_status_link = zen_href_link(FILENAME_ORDER_STATUS, '', 'SSL');
+                        $order_status_link_text = EMAIL_TEXT_INVOICE_URL_GUEST . ' ' . $order_status_link;
 
-                    $email_text = str_replace($account_history_link_text, $order_status_link_text, $email_text);
+                        $email_text = str_replace($account_history_link_text, $order_status_link_text, $email_text);
+                        
+                        $html_msg['INTRO_URL_TEXT'] = EMAIL_TEXT_INVOICE_URL_CLICK_GUEST;
+                        $html_msg['INTRO_URL_VALUE'] = $order_status_link;
+                    }
                     
-                    $html_msg['INTRO_URL_TEXT'] = EMAIL_TEXT_INVOICE_URL_CLICK_GUEST;
-                    $html_msg['INTRO_URL_VALUE'] = $order_status_link;
-                    
-                    if ($class->content_type != 'virtual') {
+                    if ($class->content_type != 'virtual' && $_SESSION['sendto'] == CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID) {
                         $shipping_address = $_SESSION['opc']->formatAddress('ship');
                         
                         $new_shipping_address = 
@@ -343,19 +348,21 @@ class checkout_one_observer extends base
                         $html_msg['ADDRESS_DELIVERY_DETAIL'] = nl2br($shipping_address);
                     }
                     
-                    $billing_address = $_SESSION['opc']->formatAddress('bill');
-                    
-                    $new_billing_address =
-                        EMAIL_TEXT_BILLING_ADDRESS . "\n" .
-                        EMAIL_SEPARATOR . "\n" .
-                        $billing_address;
-                    $old_billing_address =
-                        EMAIL_TEXT_BILLING_ADDRESS . "\n" .
-                        EMAIL_SEPARATOR . "\n" .
-                        zen_address_label($_SESSION['customer_id'], $_SESSION['billto'], 0, '', "\n");
-                    $email_text = str_replace($old_billing_address, $new_billing_address, $email_text);
-                    
-                    $html_msg['ADDRESS_BILLING_DETAIL'] = nl2br($billing_address);
+                    if ($_SESSION['billto'] == CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID) {
+                        $billing_address = $_SESSION['opc']->formatAddress('bill');
+                        
+                        $new_billing_address =
+                            EMAIL_TEXT_BILLING_ADDRESS . "\n" .
+                            EMAIL_SEPARATOR . "\n" .
+                            $billing_address;
+                        $old_billing_address =
+                            EMAIL_TEXT_BILLING_ADDRESS . "\n" .
+                            EMAIL_SEPARATOR . "\n" .
+                            zen_address_label($_SESSION['customer_id'], $_SESSION['billto'], 0, '', "\n");
+                        $email_text = str_replace($old_billing_address, $new_billing_address, $email_text);
+                        
+                        $html_msg['ADDRESS_BILLING_DETAIL'] = nl2br($billing_address);
+                    }
                     
                     $p2 = $email_text;
                     $p3 = $html_msg;
