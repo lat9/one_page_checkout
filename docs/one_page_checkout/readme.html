@@ -697,7 +697,9 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                     <li>BUGFIX: Full-account shipping-address dropdown selection not rendered.</li>
                     <li>CHANGE: Show &quot;wait&quot; cursor during AJAX processing.</li>
                     <li>BUGFIX: Non-guest temporary addresses not included in order-confirmation email.</li>
+                    <li>BUGFIX: Session variables not reset after successful non-guest checkout.</li>
                     <li>The following files were affected:<ol>
+                        <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
                         <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                         <li>/includes/modules/pages/checkout_one/header_php.php</li>

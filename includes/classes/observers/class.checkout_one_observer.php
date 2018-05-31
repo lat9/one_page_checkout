@@ -47,7 +47,7 @@ class checkout_one_observer extends base
         $post_checkout_pages[] = FILENAME_CHECKOUT_SUCCESS;
         if (isset($_SESSION['order_placed_by_guest']) && !in_array($GLOBALS['current_page_base'], $post_checkout_pages)) {
             unset($_SESSION['order_placed_by_guest'], $_SESSION['order_number_created']);
-            $_SESSION['opc']->resetSessionValues();
+            $_SESSION['opc']->resetGuestSessionValues();
         }
         
         // -----
@@ -91,7 +91,7 @@ class checkout_one_observer extends base
                     }
                 } else {
                     $GLOBALS['messageStack']->add_session('header', WARNING_GUEST_CHECKOUT_NOT_AVAILABLE, 'warning');
-                    $_SESSION['opc']->resetSessionValues();
+                    $_SESSION['opc']->resetGuestSessionValues();
                 }
             }
                     
@@ -105,6 +105,7 @@ class checkout_one_observer extends base
                     'NOTIFY_HEADER_START_CHECKOUT_SHIPPING_ADDRESS', 
                     'NOTIFY_HEADER_START_CHECKOUT_CONFIRMATION',
                     'NOTIFY_HEADER_START_ADDRESS_BOOK_PROCESS',
+                    'NOTIFY_CHECKOUT_PROCESS_BEFORE_CART_RESET',
                     'NOTIFY_ZEN_IN_GUEST_CHECKOUT',
                     'NOTIFY_ZEN_IS_LOGGED_IN',
                 )
@@ -122,7 +123,6 @@ class checkout_one_observer extends base
                     'NOTIFY_ORDER_CART_AFTER_ADDRESSES_SET',
                     'NOTIFY_ORDER_DURING_CREATE_ADDED_ORDER_HEADER',
                     'NOTIFY_ORDER_INVOICE_CONTENT_READY_TO_SEND',
-                    'NOTIFY_CHECKOUT_PROCESS_BEFORE_CART_RESET',
                     'NOTIFY_HEADER_START_CHECKOUT_SUCCESS',
                     'NOTIFY_OT_COUPON_USES_PER_USER_CHECK'
                 )
@@ -272,6 +272,8 @@ class checkout_one_observer extends base
             // the session if the variable is set and the current page is other
             // than the checkout_success one.
             //
+            // Unconditionally, reset the OPC's "common" session variables.
+            //
             // On entry:
             //
             // $p1 ... (r/o) The just-created order's order_id.
@@ -280,6 +282,7 @@ class checkout_one_observer extends base
                 if (zen_in_guest_checkout()) {
                     $_SESSION['order_placed_by_guest'] = (int)$p1;
                 }
+                $_SESSION['opc']->resetSessionVariables();
                 break;
                 
             // -----

@@ -222,7 +222,7 @@ class OnePageCheckout extends base
     ** This function resets the guest-related information stored in the current session,
     ** essentially restoring the session to a non-guest-checkout scenario.
     */           
-    public function resetSessionValues()
+    public function resetGuestSessionValues()
     {
         if (zen_in_guest_checkout() || $_SESSION['customer_id'] == $this->guestCustomerId) {
             unset(
@@ -237,11 +237,22 @@ class OnePageCheckout extends base
             );
         }
         unset(
-            $_SESSION['is_guest_checkout'],
+            $_SESSION['is_guest_checkout']
+        );
+        $this->resetSessionVariables();
+        $this->reset();
+    }
+    
+    /* -----
+    ** This function resets the common (guest and account) session variables added to
+    ** the session for the One Page Checkout's processing.
+    */
+    public function resetSessionVariables()
+    {
+        unset(
             $_SESSION['shipping_billing'], 
             $_SESSION['opc_sendto_saved']
-        );
-        $this->reset();
+        );        
     }
     
     // -----
