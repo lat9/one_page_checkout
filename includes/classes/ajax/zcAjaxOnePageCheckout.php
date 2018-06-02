@@ -177,7 +177,9 @@ class zcAjaxOnePageCheckout extends base
                         $storepickup = false;
                     }
                 }
-//-eof-product_delivery_by_postcode (PDP) integration  
+//-eof-product_delivery_by_postcode (PDP) integration
+
+                $this->disableGzip();
               
                 $shipping_html = '';
                 if ($status == 'invalid' || $_POST['shipping_request'] == 'shipping-billing') {
@@ -379,6 +381,9 @@ class zcAjaxOnePageCheckout extends base
             $this->loadLanguageFiles();
             global $current_page_base, $template;
             $template_file = 'tpl_modules_opc_customer_info.php';
+            
+            $this->disableGzip();
+            
             ob_start();
             require $template->get_template_dir($template_file, DIR_WS_TEMPLATE, $current_page_base, 'templates'). "/$template_file";
             $info_html = ob_get_clean();
@@ -436,14 +441,32 @@ class zcAjaxOnePageCheckout extends base
     {
         global $current_page_base, $template;
         $template_file = ($which == 'bill') ? 'tpl_modules_opc_billing_address.php' : 'tpl_modules_opc_shipping_address.php';
-        $flagDisablePaymentAddressChange = false;
+        $flagDisablePaymentAddressChange = !$_SESSION['opc']->isBilltoAddressChangeable();
+        $editShippingButtonLink = $_SESSION['opc']->isSendtoAddressChangeable();
+        $is_virtual_order = $_SESSION['opc']->isVirtualOrder();
+        $shipping_billing = $_SESSION['opc']->getShippingBilling();
+        
+        $this->disableGzip();
+        
         ob_start();
         require $template->get_template_dir($template_file, DIR_WS_TEMPLATE, $current_page_base, 'templates'). "/$template_file";
         $address_html = ob_get_clean();
         ob_flush();
         
         return $address_html;
-    }        
+    }
+    
+    // -----
+    // Gzip compression can "get in the way" of the AJAX requests on current versions of IE and
+    // Chrome.
+    //
+    // This internal method sets that compression "off" for the AJAX responses.
+    //
+    protected function disableGzip()
+    {
+        @ob_end_clean();
+        @ini_set('zlib.output_compression', '0');
+    }
     
     // -----
     // Load the One-Page Checkout page's language files.
