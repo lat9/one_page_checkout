@@ -4,7 +4,7 @@
 // Copyright (C) 2017-2018, Vinos de Frutas Tropicales.  All rights reserved.
 //
 // This class, instantiated in the current customer session, keeps track of a customer's login and checkout
-// progression with the aid of the OPC's observer-class.
+// progression with the aid of the OPC's observer- and AJAX-classes.
 //
 class OnePageCheckout extends base
 {
@@ -22,6 +22,13 @@ class OnePageCheckout extends base
     // tempSendtoAddressBookId .. Contains a sanitized/int version of the configured "temporary" ship-to address-book ID.
     // dbStringType ............. Identifies the form of string data "binding" to use on $db requests; 'string' for ZC < 1.5.5b, 'stringIgnoreNull', otherwise.
     //
+    // Values set at the end of the checkout_one page's header_php.php file's processing to capture processing flags for
+    // use by the OPC's AJAX component.
+    //
+    // isVirtualOrder ........... Identifies whether or not the current order is "virtual" (i.e. no shipping address required).
+    // billtoAddressChangeable .. Identifies whether (true) or not (false) the payment address can be changed.
+    // shiptoAddressChangeable .. Identifies whether (true) or not (false) the shipping address can be changed.
+    //
     protected $isGuestCheckoutEnabled,
               $registeredAccounts,
               $guestIsActive,
@@ -31,7 +38,10 @@ class OnePageCheckout extends base
               $guestCustomerId,
               $tempBilltoAddressBookId,
               $tempSendtoAddressBookId,
-              $dbStringType;
+              $dbStringType,
+              $isVirtualOrder,
+              $billtoAddressChangeable,
+              $shiptoAddressChangeable;
     
     public function __construct()
     {
@@ -115,6 +125,33 @@ class OnePageCheckout extends base
     public function accountRegistrationEnabled()
     {
         return $this->isEnabled && $this->registeredAccounts;
+    }
+    
+    /* -----
+    ** This function, called at the end of the checkout_one page's header processing, captures
+    ** some processing flags to be used by subsequent calls by the OPC's AJAX processing.
+    */
+    public function saveCheckoutProcessingFlags($is_virtual_order, $flagDisablePaymentAddressChange, $editShippingButtonLink)
+    {
+        $this->isVirtualOrder = $is_virtual_order;
+        $this->billtoAddressChangeable = !$flagDisablePaymentAddressChange;
+        $this->sendtoAddressChangeable = $editShippingButtonLink;
+    }
+    
+    /* -----
+    ** These functions, used by the OPC's AJAX class, retrieve those values as saved above.
+    */
+    public function isVirtualOrder()
+    {
+        return $this->isVirtualOrder;
+    }
+    public function isBilltoAddressChangeable()
+    {
+        return $this->billtoAddressChangeable;
+    }
+    public function isSendtoAddressChangeable()
+    {
+        return $this->sendtoAddressChangeable;
     }
     
     /* -----

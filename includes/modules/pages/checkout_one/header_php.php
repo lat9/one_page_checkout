@@ -371,6 +371,12 @@ if (isset($_SESSION['payment'])) {
 }
 
 // -----
+// Record various processing flags with the OPC's session-handler, for possible use by intra-page AJAX
+// calls.
+//
+$_SESSION['opc']->saveCheckoutProcessingFlags($is_virtual_order, $flagDisablePaymentAddressChange, $editShippingButtonLink);
+
+// -----
 // Disable the right- and left-sideboxes for the one-page checkout; the space is needed to get the 2-column display.
 //
 $flag_disable_right = $flag_disable_left = true;
