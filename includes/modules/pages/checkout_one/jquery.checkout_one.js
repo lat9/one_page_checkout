@@ -569,37 +569,55 @@ jQuery(document).ready(function(){
         });
     }
     
-    jQuery(document).on('change', '#checkoutOneBillto input, #checkoutOneBillto select:not(#select-address-bill)', function(event) {
+    function changeBillingFields(event)
+    {
         jQuery(this).addClass('opc-changed');
         jQuery('#checkoutOneBillto .opc-buttons').show();
         jQuery('#checkoutPayment > .opc-overlay').addClass('active');
         jQuery('#checkoutOneBillto').addClass('opc-view');
-    });
-    jQuery(document).on('click', '#opc-bill-cancel', function(event) {
+    }
+    jQuery(document).on('change', '#checkoutOneBillto input, #checkoutOneBillto select:not(#select-address-bill)', changeBillingFields);
+
+    function restoreBilling()
+    {
         restoreAddressValues('bill', '#checkoutOneBillto');
         jQuery('#checkoutPayment > .opc-overlay').removeClass('active');
         jQuery('#checkoutOneBillto').removeClass('opc-view');
         jQuery('#checkoutOneBillto .opc-buttons').hide();
-    });
-    jQuery(document).on('click', '#opc-bill-save', function(event) {
+    }
+    jQuery(document).on('click', '#opc-bill-cancel', restoreBilling);
+
+    function saveBilling()
+    {
         saveAddressValues('bill', '#checkoutOneBillto');
-    });
-    jQuery(document).on('change', '#checkoutOneShipto input, #checkoutOneShipto select:not(#select-address-ship)', function(event) {
+    }
+    jQuery(document).on('click', '#opc-bill-save', saveBilling);
+    
+    function changeShippingFields(event)
+    {
         jQuery(this).addClass('opc-changed');
         jQuery('#checkoutOneShipto .opc-buttons').show();
         jQuery('#checkoutPayment > .opc-overlay').addClass('active');
         jQuery('#checkoutOneShipto').removeClass('visibleField');
         jQuery('#checkoutOneShipto').addClass('opc-view');
-    });
-    jQuery(document).on('click', '#opc-ship-cancel', function(event) {
+    }
+    jQuery(document).on('change', '#checkoutOneShipto input, #checkoutOneShipto select:not(#select-address-ship)', changeShippingFields);
+    
+    function restoreShipping()
+    {
         restoreAddressValues('ship', '#checkoutOneShipto');
         jQuery('#checkoutPayment > .opc-overlay').removeClass('active');
         jQuery('#checkoutOneShipto').removeClass('opc-view');
         jQuery('#checkoutOneShipto .opc-buttons').hide();
-    });
-    jQuery(document).on('click', '#opc-ship-save', function(event) {
+    }
+    jQuery(document).on('click', '#opc-ship-cancel', restoreShipping);
+    
+    function saveShipping()
+    {
         saveAddressValues('ship', '#checkoutOneShipto');
-    });    
+    }
+    jQuery(document).on('click', '#opc-ship-save', saveShipping);
+    
     function restoreAddressValues(which, address_block)
     {
         zcLog2Console('restoreAddressValues('+which+', '+address_block+')');
@@ -616,9 +634,18 @@ jQuery(document).ready(function(){
                 }
             },
         }).done(function( response ) {
-            jQuery(address_block).html(response.addressHtml);
+            jQuery(address_block).replaceWith(response.addressHtml);
             if (typeof initializeStateZones != 'undefined') {
                 initializeStateZones();
+            }
+            if (which == 'ship') {
+                jQuery(document).on('change', '#checkoutOneShipto input, #checkoutOneShipto select:not(#select-address-ship)', changeShippingFields);
+                jQuery(document).on('click', '#opc-ship-cancel', restoreShipping);
+                jQuery(document).on('click', '#opc-ship-save', saveShipping);
+            } else {
+                jQuery(document).on('change', '#checkoutOneBillto input, #checkoutOneBillto select:not(#select-address-bill)', changeBillingFields);
+                jQuery(document).on('click', '#opc-bill-cancel', restoreBilling);
+                jQuery(document).on('click', '#opc-bill-save', saveBilling);
             }
         });
     }
