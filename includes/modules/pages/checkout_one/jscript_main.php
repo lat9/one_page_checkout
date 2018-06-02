@@ -54,9 +54,9 @@ if (isset($quotes) && is_array($quotes)) {
     }
 }
 ?>
-}
+};
 <?php
-echo $input_array . '}';
+echo $input_array . '};';
 ?>
 //--></script>
 <?php
@@ -68,6 +68,8 @@ if (defined('CHECKOUT_ONE_MINIFIED_SCRIPT') && CHECKOUT_ONE_MINIFIED_SCRIPT == '
     $addr_script_filename = 'jquery.checkout_one_addr.js';
 }
 $main_script_filepath = DIR_WS_MODULES . "pages/checkout_one/$main_script_filename";
+$main_script_mtime = filemtime($main_script_filepath);
+$main_script_filepath .= "?$main_script_mtime";
 ?>
 <script type="text/javascript" src="<?php echo $main_script_filepath; ?>" defer></script>
 <?php
@@ -77,6 +79,8 @@ $main_script_filepath = DIR_WS_MODULES . "pages/checkout_one/$main_script_filena
 //
 if ($show_state_dropdowns) {
     $addr_script_filepath = DIR_WS_MODULES . "pages/checkout_one/$addr_script_filename";
+    $addr_script_mtime = filemtime($addr_script_filepath);
+    $addr_script_filepath .= "?$addr_script_mtime";
 ?>
 <script type="text/javascript" src="<?php echo $addr_script_filepath; ?>" defer></script>
 <?php
