@@ -22,6 +22,12 @@ class OnePageCheckout extends base
     // tempSendtoAddressBookId .. Contains a sanitized/int version of the configured "temporary" ship-to address-book ID.
     // dbStringType ............. Identifies the form of string data "binding" to use on $db requests; 'string' for ZC < 1.5.5b, 'stringIgnoreNull', otherwise.
     //
+    // Some processing flags, identifying whether/not various "temporary" values have been validated.
+    //
+    // customerInfoOk ........... Identifies whether/not the guest-checkout 'customer information' has been validated.
+    // billtoTempAddrOk ......... Identifies that entries in the temporary bill-to address have been validated.
+    // sendtoTempAddrOk ......... Identifies that entries in the temporary send-to address have been validated.
+    //
     // Values set at the end of the checkout_one page's header_php.php file's processing to capture processing flags for
     // use by the OPC's AJAX component.
     //
@@ -39,6 +45,9 @@ class OnePageCheckout extends base
               $tempBilltoAddressBookId,
               $tempSendtoAddressBookId,
               $dbStringType,
+              $customerInfoOk,
+              $billtoTempAddrOk,
+              $sendtoTempAddrOk,
               $isVirtualOrder,
               $billtoAddressChangeable,
               $shiptoAddressChangeable;
@@ -325,6 +334,9 @@ class OnePageCheckout extends base
             if ($this->isGuestCheckout() || $redirect_required) {
                 $this->guestIsActive = true;
                 if (!isset($this->guestCustomerInfo)) {
+                    $this->customerInfoOk = false;
+                    $this->billtoTempAddrOk = false;
+                    $this->sendtoTempAddrOk = false;
                     $this->guestCustomerInfo = array(
                         'firstname' => '',
                         'lastname' => '',
@@ -991,6 +1003,7 @@ class OnePageCheckout extends base
         }
         
         $messages = array();
+        $this->customerInfoOk = false;
         
         $email_address = zen_db_prepare_input(zen_sanitize_string($_POST['email_address']));
         if (strlen($email_address) < ENTRY_EMAIL_ADDRESS_MIN_LENGTH) {
@@ -1018,7 +1031,6 @@ class OnePageCheckout extends base
                     $_POST['dob'] = $dob = date(DATE_FORMAT, strtotime($dob));
                 }
                 if (substr_count($dob, '/') > 2 || !checkdate((int)substr(zen_date_raw($dob), 4, 2), (int)substr(zen_date_raw($dob), 6, 2), (int)substr(zen_date_raw($dob), 0, 4))) {
-                    $error = true;
                     $messages['dob'] = ENTRY_DATE_OF_BIRTH_ERROR;
                 }
             }
@@ -1040,6 +1052,7 @@ class OnePageCheckout extends base
         }
         
         if (count($messages) == 0) {
+            $this->customerInfoOk = true;
             $this->guestCustomerInfo['email_address'] = $email_address;
             $this->guestCustomerInfo['telephone'] = $telephone;
             $this->guestCustomerInfo['dob'] = $dob;
@@ -1103,6 +1116,12 @@ class OnePageCheckout extends base
         $message_prefix = ($prepend_which) ? (($which == 'bill') ? ERROR_IN_BILLING : ERROR_IN_SHIPPING) : '';
         
         $this->debugMessage("Start validateUpdatedAddress, which = $which:" . var_export($address_values, true));
+        
+        if ($which == 'bill') {
+            $this->billtoTempAddrOk = false;
+        } else {
+            $this->sendtoTempAddrOk = false;
+        }
         
         $gender = false;
         $company = '';
@@ -1224,6 +1243,11 @@ class OnePageCheckout extends base
                 )
             );
             $address_values = $this->updateStateDropdownSettings($address_values);
+            if ($which == 'bill') {
+                $this->billtoTempAddrOk = true;
+            } else {
+                $this->sendtoTempAddrOk = true;
+            }
         }
         
         $this->debugMessage('Exiting validateUpdatedAddress.' . var_export($messages, true) . var_export($address_values, true));
@@ -1321,6 +1345,35 @@ class OnePageCheckout extends base
                 $_SESSION['sendto'] = $address_book_id;
             }
         }
+    }
+    
+    /* -----
+    ** This function, called from the 'checkout_one_confirmation' page to ensure that all temporary
+    ** entries (e.g. guest customer information and/or temporary addresses) have been entered and validated.
+    **
+    ** Returns a boolean value indicating whether or not all entries have been found to be valid.
+    **
+    ** Note: Under 'normal' circumstances, this function will never return 'false'.  The function's purpose is to thwart
+    ** script-kiddies from messing with the CSS overlay and attempting to create an order with invalid entries.
+    */
+    public function validateTemporaryEntries()
+    {
+        $this->debugMessage("validateTemporaryEntries, on entry ({$this->customerInfoOk}, {$this->billtoTempAddrOk}, {$this->sendtoTempAddrOk}).");
+        
+        $validated = true;
+        
+        if ($this->isGuestCheckout && !$this->customerInfoOk) {
+            $validated = false;
+        }
+        
+        if (!empty($_SESSION['billto']) && $_SESSION['billto'] == $this->tempBilltoAddressBookId && !$this->billtoTempAddrOk) {
+            $validated = false;
+        }
+        
+        if (!empty($_SESSION['sendto']) && $_SESSION['sendto'] == $this->tempSendtoAddressBookId && !$this->shiptoTempAddrOK) {
+            $validated = false;
+        }
+        return $validated;
     }
     
     /* -----

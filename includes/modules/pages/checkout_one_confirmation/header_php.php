@@ -89,6 +89,9 @@ if (isset($_POST['payment'])) {
     $_SESSION['payment'] = $_POST['payment'];
 }
 
+// -----
+// Start order-entry validation ...
+//
 $error = false;
 if (DISPLAY_CONDITIONS_ON_CHECKOUT == 'true') {
     if (!isset($_POST['conditions']) || $_POST['conditions'] != '1') {
@@ -97,12 +100,21 @@ if (DISPLAY_CONDITIONS_ON_CHECKOUT == 'true') {
     }
 }
 
-        
 if ($_SESSION['opc']->isGuestCheckout() && DISPLAY_PRIVACY_CONDITIONS == 'true') {
     if (!isset($_POST['privacy_conditions']) || ($_POST['privacy_conditions'] != '1')) {
         $error = true;
         $messageStack->add_session('checkout_payment', ERROR_PRIVACY_STATEMENT_NOT_ACCEPTED, 'error');
     }
+}
+
+// -----
+// Check to ensure that any guest-customer information and/or temporary addresses (if used) have been
+// entered and validated.  This should not occur unless "script kiddies" are messing with the CSS
+// overlay used to guide the customer through the information-entry process.
+//
+if (!$_SESSION['opc']->validateTemporaryEntries()) {
+    $error = true;
+    $messageStack->add_session('checkout_payment', ERROR_INVALID_TEMPORARY_ENTRIES, 'error');
 }
 
 $shipping_billing = ($_POST['javascript_enabled'] != '0' && isset($_POST['shipping_billing']) && $_POST['shipping_billing'] == '1');
