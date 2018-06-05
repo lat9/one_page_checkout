@@ -92,7 +92,16 @@ if (isset($_POST['payment'])) {
 $error = false;
 if (DISPLAY_CONDITIONS_ON_CHECKOUT == 'true') {
     if (!isset($_POST['conditions']) || $_POST['conditions'] != '1') {
+        $error = true;
         $messageStack->add_session('checkout_payment', ERROR_CONDITIONS_NOT_ACCEPTED, 'error');
+    }
+}
+
+        
+if ($_SESSION['opc']->isGuestCheckout() && DISPLAY_PRIVACY_CONDITIONS == 'true') {
+    if (!isset($_POST['privacy_conditions']) || ($_POST['privacy_conditions'] != '1')) {
+        $error = true;
+        $messageStack->add_session('checkout_payment', ERROR_PRIVACY_STATEMENT_NOT_ACCEPTED, 'error');
     }
 }
 
@@ -123,7 +132,6 @@ $checkout_one->debug_message('Initial order information:' . var_export($order, t
 // If the order's all-virtual, then the shipping (free) has already been set; no need to go through all
 // the shipping-related handling.
 //
-$error = false;
 if ($order->content_type != 'virtual') {
     require DIR_WS_CLASSES . 'shipping.php';
     $shipping_modules = new shipping($_SESSION['shipping']);

@@ -1,8 +1,23 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2017, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2018, Vinos de Frutas Tropicales.  All rights reserved.
 //
+if ($_SESSION['opc']->isGuestCheckout() && DISPLAY_PRIVACY_CONDITIONS == 'true') {
+?>
+    <div id="privacy-div">
+        <fieldset>
+            <legend><?php echo TABLE_HEADING_PRIVACY_CONDITIONS; ?></legend>
+            <div class="information"><?php echo TEXT_PRIVACY_CONDITIONS_DESCRIPTION;?></div>
+            <div class="custom-control custom-checkbox">
+                <?php echo zen_draw_checkbox_field('privacy_conditions', '1', false, 'id="privacy" required'); ?>
+                <label class="custom-control-label checkboxLabel" for="privacy"><?php echo TEXT_PRIVACY_CONDITIONS_CONFIRM; ?></label>
+            </div>
+        </fieldset>
+    </div>
+<?php
+}
+
 if (DISPLAY_CONDITIONS_ON_CHECKOUT == 'true') {
 ?>
 <!--bof conditions block -->
