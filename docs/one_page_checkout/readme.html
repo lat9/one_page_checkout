@@ -83,7 +83,7 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
 
 <body>
   <h1>One-Page Checkout &hellip; with Guest &hellip; <span class="smaller">for Zen Cart v1.5.4 (and later)</span></h1>
-  <h3>Version 2.0.1 by lat9</h3>
+  <h3>Version 2.0.2 by lat9</h3>
   <h3>Copyright &copy; 2013-2018 <a href="https://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
   <p><b>Credits:</b></p>
   <ol>
@@ -688,6 +688,13 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a> <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color.</p>
               <ul>
+                <li>v2.0.2, 2018-06-20:<ul>
+                    <li>BUGFIX: Invalid "Some information incorrect" message displayed during guest checkout</li>
+                    <li>The following files were affected:<ol>
+                        <li>/includes/classes/OnePageCheckout.php</li>
+                        <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
+                    </ol></li>
+                </ul></li>
                 <li>v2.0.1, 2018-06-08:<ul>
                     <li>BUGFIX: T's and C's checkbox not rendered for &quot;ZCA Bootstrap Template&quot;.</li>
                     <li>BUGFIX: Debug-log generated when no shipping methods are available.</li>
@@ -720,6 +727,7 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_shipping_address.php</span></li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_shipping_choices.php</span></li>
                         <li>/includes/templates/YOUR_TEMPLATE/css/login.css</li>
+                        <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                     </ol></li>
                 </ul></li>
                 <li>v2.0.0, 2018-04-27:<ul>

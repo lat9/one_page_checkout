@@ -1357,11 +1357,8 @@ class OnePageCheckout extends base
     ** script-kiddies from messing with the CSS overlay and attempting to create an order with invalid entries.
     */
     public function validateTemporaryEntries()
-    {
-        $this->debugMessage("validateTemporaryEntries, on entry ({$this->customerInfoOk}, {$this->billtoTempAddrOk}, {$this->sendtoTempAddrOk}).");
-        
+    {       
         $validated = true;
-        
         if ($this->isGuestCheckout && !$this->customerInfoOk) {
             $validated = false;
         }
@@ -1370,9 +1367,10 @@ class OnePageCheckout extends base
             $validated = false;
         }
         
-        if (!empty($_SESSION['sendto']) && $_SESSION['sendto'] == $this->tempSendtoAddressBookId && !$this->shiptoTempAddrOK) {
+        if (!empty($_SESSION['sendto']) && $_SESSION['sendto'] == $this->tempSendtoAddressBookId && !$this->sendtoTempAddrOk) {
             $validated = false;
         }
+        $this->debugMessage("validateTemporaryEntries, on entry ({$this->customerInfoOk}, {$this->billtoTempAddrOk}, {$this->sendtoTempAddrOk}), returning ($validated).");
         return $validated;
     }
     
