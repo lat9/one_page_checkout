@@ -314,7 +314,11 @@ class checkout_one_observer extends base
             // $p3 ... (r/w) The current HTML email array.
             //
             case 'NOTIFY_ORDER_INVOICE_CONTENT_READY_TO_SEND':
-                if ($_SESSION['sendto'] == CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID || $_SESSION['billto'] == CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID) {
+                $temp_addresses = array(
+                    CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID,
+                    CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID
+                );
+                if (in_array($_SESSION['sendto'], $temp_addresses) || $_SESSION['billto'] == CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID) {
                     $order_id = (int)$p1['zf_insert_id'];
                     $email_text = $p2;
                     $html_msg = $p3;
@@ -335,8 +339,9 @@ class checkout_one_observer extends base
                         $html_msg['INTRO_URL_VALUE'] = $order_status_link;
                     }
                     
-                    if ($class->content_type != 'virtual' && $_SESSION['sendto'] == CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID) {
-                        $shipping_address = $_SESSION['opc']->formatAddress('ship');
+                    if ($class->content_type != 'virtual' && in_array($_SESSION['sendto'], $temp_addresses)) {
+                        $which = ($_SESSION['sendto'] == CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID) ? 'ship' : 'bill';
+                        $shipping_address = $_SESSION['opc']->formatAddress($which);
                         
                         $new_shipping_address = 
                             EMAIL_TEXT_DELIVERY_ADDRESS . "\n" . 
