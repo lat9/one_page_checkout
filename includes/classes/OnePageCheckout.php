@@ -1153,6 +1153,10 @@ class OnePageCheckout extends base
             $messages['street_address'] = $message_prefix . ENTRY_STREET_ADDRESS_ERROR;
         }
         
+        if (ACCOUNT_SUBURB == 'true') {
+            $suburb = zen_db_prepare_input($_POST['suburb']);
+        }
+        
         $city = zen_db_prepare_input($address_values['city']);
         if (strlen($city) < ENTRY_CITY_MIN_LENGTH) {
             $error = true;
