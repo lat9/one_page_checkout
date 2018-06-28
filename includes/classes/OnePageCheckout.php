@@ -1126,6 +1126,14 @@ class OnePageCheckout extends base
         $gender = false;
         $company = '';
         $suburb = '';
+        
+        if (ACCOUNT_COMPANY == 'true') {
+            $company = zen_db_prepare_input($_POST['company']);
+            if (((int)ENTRY_COMPANY_MIN_LENGTH > 0) && strlen($company) < ((int)ENTRY_COMPANY_MIN_LENGTH)) {
+                $error = true;
+                $messages['company'] = $message_prefix . ENTRY_COMPANY_ERROR;
+            }
+        }
 
         if (ACCOUNT_GENDER == 'true') {
           $gender = zen_db_prepare_input($address_values['gender']);
@@ -1228,6 +1236,7 @@ class OnePageCheckout extends base
             $address_values = array_merge(
                 $address_values,
                 array(
+                    'company' => $company,
                     'gender' => $gender,
                     'firstname' => $firstname,
                     'lastname' => $lastname,
@@ -1562,6 +1571,7 @@ class OnePageCheckout extends base
     protected function addressArrayToString($address_array) 
     {
         $the_address = 
+            $address_array['company'] .
             $address_array['firstname'] . 
             $address_array['lastname'] . 
             $address_array['street_address'] . 
