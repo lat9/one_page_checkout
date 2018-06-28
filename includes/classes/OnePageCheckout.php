@@ -513,11 +513,23 @@ class OnePageCheckout extends base
     ** the module whether (true) or not (false) to include the checkbox to add the updated
     ** address.
     **
-    ** The field is displayed unless the checkout is being performed in guest-mode.
+    ** The field is displayed only during an account-holder checkout, where that customer does
+    ** not (yet) have the maximum number of address-book entries.
     */
     public function showAddAddressField()
     {
-        return !zen_in_guest_checkout();
+        $show_add_address = false;
+        if (!zen_in_guest_checkout() && !empty($_SESSION['customer_id'])) {
+            $check = $GLOBALS['db']->Execute(
+                "SELECT COUNT(*) as count
+                   FROM " . TABLE_ADDRESS_BOOK . "
+                  WHERE customers_id = " . (int)$_SESSION['customer_id']
+            );
+            if ($check->fields['count'] < (int)MAX_ADDRESS_BOOK_ENTRIES) {
+                $show_add_address = true;
+            }
+        }
+        return $show_add_address;
     }
     
     /* -----
