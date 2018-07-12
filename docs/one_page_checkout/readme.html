@@ -148,7 +148,7 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                 <p>There are other order-total modules that require some <em>tweaks</em> to enable their interoperation with <em>One-Page Checkout</em>:</p>
                 <ol>
                   <li><a href="https://www.zen-cart.com/downloads.php?do=file&id=704" target="_blank"><em>Reward Points Full Suite</em></a> v25.e and earlier, see <a href="https://www.zen-cart.com/showthread.php?220781-One-Page-Checkout-Support-Thread&p=1329034#post1329034" target="_blank">this</a> posting on the <em>One-Page Checkout</em> support thread for details.</li>
-                </li>
+                </ol>
               </div>
               <br />
               <div class="box-border">
@@ -367,11 +367,12 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
             
             <div id="storefront">
               <p>When you've enabled the <em>One-Page Checkout</em>, the customer will see a single-page <em>similar to</em> the images shown in the plugin's <a href="https://lat9.github.io/one_page_checkout/pages/checkout_one_page.html" target="_blank">additional documentation</a>; the actual layout will depend on the template that is currently active for your store and the <em>OPC</em> options that you have enabled.  The customer uses the form to apply any coupon (or gift-certificate) codes, choose their shipping and payment methods and then clicks that &quot;Confirm Order&quot; button &hellip; which takes them to a transitional confirmation page and subsequently to the &quot;checkout_success&quot; page.  If they've chosen a payment method that accepts credit-cards onsite, then an additional confirmation page is displayed from which the customer re-confirms their order.</p>
-              <p><strong>Notes:</strong><ol>
+              <p><strong>Notes:</strong></p>
+              <ol>
                   <li>Starting with v1.0.4, customers that access your site using a version of <b><em>Internet Explorer</em> less than 9.0</b> will continue to see the &quot;traditional&quot; multi-page version of the checkout process.</li>
                   <li>Starting with v1.3.0, this page uses jQuery to handle the submittal of the checkout-related form.  If the customer has disabled javascript in their browser or if there's a jQuery-related error on the page, <em>the customer is unable to checkout via <b>OPC</b></em>.  In this case, the plugin displays a message to the customer with a link to the multi-page checkout handling so that they can still checkout.</li>
                   <li>This page's display <i><b>depends heavily</b></i> on the <em><a href="https://lat9.github.io/one_page_checkout/pages/address_management.html" target="_blank">mode</a></em> that a customer uses to perform their checkout.  See <a href="https://lat9.github.io/one_page_checkout/pages/checkout_one_page.html" target="_blank">this</a> additional-documentation page for details.</li>
-              </ol></p>
+              </ol>
               <div class="clearBoth"></div>
                            
             </div>
@@ -453,6 +454,10 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                   <li>/includes/classes/Vinos_Browser.php</li>
                   <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
                   <li>/includes/classes/observers/class.checkout_one_observer.php</li>
+                  <li>/includes/classes/observers/auto.downloads_via_aws.php</li>
+                  <li>/includes/classes/observers/auto.downloads_via_redirect.php</li>
+                  <li>/includes/classes/observers/auto.downloads_via_streaming.php</li>
+                  <li>/includes/classes/observers/auto.downloads_via_url.php</li>
                   <li>/includes/extra_datafiles/checkout_one_filenames.php</li>
                   <li>/includes/functions/extra_functions/one_page_checkout_functions.php</li>
                   <li>/includes/langauges/english/address_book_register.php</li>
@@ -591,6 +596,10 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                 <li>/includes/classes/Vinos_Browser.php <span class="smaller">(Added in v1.0.4)</span></li>
                 <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
                 <li>/includes/classes/observers/class.checkout_one_observer.php</li>
+                <li>/includes/classes/observers/auto.downloads_via_aws.php <span class="smaller">(Added in v2.0.4, this is the zc156 version of the file)</span></li>
+                <li>/includes/classes/observers/auto.downloads_via_redirect.php <span class="smaller">(Added in v2.0.4, this is the zc156 version of the file)</span></li>
+                <li>/includes/classes/observers/auto.downloads_via_streaming.php <span class="smaller">(Added in v2.0.4, this is the zc156 version of the file)</span></li>
+                <li>/includes/classes/observers/auto.downloads_via_url.php <span class="smaller">(Added in v2.0.4, this is the zc156 version of the file)</span></li>
                 <li>/includes/extra_datafiles/checkout_one_filenames.php</li>
                 <li>/includes/functions/extra_functions/one_page_checkout_functions.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/languages/english/address_book_register.php <span class="smaller">(Added in v2.0.0)</span></li>
@@ -627,7 +636,7 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                 <li>/includes/modules/pages/create_account/main_template_vars.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/modules/pages/create_account_success/header_php_create_account_success_register.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/modules/pages/create_account_success/main_template_vars.php <span class="smaller">(Added in v2.0.0)</span></li>
-                <li><span class="corefile">/includes/modules/pages/download/header_php.php</span> <span class="smaller">(Added in v2.0.0, this is the zc156 version of the file)</span>
+                <li><span class="corefile">/includes/modules/pages/download/header_php.php</span> <span class="smaller">(Added in v2.0.0, this is the zc156 version of the file)</span></li>
                 <li><span class="corefile">/includes/modules/pages/login/header_php.php</span> <span class="smaller">(Added in v2.0.0, one marked change section)</span></li>
                 <li>/includes/modules/pages/login/header_php_login_guest.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/modules/pages/login/main_template_vars.php <span class="smaller">(Added in v2.0.0)</span></li>
@@ -635,9 +644,9 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                 <li><span class="template">/includes/modules/YOUR_TEMPLATE/downloads.php</span> <span class="smaller">(Added in v2.0.0, this is the zc156 version of the file)</span></li>
                 <li>/includes/templates/template_default/css/checkout_one.css</li>
                 <li>/includes/templates/template_default/css/checkout_one_confirmation.css</li>
-                <li>/includes/templates/template_default/css/checkout_success.css <span class="smaller">(Added in v2.0.0)<span></li>
-                <li>/includes/templates/template_default/css/create_account.css <span class="smaller">(Added in v2.0.0)<span></li>
-                <li>/includes/templates/template_default/css/login.css <span class="smaller">(Added in v2.0.0)<span></li>
+                <li>/includes/templates/template_default/css/checkout_success.css <span class="smaller">(Added in v2.0.0)</span></li>
+                <li>/includes/templates/template_default/css/create_account.css <span class="smaller">(Added in v2.0.0)</span></li>
+                <li>/includes/templates/template_default/css/login.css <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/templates/template_default/images/confirmation_one_loading.gif</li>
                 <li><span class="corefile removed">/includes/templates/template_default/jscript/jscript_framework.php</span> <span class="smaller">(Removed from this distribution in v1.4.1)</span></li>
                 <li>/includes/templates/template_default/templates/tpl_address_book_register.php <span class="smaller">(Added in v2.0.0)</span></li>
@@ -665,8 +674,8 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                 <li><span class="template">/includes/templates/YOUR_TEMPLATE/common/tpl_header.php</span> <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/templates/YOUR_TEMPLATE/css/checkout_one.css</li>
                 <li>/includes/templates/YOUR_TEMPLATE/css/checkout_one_confirmation.css</li>
-                <li>/includes/templates/YOUR_TEMPLATE/css/checkout_success.css <span class="smaller">(Added in v2.0.0)<span></li>
-                <li>/includes/templates/YOUR_TEMPLATE/css/create_account.css <span class="smaller">(Added in v2.0.0)<span></li>
+                <li>/includes/templates/YOUR_TEMPLATE/css/checkout_success.css <span class="smaller">(Added in v2.0.0)</span></li>
+                <li>/includes/templates/YOUR_TEMPLATE/css/create_account.css <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/templates/YOUR_TEMPLATE/css/login.css <span class="smaller">(Added in v2.0.0)</span></li>
                 <li><span class="template">/includes/templates/YOUR_TEMPLATE/jscript/jscript_framework.php</span> <span class="smaller">(Added in v1.0.3, the ZC1.5.5a version of the file, with modifications to produce valid HTML)</span></li>
                 <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_ajax_checkout_confirmation_default.php</span> <span class="smaller">(Added in v1.0.3)</span></li>             <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_modules_downloads.php</span> <span class="smaller">(Added in v2.0.0, this is the zc156 version of the file)</span></li>
@@ -691,8 +700,13 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                 <li>v2.0.4, 2018-07-xx:<ul>
                     <li>BUGFIX: &quot;Suburb&quot; (aka &quot;Address Line 2&quot;) and/or &quot;Company&quot; not saved when an address is updated.</li>
                     <li>BUGFIX: Maximum address-book entries not honored.</li>
+                    <li>BUGFIX: Downloaded products result in a 0-byte download file.</li>
                     <li>The following files were affected:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
+                        <li>/includes/classes/observers/auto.downloads_via_aws.php <span class="smaller">(Added)</span></li>
+                        <li>/includes/classes/observers/auto.downloads_via_redirect.php <span class="smaller">(Added)</span></li>
+                        <li>/includes/classes/observers/auto.downloads_via_streaming.php <span class="smaller">(Added)</span></li>
+                        <li>/includes/classes/observers/auto.downloads_via_url.php <span class="smaller">(Added)</span></li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                     </ol></li>
                 </ul></li>
@@ -791,7 +805,7 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                         <li><span class="added">/includes/modules/pages/create_account_success/main_template_vars.php</span></li>
                         <li><span class="corefile">/includes/modules/pages/download/header_php.php</span> <span class="smaller">(Added, zc156 version with timeout pages in SSL)</span></li>
                         <li><span class="corefile">/includes/modules/pages/login/header_php.php</span> <span class="smaller">(Added, one notifier)</span></li>
-                        <li><span class="added">/includes/modules/pages/login/header_php_guest.php</li>
+                        <li><span class="added">/includes/modules/pages/login/header_php_guest.php</span></li>
                         <li><span class="added">/includes/modules/pages/login/main_template_vars.php</span></li>
                         <li><span class="added">/includes/modules/pages/order_status/header_php.php</span></li>
                         <li><span class="template">/includes/modules/YOUR_TEMPLATE/downloads.php</span> <span class="smaller">(Added, using the zc156 version)</span></li>
@@ -820,7 +834,7 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                         <li><span class="template-changed">/includes/templates/YOUR_TEMPLATE/css/checkout_success.css</span> <span class="smaller">(Added)</span></li>
                         <li><span class="template-changed">/includes/templates/YOUR_TEMPLATE/css/create_account.css</span> <span class="smaller">(Added)</span></li>
                         <li><span class="template-changed">/includes/templates/YOUR_TEMPLATE/css/login.css</span> <span class="smaller">(Added)</span></li>
-                        <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_modules_download.php <span class="smaller">(Added, using the zc156 version)</span></li>
+                        <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_modules_download.php</span> <span class="smaller">(Added, using the zc156 version)</span></li>
                         <li>/YOUR_ADMIN/includes/auto_loaders/config.checkout_one.php</li>
                         <li><span class="added">/YOUR_ADMIN/includes/classes/observers/OnePageCheckoutAdminObserver.php</span></li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
@@ -864,7 +878,7 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                   <li>CHANGE: Updated the <em>Troubleshooting</em> section in this readme, to identify where to find what &quot;required elements&quot; are missing.</li>
                   <li>The following files were affected:<ol>
                     <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
-                    <li><span class="template-changed">/includes/templates/YOUR_TEMPLATE/jscript/jscript_framework.php</li></li>
+                    <li><span class="template-changed">/includes/templates/YOUR_TEMPLATE/jscript/jscript_framework.php</span></li>
                     <li><span class="removed">/includes/templates/template_default/jscript/jscript_framework.php</span> <span class="smaller">(Removed from this distribution <em>only</em>.)</span></li>
                     <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                   </ol></li>
@@ -938,6 +952,7 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                     <li><span class="template-changed">/includes/templates/template_default/templates/tpl_checkout_one_confirmation_default.php</span></li>
                     <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                   </ol></li>
+                </ul>
                 <li>v1.0.11, 2016-12-29:<ul>
                   <li>CHANGE: Position cursor on top-of-page when displaying the &quot;collectsCardDataOnsite&quot; confirmation.</li>
                   <li>CHANGE: Correct interoperation with <b><em>Ceon Manual Card</em></b> payment method.</li>
