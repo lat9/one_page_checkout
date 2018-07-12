@@ -15,7 +15,7 @@ if (!defined('IS_ADMIN_FLAG')) {
 // 500-599 ... Registered-account settings
 // 1000+ ..... Debug settings
 //
-define('CHECKOUT_ONE_CURRENT_VERSION', '2.0.4-beta5');
+define('CHECKOUT_ONE_CURRENT_VERSION', '2.0.4-beta6');
 define('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2018-07-12');
 
 if (isset($_SESSION['admin_id'])) {
@@ -147,7 +147,7 @@ if (isset($_SESSION['admin_id'])) {
             "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
                 ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) 
                 VALUES 
-                ( 'Guest Checkout: Pages Allowed Post-Checkout', 'CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED', '', 'Identify (using a comma-separated list, intervening blanks are OK) the pages that are <em>allowed</em> once a guest has completed their checkout.  When the guest navigates from the <code>checkout_success</code> page to any page <em><b>not in this list</b></em>, their guest-customer session is reset.<br /><br />For example, if your store provides a pop-up print invoice, you would include the name of that page in this list.<br />', $cgi, now(), 50, NULL, NULL)"
+                ( 'Guest Checkout: Pages Allowed Post-Checkout', 'CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED', 'download', 'Identify (using a comma-separated list, intervening blanks are OK) the pages that are <em>allowed</em> once a guest has completed their checkout.  When the guest navigates from the <code>checkout_success</code> page to any page <em><b>not in this list</b></em>, their guest-customer session is reset.<br /><br />For example, if your store provides a pop-up print invoice, you would include the name of that page in this list.<br />', $cgi, now(), 50, NULL, NULL)"
         );
         $db->Execute(
             "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
@@ -196,7 +196,30 @@ if (isset($_SESSION['admin_id'])) {
             $db->Execute("ALTER TABLE " . TABLE_ORDERS . " ADD COLUMN is_guest_order tinyint(1) NOT NULL default 0");
         }
     }
-
+    
+    // -----
+    // v2.0.4:
+    //
+    // - If the CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED setting does not include the 'download' page, add it!
+    //
+    if (version_compare(CHECKOUT_ONE_MODULE_VERSION, '2.0.4', '<')) {
+        if (defined('CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED') && strpos(CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED, 'download') === false) {
+            if (CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED == '') {
+                $checkout_pages = array();
+            } else {
+                $checkout_pages = explode(',', str_replace(' ', '', CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED));
+            }
+            $checkout_pages[] = 'download';
+            $checkout_pages = implode(', ', $checkout_pages);
+            $db->Execute(
+                "UPDATE " . TABLE_CONFIGURATION . "
+                    SET configuration_value = '$checkout_pages'
+                  WHERE configuration_key = 'CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED'
+                  LIMIT 1"
+            );
+        }
+    }
+    
     if (CHECKOUT_ONE_MODULE_VERSION != '0.0.0' && CHECKOUT_ONE_MODULE_VERSION != $version_release_date) {
         $messageStack->add(sprintf(TEXT_OPC_UPDATED, CHECKOUT_ONE_MODULE_VERSION, $version_release_date), 'success');
         $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '$version_release_date', last_modified = now() WHERE configuration_key = 'CHECKOUT_ONE_MODULE_VERSION' LIMIT 1");

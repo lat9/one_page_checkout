@@ -316,7 +316,7 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                 </tr>
                 <tr>
                     <td>Guest Checkout: Pages Allowed Post-Checkout</td>
-                    <td>Identify (using a comma-separated list, intervening blanks are OK) the pages that are <em>allowed</em> once a guest has completed their checkout.  When the guest navigates from the <code class="no-pad">checkout_success</code> page to any page <em><b>not in this list</b></em>, their guest-customer session is reset.<br /><br />For example, if your store provides a pop-up print invoice, you would include the name of that page in this list.  Default: <em>empty</em>.</td>
+                    <td>Identify (using a comma-separated list, intervening blanks are OK) the pages that are <em>allowed</em> once a guest has completed their checkout.  When the guest navigates from the <code class="no-pad">checkout_success</code> page to any page <em><b>not in this list</b></em>, their guest-customer session is reset.<br /><br />For example, if your store provides a pop-up print invoice, you would include the name of that page in this list.  Default: <em>download</em>.<br /><br /><strong>Note:</strong> The default for this setting was blank (i.e. '') for <em>OPC</em> versions prior to v2.0.4.</td>
                     <td>2.0.0</td>
                 </tr>
                 <tr>
@@ -699,8 +699,9 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
               <ul>
                 <li>v2.0.4, 2018-07-xx:<ul>
                     <li>BUGFIX: &quot;Suburb&quot; (aka &quot;Address Line 2&quot;) and/or &quot;Company&quot; not saved when an address is updated.</li>
-                    <li>BUGFIX: Maximum address-book entries not honored.</li>
+                    <li>BUGFIX: Maximum address-book entries not honoured.</li>
                     <li>BUGFIX: Downloaded products result in a 0-byte download file.</li>
+                    <li>BUGFIX: Guest-customer downloads not honoured <em>automatically</em> on the &quot;checkout_success&quot; page.</li>
                     <li>The following files were affected:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/classes/observers/auto.downloads_via_aws.php <span class="smaller">(Added)</span></li>
