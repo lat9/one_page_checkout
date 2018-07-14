@@ -420,10 +420,17 @@ jQuery(document).ready(function(){
                 },
             }).done(function( response ) {
                 jQuery('#orderTotalDivs').html(response.orderTotalHtml);
-                jQuery('#checkoutPaymentMethod').replaceWith(response.paymentHtml);
-                jQuery('input[name=payment]').on('change', function() {
-                    setFormSubmitButton();
-                });
+                
+                // -----
+                // Don't change the payment-method block if a form-submittal is requested.  Otherwise, the
+                // customer's just-entered credit-card credentials will be "wiped out".
+                //
+                if (type != 'submit') {
+                    jQuery('#checkoutPaymentMethod').replaceWith(response.paymentHtml);
+                    jQuery('input[name=payment]').on('change', function() {
+                        setFormSubmitButton();
+                    });
+                }
                 
                 var shippingError = false;
                 jQuery('#otshipping, #otshipping+br').show();

@@ -702,12 +702,15 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                     <li>BUGFIX: Maximum address-book entries not honoured.</li>
                     <li>BUGFIX: Downloaded products result in a 0-byte download file.</li>
                     <li>BUGFIX: Guest-customer downloads not honoured <em>automatically</em> on the &quot;checkout_success&quot; page.</li>
+                    <li>BUGFIX: Correct interaction with payment methods that &quot;collectCreditCardDataOnSite&quot;.</li>
                     <li>The following files were affected:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/classes/observers/auto.downloads_via_aws.php <span class="smaller">(Added)</span></li>
                         <li>/includes/classes/observers/auto.downloads_via_redirect.php <span class="smaller">(Added)</span></li>
                         <li>/includes/classes/observers/auto.downloads_via_streaming.php <span class="smaller">(Added)</span></li>
                         <li>/includes/classes/observers/auto.downloads_via_url.php <span class="smaller">(Added)</span></li>
+                        <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
+                        <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                     </ol></li>
                 </ul></li>
