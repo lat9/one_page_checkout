@@ -529,8 +529,41 @@ jQuery(document).ready(function(){
     // When a different payment method is chosen, determine whether the payment will require a confirmation-
     // page display, change the form's pseudo-submit button to reflect either "Review" or "Confirm".
     //
+    // Additionally, need to "register" the selected payment method in the session and re-load the
+    // order-totals block to account for totals that are payment-method-specific (e.g. ot_cod_fee).
+    //
     jQuery('input[name=payment]').on('change', function() {
         setFormSubmitButton();
+        
+        var paymentSelected = jQuery('input[name=payment]');
+        if (paymentSelected.is(':radio')) {
+            paymentSelected = jQuery('input[name=payment]:checked');
+
+        }
+        if (paymentSelected.length == 0) {
+            paymentSelected = '';
+        } else {
+            paymentSelected = paymentSelected.val();
+        }
+
+        var paymentData = {
+            payment: paymentSelected
+        };
+            
+        zcLog2Console('Updating payment method to '+paymentSelected);
+        zcJS.ajax({
+            url: "ajax.php?act=ajaxOnePageCheckout&method=updatePaymentMethod",
+            data: paymentData,
+            timeout: shippingTimeout,
+            error: function (jqXHR, textStatus, errorThrown) {
+                zcLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
+                if (textStatus == 'timeout') {
+                    alert( ajaxTimeoutErrorMessage );
+                }
+            },
+        }).done(function( response ) {
+            jQuery('#orderTotalDivs').html(response.orderTotalHtml);
+        });
     });
     
     // -----

@@ -437,6 +437,69 @@ class zcAjaxOnePageCheckout extends base
         return $return_array;
     }
     
+    // -----
+    // Public function to update the payment-method and the order-totals block; used when the payment method is changed
+    // so that payment-related totals (like ot_cod_fee) are properly updated.
+    //
+    public function updatePaymentMethod()
+    {
+        // -----
+        // Since we're running as a function, need to declare the objects we're instantiating here, for use by the various classes
+        // involved in creating the order's total-block.
+        //
+        global $db, $order, $currencies, $checkout_one, $total_weight, $total_count, $discount_coupon, $messageStack;
+        global $shipping_weight, $uninsurable_value, $shipping_quoted, $shipping_num_boxes, $template, $template_dir;
+        global $language_page_directory;
+
+        // -----
+        // Load the One-Page Checkout page's language files.
+        //
+        $this->loadLanguageFiles();       
+        
+        $error_message = $order_total_html = '';
+        $status = 'ok';
+        
+        // -----
+        // Check for a session timeout (i.e. no more customer_id in the session), returning a specific
+        // status and message for that case.
+        //
+        if (!isset($_SESSION['customer_id'])) {
+            $status = 'timeout';
+            $checkout_one->debug_message("Session time-out detected.", 'zcAjaxOnePageCheckout::updateOrderTotals');
+        } else {
+            $this->disableGzip();
+            
+            if (empty($_POST['payment'])) {
+                unset($_SESSION['payment']);
+            } else {
+                $_SESSION['payment'] = $_POST['payment'];
+            }
+            
+            require DIR_WS_CLASSES . 'order.php';
+            $order = new order();
+
+            if (!class_exists('order_total')) {
+                require DIR_WS_CLASSES . 'order_total.php';
+            }
+            $order_total_modules = new order_total;
+
+            ob_start();
+            $order_total_modules->process();
+            $order_total_modules->output();
+            $order_total_html = ob_get_clean();
+            ob_flush();
+        }
+        
+        $return_array = array(
+            'status' => $status,
+            'errorMessage' => $error_message,
+            'orderTotalHtml' => $order_total_html,
+        );
+        $checkout_one->debug_message('updateOrderTotals, returning:' . var_export($return_array, true));
+
+        return $return_array;
+    }
+    
     protected function renderAddressBlock($which)
     {
         global $current_page_base, $template;
