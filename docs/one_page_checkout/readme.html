@@ -108,6 +108,7 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
     
       <div id="overview">
         <p>This section identifies how the <em>One-Page Checkout</em>, a.k.a. <em>OPC</em>, presents itself to your customers and your admin users.</p>
+        <p><strong>Note:</strong> If your store provides <em>downloadable</em> products, be sure to check the <b>Installation and Troubleshooting</b>  tab's <em>Troubleshooting</em> tab!</p>
         <div class="tab-container" id="inner-container1">
           <ul class="etabs">
             <li class="tab"><a href="#operation">Operation</a></li>
@@ -553,6 +554,11 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
             </div>
             
             <div id="trouble">
+              <p>Although it's a &quot;standard&quot; Zen Cart practice to switch to the built-in <code class="no-pad">classic</code> or <code class="no-pad">responsive_classic</code> templates when diagnosing a template-related issue, please note that this <b>will not work</b> when debugging template-specific product download issues.  This is due to the way that <em>OPC</em> distributes its required changes to the download handling.</p>
+              <p>The base <code class="no-pad">download</code> page's header processing has been updated to use the Zen Cart 1.5.6 version, with the also-required change to the <code class="no-pad">/includes/modules/downloads.php</code> module distributed in a template-override sub-directory.  If desired, you can rename the base version of the module and copy the version provided by <em>OPC</em>&nbsp; into &quot;base&quot; <code class="no-pad">/includes/modules</code> for testing purposes.</p>
+              
+              <hr />
+              
               <p><em>One-Page Checkout</em> relies <em><b>heavily</b></em> on your store to load <b>a single version</b> of jQuery for its use during the checkout processing.  If your store uses plugin payment-, shipping- or order-total-modules, you'll need to validate the <em>OPC</em> to make sure that your store is capable of supporting its processing.  That's why the <em>OPC</em>'s initial installation sets the plugin's configuration as <em><b>Disabled</b></em>, to give a store-owner the opportunity to make sure that his/her store's environment is compatible with the one-page checkout process.</p>
               <p><em>OPC</em>'s jQuery handling makes use of your browser's &quot;Console&quot; to identify its progress throughout the checkout process.  On most up-to-date browsers, you can view the browser's console by pressing the F12 key and then clicking on the &quot;Console&quot; tab that is shown (usually at the bottom of the viewed page).</p>
               
