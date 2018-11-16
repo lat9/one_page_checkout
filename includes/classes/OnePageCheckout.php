@@ -33,7 +33,7 @@ class OnePageCheckout extends base
     //
     // isVirtualOrder ........... Identifies whether or not the current order is "virtual" (i.e. no shipping address required).
     // billtoAddressChangeable .. Identifies whether (true) or not (false) the payment address can be changed.
-    // shiptoAddressChangeable .. Identifies whether (true) or not (false) the shipping address can be changed.
+    // sendtoAddressChangeable .. Identifies whether (true) or not (false) the shipping address can be changed.
     //
     protected $isGuestCheckoutEnabled,
               $registeredAccounts,
@@ -50,7 +50,7 @@ class OnePageCheckout extends base
               $sendtoTempAddrOk,
               $isVirtualOrder,
               $billtoAddressChangeable,
-              $shiptoAddressChangeable;
+              $sendtoAddressChangeable;
     
     public function __construct()
     {
@@ -823,7 +823,7 @@ class OnePageCheckout extends base
             'street_address' => '',
             'suburb' => '',
             'city' => '',
-            'postcode' => '',
+            'postcode' => SHIPPING_ORIGIN_ZIP,
             'state' => '',
             'country' => (int)STORE_COUNTRY,
             'zone_id' => (int)STORE_ZONE,
