@@ -449,7 +449,7 @@ class zcAjaxOnePageCheckout extends base
         //
         global $db, $order, $currencies, $checkout_one, $total_weight, $total_count, $discount_coupon, $messageStack;
         global $shipping_weight, $uninsurable_value, $shipping_quoted, $shipping_num_boxes, $template, $template_dir;
-        global $language_page_directory;
+        global $language_page_directory, $shipping_modules, $payment_modules;
 
         // -----
         // Load the One-Page Checkout page's language files.
@@ -477,6 +477,12 @@ class zcAjaxOnePageCheckout extends base
             
             require DIR_WS_CLASSES . 'order.php';
             $order = new order();
+            
+            require DIR_WS_CLASSES . 'shipping.php';
+            $shipping_modules = new shipping($_SESSION['shipping']);
+            
+            require DIR_WS_CLASSES . 'payment.php';
+            $payment_modules = new payment;
 
             if (!class_exists('order_total')) {
                 require DIR_WS_CLASSES . 'order_total.php';
