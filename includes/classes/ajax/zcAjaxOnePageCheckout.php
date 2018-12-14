@@ -19,14 +19,14 @@ class zcAjaxOnePageCheckout extends base
         //
         global $db, $order, $currencies, $checkout_one, $total_weight, $total_count, $discount_coupon, $messageStack;
         global $shipping_weight, $uninsurable_value, $shipping_quoted, $shipping_num_boxes, $template, $template_dir;
-        global $language_page_directory;
+        global $language_page_directory, $current_page_base;
 
         // -----
         // Load the One-Page Checkout page's language files.
         //
         $this->loadLanguageFiles();       
         
-        $error_message = $order_total_html = $shipping_html = '';
+        $error_message = $order_total_html = $shipping_html = $payment_html = '';
         $status = 'ok';
         $shipping_choose_message = '';
         
@@ -109,7 +109,9 @@ class zcAjaxOnePageCheckout extends base
             );
 
             if ($free_shipping || $is_virtual_order) {
+                $shipping_module_available = true;
                 if ($_POST['shipping'] != 'free_free') {
+                    $shipping_module_available = false;
                     $checkout_one->debug_message('Invalid shipping method (' . $_POST['shipping'] . ') submitted; free-shipping and virtual orders should be free_free.', false, 'zcAjaxOnePageCheckout');
                     $status = 'error';
                     $error_message = ERROR_UNKNOWN_SHIPPING_SELECTION;
@@ -120,8 +122,11 @@ class zcAjaxOnePageCheckout extends base
                 $shipping_modules = new shipping;
             
 //-bof-product_delivery_by_postcode (PDP) integration
+                $is_localdelivery_enabled = false;
                 if (defined('MODULE_SHIPPING_LOCALDELIVERY_POSTCODE') && defined('MODULE_SHIPPING_STOREPICKUP_POSTCODE') && function_exists('zen_get_UKPostcodeFirstPart')) {
                     global $localdelivery, $storepickup;
+                    
+                    $is_localdelivery_enabled = true;
                     
                     $check_delivery_postcode = $order->delivery['postcode'];
               
@@ -160,7 +165,7 @@ class zcAjaxOnePageCheckout extends base
                 $shipping_modules = new shipping(isset ($_SESSION['shipping']) ? $_SESSION['shipping'] : '');
                 
 //-bof-product_delivery_by_postcode (PDP) integration
-                if (function_exists('zen_get_UKPostcodeFirstPart')) {
+                if ($is_localdelivery_enabled) {
                     global $localdelivery, $storepickup;
                     
                     $check_delivery_postcode = $order->delivery['postcode'];
@@ -194,7 +199,6 @@ class zcAjaxOnePageCheckout extends base
                     ob_start ();
                     require $template->get_template_dir('tpl_modules_checkout_one_shipping.php', DIR_WS_TEMPLATE, $GLOBALS['current_page_base'], 'templates'). '/tpl_modules_checkout_one_shipping.php';
                     $shipping_html = ob_get_clean();
-                    ob_flush();
                 }
                 
                 if ($status == 'ok' && isset ($quote[0]['error'])) {
@@ -210,11 +214,34 @@ class zcAjaxOnePageCheckout extends base
                     }
                 }
                 unset($_SESSION['messageToStack']);
+               
+                // -----
+                // Pull in, also, any changes to the shipping-methods available, given the change to shipping.
+                //
+                $shipping_module_available = ($free_shipping || $is_virtual_order || zen_count_shipping_modules() > 0);
 
                 $checkout_one->debug_message("Shipping method changed: " . var_export($quote, true) . var_export($_SESSION['shipping'], true), false, 'zcAjaxOnePageCheckout');
             }
+            
             $checkout_one->debug_message("Billing/shipping, exit (" . var_export($_POST['shipping_is_billing'], true) . "), " . $_SESSION['sendto'] . ", " . $_SESSION['billto'] . ", " . $_SESSION['opc_sendto_saved'] . ", (" . $_SESSION['shipping_billing'] . ")", 'zcAjaxOnePageCheckout::updateShipping');
 
+            // -----
+            // Pull in the payment-class processing at this point (was previously after the order-totals) to ensure
+            // that any order-total modules that are 'keyed to' a payment method are properly included.
+            //
+            if (!class_exists('payment')) {
+                require DIR_WS_CLASSES . 'payment.php';
+            }
+            $payment_modules = new payment();
+            $enabled_payment_modules = $_SESSION['opc']->validateGuestPaymentMethods($payment_modules->selection());
+            ob_start ();
+            require $template->get_template_dir('tpl_modules_opc_payment_choices.php', DIR_WS_TEMPLATE, $GLOBALS['current_page_base'], 'templates'). '/tpl_modules_opc_payment_choices.php';
+            $payment_html = ob_get_clean();
+
+            // -----
+            // Now, pull in any changes/re-calculations for the order's totals based on any shipping/payment
+            // processing.
+            //
             if (!class_exists('order_total')) {
                 require DIR_WS_CLASSES . 'order_total.php';
             }
@@ -224,24 +251,15 @@ class zcAjaxOnePageCheckout extends base
             $order_total_modules->process();
             $order_total_modules->output();
             $order_total_html = ob_get_clean();
-            ob_flush();
-            
-            // -----
-            // Pull in, also, any changes to the payment-methods available, given the change to shipping.
-            //
-            $shipping_module_available = ($free_shipping || $is_virtual_order || zen_count_shipping_modules() > 0);
-
-            if (!class_exists('payment')) {
-                require DIR_WS_CLASSES . 'payment.php';
-            }
-            $payment_modules = new payment();
-            $enabled_payment_modules = $_SESSION['opc']->validateGuestPaymentMethods($payment_modules->selection());
-            ob_start ();
-            require $template->get_template_dir('tpl_modules_opc_payment_choices.php', DIR_WS_TEMPLATE, $GLOBALS['current_page_base'], 'templates'). '/tpl_modules_opc_payment_choices.php';
-            $payment_html = ob_get_clean();
-            ob_flush();
         }
         
+        // -----
+        // Some payment methods, e.g. square, have some external jQuery that is loaded and run on initial
+        // page-load **only**.  Set a processing flag for use by the 'checkout_one' page's jQuery to indicate what
+        // action should be taken for the payment-method HTML on a shipping-method update.
+        //
+        // Possible values are 'update', 'no-update' or 'refresh'.
+        //
         $return_array = array(
             'status' => $status,
             'errorMessage' => $error_message,
@@ -249,6 +267,7 @@ class zcAjaxOnePageCheckout extends base
             'shippingHtml' => $shipping_html,
             'shippingMessage' => $shipping_choose_message,
             'paymentHtml' => $payment_html,
+            'paymentHtmlAction' => CHECKOUT_ONE_PAYMENT_BLOCK_ACTION,
         );
         $checkout_one->debug_message('updateShipping, returning:' . var_export($return_array, true) . var_export($_SESSION['shipping'], true));
 
@@ -387,7 +406,6 @@ class zcAjaxOnePageCheckout extends base
             ob_start();
             require $template->get_template_dir($template_file, DIR_WS_TEMPLATE, $current_page_base, 'templates'). "/$template_file";
             $info_html = ob_get_clean();
-            ob_flush();
         }
         
         $return_array = array(
@@ -493,7 +511,6 @@ class zcAjaxOnePageCheckout extends base
             $order_total_modules->process();
             $order_total_modules->output();
             $order_total_html = ob_get_clean();
-            ob_flush();
         }
         
         $return_array = array(
@@ -520,7 +537,6 @@ class zcAjaxOnePageCheckout extends base
         ob_start();
         require $template->get_template_dir($template_file, DIR_WS_TEMPLATE, $current_page_base, 'templates'). "/$template_file";
         $address_html = ob_get_clean();
-        ob_flush();
         
         return $address_html;
     }
