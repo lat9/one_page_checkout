@@ -204,14 +204,13 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                   <li>First Data Hosted Checkout Payment Pages</li>
                   <li>Layaway Plan</li>
                   <li>NoChex</li>
-                  <li>Payeezy (payeezyjszc) <span class="smaller">(See below<sup>1</sup> for v0.96 and earlier)</span></li>
+                  <li>Payeezy (payeezyjszc), v0.99 or later</li>
                   <li>PayPal Express Checkout (paypalwpp)</li>
                   <li>Purchase Order (purchaseorders)</li>
                   <li>Sage Pay Form</li>
-                  <li>Square (square) <span class="smaller">(See below<sup>1</sup> for v0.90 and earlier)</span></li>
+                  <li>Square (square), v0.96 or later</li>
                   <li>Stripe-Pay</li>
                 </ol>
-                <sup>1</sup>Requires patching to interoperate with the <em>PayPal Express Checkout</em> &quot;shortcut&quot; button processing.  See the &quot;Payment Method Interoperation&quot; tab for additional information.
               </div>
               <div class="clearBoth"></div>
             </div>
@@ -284,6 +283,17 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                     <td>Update Shipping AJAX Time-out</td>
                     <td>Use this setting to adjust the timeout to use when the plugin requests an update to the shipping quotes on the "checkout_one" page. The default setting of 5000 (5 seconds) should work for most stores. If your store has enabled multiple external shipping modules (e.g. USPS, UPS and FedEx), you might need to increase this value.</td>
                     <td>1.0.3</td>
+                </tr>
+                <tr>
+                    <td>Payment-Block Action on Shipping Change</td>
+                    <td>Identify the action to be taken for the order's 'payment-block' when the order's shipping-method changes. Some payment-methods (e.g. square) require that the block <b>not</b> be updated while others are dependent on the shipping-method selected (e.g. a Cash payment is accepted <em>only</em> if the customer has chosen 'Store Pickup').  Choose:
+                        <ul>
+                            <li><b>no-update</b> if at least one of your store's payment methods require that no update be performed, e.g. <em>square</em>.</li>
+                            <li><b>update</b> if none of your store's payment methods require <em>no-update</em>.</li>
+                            <li><b>refresh</b> if your store has a combination of payment-method requirements, some which require <em>no-update</em> and some that don't.  Note that choosing this method will result in any customer-entered credit-card information being reset if the order's shipping-method is changed.</li>
+                        </ul>
+                    If your store has the <code class="no-pad">square</code> module installed on an <em>OPC</em> installation or upgrade, this setting will default to <b>no-update</b>; otherwise, the default value will be <b>update</b>.</td>
+                    <td>2.0.5</td>
                 </tr>
                 <tr>
                     <td>Enable Shipping=Billing?</td>
@@ -555,12 +565,7 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
               <p>First, delete the files that were copied to your Zen Cart installation's file-system. Then use your admin's <em>Tools-&gt;Run SQL Patches</em> to run the file <code class="no-pad">/docs/checkout_one/uninstall/checkout_one_uninstall.sql</code>.</p>
             </div>
             
-            <div id="trouble">
-              <p>Although it's a &quot;standard&quot; Zen Cart practice to switch to the built-in <code class="no-pad">classic</code> or <code class="no-pad">responsive_classic</code> templates when diagnosing a template-related issue, please note that this <b>will not work</b> when debugging template-specific product download issues.  This is due to the way that <em>OPC</em> distributes its required changes to the download handling.</p>
-              <p>The base <code class="no-pad">download</code> page's header processing has been updated to use the Zen Cart 1.5.6 version, with the also-required change to the <code class="no-pad">/includes/modules/downloads.php</code> module distributed in a template-override sub-directory.  If desired, you can rename the base version of the module and copy the version provided by <em>OPC</em>&nbsp; into &quot;base&quot; <code class="no-pad">/includes/modules</code> for testing purposes.</p>
-              
-              <hr />
-              
+            <div id="trouble">             
               <p><em>One-Page Checkout</em> relies <em><b>heavily</b></em> on your store to load <b>a single version</b> of jQuery for its use during the checkout processing.  If your store uses plugin payment-, shipping- or order-total-modules, you'll need to validate the <em>OPC</em> to make sure that your store is capable of supporting its processing.  That's why the <em>OPC</em>'s initial installation sets the plugin's configuration as <em><b>Disabled</b></em>, to give a store-owner the opportunity to make sure that his/her store's environment is compatible with the one-page checkout process.</p>
               <p><em>OPC</em>'s jQuery handling makes use of your browser's &quot;Console&quot; to identify its progress throughout the checkout process.  On most up-to-date browsers, you can view the browser's console by pressing the F12 key and then clicking on the &quot;Console&quot; tab that is shown (usually at the bottom of the viewed page).</p>
               
@@ -706,12 +711,14 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a> <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color.</p>
               <ul>
-                <li>v2.0.5, 2018-11-xx:<ul>
+                <li>v2.0.5, 2018-12-xx:<ul>
                     <li>BUGFIX: Update totals' block on payment method change; corrects <code class="no-pad">ot_cod_fee</code> handling.</li>
                     <li>BUGFIX: Pick up more recent <code class="no-pad">download</code> class from the Zen Cart <em>zc156</em> repository.</li>
                     <li>BUGFIX: Customer's gender not being saved when address is changed.</li>
                     <li>BUGFIX: Initialize guest/registered-accounts' zip-code to bypass shipping-method errors.</li>
                     <li>BUGFIX: Taxed order-totals 'lose' their tax on a payment-method update.</li>
+                    <li>BUGFIX: 'Square' payment-inputs disappear if the shipping-method is updated.</li>
+                    <li>BUGFIX: Correct various &quot;PHP Notice&quot; issues.</li>
                     <li>The following files were affected:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
@@ -719,6 +726,7 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
                         <li><span class="corefile">/includes/templates/template_default/templates/tpl_modules_downloads.php</span> <span class="smaller">(Added)</span></li>
+                        <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_payment_choices.php</span></li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                     </ol></li>
                 </ul></li>
