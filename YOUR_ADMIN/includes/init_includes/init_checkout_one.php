@@ -15,8 +15,8 @@ if (!defined('IS_ADMIN_FLAG')) {
 // 500-599 ... Registered-account settings
 // 1000+ ..... Debug settings
 //
-define('CHECKOUT_ONE_CURRENT_VERSION', '2.0.5-beta4');
-define('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2018-12-13');
+define('CHECKOUT_ONE_CURRENT_VERSION', '2.0.5-beta5');
+define('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2018-12-14');
 
 if (isset($_SESSION['admin_id'])) {
     $version_release_date = CHECKOUT_ONE_CURRENT_VERSION . ' (' . CHECKOUT_ONE_CURRENT_UPDATE_DATE . ')';
@@ -218,6 +218,23 @@ if (isset($_SESSION['admin_id'])) {
                   LIMIT 1"
             );
         }
+    }
+    
+    // -----
+    // v2.0.5:
+    //
+    // - Add the setting CHECKOUT_ONE_PAYMENT_BLOCK_ACTION, since there are some payment methods, e.g. square,
+    //   that require that the payment-block **not** be reloaded on a shipping-module change while there are others
+    //   that require the payment-block to be reloaded on that change (e.g. a Cash payment is accepted only when
+    //   shipping is store-pickup.
+    //
+    if (version_compare(CHECKOUT_ONE_MODULE_VERSION, '2.0.5', '<')) {
+        $db->Execute(
+            "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
+                ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) 
+                VALUES 
+                ( 'Payment-Block Action on Shipping Change', 'CHECKOUT_ONE_PAYMENT_BLOCK_ACTION', 'update', 'Identify the action to be taken for the order\'s &quot;payment-block&quot; when the order\'s shipping-method changes.  Some payment-methods (e.g. <em>square</em>) require that the block <b>not</b> be updated while others are dependent on the shipping-method selected (e.g. a <em>Cash</em> payment is accepted <em>only</em> if the customer has chosen &quot;Store Pickup&quot;.<br /><br />Choose <b>no-update</b> if at least one of your store\'s payment methods require that no update be performed.  Choose <b>update</b>, the default, if <em>none</em> of your store\'s payment methods require no-update.  If your store has a combination of payment-method requirements, choose <b>refresh</b> &mdash; but any credit-card information entered in the payment-block will be lost upon a shipping-method change!', $cgi, now(), 16, NULL, 'zen_cfg_select_option(array(\'update\', \'no-update\', \'refresh\'),')"
+        );
     }
     
     if (CHECKOUT_ONE_MODULE_VERSION != '0.0.0' && CHECKOUT_ONE_MODULE_VERSION != $version_release_date) {
