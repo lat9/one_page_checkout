@@ -1,5 +1,5 @@
 // -----
-// Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
+// Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
 // Copyright (C) 2013-2018, Vinos de Frutas Tropicales.  All rights reserved.
 //
 var selected;
@@ -425,11 +425,18 @@ jQuery(document).ready(function(){
                 // Don't change the payment-method block if a form-submittal is requested.  Otherwise, the
                 // customer's just-entered credit-card credentials will be "wiped out".
                 //
+                // The same is true for stores that use payment methods that don't "tolerate"
+                // a page-refresh.
+                //
                 if (type != 'submit') {
-                    jQuery('#checkoutPaymentMethod').replaceWith(response.paymentHtml);
-                    jQuery('input[name=payment]').on('change', function() {
-                        setFormSubmitButton();
-                    });
+                    if (response.paymentHtmlAction == 'refresh') {
+                        window.location.reload(true);
+                    } else if (response.paymentHtmlAction == 'update') {
+                        jQuery('#checkoutPaymentMethod').replaceWith(response.paymentHtml);
+                        jQuery('input[name=payment]').on('change', function() {
+                            setFormSubmitButton();
+                        });
+                    }
                 }
                 
                 var shippingError = false;
