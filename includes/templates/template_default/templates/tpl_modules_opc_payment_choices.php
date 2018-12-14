@@ -66,7 +66,18 @@ if ($shipping_module_available) {
       <label for="pmt-<?php echo $payment_id; ?>" class="custom-control-label radioButtonLabel"><?php echo $current_method['module']; ?></label>
       </div>
 <?php
-            if (defined('MODULE_ORDER_TOTAL_COD_STATUS') && MODULE_ORDER_TOTAL_COD_STATUS == 'true' and $payment_id == 'cod') {
+            if (defined('MODULE_ORDER_TOTAL_COD_STATUS') && MODULE_ORDER_TOTAL_COD_STATUS == 'true' && $payment_id == 'cod') {
+                if (!defined('TEXT_INFO_COD_FEES')) {
+                    // -----
+                    // Need to load the 'ot_cod' language file, since it's not pre-loaded during AJAX operations.
+                    //
+                    $ot_cod_lang_file = zen_get_file_directory(DIR_WS_LANGUAGES . $_SESSION['language'] . '/modules/order_total/', 'ot_cod.php', 'false');
+                    if (@file_exists($ot_cod_lang_file)) {
+                        require $lang_file;
+                    } else {
+                        define('TEXT_INFO_COD_FEES', '<strong>Note:</strong> COD fees may apply');
+                    }
+                }
 ?>
       <div class="alert"><?php echo TEXT_INFO_COD_FEES; ?></div>
 <?php
@@ -86,8 +97,21 @@ if ($shipping_module_available) {
       <div class="ccinfo">
 <?php
                 foreach ($current_method['fields'] as $current_field) {
+                    // -----
+                    // Some payment methods provide a 'field' without a 'title'; conditionally include
+                    // the requested label so long a the title exists and its non-blank (i.e. not 'empty').
+                    //
+                    if (!empty($current_field['title'])) {
 ?>
-        <label <?php echo (isset($current_field['tag']) ? 'for="' . $current_field['tag'] . '" ' : ''); ?>class="inputLabelPayment"><?php echo $current_field['title']; ?></label><?php echo $current_field['field']; ?>
+        <label <?php echo (isset($current_field['tag']) ? 'for="' . $current_field['tag'] . '" ' : ''); ?>class="inputLabelPayment"><?php echo $current_field['title']; ?></label>
+<?php
+                    }
+                    
+                    // -----
+                    // The 'field' value is **always** required; output it.
+                    //
+                    echo $current_field['field']; 
+?>
         <br class="clearBoth" />
 <?php
                 }
