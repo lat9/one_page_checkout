@@ -719,12 +719,18 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                     <li>BUGFIX: Taxed order-totals 'lose' their tax on a payment-method update.</li>
                     <li>BUGFIX: 'Square' payment-inputs disappear if the shipping-method is updated.</li>
                     <li>BUGFIX: Correct various &quot;PHP Notice&quot; issues.</li>
+                    <li>CHANGE: Partial zc156 integration; downward-compatible changes only.</li>
                     <li>The following files were affected:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
+                        <li>/includes/classes/observers/auto.downloads_via_aws.php</li>
                         <li>/includes/classes/observers/auto.downloads_via_redirect.php</li>
+                        <li>/includes/classes/observers/auto.downloads_via_streaming.php</li>
+                        <li>/includes/classes/observers/auto.downloads_via_url.php</li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
+                        <li><span class="corefile">/includes/modules/pages/download/header_php.php</span></li>
+                        <li><span class="corefile">/includes/modules/pages/login/header_php.php</span></li>
                         <li><span class="corefile">/includes/templates/template_default/templates/tpl_modules_downloads.php</span> <span class="smaller">(Added)</span></li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_payment_choices.php</span></li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>

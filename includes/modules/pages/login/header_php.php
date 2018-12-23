@@ -3,7 +3,7 @@
  * Login Page
  *
  * @package page
- * @copyright Copyright 2003-2016 Zen Cart Development Team
+ * @copyright Copyright 2003-2018 Zen Cart Development Team
  * @copyright Portions Copyright 2003 osCommerce
  * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
  * @version $Id: Author: DrByte  Mon Oct 19 10:48:31 2015 -0400 Modified in v1.5.5 $
@@ -30,8 +30,8 @@ include(DIR_WS_MODULES . zen_get_module_directory(FILENAME_CREATE_ACCOUNT));
 
 $error = false;
 if (isset($_GET['action']) && ($_GET['action'] == 'process')) {
-  $email_address = zen_db_prepare_input($_POST['email_address']);
-  $password = zen_db_prepare_input($_POST['password']);
+  $email_address = zen_db_prepare_input(isset($_POST['email_address']) ? $_POST['email_address'] : '');
+  $password = zen_db_prepare_input(isset($_POST['password']) ? $_POST['password'] : '');
   $loginAuthorized = false;
 
   /* Privacy-policy-read does not need to be checked during "login"
