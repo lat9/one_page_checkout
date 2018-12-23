@@ -93,7 +93,8 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
     <li>Guest checkout, especially the <code class="no-pad">orders_status</code> page's processing, based on the <a href="https://www.zen-cart.com/showthread.php?196995-COWOA-%28for-ZC-v1-5-x%29">COWOA</a> (by @DivaVocals, @countrycharm and others) and <a href="https://www.zen-cart.com/downloads.php?do=file&id=2131">COWAA</a> (by @davewest) plugins.</li>
   </ol>
   <hr />
-  <p>Additional information (especially for features introduced in <em>OPC v2.0.0</em> can be found in the plugin's <a href="https://lat9.github.io/one_page_checkout/" target="_blank">Additional Documentation</a> page.</li>
+  <p>Additional information (especially for features introduced in <em>OPC v2.0.0</em> can be found in the plugin's <a href="https://lat9.github.io/one_page_checkout/" target="_blank">Additional Documentation</a> page.</p>
+  <p><b>Note:</b> This version is not <em>fully</em> integrated with Zen Cart v1.5.6.  You'll need to compare the various <span class="corefile">core files</span> provided by this plugin and merge those changes into the like-named files from the zc156 distribution.  The next release of <em>OPC</em> will drop support for Zen Cart versions prior to 1.5.5f.</p>
   <hr />
   <p>Current Support Thread at Zen Cart Forums: <a href="https://www.zen-cart.com/showthread.php?220781-One-Page-Checkout-Support-Thread">https://www.zen-cart.com/showthread.php?220781-One-Page-Checkout-Support-Thread</a></p>
   
@@ -650,7 +651,7 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                 <li>/includes/modules/pages/create_account_success/header_php_create_account_success_register.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/modules/pages/create_account_success/main_template_vars.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li><span class="corefile">/includes/modules/pages/download/header_php.php</span> <span class="smaller">(Added in v2.0.0, this is the zc156 version of the file)</span></li>
-                <li><span class="corefile">/includes/modules/pages/login/header_php.php</span> <span class="smaller">(Added in v2.0.0, one marked change section)</span></li>
+                <li><span class="corefile">/includes/modules/pages/login/header_php.php</span> <span class="smaller">(Added in v2.0.0, this is the zc156 version with one marked change section)</span></li>
                 <li>/includes/modules/pages/login/header_php_login_guest.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/modules/pages/login/main_template_vars.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/modules/pages/order_status/header_php.php <span class="smaller">(Added in v2.0.0)</span></li>
@@ -711,7 +712,7 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a> <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color.</p>
               <ul>
-                <li>v2.0.5, 2018-12-xx:<ul>
+                <li>v2.0.5, 2018-12-23:<ul>
                     <li>BUGFIX: Update totals' block on payment method change; corrects <code class="no-pad">ot_cod_fee</code> handling.</li>
                     <li>BUGFIX: Pick up more recent <code class="no-pad">download</code> class from the Zen Cart <em>zc156</em> repository.</li>
                     <li>BUGFIX: Customer's gender not being saved when address is changed.</li>
@@ -719,7 +720,7 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                     <li>BUGFIX: Taxed order-totals 'lose' their tax on a payment-method update.</li>
                     <li>BUGFIX: 'Square' payment-inputs disappear if the shipping-method is updated.</li>
                     <li>BUGFIX: Correct various &quot;PHP Notice&quot; issues.</li>
-                    <li>CHANGE: Partial zc156 integration; downward-compatible changes only.</li>
+                    <li>CHANGE: Partial zc156 integration; downward-compatible changes <em>only</em>.</li>
                     <li>The following files were affected:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
