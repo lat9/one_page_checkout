@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2017-2018, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2017-2019, Vinos de Frutas Tropicales.  All rights reserved.
 //
 // This class, instantiated in the current customer session, keeps track of a customer's login and checkout
 // progression with the aid of the OPC's observer- and AJAX-classes.
@@ -374,6 +374,7 @@ class OnePageCheckout extends base
         if ($redirect_required) {
             zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));
         }
+        return $this->isGuestCheckout();
     }
     
     /* -----

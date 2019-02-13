@@ -83,8 +83,8 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
 
 <body>
   <h1>One-Page Checkout &hellip; with Guest &hellip; <span class="smaller">for Zen Cart v1.5.4 (and later)</span></h1>
-  <h3>Version 2.0.5 by lat9</h3>
-  <h3>Copyright &copy; 2013-2018 <a href="https://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
+  <h3>Version 2.0.6 by lat9</h3>
+  <h3>Copyright &copy; 2013-2019 <a href="https://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
   <p><b>Credits:</b></p>
   <ol>
     <li>The checkout-confirmation loading .gif file was created using the tool at <a href="http://preloaders.net/en/free" target="_blank">http://preloaders.net/en/free</a>.</li>
@@ -712,6 +712,13 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a> <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color.</p>
               <ul>
+                <li>v2.0.6, 2019-02-xx:<ul>
+                    <li>BUGFIX: Return the expected value from <code class="no-pad">OnePageCheckout::startGuestOnePageCheckout</code>.</li>
+                    <li>The following files were affected:<ol>
+                        <li>/includes/classes/OnePageCheckout.php</li>
+                        <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
+                    </ol></li>
+                </ul></li>
                 <li>v2.0.5, 2018-12-23:<ul>
                     <li>BUGFIX: Update totals' block on payment method change; corrects <code class="no-pad">ot_cod_fee</code> handling.</li>
                     <li>BUGFIX: Pick up more recent <code class="no-pad">download</code> class from the Zen Cart <em>zc156</em> repository.</li>
