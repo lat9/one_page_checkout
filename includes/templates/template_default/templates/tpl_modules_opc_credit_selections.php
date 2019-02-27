@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2018, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2019, Vinos de Frutas Tropicales.  All rights reserved.
 //
 ?>
 <!--bof credit-selection block -->
@@ -17,7 +17,10 @@ if ($shipping_module_available) {
         // Check with the overall OPC controller to ensure that the current credit-selection is
         // valid for the current checkout-environment (e.g. is it allowed during guest checkout).
         //
-        if (!$_SESSION['opc']->enableCreditSelection($current_selection['id'])) {
+        // Note that some credit-selection type ot-modules (like zc156's ot_gv.php) might return
+        // an empty array if not available.
+        //
+        if (empty($current_selection) || !$_SESSION['opc']->enableCreditSelection($current_selection['id'])) {
             continue;
         }
         
