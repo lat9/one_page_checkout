@@ -714,8 +714,10 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
               <ul>
                 <li>v2.0.6, 2019-02-xx:<ul>
                     <li>BUGFIX: Return the expected value from <code class="no-pad">OnePageCheckout::startGuestOnePageCheckout</code>.</li>
+                    <li>BUGFIX: Correct conditional in the <code class="no-pad">checkout_one</code> page's header processing, causing PHP warnings.</li>
                     <li>The following files were affected:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
+                        <li>/includes/modules/pages/checkout_one/header_php.php</li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                     </ol></li>
                 </ul></li>

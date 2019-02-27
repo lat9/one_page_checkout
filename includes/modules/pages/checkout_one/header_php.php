@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2017, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2019, Vinos de Frutas Tropicales.  All rights reserved.
 //
 // -----
 // This should be first line of the script:
@@ -318,7 +318,7 @@ $flagOnSubmit = count($enabled_payment_modules);
 // Gather the count of enabled shipping- and payment-methods, so that only applicable sections are displayed.
 //
 $shipping_module_available = ($free_shipping || $is_virtual_order || zen_count_shipping_modules() > 0);
-$payment_module_available = ($payment_modules->in_special_checkout() || count($enabled_payment_modules > 0));
+$payment_module_available = ($payment_modules->in_special_checkout() || count($enabled_payment_modules) > 0);
 
 // -----
 // Determine if there are any payment modules that are in the confirmation-required list.
