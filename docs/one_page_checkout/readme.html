@@ -66,6 +66,9 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
 .tab a.active { font-weight: bold; }
 .tab-container .panel-container { background: #fff; border: solid #666 1px; padding: 10px; border-radius: 0 4px 4px 4px; }
 .panel-container { margin-bottom: 10px; }
+
+a[target=_blank] { text-decoration: underline; }
+
 @media (max-width: 979px) {
   .multi-list, #storefront .wrap { width: 95%; float: none; margin: 0 auto; }
 }
@@ -83,7 +86,7 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
 
 <body>
   <h1>One-Page Checkout &hellip; with Guest &hellip; <span class="smaller">for Zen Cart v1.5.4 (and later)</span></h1>
-  <h3>Version 2.0.6 by lat9</h3>
+  <h3>Version 2.1.0 by lat9</h3>
   <h3>Copyright &copy; 2013-2019 <a href="https://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
   <p><b>Credits:</b></p>
   <ol>
@@ -598,8 +601,8 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
             <div id="files">
               <p><b>Notes:</b><p>
               <ul>
-                <li>The files present in the &quot;zc155a&quot; folder are required <b>only if</b> you're installing/upgrading this plugin on either Zen Cart 1.5.5 or 1.5.5a &mdash; the required changes are present in the Zen Cart 1.5.5b (and later) core.</li>
-                <li>Unless otherwise noted, all changes to Zen Cart <span class="corefile">core files</span> use the version shipped in Zen Cart 1.5.5f as their change-basis.</li>
+                <li>The files present in the &quot;zc155&quot; folder are required <b>only if</b> you're installing/upgrading this plugin on Zen Cart versions 1.5.5b-f &mdash; the required changes are present in the Zen Cart 1.5.6 (and later) core.</li>
+                <li>Unless otherwise noted, all changes to Zen Cart <span class="corefile">core files</span> use the version shipped in Zen Cart 1.5.6 as their change-basis.</li>
               </ul>
               <p>The plugin provides the following files in its distribution zip-file:<p>
               <ol>
@@ -712,12 +715,15 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a> <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color.</p>
               <ul>
-                <li>v2.0.6, 2019-02-xx:<ul>
+                <li>v2.1.0, 2019-02-xx:<ul>
                     <li>BUGFIX: Return the expected value from <code class="no-pad">OnePageCheckout::startGuestOnePageCheckout</code>.</li>
                     <li>BUGFIX: Correct conditional in the <code class="no-pad">checkout_one</code> page's header processing, causing PHP warnings.</li>
                     <li>CHANGE: zc156 interoperability, empty array from <code class="no-pad">ot_gv</code> causes PHP warning to be logged.</li>
+                    <li>BUGFIX: Remove redundant, multiply-defined language constants.</li>
                     <li>The following files were affected:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
+                        <li>/includes/languages/english/checkout_one.php</li>
+                        <li>/includes/languages/english/checkout_one_confirmation.php</li>
                         <li>/includes/modules/pages/checkout_one/header_php.php</li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_credit_selections.php</span></li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
