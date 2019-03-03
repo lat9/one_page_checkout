@@ -1385,7 +1385,7 @@ class OnePageCheckout extends base
     public function validateTemporaryEntries()
     {       
         $validated = true;
-        if ($this->isGuestCheckout && !$this->customerInfoOk) {
+        if ($this->isGuestCheckout() && !$this->customerInfoOk) {
             $validated = false;
         }
         
