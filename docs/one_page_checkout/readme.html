@@ -85,7 +85,7 @@ a[target=_blank] { text-decoration: underline; }
 </head>
 
 <body>
-  <h1>One-Page Checkout &hellip; with Guest &hellip; <span class="smaller">for Zen Cart v1.5.4 (and later)</span></h1>
+  <h1>One-Page Checkout &hellip; with Guest &hellip; <span class="smaller">for Zen Cart v1.5.5b (and later)</span></h1>
   <h3>Version 2.1.0 by lat9</h3>
   <h3>Copyright &copy; 2013-2019 <a href="https://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
   <p><b>Credits:</b></p>
@@ -93,13 +93,13 @@ a[target=_blank] { text-decoration: underline; }
     <li>The checkout-confirmation loading .gif file was created using the tool at <a href="http://preloaders.net/en/free" target="_blank">http://preloaders.net/en/free</a>.</li>
     <li>Browser detection class courtesy of <a href="https://github.com/cbschuld/Browser.php" target="_blank">https://github.com/cbschuld/Browser.php</a>.</li>
     <li>Simple CSS overlay courtesy of <a href="https://github.com/KorenLeslieCohen/simple-css-overlay" target="_blank">https://github.com/KorenLeslieCohen/simple-css-overlay</a>.</li>
-    <li>Guest checkout, especially the <code class="no-pad">orders_status</code> page's processing, based on the <a href="https://www.zen-cart.com/showthread.php?196995-COWOA-%28for-ZC-v1-5-x%29">COWOA</a> (by @DivaVocals, @countrycharm and others) and <a href="https://www.zen-cart.com/downloads.php?do=file&id=2131">COWAA</a> (by @davewest) plugins.</li>
+    <li>Guest checkout, especially the <code class="no-pad">orders_status</code> page's processing, based on the <a href="https://www.zen-cart.com/showthread.php?196995-COWOA-%28for-ZC-v1-5-x%29" target="_blank">COWOA</a> (by @DivaVocals, @countrycharm and others) and <a href="https://www.zen-cart.com/downloads.php?do=file&id=2131" target="_blank">COWAA</a> (by @davewest) plugins.</li>
   </ol>
   <hr />
   <p>Additional information (especially for features introduced in <em>OPC v2.0.0</em> can be found in the plugin's <a href="https://lat9.github.io/one_page_checkout/" target="_blank">Additional Documentation</a> page.</p>
   <p><b>Note:</b> This version is not <em>fully</em> integrated with Zen Cart v1.5.6.  You'll need to compare the various <span class="corefile">core files</span> provided by this plugin and merge those changes into the like-named files from the zc156 distribution.  The next release of <em>OPC</em> will drop support for Zen Cart versions prior to 1.5.5f.</p>
   <hr />
-  <p>Current Support Thread at Zen Cart Forums: <a href="https://www.zen-cart.com/showthread.php?220781-One-Page-Checkout-Support-Thread">https://www.zen-cart.com/showthread.php?220781-One-Page-Checkout-Support-Thread</a></p>
+  <p>Current Support Thread at Zen Cart Forums: <a href="https://www.zen-cart.com/showthread.php?220781-One-Page-Checkout-Support-Thread" target="_blank">https://www.zen-cart.com/showthread.php?220781-One-Page-Checkout-Support-Thread</a></p>
   
   <div class="tab-container" id="outer-container">
     <ul class="etabs">
@@ -722,11 +722,13 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                     <li>BUGFIX: Remove redundant, multiply-defined language constants.</li>
                     <li>BUGFIX: Correct guest-checkout validation.</li>
                     <li>BUGFIX: Customers' <em>temporary</em> addresses not registered if neither guest-checkout nor registered-accounts are enabled.</li>
+                    <li>BUGFIX: Don't display address-selection drop-down unless the customer has more than 1 defined.</li>
                     <li>The following files were affected:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/languages/english/checkout_one.php</li>
                         <li>/includes/languages/english/checkout_one_confirmation.php</li>
                         <li>/includes/modules/pages/checkout_one/header_php.php</li>
+                        <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_address_block.php</span></li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_credit_selections.php</span></li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                     </ol></li>

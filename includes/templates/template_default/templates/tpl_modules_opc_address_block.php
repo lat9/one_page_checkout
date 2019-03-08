@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2017, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2017-2019, Vinos de Frutas Tropicales.  All rights reserved.
 //
 // This module is included by tpl_modules_opc_billing_address.php and tpl_modules_opc_shipping_address.php and
 // provides a common-formatting for those two address-blocks.
@@ -14,6 +14,7 @@
 //
 if (!isset($opc_address_type) || !in_array($opc_address_type, array('bill', 'ship'))) {
     trigger_error("Unknown value for opc_address_type ($opc_address_type).", E_USER_ERROR);
+    exit();
 }
 
 // -----
@@ -22,7 +23,7 @@ if (!isset($opc_address_type) || !in_array($opc_address_type, array('bill', 'shi
 //
 if (!$opc_disable_address_change) {
     $address_selections = $_SESSION['opc']->formatAddressBookDropdown();
-    if (count($address_selections) != 0) {
+    if (count($address_selections) > 1) {
         $selected = $_SESSION['opc']->getAddressDropDownSelection($opc_address_type);
 ?>
     <div id="choices-<?php echo $opc_address_type; ?>"><?php echo zen_draw_pull_down_menu("address-$opc_address_type", $address_selections, $selected); ?></div>
