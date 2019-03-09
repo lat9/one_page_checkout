@@ -78,7 +78,7 @@ Copy the files listed below from the _OPC_ distribution's `/zc155f` sub-director
 1. `/includes/classes/order.php` (one marked change-section)
 2. `/includes/modules/order_total/ot_coupon.php` (one marked change-section)
 
-### Edit Files
+#### Edit Files
 
 Edit your store's active template's `/includes/templates/YOUR_TEMPLATE/common/tpl_header.php` _using a text-editor_ (like NotePad++), changing all occurrences of
 
