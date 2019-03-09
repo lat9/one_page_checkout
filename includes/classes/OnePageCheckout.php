@@ -119,11 +119,14 @@ class OnePageCheckout extends base
     /* -----
     ** Issued by the OPC's observer-class to determine whether order-related notifications need
     ** to be monitored.
+    **
+    ** Note: This method (currently) returns a positive indication that those notifications should
+    ** always be monitored.
     */
     public function initTemporaryAddresses()
     {
         $this->initializeGuestCheckout();
-        return ($this->isGuestCheckoutEnabled || $this->registeredAccounts);
+        return true;
     }
     
     /* -----
@@ -1385,7 +1388,7 @@ class OnePageCheckout extends base
     public function validateTemporaryEntries()
     {       
         $validated = true;
-        if ($this->isGuestCheckout && !$this->customerInfoOk) {
+        if ($this->isGuestCheckout() && !$this->customerInfoOk) {
             $validated = false;
         }
         

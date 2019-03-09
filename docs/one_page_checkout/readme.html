@@ -30,7 +30,7 @@ ol li, ul li, ul li ul li { margin: 5px 0; padding: 0; }
 img { margin: 0 20px; float: left; border: 1px solid #666; }
 img.wide { width: 95%; float: none; margin: 0 2.5%; }
 textarea { width: 100%; }
-.corefile { color: red; }
+.corefile, .red { color: red; }
 .template { color: green; }
 .forward { float: right; }
 .added { color: #342d7e; }
@@ -66,12 +66,15 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
 .tab a.active { font-weight: bold; }
 .tab-container .panel-container { background: #fff; border: solid #666 1px; padding: 10px; border-radius: 0 4px 4px 4px; }
 .panel-container { margin-bottom: 10px; }
+
+a[target=_blank] { text-decoration: underline; }
+
 @media (max-width: 979px) {
   .multi-list, #storefront .wrap { width: 95%; float: none; margin: 0 auto; }
 }
 -->
 </style>
-<link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" />
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <script src="../jquery-1.7.1.min.js" type="text/javascript"></script> 
 <script src="../jquery.easytabs.min.js" type="text/javascript"></script>
 <script type="text/javascript">
@@ -82,21 +85,24 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
 </head>
 
 <body>
-  <h1>One-Page Checkout &hellip; with Guest &hellip; <span class="smaller">for Zen Cart v1.5.4 (and later)</span></h1>
-  <h3>Version 2.0.6 by lat9</h3>
+  <h1>One-Page Checkout &hellip; with Guest &hellip; <span class="smaller">for Zen Cart v1.5.5b (and later)</span></h1>
+  <h3>Version 2.1.0 by lat9</h3>
   <h3>Copyright &copy; 2013-2019 <a href="https://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
+  <p>Released under the General Public License (see the file named <code class="no-pad">license.txt</code> in the plugin's distribution for full details). This script is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</p>
+  <hr />
+  <p><i class="fas fa-exclamation-circle fa-5x red"></i> The installation instructions for <em>OPC</em> v2.1.0 and later have changed <b>significantly</b>, as the <span class="corefile">core file</span> changes required are now <em>in-core</em>, starting with Zen Cart 1.5.6b. If you are updating <em>OPC</em> from a previous version or are performing an initial installation for a Zen Cart version <em>prior to</em> 1.5.6b, refer to <a href="https://lat9.github.io/one_page_checkout/pages/install_upgrade_v210_or_later.html" target="_blank">these</a> additional instructions <span class="new-code">before</span> that update or installation!  Note also that initial installations on Zen Cart versions <em>prior to</em> 1.5.5b <b>are no longer supported</b>.</p>
+  <hr />
   <p><b>Credits:</b></p>
   <ol>
     <li>The checkout-confirmation loading .gif file was created using the tool at <a href="http://preloaders.net/en/free" target="_blank">http://preloaders.net/en/free</a>.</li>
     <li>Browser detection class courtesy of <a href="https://github.com/cbschuld/Browser.php" target="_blank">https://github.com/cbschuld/Browser.php</a>.</li>
     <li>Simple CSS overlay courtesy of <a href="https://github.com/KorenLeslieCohen/simple-css-overlay" target="_blank">https://github.com/KorenLeslieCohen/simple-css-overlay</a>.</li>
-    <li>Guest checkout, especially the <code class="no-pad">orders_status</code> page's processing, based on the <a href="https://www.zen-cart.com/showthread.php?196995-COWOA-%28for-ZC-v1-5-x%29">COWOA</a> (by @DivaVocals, @countrycharm and others) and <a href="https://www.zen-cart.com/downloads.php?do=file&id=2131">COWAA</a> (by @davewest) plugins.</li>
+    <li>Guest checkout, especially the <code class="no-pad">orders_status</code> page's processing, based on the <a href="https://www.zen-cart.com/showthread.php?196995-COWOA-%28for-ZC-v1-5-x%29" target="_blank">COWOA</a> (by @DivaVocals, @countrycharm and others) and <a href="https://www.zen-cart.com/downloads.php?do=file&id=2131" target="_blank">COWAA</a> (by @davewest) plugins.</li>
   </ol>
   <hr />
   <p>Additional information (especially for features introduced in <em>OPC v2.0.0</em> can be found in the plugin's <a href="https://lat9.github.io/one_page_checkout/" target="_blank">Additional Documentation</a> page.</p>
-  <p><b>Note:</b> This version is not <em>fully</em> integrated with Zen Cart v1.5.6.  You'll need to compare the various <span class="corefile">core files</span> provided by this plugin and merge those changes into the like-named files from the zc156 distribution.  The next release of <em>OPC</em> will drop support for Zen Cart versions prior to 1.5.5f.</p>
   <hr />
-  <p>Current Support Thread at Zen Cart Forums: <a href="https://www.zen-cart.com/showthread.php?220781-One-Page-Checkout-Support-Thread">https://www.zen-cart.com/showthread.php?220781-One-Page-Checkout-Support-Thread</a></p>
+  <p>Current Support Thread at Zen Cart Forums: <a href="https://www.zen-cart.com/showthread.php?220781-One-Page-Checkout-Support-Thread" target="_blank">https://www.zen-cart.com/showthread.php?220781-One-Page-Checkout-Support-Thread</a></p>
   
   <div class="tab-container" id="outer-container">
     <ul class="etabs">
@@ -161,7 +167,7 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
 <b style="color: red;">jQuery.noConflict();</b></pre></li>
                 </ol>
               </div>
-              <p><em>One-Page Checkout's</em> installation loads all the plugin's files into the folders associated with the <em>template_default</em> template's use; that way, the processing is available for <b>all</b> templates you might use in your store.  If you make changes to those default files, you'll use the Zen Cart &quot;override&quot; system to make your updates.  For example, if you're adding a top-of-page message, you'll copy the file /includes/languages/english/checkout_one.php to the /includes/languages/english/YOUR_TEMPLATE folder and make your changes there.</p>
+              <p><em>One-Page Checkout's</em> installation loads all the plugin's files into the sub-directories associated with the <em>template_default</em> template's use; that way, the processing is available for <b>all</b> templates you might use in your store.  If you make changes to those default files, you'll use the Zen Cart &quot;override&quot; system to make your updates.  For example, if you're adding a top-of-page message, you'll copy the file /includes/languages/english/checkout_one.php to the /includes/languages/english/YOUR_TEMPLATE sub-directory and make your changes there.</p>
               <p>The plugin has been validated on Zen Cart 1.5.4 and Zen Cart 1.5.5a through Zen Cart 1.5.5f, using the following shipping, order-total and payment methods:</p>
               <div class="multi-list">
                 <h3>Shipping Methods</h3>
@@ -358,7 +364,7 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                 </tr>
                 <tr>
                     <td>Enable One-Page Checkout Debug?</td>
-                    <td>When enabled, debug files named myDEBUG-one_page_checkout-<em>xx</em>.log are created in your /logs folder (<em>xx</em> is the customer_id for the checkout). Use the <b>true</b> or <b>full</b> settings in combination with the <em>Debug: Customer List</em> setting to limit the customers for which the debug-action is taken.  Setting the value to <b>full</b> will also set the PHP error-level for the checkout_one page's processing so that <b>all</b> PHP errors are logged.</td>
+                    <td>When enabled, debug files named myDEBUG-one_page_checkout-<em>xx</em>.log are created in your /logs sub-directory (<em>xx</em> is the customer_id for the checkout). Use the <b>true</b> or <b>full</b> settings in combination with the <em>Debug: Customer List</em> setting to limit the customers for which the debug-action is taken.  Setting the value to <b>full</b> will also set the PHP error-level for the checkout_one page's processing so that <b>all</b> PHP errors are logged.</td>
                     <td>1.0.0</td>
                 </tr>
                 <tr>
@@ -398,7 +404,8 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
 
         <div class="tab-container" id="inner-container2">
           <ul class="etabs">
-            <li class="tab"><a href="#install">Installation and Updates</a></li>
+            <li class="tab"><a href="#install">Installation</a></li>
+            <li class="tab"><a href="#update">Updating</a></li>
             <li class="tab"><a href="#remove">Uninstall</a></li>
             <li class="tab"><a href="#trouble">Troubleshooting</a></li>
           </ul>
@@ -407,70 +414,32 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
               <hr />
               <p><b>Notes:</b></p>
               <ol>
-                <li>These instructions have changed <b>significantly</b> for v1.0.3 and v2.0.0 of the <em>One-Page Checkout</em> plugin!  Please make sure that you've read the full instructions before beginning your installation or upgrade.</li>
-                <li>When you're upgrading the plugin, make sure to merge any of the plugin's base template and language files with any template-override versions that you might have created!</li>
-                <li>See <a href="https://lat9.github.io/one_page_checkout/pages/admin_orders_configuration.html" target="_blank">this</a> additional-documentation page if you want to identify orders that were placed by guests in your admin's <em>Customers-&gt;Orders</em> listing display.</li>
+                <li>These instructions have changed <b>significantly</b> for v2.1.0 of the <em>One-Page Checkout</em> plugin!  Please make sure that you've read the full instructions <b>before</b> beginning your installation or upgrade.</li>
               </ol>
               <hr />
-              <p>There are <span class="corefile">core-file</span> and <span class="template">template-override</span> changes required by this plugin; you should <strong>always</strong> backup your cart's database and files prior to making any changes.  Unzip the plugin's package file and then:</p>
+              <p>There are <span class="template">template-override</span> and, depending on your store's base Zen Cart version, <span class="corefile">core-file</span> changes required by this plugin; you should <strong>always</strong> backup your cart's database and files prior to making any changes.  Unzip the plugin's package file and then:</p>
               <ol type="A"> 
-                <li>Rename the YOUR_TEMPLATE folders <b>(5 of them)</b> to match your store's template name:<ol type="a">
+                <li>Rename the YOUR_TEMPLATE sub-directories <b>(4 of them)</b> to match your store's template name:<ol type="a">
                   <li>/includes/languages/english/YOUR_TEMPLATE</li>
                   <li>/includes/languages/english/html_includes/YOUR_TEMPLATE</li>
                   <li>/includes/languages/english/modules/order_total/YOUR_TEMPLATE</li>
-                  <li>/includes/modules/YOUR_TEMPLATE</li>
                   <li>/includes/templates/YOUR_TEMPLATE</li>
                 </ol></li>
-                <li>Rename the YOUR_ADMIN folder to match your store's admin-folder name.</li>
+                <li>Rename the YOUR_ADMIN sub-directory to match your store's admin-sub-directory name.</li>
                 <li>Merge the <span class="template">template-override</span> modifications required by this plugin with your store's existing copy of each file, using the plugin's version of the file if not currently present in your store's file-system.<ol>
                   <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_coupon.php</span></li>
                   <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_gv.php</span></li>
                   <li><span class="template">/includes/languages/english/YOUR_TEMPLATE/checkout_confirmation.php</span></li>
-                  <li><span class="template">/includes/modules/YOUR_TEMPLATE/downloads.php</span></li>
-                  <li><span class="template">/includes/templates/YOUR_TEMPLATE/jscript/jscript_framework.php</span></li>
-                  <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_ajax_checkout_confirmation_default.php</span></li>
-                  <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_modules_downloads.php</span></li>
-                  <li>If your store plans to use the <em>guest-checkout</em> functionality of <em>OPC</em> v2.0.0 and later, you'll need to update your current template's <code class="no-pad">common/tpl_header.php</code> module to modify the display of the <code class="no-pad">account</code> and <code class="no-pad">logoff</code> pages' links during a guest checkout.  <em>OPC</em> provides two versions of that modification:<ol type="a">
-                    <li>If your template is based on the Zen Cart <code class="no-pad">classic</code> template, merge your template's file with <span class="template">/includes/templates/YOUR_TEMPLATE/common/tpl_header.php</span>.</li>
-                    <li>If your template is based on the Zen Cart <code class="no-pad">responsive_classic</code> template, merge your template's file with <span class="template">/includes/templates/YOUR_RC_CLONE/common/tpl_header.php</span>.</li>
-                    <li>For all other templates, determine which of the above files most closely matches your template's version of the file for the merge.</li>
-                  </ol></li>
-                </ol></li>
-                <li>Merge the <span class="corefile">core-file</span> overrides required for <em>all</em> supported Zen Cart versions with your current store files:<ol>
-                    <li><span class="corefile">/includes/classes/order.php</span></li>
-                    <li><span class="corefile">/includes/classes/message_stack.php</span></li>
-                    <li><span class="corefile">/includes/modules/order_total/ot_coupon.php</span></li>
-                    <li><span class="corefile">/includes/modules/pages/download/header_php.php</span></li>
-                    <li><span class="corefile">/includes/modules/pages/login/header_php.php</span></li>
-                    <li><span class="corefile">/includes/templates/template_default/templates/tpl_modules_download.php</span></li>
-                </ol></li>
-                <li><em><b>If your store is running a Zen Cart version less than 1.5.5b, there are a couple of additional <span class="corefile">core-files</span> that need to be at the ZC1.5.5b version for <em>OPC</em> to operate properly:</b></em>. If your store is running a Zen Cart version of 1.5.5c or later, continue the installation/upgrade with step <b>F</b>.<ol>
-                  <li>For Zen Cart 1.5.4, copy the files from the <em>OPC</em> plugin's /zc154 directory:<ol>
-                    <li><span class="corefile">/ajax.php</span> <span class="smaller">(Added in v1.3.0)</span></li>
-                  </ol></li>
-                 <li>For Zen Cart 1.5.5, copy the files from the <em>OPC</em> plugin's /zc155 directory:<ol>
-                    <li><span class="corefile">/ajax.php</span> <span class="smaller">(Added in v1.3.0)</span></li>
-                    <li><span class="corefile">/includes/classes/payment.php</span></li>
-                  </ol></li>
-                  <li>For Zen Cart 1.5.5a, copy the files from the <em>OPC</em> plugin's /zc155a directory:<ol>
-                    <li><span class="corefile">/ajax.php</span> <span class="smaller">(Added in v1.3.0)</span></li>
-                    <li><span class="corefile">/includes/classes/payment.php</span></li>
-                  </ol></li>
                 </ol></li>
                 <li><em><b>If you store is running a Zen Cart version less than 1.5.6 and you want to quickly identify those orders placed by guests</b></em>, there are additional edits required for <code class="no-pad corefile">/YOUR_ADMIN/orders.php</code>.  See <a href="https://lat9.github.io/one_page_checkout/pages/admin_orders_configuration.html" target="_blank">these</a> instructions from the <em>OPC</em>'s additional-documentation pages.</li>
                 <li>Sign into your Zen Cart's admin panel.  Due the the number of files that require uploading, I suggest that you place the site into <em>Maintenance Mode</em> by setting <b><i>Configuration-&gt;Website Maintenance-&gt;Down for Maintenance: ON/OFF</i></b> to <em>true</em>.</li>
-                <li>Copy the plugin's files &mdash; with the folders renamed as identified in steps <b>A</b> and <b>B</b> and the file-merges performed as identified in steps <b>C</b>, <b>D</b> and <b>E</b> &mdash; to your store's directory structure.  You'll use either your webhost's cPanel File Manager or an FTP program (like WinSCP or FileZilla) to perform this copy.<ol>
+                <li><span class="red"><b>Important!</b></span> Review the instructions provided in the <b>Initial Installation</b> section of <a href="https://lat9.github.io/one_page_checkout/pages/install_upgrade_v210_or_later.html" target="_blank">Installing or Upgrading <em>OPC</em> v2.1.0 (and later)</a> for your store's current Zen Cart version, making any additional changes indicated.</li>
+                <li>Copy the plugin's <em>new</em> files &mdash; with the sub-directories renamed as identified in steps <b>A</b> and <b>B</b> and the file-merges performed as identified in steps <b>C</b> and <b>D</b> &mdash; to your store's directory structure.  You'll use either your webhost's cPanel File Manager or an FTP program (like WinSCP or FileZilla) to perform this copy.<ol>
                   <li>/includes/auto_loaders/config.checkout_one.php</li>
                   <li>/includes/classes/OnePageCheckout.php</li>
-                  <li><span class="corefile">/includes/classes/order.php</span></li>
-                  <li><span class="corefile">/includes/classes/message_stack.php</span></li>
                   <li>/includes/classes/Vinos_Browser.php</li>
                   <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
                   <li>/includes/classes/observers/class.checkout_one_observer.php</li>
-                  <li>/includes/classes/observers/auto.downloads_via_aws.php</li>
-                  <li>/includes/classes/observers/auto.downloads_via_redirect.php</li>
-                  <li>/includes/classes/observers/auto.downloads_via_streaming.php</li>
-                  <li>/includes/classes/observers/auto.downloads_via_url.php</li>
                   <li>/includes/extra_datafiles/checkout_one_filenames.php</li>
                   <li>/includes/functions/extra_functions/one_page_checkout_functions.php</li>
                   <li>/includes/langauges/english/address_book_register.php</li>
@@ -488,7 +457,6 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                   <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_coupon.php</span></li>
                   <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_gv.php</span></li>
                   <li><span class="template">/includes/languages/english/YOUR_TEMPLATE/checkout_confirmation.php</span></li>
-                  <li><span class="corefile">/includes/modules/order_total/ot_coupon.php</span></li>
                   <li>/includes/modules/pages/address_book/header_php_address_book_register.php</li>
                   <li>/includes/modules/pages/address_book/main_template_vars.php</li>
                   <li>/includes/modules/pages/checkout_one/header_php.php</li>
@@ -507,11 +475,9 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                   <li>/includes/modules/pages/create_account/main_template_vars.php</li>
                   <li>/includes/modules/pages/create_account_success/header_php_create_account_success_register.php</li>
                   <li>/includes/modules/pages/create_account_success/main_template_vars.php</li>
-                  <li><span class="corefile">/includes/modules/pages/login/header_php.php</span></li>
                   <li>/includes/modules/pages/login/header_php_login_guest.php</li>
                   <li>/includes/modules/pages/login/main_template_vars.php</li>
                   <li>/includes/modules/pages/order_status/header_php.php</li>
-                  <li><span class="template">/includes/modules/YOUR_TEMPLATE/downloads.php</span></li>
                   <li>/includes/templates/template_default/css/checkout_one.css</li>
                   <li>/includes/templates/template_default/css/checkout_one_confirmation.css</li>
                   <li>/includes/templates/template_default/css/checkout_success.css</li>
@@ -526,7 +492,6 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                   <li>/includes/templates/template_default/templates/tpl_create_account_success_register.php</li>
                   <li>/includes/templates/template_default/templates/tpl_login_guest.php</li>
                   <li>/includes/templates/template_default/templates/tpl_modules_checkout_one_shipping.php</li>
-                  <li><span class="corefile">/includes/templates/template_default/templates/tpl_modules_download.php</span></li>
                   <li>/includes/templates/template_default/templates/tpl_modules_opc_address_block.php</li>
                   <li>/includes/templates/template_default/templates/tpl_modules_opc_billing_address.php</li>
                   <li>/includes/templates/template_default/templates/tpl_modules_opc_comments.php</li>
@@ -540,15 +505,11 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                   <li>/includes/templates/template_default/templates/tpl_modules_opc_shopping_cart.php</li>
                   <li>/includes/templates/template_default/templates/tpl_modules_opc_submit_block.php</li>
                   <li>/includes/templates/template_default/templates/tpl_order_status_default.php</li>
-                  <li><span class="template">/includes/templates/YOUR_TEMPLATE/common/tpl_header.php</span></li>
                   <li>/includes/templates/YOUR_TEMPLATE/css/checkout_one.css</li>
                   <li>/includes/templates/YOUR_TEMPLATE/css/checkout_one_confirmation.css</li>
                   <li>/includes/templates/YOUR_TEMPLATE/css/checkout_success.css</li>
                   <li>/includes/templates/YOUR_TEMPLATE/css/create_account.css</li>
                   <li>/includes/templates/YOUR_TEMPLATE/css/login.css</li>
-                  <li><span class="template">/includes/templates/YOUR_TEMPLATE/jscript/jscript_framework.php</span></li>
-                  <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_ajax_checkout_confirmation_default.php</span></li>
-                  <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_modules_downloads.php</span></li>
                   <li>/YOUR_ADMIN/includes/auto_loaders/config.checkout_one.php</li>
                   <li>/YOUR_ADMIN/includes/classes/observers/CheckoutOneAdminObserver.php</li>
                   <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
@@ -559,6 +520,25 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                 <li>If you placed your store into <em>Maintenance Mode</em>, as suggested at step <b>G</b>, you can now safely take your site out of <em>Maintenance Mode</em>.</li>
                 <li>Note that the plugin, upon initial installation, defaults its enabling settings to <em>false</em>; see the <em>Overview / Configuration</em> tab of this readme for additional information.</li>
                 <li>One last item to &quot;tidy up&quot; ... registering the two new checkout pages into the <b>ROBOTS_PAGES_TO_SKIP</b> value.  I don't think this is a high-priority item since the pages' names don't appear on any menus and include it only for completeness!  If you want to make sure that robots aren't indexing the <code class="no-pad">checkout_one</code> and <code class="no-pad">checkout_one_confirmation</code> pages, you'll need to edit your template's version of <code class="no-pad">/includes/languages/english/meta_tags.php</code> and add those two page-names to the end of that constant's comma-separated-list.</li>
+              </ol>
+            </div>
+            
+            <div id="update">
+              <hr />
+              <p><b>Notes:</b></p>
+              <ol>
+                <li>These instructions have changed <b>significantly</b> for v2.1.0 of the <em>One-Page Checkout</em> plugin!  Please make sure that you've read the full instructions <b>before</b> beginning your installation or upgrade.</li>
+              </ol>
+              <hr />
+              <p>There are <span class="template">template-override</span> and, depending on your store's current Zen Cart version, <span class="corefile">core-file</span> changes required by this plugin; you should <strong>always</strong> backup your cart's database and files prior to making any changes.  Unzip the plugin's package file and then:</p>
+              <ol type="A">
+                <li>Sign into your Zen Cart's admin panel.  Since there might be a number of files that require uploading, I suggest that you place the site into <em>Maintenance Mode</em> by setting <b><i>Configuration-&gt;Website Maintenance-&gt;Down for Maintenance: ON/OFF</i></b> to <em>true</em>.</li>
+                <li><span class="red"><b>Important!</b></span> Review the instructions provided in the <b>Upgrading</b> section of <a href="https://lat9.github.io/one_page_checkout/pages/install_upgrade_v210_or_later.html" target="_blank">Installing or Upgrading <em>OPC</em> v2.1.0 (and later)</a> for your store's current Zen Cart version, making any additional changes indicated.</li>
+                <li>Make note of the version-number of your current <em>One-Page Checkout</em> installation; see your admin's <b><em>Configuration-&gt;One-Page Checkout Settings-&gt;Version/Release Date</em></b>.</li>
+                <li>Review the <em>Change History</em> tab of this readme, noting all of the affected files starting with the <em>OPC</em> release just following your current version.  Copy those updated files from the <em>OPC</em> distribution to your store's file-system.</li>
+                <li>In the file-list created for step <b>D</b>, note any changes to <em>OPC</em>'s <span class="template-changed">base template and language files</span> and make sure to merge those changes with any template-override versions that you might have created!</li>
+                <li>Click the &quot;Admin Home&quot; link in your Zen Cart's top admin menu.  This action will cause the plugin's upgrade script to run.</li>
+                <li>If you placed your store into <em>Maintenance Mode</em>, as suggested at step <b>A</b>, you can now safely take your site out of <em>Maintenance Mode</em>.</li>
               </ol>
             </div>
              
@@ -596,24 +576,13 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
           </ul>
           <div class="panel-container">
             <div id="files">
-              <p><b>Notes:</b><p>
-              <ul>
-                <li>The files present in the &quot;zc155a&quot; folder are required <b>only if</b> you're installing/upgrading this plugin on either Zen Cart 1.5.5 or 1.5.5a &mdash; the required changes are present in the Zen Cart 1.5.5b (and later) core.</li>
-                <li>Unless otherwise noted, all changes to Zen Cart <span class="corefile">core files</span> use the version shipped in Zen Cart 1.5.5f as their change-basis.</li>
-              </ul>
-              <p>The plugin provides the following files in its distribution zip-file:<p>
+              <p>The plugin provides the following <em>new</em> files in its distribution zip-file:<p>
               <ol>
                 <li>/includes/auto_loaders/config.checkout_one.php</li>
-                <li><span class="corefile">/includes/classes/message_stack.php</span></li>
-                <li><span class="corefile">/includes/classes/order.php</span> <span class="smaller">(Added in v2.0.0, one marked change section)</span></li>
                 <li>/includes/classes/OnePageCheckout.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/classes/Vinos_Browser.php <span class="smaller">(Added in v1.0.4)</span></li>
                 <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
                 <li>/includes/classes/observers/class.checkout_one_observer.php</li>
-                <li>/includes/classes/observers/auto.downloads_via_aws.php <span class="smaller">(Added in v2.0.4, this is the zc156 version of the file)</span></li>
-                <li>/includes/classes/observers/auto.downloads_via_redirect.php <span class="smaller">(Added in v2.0.4, this is the zc156 version of the file)</span></li>
-                <li>/includes/classes/observers/auto.downloads_via_streaming.php <span class="smaller">(Added in v2.0.4, this is the zc156 version of the file)</span></li>
-                <li>/includes/classes/observers/auto.downloads_via_url.php <span class="smaller">(Added in v2.0.4, this is the zc156 version of the file)</span></li>
                 <li>/includes/extra_datafiles/checkout_one_filenames.php</li>
                 <li>/includes/functions/extra_functions/one_page_checkout_functions.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/languages/english/address_book_register.php <span class="smaller">(Added in v2.0.0)</span></li>
@@ -631,7 +600,6 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                 <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_coupon.php</span></li>
                 <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_gv.php</span></li>
                 <li><span class="template">/includes/languages/english/YOUR_TEMPLATE/checkout_confirmation.php</span></li>
-                <li><span class="corefile">/includes/modules/order_total/ot_coupon.php</span> <span class="smaller">(Added in v2.0.0, one marked change section)</span></li>
                 <li>/includes/modules/pages/address_book/header_php_address_book_register.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/modules/pages/address_book/main_template_vars.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/modules/pages/checkout_one/header_php.php</li>
@@ -640,7 +608,6 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                 <li>/includes/modules/pages/checkout_one/jquery.checkout_one_addr.js <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/modules/pages/checkout_one/jquery.checkout_one_addr.min.js <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
-                <li><span class="removed">/includes/modules/pages/checkout_one/on_load_main.js</span> <span class="smaller">(Removed/stubbed-out in v1.5.0)</span></li>
                 <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
                 <li>/includes/modules/pages/checkout_one_confirmation/jscript_main.php</li>
                 <li>/includes/modules/pages/checkout_success/header_php_guest.php <span class="smaller">(Added in v2.0.0)</span></li>
@@ -650,19 +617,15 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                 <li>/includes/modules/pages/create_account/main_template_vars.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/modules/pages/create_account_success/header_php_create_account_success_register.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/modules/pages/create_account_success/main_template_vars.php <span class="smaller">(Added in v2.0.0)</span></li>
-                <li><span class="corefile">/includes/modules/pages/download/header_php.php</span> <span class="smaller">(Added in v2.0.0, this is the zc156 version of the file)</span></li>
-                <li><span class="corefile">/includes/modules/pages/login/header_php.php</span> <span class="smaller">(Added in v2.0.0, this is the zc156 version with one marked change section)</span></li>
                 <li>/includes/modules/pages/login/header_php_login_guest.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/modules/pages/login/main_template_vars.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/modules/pages/order_status/header_php.php <span class="smaller">(Added in v2.0.0)</span></li>
-                <li><span class="template">/includes/modules/YOUR_TEMPLATE/downloads.php</span> <span class="smaller">(Added in v2.0.0, this is the zc156 version of the file)</span></li>
                 <li>/includes/templates/template_default/css/checkout_one.css</li>
                 <li>/includes/templates/template_default/css/checkout_one_confirmation.css</li>
                 <li>/includes/templates/template_default/css/checkout_success.css <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/templates/template_default/css/create_account.css <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/templates/template_default/css/login.css <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/templates/template_default/images/confirmation_one_loading.gif</li>
-                <li><span class="corefile removed">/includes/templates/template_default/jscript/jscript_framework.php</span> <span class="smaller">(Removed from this distribution in v1.4.1)</span></li>
                 <li>/includes/templates/template_default/templates/tpl_address_book_register.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/templates/template_default/templates/tpl_checkout_one_confirmation_default.php</li>
                 <li>/includes/templates/template_default/templates/tpl_checkout_one_default.php</li>
@@ -671,7 +634,6 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                 <li>/includes/templates/template_default/templates/tpl_create_account_success_register.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/templates/template_default/templates/tpl_login_guest.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/templates/template_default/templates/tpl_modules_checkout_one_shipping.php <span class="smaller">(Added in v1.0.2)</span></li>
-                <li><span class="corefile">/includes/templates/template_default/templates/tpl_modules_downloads.php</span> <span class="smaller">(Added in v2.0.5, this is the zc156 version of the file)</span></li>
                 <li>/includes/templates/template_default/templates/tpl_modules_opc_address_block.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/templates/template_default/templates/tpl_modules_opc_billing_address.php <span class="smaller">(Added in v1.5.0)</span></li>
                 <li>/includes/templates/template_default/templates/tpl_modules_opc_comments.php <span class="smaller">(Added in v1.5.0)</span></li>
@@ -685,40 +647,54 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                 <li>/includes/templates/template_default/templates/tpl_modules_opc_shopping_cart.php <span class="smaller">(Added in v1.5.0)</span></li>
                 <li>/includes/templates/template_default/templates/tpl_modules_opc_submit_block.php <span class="smaller">(Added in v1.5.0)</span></li>
                 <li>/includes/templates/template_default/templates/tpl_order_status_default.php <span class="smaller">(Added in v2.0.0)</span></li>
-                <li><span class="template">/includes/templates/YOUR_RC_CLONE/common/tpl_header.php</span> <span class="smaller">(Added in v2.0.0)</span></li>
-                <li><span class="template">/includes/templates/YOUR_TEMPLATE/common/tpl_header.php</span> <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/templates/YOUR_TEMPLATE/css/checkout_one.css</li>
                 <li>/includes/templates/YOUR_TEMPLATE/css/checkout_one_confirmation.css</li>
                 <li>/includes/templates/YOUR_TEMPLATE/css/checkout_success.css <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/templates/YOUR_TEMPLATE/css/create_account.css <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/templates/YOUR_TEMPLATE/css/login.css <span class="smaller">(Added in v2.0.0)</span></li>
-                <li><span class="template">/includes/templates/YOUR_TEMPLATE/jscript/jscript_framework.php</span> <span class="smaller">(Added in v1.0.3, the ZC1.5.5a version of the file, with modifications to produce valid HTML)</span></li>
-                <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_ajax_checkout_confirmation_default.php</span> <span class="smaller">(Added in v1.0.3)</span></li>             <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_modules_downloads.php</span> <span class="smaller">(Added in v2.0.0, this is the zc156 version of the file)</span></li>
                 <li>/YOUR_ADMIN/includes/auto_loaders/config.checkout_one.php</li>
                 <li>/YOUR_ADMIN/includes/classes/observers/CheckoutOneAdminObserver.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                 <li>/YOUR_ADMIN/includes/languages/english/extra_definitions/checkout_one_name.php</li>
-                <li><span class="corefile removed">/pre_zc155a/ajax.php</span> <span class="smaller">(Removed in v1.0.2)</span></li>
-                <li><span class="corefile removed">/pre_zc155a/includes/templates/template_default/jscript/jscript_framework.php</span> <span class="smaller">(Removed in v1.0.3)</span></li>
-                <li><span class="template removed">/pre_zc155a/includes/templates/YOUR_TEMPLATE/jscript/jscript_framework.php</span> <span class="smaller">(Removed in v1.0.3)</span></li>
-                <li><span class="corefile">/zc154/ajax.php</span> <span class="smaller">(Added in v1.3.0)</span></li>
-                <li><span class="corefile">/zc155/ajax.php</span> <span class="smaller">(Added in v1.3.0)</span></li>
-                <li><span class="corefile">/zc155/includes/classes/payment.php</span> <span class="smaller">(Added in v1.3.0)</span></li>
-                <li><span class="corefile">/zc155a/ajax.php</span> <span class="smaller">(Added in v1.3.0)</span></li>
-                <li><span class="corefile">/zc155a/includes/classes/payment.php</span> <span class="smaller">(Added in v1.0.3)</span></li>
+              </ol>
+              <p>The following Zen Cart <span class="corefile">core files</span> are not required for initial installations on Zen Cart 1.5.6b and later.  Refer to <a href="https://lat9.github.io/one_page_checkout/pages/install_upgrade_v210_or_later.html" target="_blank">these</a> additional installation/upgrade instructions regarding which files should be copied to your Zen Cart installation's file-system:</p>
+              <ol>
+                <li><span class="corefile">/zc155f/includes/classes/order.php</span> <span class="smaller">(Added in v2.0.0, one marked change section based on the zc155f version of the file)</span></li>
+                <li><span class="corefile">/zc155f/includes/modules/order_total/ot_coupon.php</span> <span class="smaller">(Added in v2.0.0, one marked change section based on the zc155f version of the file)</span></li>
+                <li><span class="corefile">/zc156b/includes/classes/message_stack.php</span></li>
+                <li><span class="corefile">/zc156b/includes/classes/observers/auto.downloads_via_aws.php</span> <span class="smaller">(Added in v2.0.4)</span></li>
+                <li><span class="corefile">/zc156b/includes/classes/observers/auto.downloads_via_redirect.php</span> <span class="smaller">(Added in v2.0.4)</span></li>
+                <li><span class="corefile">/zc156b/includes/classes/observers/auto.downloads_via_streaming.php</span> <span class="smaller">(Added in v2.0.4)</span></li>
+                <li><span class="corefile">/zc156b/includes/classes/observers/auto.downloads_via_url.php</span> <span class="smaller">(Added in v2.0.4)</span></li>
+                <li><span class="corefile">/zc156b/includes/modules/downloads.php</span> <span class="smaller">(Added in v2.1.0, was previously distributed in the <code class="no-pad">YOUR_TEMPLATE</code> sub-directory)</span></li>
+                <li><span class="corefile">/zc156b/includes/modules/order_total/ot_coupon.php</span> <span class="smaller">(Added in v2.1.0)</span></li>
+                <li><span class="corefile">/zc156b/includes/modules/pages/download/header_php.php</span> <span class="smaller">(Added in v2.0.0)</span></li>
+                <li><span class="corefile">/zc156b/includes/modules/pages/login/header_php.php</span> <span class="smaller">(Added in v2.0.0, one marked change-section)</span></li>
+                <li><span class="corefile">/zc156b/includes/templates/responsive_classic/templates/tpl_ajax_checkout_confirmation_default.php</span> <span class="smaller">(Added in v2.1.0)</span></li>
+                <li><span class="corefile">/zc156b/includes/templates/template_default/templates/tpl_ajax_checkout_confirmation_default.php</span> <span class="smaller">(Added in v1.0.3, previously distributed in the <code class="no-pad">YOUR_TEMPLATE</code> sub-directory)</span></li>
+                <li><span class="corefile">/zc156b/includes/templates/template_default/templates/tpl_modules_downloads.php</span> <span class="smaller">(Added in v2.0.5)</span></li>
               </ol>
             </div>
             
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a> <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color.</p>
               <ul>
-                <li>v2.0.6, 2019-02-xx:<ul>
+                <li>v2.1.0, 2019-03-xx:<ul>
                     <li>BUGFIX: Return the expected value from <code class="no-pad">OnePageCheckout::startGuestOnePageCheckout</code>.</li>
                     <li>BUGFIX: Correct conditional in the <code class="no-pad">checkout_one</code> page's header processing, causing PHP warnings.</li>
                     <li>CHANGE: zc156 interoperability, empty array from <code class="no-pad">ot_gv</code> causes PHP warning to be logged.</li>
+                    <li>BUGFIX: Remove redundant, multiply-defined language constants.</li>
+                    <li>BUGFIX: Correct guest-checkout validation.</li>
+                    <li>BUGFIX: Customers' <em>temporary</em> addresses not registered if neither guest-checkout nor registered-accounts are enabled.</li>
+                    <li>BUGFIX: Don't display address-selection drop-down unless the customer has more than 1 defined.</li>
+                    <li>CHANGE: Restructure distribution, for zc156b interoperability.</li>
                     <li>The following files were affected:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
+                        <li>/includes/languages/english/checkout_one.php</li>
+                        <li>/includes/languages/english/checkout_one_confirmation.php</li>
+                        <li><span class="template">/includes/languages/english/YOUR_TEMPLATE/checkout_confirmation.php</span></li>
                         <li>/includes/modules/pages/checkout_one/header_php.php</li>
+                        <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_address_block.php</span></li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_credit_selections.php</span></li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                     </ol></li>

@@ -1,9 +1,8 @@
 <?php
 // -----
-// Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2017, Vinos de Frutas Tropicales.  All rights reserved.
+// Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
+// Copyright (C) 2013-2019, Vinos de Frutas Tropicales.  All rights reserved.
 //
-
 define('NAVBAR_TITLE_1', 'Checkout');
 define('NAVBAR_TITLE_2', 'Select Shipping/Payment and Confirm Your Order');
 
@@ -36,9 +35,6 @@ define('TITLE_NO_SHIPPING_AVAILABLE', 'Not Available At This Time');
 define('TEXT_NO_SHIPPING_AVAILABLE','<span class="alert">Sorry, we are not shipping to your region at this time.</span><br />Please contact us for alternate arrangements.');
 
 define('TABLE_HEADING_COMMENTS', 'Special Instructions or Comments');
-
-define('TITLE_CONTINUE_CHECKOUT_PROCEDURE', 'Continue to Step 2');
-define('TEXT_CONTINUE_CHECKOUT_PROCEDURE', '- choose your payment method.');
 
 define('ERROR_PLEASE_RESELECT_SHIPPING_METHOD', 'Your available shipping options have changed. Please re-select your desired shipping method.');
 define('ERROR_UNKNOWN_SHIPPING_SELECTION', 'An unknown shipping-method was submitted.  Please contact the store owner.');
@@ -77,15 +73,10 @@ define('TITLE_BILLING_ADDRESS', 'Billing Address:');
 
 define('TABLE_HEADING_PAYMENT_METHOD', 'Payment Method');
 define('TEXT_SELECT_PAYMENT_METHOD', 'Please select a payment method for this order.');
-define('TITLE_PLEASE_SELECT', 'Please Select');
 define('TEXT_ENTER_PAYMENT_INFORMATION', '');
-define('TABLE_HEADING_COMMENTS', 'Special Instructions or Order Comments');
 
 define('TITLE_NO_PAYMENT_OPTIONS_AVAILABLE', 'Not Available At This Time');
 define('TEXT_NO_PAYMENT_OPTIONS_AVAILABLE','<span class="alert">Sorry, we are not accepting payments from your region at this time.</span><br />Please contact us for alternate arrangements.');
-
-define('TITLE_CONTINUE_CHECKOUT_PROCEDURE', '<strong>Continue to Step 3</strong>');
-define('TEXT_CONTINUE_CHECKOUT_PROCEDURE', '- to confirm your order.');
 
 define('TABLE_HEADING_CONDITIONS', '<span class="termsconditions">Terms and Conditions</span>');
 define('TEXT_CONDITIONS_DESCRIPTION', '<span class="termsdescription">Please acknowledge the terms and conditions bound to this order by ticking the following box. The terms and conditions can be read <a href="' . zen_href_link(FILENAME_CONDITIONS, '', 'SSL') . '"><span class="pseudolink">here</span></a>.</span>');
@@ -104,10 +95,6 @@ define('HEADING_TAX', 'Tax');
 define('HEADING_ORDER_COMMENTS', 'Special Instructions or Order Comments');
 // no comments entered
 define('NO_COMMENTS_TEXT', 'None');
-define('TITLE_CONTINUE_CHECKOUT_PROCEDURE', '<strong>Continue to Step 4</strong>');
-define('TEXT_CONTINUE_CHECKOUT_PROCEDURE', '- to complete your order. Thank you!');
-
-define('OUT_OF_STOCK_CAN_CHECKOUT', 'Products marked with ' . STOCK_MARK_PRODUCT_OUT_OF_STOCK . ' are out of stock.<br />Items not in stock will be placed on backorder.');
 
 define ('TEXT_USE_BILLING_FOR_SHIPPING', 'Shipping Address, Same as Billing?');
 define ('ALT_TEXT_APPLY_DEDUCTION', 'Apply');

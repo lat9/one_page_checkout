@@ -6,10 +6,10 @@
  * Displays final checkout details, cart, payment and shipping info details.
  *
  * @package templateSystem
- * @copyright Copyright 2003-2016 Zen Cart Development Team
+ * @copyright Copyright 2003-2017 Zen Cart Development Team
  * @copyright Portions Copyright 2003 osCommerce
  * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
- * @version $Id: picaflor-azul Fri Jan 8 02:59:52 2016 -0500 New in v1.5.5 $
+ * @version $Id:  Aug 2017 Modified in v1.5.6 $
  */
 ?>
 <div class="centerColumn" id="checkoutConfirmDefault">
@@ -57,6 +57,7 @@
   }
 ?>
 
+<br class="clearBoth" />
 </div>
 
 <?php
@@ -82,14 +83,20 @@
   }
 ?>
 <br class="clearBoth" />
-
-<div class="group" id="order-comments">
+<hr />
+<?php
+// always show comments
+//  if ($order->info['comments']) {
+?>
 
 <h2 id="checkoutConfirmDefaultHeadingComments"><?php echo HEADING_ORDER_COMMENTS; ?></h2>
 <div class="buttonRow forward"><?php echo  '<a href="' . zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) . '</a>'; ?></div>
 <div><?php echo (empty($order->info['comments']) ? NO_COMMENTS_TEXT : nl2br(zen_output_string_protected($order->info['comments'])) . zen_draw_hidden_field('comments', $order->info['comments'])); ?></div>
-
-</div>
+<br class="clearBoth" />
+<?php
+//  }
+?>
+<hr />
 
 <h2 id="checkoutConfirmDefaultHeadingCart"><?php echo HEADING_PRODUCTS; ?></h2>
 
@@ -152,7 +159,7 @@
       </tr>
 <?php  }  // end for loopthru all products ?>
       </table>
-
+      <hr />
 
 <?php
   if (MODULE_ORDER_TOTAL_INSTALLED) {
@@ -204,7 +211,6 @@ $(document).ready(function () {
    }
 ?>
 <?php
-//-bof-one_page_checkout-lat9  *** 1 of 1 ***
 // Add shipping-module "extra" variables so they get transported to the checkout_process page.
 if (isset ($_SESSION['shipping']['extras']) && is_array ($_SESSION['shipping']['extras'])) {
     list ($module, $method) = explode ('_', $_SESSION['shipping']['id']);
@@ -212,7 +218,6 @@ if (isset ($_SESSION['shipping']['extras']) && is_array ($_SESSION['shipping']['
         echo zen_draw_hidden_field ($module . '_' . $varname, $value) . PHP_EOL;
     }
 }
-//-eof-one_page_checkout-lat9  *** 1 of 1 ***
 ?>
 <div class="buttonRow forward confirm-order"><?php echo zen_image_submit(BUTTON_IMAGE_CONFIRM_ORDER, BUTTON_CONFIRM_ORDER_ALT, 'name="btn_submit" id="btn_submit"') ;?></div>
 </form>
