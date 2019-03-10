@@ -12,8 +12,8 @@
  * @version $Id: Author: DrByte  Mon Mar 23 13:48:06 2015 -0400 Modified in v1.5.5 $
  */
 // -----
-// Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2018, Vinos de Frutas Tropicales.  All rights reserved.
+// Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 
+// Copyright (C) 2018-2019, Vinos de Frutas Tropicales.  All rights reserved.
 //
 ?>
 <div class="centerColumn" id="checkoutSuccess">
@@ -41,7 +41,7 @@ if ($offer_account_creation) {
     if (ACCOUNT_NEWSLETTER_STATUS != 0) {
 ?>
             <div class="custom-control custom-checkbox">
-                <?php echo zen_draw_checkbox_field('newsletter', '1', $newsletter, 'id="newsletter-checkbox"'); ?>
+                <?php echo zen_draw_checkbox_field('newsletter', '1', false, 'id="newsletter-checkbox"'); ?>
                 <label class="custom-control-label checkboxLabel" for="newsletter-checkbox"> <?php echo ENTRY_NEWSLETTER; ?></label>
             </div>
             <?php echo(zen_not_null(ENTRY_NEWSLETTER_TEXT) ? '<span class="alert">' . ENTRY_NEWSLETTER_TEXT . '</span>': ''); ?>

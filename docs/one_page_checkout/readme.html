@@ -688,12 +688,14 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                     <li>BUGFIX: Customers' <em>temporary</em> addresses not registered if neither guest-checkout nor registered-accounts are enabled.</li>
                     <li>BUGFIX: Don't display address-selection drop-down unless the customer has more than 1 defined.</li>
                     <li>CHANGE: Restructure distribution, for zc156b interoperability.</li>
+                    <li>BUGFIX: Correct undefined variable on <em>guest</em> &quot;checkout_success&quot; page.</li>
                     <li>The following files were affected:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/languages/english/checkout_one.php</li>
                         <li>/includes/languages/english/checkout_one_confirmation.php</li>
                         <li><span class="template">/includes/languages/english/YOUR_TEMPLATE/checkout_confirmation.php</span></li>
                         <li>/includes/modules/pages/checkout_one/header_php.php</li>
+                        <li><span class="template-changed">/includes/templates/template_default/templates/tpl_checkout_success_guest.php</span></li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_address_block.php</span></li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_credit_selections.php</span></li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
