@@ -1,7 +1,7 @@
 <?php
 // -----
-// Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2017, Vinos de Frutas Tropicales.  All rights reserved.
+// Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
+// Copyright (C) 2013-2019, Vinos de Frutas Tropicales.  All rights reserved.
 //
 // Note: This formatting has changed in v2.0.0+ of OPC, in support of the guest-checkout path.
 // The $enabled_payment_modules variable must be handled using foreach, since numerical keys
@@ -11,9 +11,10 @@
 <!--bof payment-method choices -->
 <?php
 // -----
-// Don't display the payment-method block if there is no shipping method available.
+// Don't display the payment-method block unless there is a shipping method available
+// and the payment-related address is validated.
 //
-if ($shipping_module_available) {
+if ($shipping_module_available && $display_payment_block) {
 ?>
   <div id="checkoutPaymentMethod" class="floatingBox forward clearRight">
     <fieldset>

@@ -1,7 +1,7 @@
 <?php
 // -----
-// Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2018, Vinos de Frutas Tropicales.  All rights reserved.
+// Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
+// Copyright (C) 2013-2019, Vinos de Frutas Tropicales.  All rights reserved.
 //
 ?>
 <script type="text/javascript"><!--
@@ -23,7 +23,8 @@ var noShippingSelectedError = '<?php echo ERROR_NO_SHIPPING_SELECTED; ?>';
 var flagOnSubmit = <?php echo ($flagOnSubmit) ? 'true' : 'false'; ?>;
 var shippingTimeout = <?php echo (int)((defined ('CHECKOUT_ONE_SHIPPING_TIMEOUT')) ? CHECKOUT_ONE_SHIPPING_TIMEOUT : 5000); ?>;
 var textPleaseSelect = '<?php echo PLEASE_SELECT; ?>';
-var shippingAvailable = <?php echo ($shipping_module_available) ? 'true' : 'false'; ?>;
+var displayShippingBlock = <?php echo ($display_shipping_block) ? 'true' : 'false'; ?>;
+var displayPaymentBlock = <?php echo ($display_payment_block) ? 'true' : 'false'; ?>;
 <?php
 // -----
 // If dropdown states are to be displayed, include that json-formatted array of countries/zones.

@@ -708,7 +708,7 @@ class OnePageCheckout extends base
         } else {
             $address_book_id = $_SESSION['sendto'];
             $is_temp_address = ($address_book_id == $this->tempSendtoAddressBookId);
-            if (isset($_SESSION['shipping_billing'])) {
+            if ($this->getShippingBilling()) {
                 $is_temp_address = $is_temp_address || ($address_book_id == $this->tempBilltoAddressBookId);
             }
         }
@@ -762,7 +762,7 @@ class OnePageCheckout extends base
         
         if ($which == 'bill') {
             $_SESSION['billto'] = $address_book_id;
-            if (isset($_SESSION['shipping_billing']) && $_SESSION['shipping_billing']) {
+            if ($this->getShippingBilling()) {
                 $_SESSION['sendto'] = $address_book_id;
             }
         } else {
@@ -1135,6 +1135,9 @@ class OnePageCheckout extends base
         
         if ($which == 'bill') {
             $this->billtoTempAddrOk = false;
+            if ($this->getShippingBilling()) {
+                $this->sendtoTempAddrOk = false;
+            }
         } else {
             $this->sendtoTempAddrOk = false;
         }
@@ -1274,6 +1277,9 @@ class OnePageCheckout extends base
             $address_values = $this->updateStateDropdownSettings($address_values);
             if ($which == 'bill') {
                 $this->billtoTempAddrOk = true;
+                if ($this->getShippingBilling()) {
+                    $this->sendtoTempAddrOk = true;
+                }
             } else {
                 $this->sendtoTempAddrOk = true;
             }
@@ -1289,7 +1295,7 @@ class OnePageCheckout extends base
     //
     protected function saveCustomerAddress($address, $which, $add_address = false)
     {
-        $this->debugMessage("saveCustomerAddress($which, $add_address), " . ((isset($_SESSION['shipping_billing']) && $_SESSION['shipping_billing']) ? 'shipping=billing' : 'shipping!=billing') . ' ' . var_export($address, true));
+        $this->debugMessage("saveCustomerAddress($which, $add_address), " . (($this->getShippingBilling()) ? 'shipping=billing' : 'shipping!=billing') . ' ' . var_export($address, true));
         
         // -----
         // If the address is **not** to be added to the customer's address book or if
@@ -1306,7 +1312,7 @@ class OnePageCheckout extends base
                     $this->guestCustomerInfo['lastname'] = $address['lastname'];
                 }
                 $_SESSION['billto'] = $this->tempBilltoAddressBookId;
-                if (isset($_SESSION['shipping_billing']) && $_SESSION['shipping_billing']) {
+                if ($this->getShippingBilling()) {
                     $_SESSION['sendto'] = $this->tempSendtoAddressBookId;
                     $this->tempAddressValues['ship'] = $this->tempAddressValues['bill'];
                 }
@@ -1387,20 +1393,33 @@ class OnePageCheckout extends base
     */
     public function validateTemporaryEntries()
     {       
-        $validated = true;
-        if ($this->isGuestCheckout() && !$this->customerInfoOk) {
-            $validated = false;
-        }
-        
-        if (!empty($_SESSION['billto']) && $_SESSION['billto'] == $this->tempBilltoAddressBookId && !$this->billtoTempAddrOk) {
-            $validated = false;
-        }
-        
-        if (!empty($_SESSION['sendto']) && $_SESSION['sendto'] == $this->tempSendtoAddressBookId && !$this->sendtoTempAddrOk) {
-            $validated = false;
-        }
-        $this->debugMessage("validateTemporaryEntries, on entry ({$this->customerInfoOk}, {$this->billtoTempAddrOk}, {$this->sendtoTempAddrOk}), returning ($validated).");
+        $validated = ($this->validateCustomerInfo() && $this->validateTempBilltoAddress() && $this->validateTempShiptoAddress());
+ 
+        $this->debugMessage("validateTemporaryEntries, on exit ({$this->customerInfoOk}, {$this->billtoTempAddrOk}, {$this->sendtoTempAddrOk}), returning ($validated).");
         return $validated;
+    }
+    
+    /* -----
+    ** This series of functions identify whether the various required elements (Guest
+    ** Customer Information, Temporary Shipping Address and Temporary Billing Address)
+    ** are set and validated.  Used during the 'checkout_one' page's (and associated AJAX
+    ** processing) to determine whether or not to display certain blocks within the page's
+    ** rendering.
+    **
+    ** Each returns a boolean value, indicatin whether or not the associated entries have been found
+    ** to be valid.
+    */
+    public function validateCustomerInfo()
+    {
+        return (!$this->isGuestCheckout() || $this->customerInfoOk);
+    }
+    public function validateTempBilltoAddress()
+    {
+        return (!empty($_SESSION['billto']) && ($_SESSION['billto'] != $this->tempBilltoAddressBookId || $this->billtoTempAddrOk));
+    }
+    public function validateTempShiptoAddress()
+    {
+        return ($this->isVirtualOrder || (!empty($_SESSION['sendto']) && ($_SESSION['sendto'] == $this->tempSendtoAddressBookId || $this->sendtoTempAddrOk)));
     }
     
     /* -----

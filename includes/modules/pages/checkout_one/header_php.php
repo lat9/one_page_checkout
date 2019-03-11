@@ -132,7 +132,11 @@ if ($_SESSION['cart']->get_content_type() == 'virtual') {
     $is_virtual_order = true;
     $shipping_billing = false;
 
-    $_SESSION['shipping'] = array( 'id' => 'free_free', 'title' => FREE_SHIPPING_TITLE, 'cost' => 0);
+    $_SESSION['shipping'] = array(
+        'id' => 'free_free', 
+        'title' => FREE_SHIPPING_TITLE, 
+        'cost' => 0
+    );
     $_SESSION['sendto'] = false;
 }
 
@@ -141,7 +145,11 @@ if ($_SESSION['cart']->get_content_type() == 'virtual') {
 //
 $free_shipping = $checkout_one->isOrderFreeShipping($_SESSION['sendto']);
 if ($free_shipping) {
-    $_SESSION['shipping'] = array ( 'id' => 'free_free', 'title' => FREE_SHIPPING_TITLE, 'cost' => 0 );
+    $_SESSION['shipping'] = array( 
+        'id' => 'free_free', 
+        'title' => FREE_SHIPPING_TITLE, 
+        'cost' => 0 
+    );
 }
 
 require DIR_WS_CLASSES . 'order.php';
@@ -151,12 +159,16 @@ $total_weight = $_SESSION['cart']->show_weight();
 $total_count = $_SESSION['cart']->count_contents();
 
 $comments = (isset($_SESSION['comments'])) ? $_SESSION['comments'] : '';
+$quotes = array();
 
 // -----
-// If the order DOES NOT contain only virtual products, then we need to get shipping quotes.
+// If the order DOES NOT contain only virtual products, a guest-checkout has supplied
+// validated guest-information and any temporary addresses for the checkout have been
+// validated, then we need to get shipping quotes.
 //
-$quotes = array();
-if (!$is_virtual_order) {
+$customer_info_ok = $_SESSION['opc']->validateCustomerInfo();
+$temp_shipto_addr_ok = $_SESSION['opc']->validateTempShiptoAddress();
+if (!$is_virtual_order && $customer_info_ok && $temp_shipto_addr_ok) {
     // load all enabled shipping modules
     require DIR_WS_CLASSES . 'shipping.php';
     $shipping_modules = new shipping;
@@ -252,6 +264,13 @@ if (!$is_virtual_order) {
 }
 
 // -----
+// Determine whether shipping-modules are available, noting that they're not available if either
+// the guest customer-information or temporary shipping address hasn't been set.
+//
+$display_shipping_block = ($customer_info_ok && $temp_shipto_addr_ok);
+$shipping_module_available = $is_virtual_order || ($display_shipping_block && ($free_shipping || zen_count_shipping_modules() > 0));
+
+// -----
 // If the session-based shipping information is set, sync that information up with the order.
 //
 if (isset($_SESSION['shipping']) && is_array($_SESSION['shipping'])) {
@@ -298,27 +317,33 @@ $order_total_modules->pre_confirmation_check();
 
 $checkout_one->debug_message("CHECKOUT_ONE_AFTER_ORDER_TOTAL_PROCESSING\n" . var_export($order_total_modules, true) . var_export($order, true) . var_export($messageStack, true));
 
-// load all enabled payment modules
-require DIR_WS_CLASSES . 'payment.php';
-$payment_modules = new payment;
-
 // -----
-// Check to see if we're in "special checkout", i.e. the payment's being made via the PayPal Express
-// Checkout's "shortcut" button.  If so, "reset" the payment modules to include **only** the payment
-// method presumed to be recorded in the current customer's session.
+// Ensure that the customer-information and temporary shipto/billto addresses have been
+// validated prior to loading the enabled payment modules.
 //
-if ($payment_modules->in_special_checkout()) {
-    unset($payment_modules);
-    $payment_modules = new payment($_SESSION['payment']);
+$temp_billto_addr_ok = $_SESSION['opc']->validateTempBilltoAddress();
+$payment_module_available = false;
+$enabled_payment_modules = array();
+$payment_modules = false;
+$display_payment_block = ($customer_info_ok && $temp_billto_addr_ok);
+$flagOnSubmit = 0;
+if ($display_payment_block && $shipping_module_available) {
+    require DIR_WS_CLASSES . 'payment.php';
+    $payment_modules = new payment;
+
+    // -----
+    // Check to see if we're in "special checkout", i.e. the payment's being made via the PayPal Express
+    // Checkout's "shortcut" button.  If so, "reset" the payment modules to include **only** the payment
+    // method presumed to be recorded in the current customer's session.
+    //
+    if ($payment_modules->in_special_checkout()) {
+        unset($payment_modules);
+        $payment_modules = new payment($_SESSION['payment']);
+    }
+    $enabled_payment_modules = $_SESSION['opc']->validateGuestPaymentMethods($payment_modules->selection());
+    $flagOnSubmit = count($enabled_payment_modules);
+    $payment_module_available = ($payment_modules->in_special_checkout() || count($enabled_payment_modules) > 0);
 }
-$enabled_payment_modules = $_SESSION['opc']->validateGuestPaymentMethods($payment_modules->selection());
-$flagOnSubmit = count($enabled_payment_modules);
-
-// -----
-// Gather the count of enabled shipping- and payment-methods, so that only applicable sections are displayed.
-//
-$shipping_module_available = ($free_shipping || $is_virtual_order || zen_count_shipping_modules() > 0);
-$payment_module_available = ($payment_modules->in_special_checkout() || count($enabled_payment_modules) > 0);
 
 // -----
 // Determine if there are any payment modules that are in the confirmation-required list.

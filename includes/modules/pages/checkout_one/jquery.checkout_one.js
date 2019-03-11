@@ -1,6 +1,6 @@
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
-// Copyright (C) 2013-2018, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2019, Vinos de Frutas Tropicales.  All rights reserved.
 //
 var selected;
 var submitter = null;
@@ -178,11 +178,26 @@ jQuery(document).ready(function(){
     }
     
     // -----
-    // Account for the fact that some portions of the page aren't rendered if no
-    // shipping is available and don't check for these known-to-be-missing blocks
-    // in that "corner-case".
+    // Hide the shipping and/or payment blocks if the associated address is either
+    // not yet entered or not validated.
     //
-    if (shippingAvailable) {
+    var checkMissingElements = true;
+    if (!displayShippingBlock) {
+        checkMissingElements = false;
+        jQuery('#checkoutShippingMethod').hide();
+    }
+    if (!displayPaymentBlock) {
+        checkMissingElements = false;
+        jQuery('#checkoutPaymentMethod').hide();
+    }
+    
+    // -----
+    // Account for the fact that some portions of the page aren't rendered if no
+    // shipping is available and/or the temporary shipping/billing addresses have
+    // not yet been entered and don't check for these known-to-be-missing blocks
+    // in those "corner-cases".
+    //
+    if (checkMissingElements) {
         if (jQuery( '#current-order-total' ).length == 0) {
             elementsMissing = true;
             zcLog2Console ( 'Missing #current-order-total' );
