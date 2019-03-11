@@ -689,15 +689,24 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                     <li>BUGFIX: Don't display address-selection drop-down unless the customer has more than 1 defined.</li>
                     <li>CHANGE: Restructure distribution, for zc156b interoperability.</li>
                     <li>BUGFIX: Correct undefined variable on <em>guest</em> &quot;checkout_success&quot; page.</li>
+                    <li>CHANGE: Don't display shipping/payment blocks until associated address is valid.</li>
+                    <li>BUGFIX: Correct undefined variables in debug-output on &quot;checkout_one_confirmation&quot; page when order is virtual.</li>
                     <li>The following files were affected:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/languages/english/checkout_one.php</li>
                         <li>/includes/languages/english/checkout_one_confirmation.php</li>
                         <li><span class="template">/includes/languages/english/YOUR_TEMPLATE/checkout_confirmation.php</span></li>
                         <li>/includes/modules/pages/checkout_one/header_php.php</li>
+                        <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
+                        <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
+                        <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
+                        <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
+                        <li><span class="template-changed">/includes/templates/template_default/templates/tpl_checkout_one_default.php</span></li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_checkout_success_guest.php</span></li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_address_block.php</span></li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_credit_selections.php</span></li>
+                        <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_payment_choices.php</span></li>
+                        <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_shipping_choices.php</span></li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                     </ol></li>
                 </ul></li>
