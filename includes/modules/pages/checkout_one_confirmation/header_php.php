@@ -1,14 +1,14 @@
 <?php
 // -----
-// Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2018, Vinos de Frutas Tropicales.  All rights reserved.
+// Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
+// Copyright (C) 2013-2019, Vinos de Frutas Tropicales.  All rights reserved.
 //
 
 // This should be first line of the script:
 $zco_notifier->notify('NOTIFY_HEADER_START_CHECKOUT_ONE_CONFIRMATION');
 
-require (DIR_WS_MODULES . zen_get_module_directory ('require_languages.php'));
-require_once (DIR_WS_CLASSES . 'http_client.php');
+require DIR_WS_MODULES . zen_get_module_directory('require_languages.php');
+require_once DIR_WS_CLASSES . 'http_client.php';
 
 // -----
 // Use "normal" checkout if not enabled.
@@ -55,7 +55,7 @@ if ($_SESSION['customers_authorization'] != 0) {
 }
 
 // avoid hack attempts during the checkout procedure by checking the internal cartID
-if (isset($_SESSION['cart']->cartID) && $_SESSION['cartID']) {
+if (!empty($_SESSION['cart']->cartID)) {
     if ($_SESSION['cart']->cartID != $_SESSION['cartID']) {
         $checkout_one->debug_message('NOTIFY_CHECKOUT_ONE_CONFIRMATION_CARTID_MISMATCH');
         zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));
@@ -70,7 +70,12 @@ if (!isset($_SESSION['shipping'])) {
 
 $checkout_one->debug_message ('Starting confirmation, shipping and request data follows:' . print_r ($_SESSION['shipping'], true), true);
 
-if (isset($_SESSION['shipping']['id']) && $_SESSION['shipping']['id'] == 'free_free' && $_SESSION['cart']->get_content_type() != 'virtual' && defined('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING') && MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING == 'true' && defined('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER') && $_SESSION['cart']->show_total() < MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER) {
+$free_shipping_enabled = (defined('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING') && MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING == 'true');
+$free_shipping_over = 0;
+if (defined('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER')) {
+    $free_shipping_over = $currencies->value((float)MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER);
+}
+if (isset($_SESSION['shipping']['id']) && $_SESSION['shipping']['id'] == 'free_free' && $_SESSION['cart']->get_content_type() != 'virtual' && $free_shipping_enabled &&  $_SESSION['cart']->show_total() < $free_shipping_over) {
     $checkout_one->debug_message('NOTIFY_CHECKOUT_ONE_CONFIRMATION_FREE_SHIPPING');
     unset($_SESSION['shipping']);
     $messageStack->add_session('checkout_shipping', ERROR_PLEASE_RESELECT_SHIPPING_METHOD, 'error');
@@ -144,6 +149,7 @@ $checkout_one->debug_message('Initial order information:' . var_export($order, t
 // If the order's all-virtual, then the shipping (free) has already been set; no need to go through all
 // the shipping-related handling.
 //
+$shipping_modules_debug = '';
 if ($order->content_type != 'virtual') {
     require DIR_WS_CLASSES . 'shipping.php';
     $shipping_modules = new shipping($_SESSION['shipping']);
@@ -205,8 +211,9 @@ if ($order->content_type != 'virtual') {
         unset($_SESSION['shipping']);
         $error = true;
     }
+    $shipping_modules_debug = var_export($shipping_modules, true) . var_export($quote, true);
 }
-$checkout_one->debug_message('Shipping setup, preparing to call order-totals.' . var_export($shipping_modules, true) . var_export($quote, true) . ((isset($_SESSION['shipping'])) ? var_export($_SESSION['shipping'], true) : 'Shipping not set'));
+$checkout_one->debug_message('Shipping setup, preparing to call order-totals.' . $shipping_modules_debug . ((isset($_SESSION['shipping'])) ? var_export($_SESSION['shipping'], true) : 'Shipping not set'));
 
 if (!class_exists('order_total')) {
     require DIR_WS_CLASSES . 'order_total.php';
@@ -229,11 +236,11 @@ $checkout_one->debug_message('Returned from call to order-totals:' . var_export(
 // -----
 // Process the payment modules **only if** the order has been confirmed.  Don't want/need this processing for coupon/GC actions.
 //
-$order_confirmed = isset($_POST['order_confirmed']) && $_POST['order_confirmed'] == 1;
+$order_confirmed = !empty($_POST['order_confirmed']);
 if ($order_confirmed) {
     $payment_modules = new payment($_SESSION['payment']);
     $payment_modules->update_status();
-    if ( (!isset($_SESSION['payment']) || $_SESSION['payment'] == '' || !is_object(${$_SESSION['payment']}) ) && $credit_covers === false) {
+    if ((empty($_SESSION['payment']) || !is_object(${$_SESSION['payment']})) && $credit_covers === false) {
         $messageStack->add_session('checkout_payment', ERROR_NO_PAYMENT_MODULE_SELECTED, 'error');
     }
 
@@ -351,7 +358,7 @@ if (isset (${$_SESSION['payment']}->flagDisablePaymentAddressChange)) {
 // header/footer are displayed too; otherwise, all elements of the display are hidden.
 //
 $flag_disable_left = $flag_disable_right = true;
-if (in_array($_SESSION['payment'], explode (',', CHECKOUT_ONE_CONFIRMATION_REQUIRED))) {
+if (in_array($_SESSION['payment'], explode(',', str_replace(' ', '', CHECKOUT_ONE_CONFIRMATION_REQUIRED)))) {
     $confirmation_required = true;
 } else {
     $confirmation_required = false;
