@@ -692,6 +692,7 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                     <li>CHANGE: Don't display shipping/payment blocks until associated address is valid.</li>
                     <li>BUGFIX: Correct undefined variables in debug-output on &quot;checkout_one_confirmation&quot; page when order is virtual.</li>
                     <li>BUGFIX: Guest-checkout, billing = shipping doesn't &quot;keep up&quot;.</li>
+                    <li>BUGFIX: Correct PHP Notice logged when shipping method is untaxed.</li>
                     <li>The following files were affected:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/languages/english/checkout_one.php</li>
@@ -706,6 +707,7 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                         <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_checkout_one_default.php</span></li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_checkout_success_guest.php</span></li>
+                        <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_checkout_one_shipping.php</span></li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_address_block.php</span></li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_credit_selections.php</span></li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_payment_choices.php</span></li>
