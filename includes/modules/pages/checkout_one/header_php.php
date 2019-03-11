@@ -273,13 +273,15 @@ $shipping_module_available = $is_virtual_order || ($display_shipping_block && ($
 // -----
 // If the session-based shipping information is set, sync that information up with the order.
 //
+$shipping_debug = '';
 if (isset($_SESSION['shipping']) && is_array($_SESSION['shipping'])) {
+    $shipping_debug = var_export($_SESSION['shipping'], true);
     $order->info['shipping_method'] = $_SESSION['shipping']['title'];
     $order->info['shipping_module_code'] = $_SESSION['shipping']['id'];
     $order->info['shipping_cost'] = $_SESSION['shipping']['cost'];
 }
 
-$checkout_one->debug_message("CHECKOUT_ONE_AFTER_SHIPPING_QUOTES\n" . var_export($_SESSION['shipping'], true) . var_export($order, true) . var_export($messageStack, true) . var_export($quotes, true));
+$checkout_one->debug_message("CHECKOUT_ONE_AFTER_SHIPPING_QUOTES\n" . $shipping_debug . var_export($order, true) . var_export($messageStack, true) . var_export($quotes, true));
 
 // -----
 // Capture the current value of the sendto-address, for possible use by the plugin's AJAX component.
