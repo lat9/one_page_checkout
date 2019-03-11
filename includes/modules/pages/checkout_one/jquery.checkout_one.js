@@ -124,29 +124,6 @@ function setJavaScriptEnabled()
 }
 
 // -----
-// Called by the on-click event processor for the "Shipping Address, same as Billing?" checkbox, checks
-// to see that the ship-to address section is present (it's not for virtual orders) and, if so, either
-// hides or shows that address based on the checkbox status.
-//
-// Requires:
-// - checkbox, id="shipping_billing"
-// - CSS classes "hiddenField" and "visibleField".
-//
-function shippingIsBilling() 
-{
-    var shippingAddress = document.getElementById('checkoutOneShipto');
-    if (shippingAddress) {
-        if (document.getElementById('shipping_billing').checked) {
-            shippingAddress.className = 'hiddenField';
-            shippingAddress.setAttribute('className', 'hiddenField'); 
-        } else {
-            shippingAddress.className = 'visibleField';
-            shippingAddress.setAttribute('className', 'visibleField');
-        }
-    }
-}
-
-// -----
 // Called by various on-page event handlers, sets the flag that's passed to the checkout_one_confirmation page
 // to indicate whether the transition was due to an order-confirmation vs. a credit-class order-total update.
 //
@@ -223,6 +200,25 @@ jQuery(document).ready(function(){
         alert( 'Please contact the store owner; some required elements of this page are missing.' );
     }
 
+    // -----
+    // Called by the on-click event processor for the "Shipping Address, same as Billing?" checkbox, checks
+    // to see that the ship-to address section is present (it's not for virtual orders) and, if so, either
+    // hides or shows that address based on the checkbox status.
+    //
+    // Requires:
+    // - checkbox, id="shipping_billing"
+    //
+    function shippingIsBilling() 
+    {
+        if (jQuery('#checkoutOneShipto').length) {
+            if (jQuery("#shipping_billing").is(':checked')) {
+                jQuery('#checkoutOneShipto').hide();
+            } else {
+                jQuery('#checkoutOneShipto').show();
+            }
+        }
+    }
+    
     // -----
     // Perform some page-load type operations, initializing the "environment".  These functions
     // were performed by the on_load_main.js file from prior versions.
