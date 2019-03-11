@@ -162,6 +162,8 @@ jQuery(document).ready(function(){
     if (!displayShippingBlock) {
         checkMissingElements = false;
         jQuery('#checkoutShippingMethod').hide();
+        jQuery('#otshipping').hide();
+        jQuery('#otshipping+br').hide();
     }
     if (!displayPaymentBlock) {
         checkMissingElements = false;
@@ -192,7 +194,7 @@ jQuery(document).ready(function(){
     if (!virtual_order) {
         if (jQuery( '#otshipping' ).length == 0) {
             elementsMissing = true;
-            zcLog2Console ( 'Missing #otshipping' );
+            zcLog2Console( 'Missing #otshipping' );
         }
     }
 
