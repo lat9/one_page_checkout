@@ -1313,7 +1313,7 @@ class OnePageCheckout extends base
                 }
                 $_SESSION['billto'] = $this->tempBilltoAddressBookId;
                 if ($this->getShippingBilling()) {
-                    $_SESSION['sendto'] = $this->tempSendtoAddressBookId;
+                    $_SESSION['sendto'] = $this->tempBilltoAddressBookId;
                     $this->tempAddressValues['ship'] = $this->tempAddressValues['bill'];
                 }
             }
