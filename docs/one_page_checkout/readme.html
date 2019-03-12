@@ -100,7 +100,7 @@ a[target=_blank] { text-decoration: underline; }
     <li>Guest checkout, especially the <code class="no-pad">orders_status</code> page's processing, based on the <a href="https://www.zen-cart.com/showthread.php?196995-COWOA-%28for-ZC-v1-5-x%29" target="_blank">COWOA</a> (by @DivaVocals, @countrycharm and others) and <a href="https://www.zen-cart.com/downloads.php?do=file&id=2131" target="_blank">COWAA</a> (by @davewest) plugins.</li>
   </ol>
   <hr />
-  <p>Additional information (especially for features introduced in <em>OPC v2.0.0</em> can be found in the plugin's <a href="https://lat9.github.io/one_page_checkout/" target="_blank">Additional Documentation</a> page.</p>
+  <p>Additional information (especially for features introduced in <em>OPC v2.0.0</em>) can be found in the plugin's <a href="https://lat9.github.io/one_page_checkout/" target="_blank">Additional Documentation</a> page.</p>
   <hr />
   <p>Current Support Thread at Zen Cart Forums: <a href="https://www.zen-cart.com/showthread.php?220781-One-Page-Checkout-Support-Thread" target="_blank">https://www.zen-cart.com/showthread.php?220781-One-Page-Checkout-Support-Thread</a></p>
   
@@ -283,7 +283,7 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                 </tr>
                 <tr>
                     <td>Enable: Customer List</td>
-                    <td>When you <em>conditionally</em> enable the plugin, use this setting to limit the customers for which the plugin is enabled. Leave the setting blank (the default) to <em>disable</em> the plugin for all customers or identify a comma-separated list of customer_id values for whom the plugin is to be <em>enabled</em>.</td>
+                    <td>When you <em>conditionally</em> enable the plugin, use this setting to limit the customers for which the plugin is enabled. Leave the setting blank (the default) to <em>disable</em> the plugin for all customers or identify a comma-separated list of customer_id values for whom the plugin is to be <em>enabled</em>.<br /><br /><b>Note:</b> Starting with <em>OPC</em> v2.1.0, intervening blanks are allowed.</td>
                     <td>1.1.0</td>
                 </tr>
                 <tr>
@@ -309,7 +309,7 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                 </tr>
                 <tr>
                     <td>Payment Methods Requiring Confirmation</td>
-                    <td>There are some payment methods that <strong>require</strong> the confirmation page to be displayed for their proper operation.  You can add to that comma-separated list any of the payment methods used on your store for which you'd like the customer to confirm.</td>
+                    <td>There are some payment methods that <strong>require</strong> the confirmation page to be displayed for their proper operation.  You can add to that comma-separated list any of the payment methods used on your store for which you'd like the customer to confirm.<br /><br /><b>Note:</b> Starting with <em>OPC</em> v2.1.0, intervening blanks are allowed.</td>
                     <td>1.3.0</td>
                 </tr>
                 <tr>
@@ -344,12 +344,12 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                 </tr>
                 <tr>
                     <td>Guest Checkout: Disallowed <em>Credit Class</em> Order-Totals</td>
-                    <td>Identify (using a comma-separated list, intervening blanks are OK) any <em>credit-class</em> order-totals that are <em>disallowed</em> during guest-checkout.  These order-totals <em>normally</em> require a customer-account for their processing, e.g. <code class="no-pad">ot_gv</code>, the default value.</td>
+                    <td>Identify (using a comma-separated list, intervening blanks are OK) any <em>credit-class</em> order-totals that are <em>disallowed</em> during guest-checkout.  These order-totals <em>normally</em> require a customer-account for their processing, e.g. <code class="no-pad">ot_gv</code>, the default value.<br /><br /><b>Note:</b> Starting with <em>OPC</em> v2.1.0, intervening blanks are allowed.</td>
                     <td>2.0.0</td>
                 </tr>
                 <tr>
                     <td>Guest Checkout: Disallowed Payment Methods</td>
-                    <td>Identify (using a comma-separated list, intervening blanks are OK) any payment methods that are <em>disallowed</em> during guest-checkout.  These payment methods <em>normally</em> have no validation of purchase &mdash; e.g. <code class="no-pad">moneyorder</code> and <code class="no-pad">cod</code> &mdash; and can, if left enabled, result in unwanted <em>spam purchases</em>.  Default: <b>moneyorder, cod</b>.</td>
+                    <td>Identify (using a comma-separated list, intervening blanks are OK) any payment methods that are <em>disallowed</em> during guest-checkout.  These payment methods <em>normally</em> have no validation of purchase &mdash; e.g. <code class="no-pad">moneyorder</code> and <code class="no-pad">cod</code> &mdash; and can, if left enabled, result in unwanted <em>spam purchases</em>.  Default: <b>moneyorder, cod</b>.<br /><br /><b>Note:</b> Starting with <em>OPC</em> v2.1.0, intervening blanks are allowed.</td>
                     <td>2.0.0</td>
                 </tr>
                 <tr>
@@ -364,7 +364,7 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                 </tr>
                 <tr>
                     <td>Enable One-Page Checkout Debug?</td>
-                    <td>When enabled, debug files named myDEBUG-one_page_checkout-<em>xx</em>.log are created in your /logs sub-directory (<em>xx</em> is the customer_id for the checkout). Use the <b>true</b> or <b>full</b> settings in combination with the <em>Debug: Customer List</em> setting to limit the customers for which the debug-action is taken.  Setting the value to <b>full</b> will also set the PHP error-level for the checkout_one page's processing so that <b>all</b> PHP errors are logged.</td>
+                    <td>When enabled, debug files named myDEBUG-one_page_checkout-<em>xx</em>-YYYY-mm-dd.log are created in your /logs sub-directory, where <em>xx</em> is the customer_id for the checkout and <em>YYYY-mm-dd</em> is the date associated with the information. Use the <b>true</b> or <b>full</b> settings in combination with the <em>Debug: Customer List</em> setting to limit the customers for which the debug-action is taken.  Setting the value to <b>full</b> will also set the PHP error-level for the checkout_one page's processing so that <b>all</b> PHP errors are logged.</td>
                     <td>1.0.0</td>
                 </tr>
                 <tr>
@@ -694,6 +694,7 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                     <li>BUGFIX: Guest-checkout, billing = shipping doesn't &quot;keep up&quot;.</li>
                     <li>BUGFIX: Correct PHP Notice logged when shipping method is untaxed.</li>
                     <li>CHANGE: Disallow guest-checkout when the customer's cart contains Gift Certificates.</li>
+                    <li>CHANGE: Add date (yyyy-mm-dd) suffix to any <em>OPC</em> debug-logs.</li>
                     <li>The following files were affected:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/classes/observers/class.checkout_one_observer.php</li>

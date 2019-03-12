@@ -66,7 +66,7 @@ class OnePageCheckout extends base
     public function getDebugLogFileName()
     {
         $customer_id = (isset($_SESSION['customer_id'])) ? $_SESSION['customer_id'] : 'na';
-        return DIR_FS_LOGS . "/myDEBUG-one_page_checkout-$customer_id.log";
+        return DIR_FS_LOGS . "/myDEBUG-one_page_checkout-$customer_id-" . date('Y-m-d') . ".log";
     }
     
     /* -----
