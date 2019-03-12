@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2018, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2019, Vinos de Frutas Tropicales.  All rights reserved.
 //
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
@@ -31,10 +31,56 @@ class checkout_one_observer extends base
         //
         if (isset($_GET['opctype'])) {
             if ($_GET['opctype'] == 'jserr') {
-                $_SESSION['opc_error'] = true;
+                $_SESSION['opc_error'] = 'jserr';
             }
             if ($_GET['opctype'] == 'retry') {
                 unset($_SESSION['opc_error']);
+            }
+        }
+        
+        // -----
+        // If no previous jQuery error was noted and an account-holder is not logged in,
+        // check the shopping-cart's current contents to see if one or more Gift Certificates
+        // are present (only account-holders can purchase GC's).
+        //
+        // If one or more GC is present in the customer's cart:
+        // - If the customer is not on the login or checkout_one page, let them know that they'll need
+        // to create an account (or sign in) to make that purchase.  If the customer is in the
+        // middle of a guest-checkout (e.g. they started without a GC in-cart and added one after
+        // the guest-checkout started), let them know that continuing with the checkout will
+        // result in a loss of the information that they previously entered.
+        //
+        // - If the customer has continued (via button- or link-click) to the login/checkout_one
+        // page, reset any guest-related information that was previously entered.  The guest-checkout
+        // will be disabled.
+        //
+        // NOTE: Using the session-based OPC class to determine logged-in/guest-checkout status, since
+        // the observers for the zen_is_logged_in/zen_in_guest_checkout functions haven't yet been
+        // attached!
+        //
+        if (!(isset($_SESSION['opc_error']) && $_SESSION['opc_error'] == 'jserr') && $_SESSION['opc']->guestCheckoutEnabled()) {
+            if (!$_SESSION['opc']->isLoggedIn() || $_SESSION['opc']->isGuestCheckout()) {
+                unset($_SESSION['opc_error']);
+                $cart_products = $_SESSION['cart']->get_products();
+                foreach ($cart_products as $current_product) {
+                    if (strpos($current_product['model'], 'GIFT') === 0) {
+                        $pages_to_reset_for_gc = array(
+                            FILENAME_LOGIN,
+                            FILENAME_CHECKOUT_ONE
+                        );
+                        if (!in_array($GLOBALS['current_page_base'], $pages_to_reset_for_gc)) {
+                            $gift_certificate_message = WARNING_GUEST_NO_GCS;
+                            if ($_SESSION['opc']->isGuestCheckout()) {
+                                $gift_certificate_message .= ' ' . WARNING_GUEST_GCS_RESET . '<br /><br />' . WARNING_GUEST_REMOVE_GC;
+                            }
+                            $GLOBALS['messageStack']->add('header', $gift_certificate_message, 'caution');
+                        } else {
+                            $_SESSION['opc_error'] = 'no-gc';
+                            $_SESSION['opc']->resetGuestSessionValues();
+                        }
+                        break;
+                    }
+                }
             }
         }
         
@@ -43,7 +89,7 @@ class checkout_one_observer extends base
         // the checkout_success or other, customizable, pages, need to remove all session-variables associated with that
         // guest checkout.
         //
-        $post_checkout_pages = explode(',', CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED);
+        $post_checkout_pages = explode(',', str_replace(' ', '', CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED));
         $post_checkout_pages[] = FILENAME_CHECKOUT_SUCCESS;
         if (isset($_SESSION['order_placed_by_guest']) && !in_array($GLOBALS['current_page_base'], $post_checkout_pages)) {
             unset($_SESSION['order_placed_by_guest'], $_SESSION['order_number_created']);
@@ -65,7 +111,7 @@ class checkout_one_observer extends base
             $this->enabled = true;
             $this->debug = (CHECKOUT_ONE_DEBUG == 'true' || CHECKOUT_ONE_DEBUG == 'full');
             if ($this->debug && CHECKOUT_ONE_DEBUG_EXTRA != '' && CHECKOUT_ONE_DEBUG_EXTRA != '*') {
-                $debug_customers = explode (',', CHECKOUT_ONE_DEBUG_EXTRA);
+                $debug_customers = explode(',', str_replace(' ', '', CHECKOUT_ONE_DEBUG_EXTRA));
                 if (!in_array($_SESSION['customer_id'], $debug_customers)) {
                     $this->debug = false;
                 }
@@ -154,6 +200,7 @@ class checkout_one_observer extends base
             case 'NOTIFY_LOGIN_SUCCESS_VIA_CREATE_ACCOUNT':     //-Fall-through from above ...
                 $_SESSION['opc']->cleanupGuestSession();
                 break;
+                
             // -----
             // Redirect any accesses to the "3-page" checkout process to the one-page.
             //
@@ -170,7 +217,6 @@ class checkout_one_observer extends base
             //
             case 'NOTIFY_HEADER_START_CHECKOUT_SHIPPING_ADDRESS':
                 $_SESSION['shipping_billing'] = false;
-                
                 break;
                 
             // -----
@@ -391,6 +437,7 @@ class checkout_one_observer extends base
             case 'NOTIFY_OT_COUPON_USES_PER_USER_CHECK':
                 $p2 = $_SESSION['opc']->validateUsesPerUserCoupon($p1, $p2);
                 break;
+
             default:
                 break;
         }

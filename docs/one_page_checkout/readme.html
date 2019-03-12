@@ -693,12 +693,13 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                     <li>BUGFIX: Correct undefined variables in debug-output on &quot;checkout_one_confirmation&quot; page when order is virtual.</li>
                     <li>BUGFIX: Guest-checkout, billing = shipping doesn't &quot;keep up&quot;.</li>
                     <li>BUGFIX: Correct PHP Notice logged when shipping method is untaxed.</li>
+                    <li>CHANGE: Disallow guest-checkout when the customer's cart contains Gift Certificates.</li>
                     <li>The following files were affected:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
-                        <li>/includes/languages/english/checkout_one.php</li>
-                        <li>/includes/languages/english/checkout_one_confirmation.php</li>
+                        <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                         <li><span class="template-changed">/includes/languages/english/checkout_one.php</span></li>
                         <li><span class="template-changed">/includes/languages/english/checkout_one_confirmation.php</span></li>
+                        <li><span class="template-changed">/includes/languages/english/extra_definitions/checkout_one_extra_definitions.php</span></li>
                         <li><span class="template">/includes/languages/english/YOUR_TEMPLATE/checkout_confirmation.php</span></li>
                         <li>/includes/modules/pages/checkout_one/header_php.php</li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>

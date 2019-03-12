@@ -84,7 +84,7 @@ class OnePageCheckout extends base
         //   - Conditional enablement and the current customer is in the conditional-customers list
         //
         $this->isEnabled = false;
-        if (defined('CHECKOUT_ONE_ENABLED') && !isset($_SESSION['opc_error'])) {
+        if (defined('CHECKOUT_ONE_ENABLED') && (!isset($_SESSION['opc_error']) || $_SESSION['opc_error'] != 'jserr')) {
             if (CHECKOUT_ONE_ENABLED == 'true') {
                 $this->isEnabled = true;
             } elseif (CHECKOUT_ONE_ENABLED == 'conditional' && isset($_SESSION['customer_id'])) {
@@ -217,6 +217,9 @@ class OnePageCheckout extends base
     {
         $this->checkEnabled();
         $this->isGuestCheckoutEnabled = !zen_is_spider_session() && (defined('CHECKOUT_ONE_ENABLE_GUEST') && CHECKOUT_ONE_ENABLE_GUEST == 'true');
+        if (isset($_SESSION['opc_error']) && $_SESSION['opc_error'] == 'no-gc') {
+            $this->isGuestCheckoutEnabled = false;
+        }
         $this->guestCustomerId = (defined('CHECKOUT_ONE_GUEST_CUSTOMER_ID')) ? (int)CHECKOUT_ONE_GUEST_CUSTOMER_ID : 0;
         $this->tempBilltoAddressBookId = (defined('CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID')) ? (int)CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID : 0;
         $this->tempSendtoAddressBookId = (defined('CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID')) ? (int)CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID : 0;
@@ -282,7 +285,11 @@ class OnePageCheckout extends base
                 $_SESSION['billto'],
                 $_SESSION['customer_default_address_id'],
                 $_SESSION['customer_country_id'],
-                $_SESSION['customer_zone_id']
+                $_SESSION['customer_zone_id'],
+                $_SESSION['shipping'],
+                $_SESSION['payment'],
+                $_SESSION['shipping_tax_description'],
+                $_SESSION['shipping_tax_amount']
             );
         }
         unset(
@@ -1406,7 +1413,7 @@ class OnePageCheckout extends base
     ** processing) to determine whether or not to display certain blocks within the page's
     ** rendering.
     **
-    ** Each returns a boolean value, indicatin whether or not the associated entries have been found
+    ** Each returns a boolean value, indicating whether or not the associated entries have been found
     ** to be valid.
     */
     public function validateCustomerInfo()
@@ -1415,11 +1422,11 @@ class OnePageCheckout extends base
     }
     public function validateTempBilltoAddress()
     {
-        return (!empty($_SESSION['billto']) && ($_SESSION['billto'] != $this->tempBilltoAddressBookId || $this->billtoTempAddrOk));
+        return (!$this->isGuestCheckout() || (!empty($_SESSION['billto']) && ($_SESSION['billto'] != $this->tempBilltoAddressBookId || $this->billtoTempAddrOk)));
     }
     public function validateTempShiptoAddress()
     {
-        return ($this->isVirtualOrder || (!empty($_SESSION['sendto']) && ($_SESSION['sendto'] == $this->tempSendtoAddressBookId || $this->sendtoTempAddrOk)));
+        return (!$this->isGuestCheckout() || $this->isVirtualOrder || (!empty($_SESSION['sendto']) && ($_SESSION['sendto'] == $this->tempSendtoAddressBookId || $this->sendtoTempAddrOk)));
     }
     
     /* -----
