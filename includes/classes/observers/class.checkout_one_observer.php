@@ -31,7 +31,7 @@ class checkout_one_observer extends base
         //
         if (isset($_GET['opctype'])) {
             if ($_GET['opctype'] == 'jserr') {
-                $_SESSION['opc_error'] = 'jserr';
+                $_SESSION['opc_error'] = OnePageCheckout::OPC_ERROR_NO_JS;
             }
             if ($_GET['opctype'] == 'retry') {
                 unset($_SESSION['opc_error']);
@@ -58,7 +58,7 @@ class checkout_one_observer extends base
         // the observers for the zen_is_logged_in/zen_in_guest_checkout functions haven't yet been
         // attached!
         //
-        if (!(isset($_SESSION['opc_error']) && $_SESSION['opc_error'] == 'jserr') && $_SESSION['opc']->guestCheckoutEnabled()) {
+        if (!(isset($_SESSION['opc_error']) && $_SESSION['opc_error'] == OnePageCheckout::OPC_ERROR_NO_JS) && $_SESSION['opc']->guestCheckoutEnabled()) {
             if (!$_SESSION['opc']->isLoggedIn() || $_SESSION['opc']->isGuestCheckout()) {
                 unset($_SESSION['opc_error']);
                 $cart_products = $_SESSION['cart']->get_products();
@@ -75,7 +75,7 @@ class checkout_one_observer extends base
                             }
                             $GLOBALS['messageStack']->add('header', $gift_certificate_message, 'caution');
                         } else {
-                            $_SESSION['opc_error'] = 'no-gc';
+                            $_SESSION['opc_error'] = OnePageCheckout::OPC_ERROR_NO_GC;
                             $_SESSION['opc']->resetGuestSessionValues();
                         }
                         break;

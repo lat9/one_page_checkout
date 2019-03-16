@@ -9,6 +9,13 @@
 class OnePageCheckout extends base
 {
     // -----
+    // Constants used to coordinate definitions for the OPC's $_SESSION['opc_error'] variable between this
+    // controlling class and its associated observer.
+    //
+    const OPC_ERROR_NO_JS   = 'jserr';  //-jQuery/javascript error detected
+    const OPC_ERROR_NO_GC   = 'no-gc';  //-Guest checkout can't be used due to a Gift Certificate being present in the cart.
+    
+    // -----
     // Various protected data elements:
     //
     // isGuestCheckoutEnabled ... Indicates whether (true) or not (false) the overall guest-checkout is enabled via configuration.
@@ -78,13 +85,16 @@ class OnePageCheckout extends base
         // -----
         // Determine whether the overall OPC processing should be enabled.  It's enabled if:
         //
-        // - No previous jQuery error on the checkout_one page has been detected.
+        // - No previous error (missing jQuery) found to prevent OPC's use.
         // - The plugin's database configuration is available and set for either
         //   - Full enablement
         //   - Conditional enablement and the current customer is in the conditional-customers list
         //
+        // Note: If we're currently in the PayPal Express Checkout's "Express Checkout" 
+        // (aka in_special_checkout) processing; if so, OPC will (currently) be disabled.
+        //
         $this->isEnabled = false;
-        if (defined('CHECKOUT_ONE_ENABLED') && (!isset($_SESSION['opc_error']) || $_SESSION['opc_error'] != 'jserr')) {
+        if (defined('CHECKOUT_ONE_ENABLED') && (!isset($_SESSION['opc_error']) || $_SESSION['opc_error'] != self::OPC_ERROR_NO_JS)) {
             if (CHECKOUT_ONE_ENABLED == 'true') {
                 $this->isEnabled = true;
             } elseif (CHECKOUT_ONE_ENABLED == 'conditional' && isset($_SESSION['customer_id'])) {
@@ -92,8 +102,28 @@ class OnePageCheckout extends base
                     $this->isEnabled = true;
                 }
             }
+            if ($this->isPayPalExpressCheckout()) {
+                $this->isEnabled = false;
+            }
         }
         return $this->isEnabled;
+    }
+    
+    // -----
+    // Determine whether we're currently in the PayPal Express Checkout's "Express Checkout"
+    // handling, using the detection currently (zc156a) present in the paypalwpp::in_special_checkout's
+    // processing.
+    //
+    protected function isPayPalExpressCheckout()
+    {
+        $is_paypal_express_checkout = false;
+        if (defined('MODULE_PAYMENT_PAYPALWPP_STATUS') && MODULE_PAYMENT_PAYPALWPP_STATUS == 'True') {
+            if (!empty($_SESSION['paypal_ec_token']) && !empty($_SESSION['paypal_ec_payer_id']) && !empty($_SESSION['paypal_ec_payer_info'])) {
+                $this->debugMessage("PayPal Express Checkout, in special checkout.  One Page Checkout is disabled.");
+                $is_paypal_express_checkout = true;
+            }
+        }
+        return $is_paypal_express_checkout;
     }
     
     /* -----
@@ -217,7 +247,7 @@ class OnePageCheckout extends base
     {
         $this->checkEnabled();
         $this->isGuestCheckoutEnabled = !zen_is_spider_session() && (defined('CHECKOUT_ONE_ENABLE_GUEST') && CHECKOUT_ONE_ENABLE_GUEST == 'true');
-        if (isset($_SESSION['opc_error']) && $_SESSION['opc_error'] == 'no-gc') {
+        if (isset($_SESSION['opc_error']) && $_SESSION['opc_error'] == self::OPC_ERROR_NO_GC) {
             $this->isGuestCheckoutEnabled = false;
         }
         $this->guestCustomerId = (defined('CHECKOUT_ONE_GUEST_CUSTOMER_ID')) ? (int)CHECKOUT_ONE_GUEST_CUSTOMER_ID : 0;
@@ -307,6 +337,7 @@ class OnePageCheckout extends base
     {
         unset(
             $_SESSION['shipping_billing'], 
+            $_SESSION['opc_error'],
             $_SESSION['opc_sendto_saved']
         );        
     }
