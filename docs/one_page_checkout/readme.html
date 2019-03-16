@@ -561,6 +561,22 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                 <li>The <code class="no-pad">checkout_one</code> page shows the message &quot;Sorry, but our expedited checkout process cannot be used.  Click here to use our alternate checkout process.&quot;, where the link presented is back to the multi-page-checkout process.</li>
                 <li>The above message is not displayed, but the <em>Review</em> or <em>Confirm</em> buttons are inoperative upon click.  Note that this symptom is <em>usually</em> associated with multiple jQuery versions being loaded by your store's template and/or plugins.</li>
               </ol>
+              
+              <h3>Template-specific &quot;jscript_framework.php&quot; is Required</h3>
+              <p>After installation of <em>OPC</em>, you might receive an admin error-message: <span class="red">The One-Page Checkout plugin has been disabled.</span>. That message identifies that the file <span class="red">&quot;DIR_FS_INCLUDES/templates/YOUR_TEMPLATE/jscript/jscript_framework.php&quot;</span> is required for the plugin's proper operation (where DIR_FS_INCLUDES identifies your store's file-system's /includes sub-directory and YOUR_TEMPLATE identifies your store's active template name).</p>
+              <p>You'll need to create that file in your store's active template's <code class="no-pad">jscript</code> sub-directory, containing:</p>
+              <pre class="scroll">
+&lt;?php
+/**
+ * Include AJAX Framework for non-template_default templates **only**!
+ *
+ * @package templateSystem
+ * @copyright Copyright 2003-2017 Zen Cart Development Team
+ * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
+ * @version $Id: Author: zcwilt  lat9 Modified in v1.5.6 $
+ */
+require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
+              </pre>              
             </div>
                         
           </div>
