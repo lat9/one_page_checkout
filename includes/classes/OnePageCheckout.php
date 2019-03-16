@@ -306,7 +306,7 @@ class OnePageCheckout extends base
     */           
     public function resetGuestSessionValues()
     {
-        if (zen_in_guest_checkout() || $_SESSION['customer_id'] == $this->guestCustomerId) {
+        if (zen_in_guest_checkout() || (!empty($_SESSION['customer_id']) && $_SESSION['customer_id'] == $this->guestCustomerId)) {
             unset(
                 $_SESSION['customer_id'], 
                 $_SESSION['customers_email_address'],
