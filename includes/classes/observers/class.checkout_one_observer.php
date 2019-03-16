@@ -75,8 +75,8 @@ class checkout_one_observer extends base
                             }
                             $GLOBALS['messageStack']->add('header', $gift_certificate_message, 'caution');
                         } else {
-                            $_SESSION['opc_error'] = OnePageCheckout::OPC_ERROR_NO_GC;
                             $_SESSION['opc']->resetGuestSessionValues();
+                            $_SESSION['opc_error'] = OnePageCheckout::OPC_ERROR_NO_GC;
                         }
                         break;
                     }
