@@ -714,6 +714,7 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                     <li>CHANGE: Disallow guest-checkout when the customer's cart contains Gift Certificates.</li>
                     <li>CHANGE: Add date (yyyy-mm-dd) suffix to any <em>OPC</em> debug-logs.</li>
                     <li>BUGFIX: Disallow <em>One-Page Checkout</em> during the &quot;PayPal Express Checkout&quot;'s shortcut-button processing.</li>
+                    <li>BUGFIX: Correct &quot;PHP Notice&quot; issues.</li>
                     <li>The following files were affected:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
@@ -727,6 +728,7 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
                         <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
                         <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
+                        <li>/includes/modules/pages/order_status/header_php.php</li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_checkout_one_default.php</span></li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_checkout_success_guest.php</span></li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_checkout_one_shipping.php</span></li>

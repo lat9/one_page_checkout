@@ -23,6 +23,12 @@ if (zen_is_logged_in() && !zen_in_guest_checkout()) {
 require DIR_WS_MODULES . zen_get_module_directory('require_languages.php');
 
 // -----
+// Initial values used by the page's template, on initial entry.
+//
+$orderID = '';
+$query_email_address = '';
+
+// -----
 // Create the store-specific name of the spam "honeypot" by hashing the store's defined name.
 //
 $spam_input_name = md5(STORE_NAME);
