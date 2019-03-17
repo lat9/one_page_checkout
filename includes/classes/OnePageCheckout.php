@@ -117,7 +117,7 @@ class OnePageCheckout extends base
     protected function isPayPalExpressCheckout()
     {
         $is_paypal_express_checkout = false;
-        if (defined('MODULE_PAYMENT_PAYPALWPP_STATUS') && MODULE_PAYMENT_PAYPALWPP_STATUS == 'True') {
+        if ($GLOBALS['current_page_base'] != FILENAME_CHECKOUT_PROCESS && defined('MODULE_PAYMENT_PAYPALWPP_STATUS') && MODULE_PAYMENT_PAYPALWPP_STATUS == 'True') {
             if (!empty($_SESSION['paypal_ec_token']) && !empty($_SESSION['paypal_ec_payer_id']) && !empty($_SESSION['paypal_ec_payer_info'])) {
                 $this->debugMessage("PayPal Express Checkout, in special checkout.  One Page Checkout is disabled.");
                 $is_paypal_express_checkout = true;
@@ -1348,6 +1348,9 @@ class OnePageCheckout extends base
                 if ($this->isGuestCheckout()) {
                     $this->guestCustomerInfo['firstname'] = $address['firstname'];
                     $this->guestCustomerInfo['lastname'] = $address['lastname'];
+                    
+                    $_SESSION['customer_first_name'] = $address['firstname'];
+                    $_SESSION['customer_last_name'] = $address['lastname'];
                 }
                 $_SESSION['billto'] = $this->tempBilltoAddressBookId;
                 if ($this->getShippingBilling()) {
