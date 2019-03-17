@@ -234,7 +234,7 @@ class zcAjaxOnePageCheckout extends base
             }
             $payment_modules = new payment();
             $enabled_payment_modules = $_SESSION['opc']->validateGuestPaymentMethods($payment_modules->selection());
-            $display_payment_block = ($_SESSION['opc']->validateCustomerInfo() && $_SESSION['opc']->validateTempBilltoAddress(););
+            $display_payment_block = ($_SESSION['opc']->validateCustomerInfo() && $_SESSION['opc']->validateTempBilltoAddress());
             ob_start ();
             require $template->get_template_dir('tpl_modules_opc_payment_choices.php', DIR_WS_TEMPLATE, $GLOBALS['current_page_base'], 'templates'). '/tpl_modules_opc_payment_choices.php';
             $payment_html = ob_get_clean();
