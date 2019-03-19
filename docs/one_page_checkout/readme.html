@@ -431,11 +431,12 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                   <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_gv.php</span></li>
                   <li><span class="template">/includes/languages/english/YOUR_TEMPLATE/checkout_confirmation.php</span></li>
                 </ol></li>
-                <li><em><b>If you store is running a Zen Cart version less than 1.5.6 and you want to quickly identify those orders placed by guests</b></em>, there are additional edits required for <code class="no-pad corefile">/YOUR_ADMIN/orders.php</code>.  See <a href="https://lat9.github.io/one_page_checkout/pages/admin_orders_configuration.html" target="_blank">these</a> instructions from the <em>OPC</em>'s additional-documentation pages.</li>
+                <li><em><b>If your store is running a Zen Cart version less than 1.5.6 and you want to quickly identify those orders placed by guests</b></em>, there are additional edits required for <code class="no-pad corefile">/YOUR_ADMIN/orders.php</code>.  See <a href="https://lat9.github.io/one_page_checkout/pages/admin_orders_configuration.html" target="_blank">these</a> instructions from the <em>OPC</em>'s additional-documentation pages.</li>
                 <li>Sign into your Zen Cart's admin panel.  Due the the number of files that require uploading, I suggest that you place the site into <em>Maintenance Mode</em> by setting <b><i>Configuration-&gt;Website Maintenance-&gt;Down for Maintenance: ON/OFF</i></b> to <em>true</em>.</li>
                 <li><span class="red"><b>Important!</b></span> Review the instructions provided in the <b>Initial Installation</b> section of <a href="https://lat9.github.io/one_page_checkout/pages/install_upgrade_v210_or_later.html" target="_blank">Installing or Upgrading <em>OPC</em> v2.1.0 (and later)</a> for your store's current Zen Cart version, making any additional changes indicated.</li>
                 <li>Copy the plugin's <em>new</em> files &mdash; with the sub-directories renamed as identified in steps <b>A</b> and <b>B</b> and the file-merges performed as identified in steps <b>C</b> and <b>D</b> &mdash; to your store's directory structure.  You'll use either your webhost's cPanel File Manager or an FTP program (like WinSCP or FileZilla) to perform this copy.<ol>
                   <li>/includes/auto_loaders/config.checkout_one.php</li>
+                  <li>/includes/auto_loaders/paypal_ipn.checkout_one.php</li>
                   <li>/includes/classes/OnePageCheckout.php</li>
                   <li>/includes/classes/OnePageCheckoutNoPayment</li>
                   <li>/includes/classes/Vinos_Browser.php</li>
