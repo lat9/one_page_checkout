@@ -162,6 +162,9 @@ class checkout_one_observer extends base
         // If the OPC's guest-/account-registration is enabled, some additional notifications
         // need to be monitored.
         //
+        // Note: This is left as "legacy", just in case they need to be 'unobserved' in the future.
+        // Right now (v2.1.0), that opc method returns an unconditional (bool)true.
+        //
         if ($this->enabled && $_SESSION['opc']->initTemporaryAddresses()) {    
             $this->attach(
                 $this, 
@@ -170,7 +173,9 @@ class checkout_one_observer extends base
                     'NOTIFY_ORDER_DURING_CREATE_ADDED_ORDER_HEADER',
                     'NOTIFY_ORDER_INVOICE_CONTENT_READY_TO_SEND',
                     'NOTIFY_HEADER_START_CHECKOUT_SUCCESS',
-                    'NOTIFY_OT_COUPON_USES_PER_USER_CHECK'
+                    'NOTIFY_OT_COUPON_USES_PER_USER_CHECK',
+                    'NOTIFY_PAYMENT_PAYPALEC_BEFORE_SETEC',
+                    'NOTIFY_PAYPALEXPRESS_BYPASS_ADDRESS_CREATION',
                 )
             );
         }
@@ -438,6 +443,40 @@ class checkout_one_observer extends base
                 $p2 = $_SESSION['opc']->validateUsesPerUserCoupon($p1, $p2);
                 break;
 
+            // -----
+            // Issued by paypalwpp::ec_step1 just before sending the customer up to PayPal for payment
+            // fulfilment.  Gives us the opportunity to record any temporary shipping address into the
+            // request.
+            //
+            // On entry,
+            //
+            // $p1 ... n/a
+            // $p2 ... (r/w) A reference to PayPal's current $options, possibly updated with any temporary address values.
+            // $p3 ... (r/w) A reference to the current order-object
+            // $p4 ... (r/w) A reference to the order's current totals array.
+            //
+            case 'NOTIFY_PAYMENT_PAYPALEC_BEFORE_SETEC':
+                $p2 = array_merge($p2, $_SESSION['opc']->createPayPalTemporaryAddressInfo());
+                break;
+                
+            // -----
+            // Issued by paypalwpp::ec_step2_finish just before its check/creation of an address-book
+            // entry for the customer's address values sent back from PayPal.  Gives us the opportunity
+            // to bypass that processing if the order currently is using temporary addresses.
+            //
+            // Note: Not in core for Zen Cart versions prior to 1.5.6b!
+            //
+            // $p1 ... (r/o) A copy of the PayPal payer/shipto-address information returned.
+            // $p2 ... (r/w) A reference to a boolean flag that indicates whether or not the default processing should proceed.
+            //
+            case 'NOTIFY_PAYPALEXPRESS_BYPASS_ADDRESS_CREATION':
+                if ($p2 !== false) {
+                    $this->debug_message('NOTIFY_PAYPALEXPRESS_BYPASS_ADDRESS_CREATION previously handled!');
+                } else {
+                    $p2 = $_SESSION['opc']->setPayPalAddressCreationBypass($p1);
+                }
+                break;
+                
             default:
                 break;
         }

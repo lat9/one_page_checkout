@@ -41,6 +41,8 @@ Copy the files listed below from the _OPC_ distribution's `/zc156b` sub-director
 
 #### Edit Files
 
+##### 1. `/includes/templates/YOUR_TEMPLATE/common/tpl_header.php`
+
 Edit your store's active template's `/includes/templates/YOUR_TEMPLATE/common/tpl_header.php` _using a text-editor_ (like NotePad++), changing all occurrences of
 
 ```php
@@ -51,6 +53,50 @@ to
 
 ```php
 if (zen_is_logged_in() && !zen_in_guest_checkout()) {
+```
+
+##### 2. `/includes/modules/payment/paypalwpp.php`
+
+If your store uses the **PayPal Express Checkout** (`paypalwpp`) payment method, you'll need to add a notification to allow _OPC_'s temporary addresses to be used.
+
+In the module's `ec_step2_finish` function, find this section:
+
+```php
+    // see if the user is logged in
+    if (!empty($_SESSION['customer_first_name']) && !empty($_SESSION['customer_id']) && $_SESSION['customer_id'] > 0) {
+      // They're logged in, so forward them straight to checkout stages, depending on address needs etc
+      $order->customer['id'] = $_SESSION['customer_id'];
+
+      // set the session value for express checkout temp
+      $_SESSION['paypal_ec_temp'] = false;
+
+      // if no address required for shipping, leave shipping portion alone
+      if (strtoupper($_SESSION['paypal_ec_payer_info']['ship_address_status']) != 'NONE' && $_SESSION['paypal_ec_payer_info']['ship_street_1'] != '') {
+```
+
+and add the notification required for OPC's proper operation:
+
+```php
+
+    // see if the user is logged in
+    if (!empty($_SESSION['customer_first_name']) && !empty($_SESSION['customer_id']) && $_SESSION['customer_id'] > 0) {
+      // They're logged in, so forward them straight to checkout stages, depending on address needs etc
+      $order->customer['id'] = $_SESSION['customer_id'];
+
+      // set the session value for express checkout temp
+      $_SESSION['paypal_ec_temp'] = false;
+      
+      // -----
+      // Allow an observer to override the default address-creation processing.
+      //
+      $bypass_address_creation = false;
+      $this->notify('NOTIFY_PAYPALEXPRESS_BYPASS_ADDRESS_CREATION', $paypal_ec_payer_info, $bypass_address_creation);
+      if ($bypass_address_creation) {
+          $this->zcLog('ec_step2_finish - 2a, address-creation bypassed based on observer setting.');
+      }
+
+      // if no address required for shipping (or overridden by above), leave shipping portion alone
+      if (!$bypass_address_creation && strtoupper($_SESSION['paypal_ec_payer_info']['ship_address_status']) != 'NONE' && $_SESSION['paypal_ec_payer_info']['ship_street_1'] != '') {
 ```
 
 ### Zen Cart 1.5.5b-f
@@ -78,7 +124,10 @@ Copy the files listed below from the _OPC_ distribution's `/zc155f` sub-director
 1. `/includes/classes/order.php` (one marked change-section)
 2. `/includes/modules/order_total/ot_coupon.php` (one marked change-section)
 
+
 #### Edit Files
+
+##### 1. `/includes/templates/YOUR_TEMPLATE/common/tpl_header.php`
 
 Edit your store's active template's `/includes/templates/YOUR_TEMPLATE/common/tpl_header.php` _using a text-editor_ (like NotePad++), changing all occurrences of
 
@@ -92,11 +141,130 @@ to
 if (zen_is_logged_in() && !zen_in_guest_checkout()) {
 ```
 
+##### 2. `/includes/modules/payment/paypalwpp.php`
+
+If your store uses the **PayPal Express Checkout** (`paypalwpp`) payment method, you'll need to add a notification to allow _OPC_'s temporary addresses to be used.
+
+In the module's `ec_step2_finish` function, find this section:
+
+```php
+    // see if the user is logged in
+    if (!empty($_SESSION['customer_first_name']) && !empty($_SESSION['customer_id']) && $_SESSION['customer_id'] > 0) {
+      // They're logged in, so forward them straight to checkout stages, depending on address needs etc
+      $order->customer['id'] = $_SESSION['customer_id'];
+
+      // set the session value for express checkout temp
+      $_SESSION['paypal_ec_temp'] = false;
+
+      // if no address required for shipping, leave shipping portion alone
+      if (strtoupper($_SESSION['paypal_ec_payer_info']['ship_address_status']) != 'NONE' && $_SESSION['paypal_ec_payer_info']['ship_street_1'] != '') {
+```
+
+and add the notification required for OPC's proper operation:
+
+```php
+
+    // see if the user is logged in
+    if (!empty($_SESSION['customer_first_name']) && !empty($_SESSION['customer_id']) && $_SESSION['customer_id'] > 0) {
+      // They're logged in, so forward them straight to checkout stages, depending on address needs etc
+      $order->customer['id'] = $_SESSION['customer_id'];
+
+      // set the session value for express checkout temp
+      $_SESSION['paypal_ec_temp'] = false;
+      
+      // -----
+      // Allow an observer to override the default address-creation processing.
+      //
+      $bypass_address_creation = false;
+      $this->notify('NOTIFY_PAYPALEXPRESS_BYPASS_ADDRESS_CREATION', $paypal_ec_payer_info, $bypass_address_creation);
+      if ($bypass_address_creation) {
+          $this->zcLog('ec_step2_finish - 2a, address-creation bypassed based on observer setting.');
+      }
+
+      // if no address required for shipping (or overridden by above), leave shipping portion alone
+      if (!$bypass_address_creation && strtoupper($_SESSION['paypal_ec_payer_info']['ship_address_status']) != 'NONE' && $_SESSION['paypal_ec_payer_info']['ship_street_1'] != '') {
+```
+
 ### Zen Cart 1.5.4, 1.5.5, 1.5.5a
 
 **Not supported.**
 
 ## Upgrading
+
+### Perform Required Edits
+
+If your store uses the **PayPal Express Checkout** (`paypalwpp.php`) payment method, there are edits needed to that module to allow _OPC_'s _temporary_ addresses to be properly transmitted to PayPal and/or recorded in the order.
+
+#### For All Zen Cart Versions _Prior to_ 1.5.6b
+
+Add a notification to allow _OPC_'s temporary addresses to be recorded in the order.  Edit `/includes/modules/payment/paypalwpp.php`; in the module's `ec_step2_finish` function, find this section:
+
+```php
+    // see if the user is logged in
+    if (!empty($_SESSION['customer_first_name']) && !empty($_SESSION['customer_id']) && $_SESSION['customer_id'] > 0) {
+      // They're logged in, so forward them straight to checkout stages, depending on address needs etc
+      $order->customer['id'] = $_SESSION['customer_id'];
+
+      // set the session value for express checkout temp
+      $_SESSION['paypal_ec_temp'] = false;
+
+      // if no address required for shipping, leave shipping portion alone
+      if (strtoupper($_SESSION['paypal_ec_payer_info']['ship_address_status']) != 'NONE' && $_SESSION['paypal_ec_payer_info']['ship_street_1'] != '') {
+```
+
+and add the notification required for OPC's proper operation:
+
+```php
+
+    // see if the user is logged in
+    if (!empty($_SESSION['customer_first_name']) && !empty($_SESSION['customer_id']) && $_SESSION['customer_id'] > 0) {
+      // They're logged in, so forward them straight to checkout stages, depending on address needs etc
+      $order->customer['id'] = $_SESSION['customer_id'];
+
+      // set the session value for express checkout temp
+      $_SESSION['paypal_ec_temp'] = false;
+      
+      // -----
+      // Allow an observer to override the default address-creation processing.
+      //
+      $bypass_address_creation = false;
+      $this->notify('NOTIFY_PAYPALEXPRESS_BYPASS_ADDRESS_CREATION', $paypal_ec_payer_info, $bypass_address_creation);
+      if ($bypass_address_creation) {
+          $this->zcLog('ec_step2_finish - 2a, address-creation bypassed based on observer setting.');
+      }
+
+      // if no address required for shipping (or overridden by above), leave shipping portion alone
+      if (!$bypass_address_creation && strtoupper($_SESSION['paypal_ec_payer_info']['ship_address_status']) != 'NONE' && $_SESSION['paypal_ec_payer_info']['ship_street_1'] != '') {
+```
+
+#### Zen Cart 1.5.4
+
+For zc154, an additional edit is required to add a notification (already present in zc155+) to allow _OPC_ to send any _temporary_ shipping address to PayPal.  Edit `/includes/modules/payment/paypalwpp.php`; in the module's `ec_step1` function, find:
+
+```php
+
+    $this->zcLog('ec_step1 - 2 -submit', print_r(array_merge($options, array('RETURNURL' => $return_url, 'CANCELURL' => $cancel_url)), true));
+
+    /**
+     * Ask PayPal for the token with which to initiate communications
+     */
+    $response = $doPayPal->SetExpressCheckout($return_url, $cancel_url, $options);
+```
+
+and add the required notification:
+
+```php
+
+    $this->zcLog('ec_step1 - 2 -submit', print_r(array_merge($options, array('RETURNURL' => $return_url, 'CANCELURL' => $cancel_url)), true));
+
+    $this->notify('NOTIFY_PAYMENT_PAYPALEC_BEFORE_SETEC', array(), $options, $order, $order_totals);
+
+    /**
+     * Ask PayPal for the token with which to initiate communications
+     */
+    $response = $doPayPal->SetExpressCheckout($return_url, $cancel_url, $options);
+```
+
 
 ### Zen Cart 1.5.6, 1.5.6a, 1.5.6b
 

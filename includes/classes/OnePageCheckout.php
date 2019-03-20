@@ -1658,6 +1658,133 @@ class OnePageCheckout extends base
         
         return $the_address;
     }
+    
+    /* -----
+    ** This public function is called by the OPC observer-class upon receipt of the indication that
+    ** PayPal Express Checkout is preparing to send the order up to PayPal for fulfilment.  If temporary
+    ** addresses are currently in use, this processing will return a PayPal-formatted array to be combined
+    ** with the order's current PayPal options.
+    */
+    public function createPayPalTemporaryAddressInfo()
+    {
+        $which = $this->determineTempShippingAddress();       
+        $paypal_temp = array();
+        if ($which !== false) {
+            $temp_address = $this->createOrderAddressFromTemporary($which);
+            $paypal_temp = array(
+                'PAYMENTREQUEST_0_SHIPTONAME' => $temp_address['firstname'] . ' ' . $temp_address['lastname'],
+                'PAYMENTREQUEST_0_SHIPTOSTREET' => $temp_address['street_address'],
+                'PAYMENTREQUEST_0_SHIPTOCITY' => $temp_address['city'],
+                'PAYMENTREQUEST_0_SHIPTOZIP' => $temp_address['postcode'],
+                'PAYMENTREQUEST_0_SHIPTOSTATE' => zen_get_zone_code($temp_address['country']['id'], $temp_address['zone_id'], $temp_address['state']),
+                'PAYMENTREQUEST_0_SHIPTOCOUNTRYCODE' => $temp_address['country']['iso_code_2']
+            );
+            if (!empty($temp_address['suburb'])) {
+                $paypal_temp['PAYMENTREQUEST_0_SHIPTOSTREET2'] = $temp_address['suburb'];
+            }            
+            if ($this->isGuestCheckout()) {
+                $paypal_temp['EMAIL'] = $this->guestCustomerInfo['email_address'];
+                if (!empty($this->guestCustomerInfo['telephone'])) {
+                    $paypal_temp['PAYMENTREQUEST_0_SHIPTOPHONENUM'] = $this->guestCustomerInfo['telephone'];
+                }
+            }
+            $this->debugMessage("createPayPalTemporaryAddressInfo, returning ($which): " . json_encode($paypal_temp));
+        }
+        
+        return $paypal_temp;
+    }
+    
+    /* -----
+    ** This public function is called by the OPC observer-class upon receipt of the indication that
+    ** PayPal Express Checkout is preparing to check/create the address associated with the PayPal-approved
+    ** payment.  If temporary addresses are currently in use, this processing will return (bool)true to
+    ** indicate to the paypalwpp payment method that it should bypass that processing clause.
+    **
+    */
+    public function setPayPalAddressCreationBypass($paypal_ec_payment_info)
+    {
+        $which = $this->determineTempShippingAddress();
+        
+        // -----
+        // If a temporary address is currently in use as the shipping address, it was sent
+        // to PayPal via the createPayPalTemporaryAddressInfo method.  Check to see that the
+        // shipping address returned by PayPal was unchanged and, if so, indicate that the
+        // address-creation should be bypassed.
+        //
+        // If that address *was* changed, let paypalwpp continue its default processing.
+        //
+        if ($which !== false) {
+            $temp_address = $this->createOrderAddressFromTemporary($which);
+            $temp_address['customer_name'] = $temp_address['firstname'] . ' ' . $temp_address['lastname'];
+            
+            // -----
+            // Loop through some of the more 'static' values in the ship-to address (the country and state
+            // will be checked separately).
+            //
+            $compare_fields = array(
+                'customer_name' => 'ship_name',
+                'street_address' => 'ship_street_1',
+                'suburb' => 'ship_street_2',
+                'city' => 'ship_city',
+                'postcode' => 'ship_postal_code',
+            );
+            foreach ($compare_fields as $t => $pp) {
+                if (strtoupper($temp_address[$t]) != strtoupper($paypal_ec_payment_info[$pp])) {
+                    $which = false;
+                    break;
+                }
+            }
+            
+            // -----
+            // If neither the state "code" (e.g. 'FL') nor the full state name (e.g. 'Florida') of the
+            // temporary address matches the state field returned by PayPal, it's not a match.
+            //
+            $state_code = zen_get_zone_code($temp_address['country']['id'], $temp_address['zone_id'], $temp_address['state']);
+            $paypal_state = strtoupper($paypal_ec_payment_info['ship_state']);
+            if ($paypal_state != $state_code && $paypal_state != strtoupper($temp_address['state'])) {
+                $which = false;
+            }
+            
+            // -----
+            // If neither the country "code" (e.g. 'US') nor the full country name (e.g. 'United States') of
+            // the temporary address matches the country name returned by PayPal, it's not a match.
+            //
+            $country_name = strtoupper($paypal_ec_payment_info['ship_country_name']);
+            if ($country_name != $temp_address['country']['iso_code_2'] && $country_name != strtoupper($temp_address['country']['title'])) {
+                $which = false;
+            }
+            
+            // -----
+            // Leave some 'breadcrumbs' in the OPC log to indicate the results of the processing.
+            //
+            $this->debugMessage("setPayPalAddressCreationBypass, returning ($which) from comparison: " . json_encode($paypal_ec_payment_info) . PHP_EOL . json_encode($temp_address));
+        }
+        
+        return ($which !== false);
+    }
+    
+    // -----
+    // This internal function returns 'which' temporary address is currently being used as
+    // the order's shipping address; the value returned is (bool)false if a permanent address is in use.
+    //
+    protected function determineTempShippingAddress()
+    {
+        $which = false;
+        if (!$this->isVirtualOrder()) {
+            if (isset($_SESSION['sendto'])) {
+                if ($_SESSION['sendto'] == $this->tempSendtoAddressBookId) {
+                    $which = 'ship';
+                } elseif ($_SESSION['sendto'] == $this->tempBilltoAddressBookId) {
+                    $which = 'bill';
+                }
+            }
+        } else {
+            if (isset($_SESSION['billto']) && $_SESSION['billto'] == $this->tempBilltoAddressBookId) {
+                $which = 'bill';
+            }
+        }
+        return $which;
+    }
 
     // -----
     // This internal function issues a debug-message using the OPC's observer-class
