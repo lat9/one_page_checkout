@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2018, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2018-2019, Vinos de Frutas Tropicales.  All rights reserved.
 //
 if ($_SESSION['opc']->isGuestCheckout()) {
     $cancel_title = 'title="' . BUTTON_CANCEL_CHANGES_TITLE . '"';
@@ -17,7 +17,7 @@ if ($_SESSION['opc']->isGuestCheckout()) {
     
     $dob_value = $_SESSION['opc']->getGuestDateOfBirth();
 ?>
-<!--bof billing-address block -->
+<!--bof customer-information block -->
     <div id="checkoutOneGuestInfo">
         <fieldset>
             <legend><?php echo TITLE_CONTACT_INFORMATION; ?></legend>
@@ -55,5 +55,6 @@ if ($_SESSION['opc']->isGuestCheckout()) {
             <div id="messages-guest"></div>
         </fieldset>
     </div>
+<!--eof customer-information block -->
 <?php
 }
