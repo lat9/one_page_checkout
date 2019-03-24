@@ -147,6 +147,55 @@ class OnePageCheckout extends base
     }
     
     /* -----
+    ** This function, present in OPC's observer-class prior to v2.1.0, returns a boolean value
+    ** that indicates whether or not the current order qualities for free shipping, as identified
+    ** within the ot_shipping module's configuration.
+    */
+    public function isOrderFreeShipping($country_override = false)
+    {
+        global $order, $db;
+        
+        $free_shipping = false;
+        $pass = false;
+        if (defined('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING') && MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING == 'true') {
+            if ($country_override === false) {
+                $order_country = $order->delivery['country_id'];
+            } else {
+                $country_check = $db->Execute(
+                    "SELECT entry_country_id 
+                       FROM " . TABLE_ADDRESS_BOOK . " 
+                      WHERE address_book_id = " . (int)$_SESSION['sendto'] . " 
+                      LIMIT 1"
+                );
+                $order_country = ($country_check->EOF) ? 0 : $country_check->fields['entry_country_id'];
+            }
+            switch (MODULE_ORDER_TOTAL_SHIPPING_DESTINATION) {
+                case 'national':
+                    if ($order_country == STORE_COUNTRY) {
+                        $pass = true;
+                    }
+                    break;
+
+                case 'international':
+                    if ($order_country != STORE_COUNTRY) {
+                        $pass = true;
+                    }
+                    break;
+
+                case 'both':
+                    $pass = true;
+                    break;
+
+            }
+
+            if ($pass && $_SESSION['cart']->show_total() >= MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER) {
+                $free_shipping = true;
+            }
+        }
+        return $free_shipping;
+    }
+    
+    /* -----
     ** Issued by the OPC's observer-class to determine whether order-related notifications need
     ** to be monitored.
     **

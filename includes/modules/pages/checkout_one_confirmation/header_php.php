@@ -157,7 +157,7 @@ if ($order->content_type != 'virtual') {
     // -----
     // Determine free shipping conditions.
     //
-    $free_shipping = $checkout_one->isOrderFreeShipping();
+    $free_shipping = $_SESSION['opc']->isOrderFreeShipping();
 
     // -----
     // Handle selected shipping module quote.
