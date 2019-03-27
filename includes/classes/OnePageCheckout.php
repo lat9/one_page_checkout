@@ -150,48 +150,68 @@ class OnePageCheckout extends base
     ** This function, present in OPC's observer-class prior to v2.1.0, returns a boolean value
     ** that indicates whether or not the current order qualities for free shipping, as identified
     ** within the ot_shipping module's configuration.
+    **
+    ** The value supplied ($country_override) is a 'mixed' value:
+    **
+    ** (bool)false ... Free shipping, determined by the country currently recorded in the order's delivery address.
+    ** otherwise ..... Free shipping, determined by the country associated with the specified address-book table id.
     */
     public function isOrderFreeShipping($country_override = false)
     {
         global $order, $db;
         
         $free_shipping = false;
-        $pass = false;
-        if (defined('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING') && MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING == 'true') {
+        $address_book_id = -1;
+        $order_country = -1;
+        $pass = $this->isVirtualOrder();
+        if (!$pass && defined('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING') && MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING == 'true') {
             if ($country_override === false) {
                 $order_country = $order->delivery['country_id'];
             } else {
-                $country_check = $db->Execute(
-                    "SELECT entry_country_id 
-                       FROM " . TABLE_ADDRESS_BOOK . " 
-                      WHERE address_book_id = " . (int)$_SESSION['sendto'] . " 
-                      LIMIT 1"
-                );
-                $order_country = ($country_check->EOF) ? 0 : $country_check->fields['entry_country_id'];
+                $address_book_id = (!empty($_SESSION['sendto'])) ? ((int)$_SESSION['sendto']) : false;
+                if ($address_book_id === false) {
+                    $order_country = false;
+                } else {
+                    if ($address_book_id == $this->tempSendtoAddressBookId) {
+                        $order_country = $this->tempAddressValues['ship']['country'];
+                    } elseif ($address_book_id == $this->tempBilltoAddressBookId) {
+                        $order_country = $this->tempAddressValues['bill']['country'];
+                    } else {
+                        $country_check = $db->Execute(
+                            "SELECT entry_country_id 
+                               FROM " . TABLE_ADDRESS_BOOK . " 
+                              WHERE address_book_id = " . (int)$_SESSION['sendto'] . " 
+                              LIMIT 1"
+                        );
+                        $order_country = ($country_check->EOF) ? false : $country_check->fields['entry_country_id'];
+                    }
+                }
             }
-            switch (MODULE_ORDER_TOTAL_SHIPPING_DESTINATION) {
-                case 'national':
-                    if ($order_country == STORE_COUNTRY) {
+            if ($order_country !== false) {
+                switch (MODULE_ORDER_TOTAL_SHIPPING_DESTINATION) {
+                    case 'national':
+                        if ($order_country === STORE_COUNTRY) {
+                            $pass = true;
+                        }
+                        break;
+
+                    case 'international':
+                        if ($order_country !== STORE_COUNTRY) {
+                            $pass = true;
+                        }
+                        break;
+
+                    case 'both':
                         $pass = true;
-                    }
-                    break;
-
-                case 'international':
-                    if ($order_country != STORE_COUNTRY) {
-                        $pass = true;
-                    }
-                    break;
-
-                case 'both':
-                    $pass = true;
-                    break;
-
+                        break;
+                }
             }
 
             if ($pass && $_SESSION['cart']->show_total() >= MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER) {
                 $free_shipping = true;
             }
         }
+        $this->debugMessage("isOrderFreeShipping($country_override), address_book_id = $address_book_id, order_country = $order_country, returning ($free_shipping).");
         return $free_shipping;
     }
     
@@ -386,8 +406,7 @@ class OnePageCheckout extends base
     {
         unset(
             $_SESSION['shipping_billing'], 
-            $_SESSION['opc_error'],
-            $_SESSION['opc_sendto_saved']
+            $_SESSION['opc_error']
         );        
     }
     
@@ -477,7 +496,6 @@ class OnePageCheckout extends base
             unset(
                 $_SESSION['is_guest_checkout'],
                 $_SESSION['shipping_billing'], 
-                $_SESSION['opc_sendto_saved'],
                 $_SESSION['billto'],
                 $_SESSION['sendto']
             );
@@ -841,6 +859,26 @@ class OnePageCheckout extends base
     }
     
     /* -----
+    ** This function, called from OPC's AJAX handler, requests that any temporary shipping
+    ** address be reset to the currently-selected billing address, as defined in the session.
+    */
+    public function setTempShippingToBilling()
+    {
+        if (empty($_SESSION['billto'])) {
+            trigger_error('Invalid access; $_SESSION[\'billto\'] is not set.', E_USER_ERROR);
+            exit();
+        }
+        
+        $address_book_id = $_SESSION['billto'];
+        if ($address_book_id == $this->tempBilltoAddressBookId) {
+            $address_values = $this->tempAddressValues['bill'];
+        } else {
+            $address_values = $this->getAddressValuesFromDb($address_book_id);
+        }
+        $this->tempAddressValues['ship'] = $address_values;
+    }
+    
+    /* -----
     ** This function resets the current session's address to the specified address-book entry.
     */
     public function setAddressFromSavedSelections($which, $address_book_id)
@@ -1042,7 +1080,7 @@ class OnePageCheckout extends base
     
     protected function updateStateDropdownSettings($address_values)
     {
-        $show_pulldown_states = ACCOUNT_STATE_DRAW_INITIAL_DROPDOWN == 'true' && (($address_values['zone_name'] == '' && $address_values['country_has_zones']) || $address_values['error_state_input']);
+        $show_pulldown_states = ACCOUNT_STATE_DRAW_INITIAL_DROPDOWN == 'true' || (($address_values['zone_name'] == '' && $address_values['country_has_zones']) || $address_values['error_state_input']);
         $address_values['selected_country'] = $address_values['country'];
         $address_values['state'] = ($show_pulldown_states) ? $address_values['state'] : $address_values['zone_name'];
         $address_values['state_field_label'] = ($show_pulldown_states) ? '' : ENTRY_STATE;
@@ -1551,7 +1589,6 @@ class OnePageCheckout extends base
             $_SESSION['billto'],
             $_SESSION['is_guest_checkout'],
             $_SESSION['shipping_billing'], 
-            $_SESSION['opc_sendto_saved'],
             $_SESSION['order_placed_by_guest']
         );
         

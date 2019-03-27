@@ -101,7 +101,7 @@ echo $_SESSION['opc']->formatAddressElement($which, 'postcode', $address['postco
 $field_name = "zone_country_id[$which]";
 $field_id = "country-$which";
 ?>
-      <label class="inputLabel" for="country-bill"><?php echo ENTRY_COUNTRY; ?></label>
+      <label class="inputLabel" for="<?php echo $field_id; ?>"><?php echo ENTRY_COUNTRY; ?></label>
       <?php echo zen_get_country_list($field_name, $address['country'], "id=\"$field_id\"") . 
       (zen_not_null(ENTRY_COUNTRY_TEXT) ? '<span class="alert">' . ENTRY_COUNTRY_TEXT . '</span>' : ''); ?>
       <div class="clearBoth"></div>

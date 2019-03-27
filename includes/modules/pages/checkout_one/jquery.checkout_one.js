@@ -456,6 +456,9 @@ jQuery(document).ready(function(){
                 jQuery('#otshipping, #otshipping+br').show();
                 if (response.status == 'ok') {
                     if (type == 'shipping-billing') {
+                        if (shippingIsBilling) {
+                            window.location.reload(true);
+                        }
                         jQuery( '#checkoutShippingChoices' ).html( response.shippingHtml );
                         jQuery( '#checkoutShippingContentChoose' ).html( response.shippingMessage );
                         jQuery( '#checkoutShippingChoices' ).on('click', 'input[name=shipping]', function( event ) {
@@ -470,16 +473,20 @@ jQuery(document).ready(function(){
                     
                     shippingError = true;
                     if (response.status == 'invalid') {
-                        jQuery( '#checkoutShippingMethod input[name=shipping]' ).prop( 'checked', false );
-                        jQuery( '#checkoutShippingChoices' ).html( response.shippingHtml );
-                        jQuery( '#checkoutShippingChoices' ).on( 'click', 'input[name=shipping]', function( event ) {
-                            changeShippingSubmitForm( 'shipping-only' );
-                        });
-                        jQuery( '#otshipping, #otshipping+br' ).hide();
-                        focusOnShipping();
+                        if (type == 'shipping-billing') {
+                            window.location.reload(true);
+                        } else {
+                            jQuery( '#checkoutShippingMethod input[name=shipping]' ).prop( 'checked', false );
+                            jQuery( '#checkoutShippingChoices' ).html( response.shippingHtml );
+                            jQuery( '#checkoutShippingChoices' ).on( 'click', 'input[name=shipping]', function( event ) {
+                                changeShippingSubmitForm( 'shipping-only' );
+                            });
+                            jQuery( '#otshipping, #otshipping+br' ).hide();
+                            focusOnShipping();
+                        }
                     }
                     if (response.errorMessage != '') {
-                        if (type == 'submit' || type == 'shipping-billing' || type == 'submit-cc') {
+                        if (type == 'submit' || (type == 'shipping-billing' && response.status != 'invalid') || type == 'submit-cc') {
                             alert( response.errorMessage );
                         }
                     }
