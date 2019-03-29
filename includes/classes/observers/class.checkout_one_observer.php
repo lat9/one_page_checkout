@@ -176,6 +176,7 @@ class checkout_one_observer extends base
                     'NOTIFY_OT_COUPON_USES_PER_USER_CHECK',
                     'NOTIFY_PAYMENT_PAYPALEC_BEFORE_SETEC',
                     'NOTIFY_PAYPALEXPRESS_BYPASS_ADDRESS_CREATION',
+                    'NOTIFY_HEADER_START_SHOPPING_CART',
                 )
             );
         }
@@ -214,6 +215,17 @@ class checkout_one_observer extends base
             case 'NOTIFY_HEADER_START_CHECKOUT_CONFIRMATION':
                 $this->debug_message('checkout_one redirect: ', true, 'checkout_one_observer');
                 zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, zen_get_all_get_params(), 'SSL'));
+                break;
+                
+            // -----
+            // If the customer leaves the checkout process to view and/or make changes to their
+            // cart, the shipping-estimator might change the order's ship-to address-book-id, causing
+            // OPC's processing to get out-of-sync.  On entry to the 'shopping_cart' page, record
+            // the order's current ship-to address for restoration when/if the customer re-enters
+            // the checkout processing.
+            //
+            case 'NOTIFY_HEADER_START_SHOPPING_CART':
+                $_SESSION['opc']->saveOrdersSendtoAddress();
                 break;
                 
             // -----

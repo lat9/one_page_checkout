@@ -425,6 +425,18 @@ class OnePageCheckout extends base
     }
     
     /* -----
+    ** Issued by OPC's observer class when entry to the shopping_cart page is detected.  Since the
+    ** shipping-estimator (present on that page) might make modifications to the order's $_SESSION['sendto'],
+    ** we'll record the OPC-set value for use on the next re-entry to the OPC process.
+    */
+    public function saveOrdersSendtoAddress()
+    {
+        if (isset($this->tempAddressValues) && !isset($this->sendtoSaved) && !empty($_SESSION['sendto'])) {
+            $this->sendtoSaved = $_SESSION['sendto'];
+        }
+    }
+    
+    /* -----
     ** Issued (currently) by the checkout_one page's header processing to initialize any guest-checkout
     ** processing.  Since the process starts by the login page's form-submittal with the 'guest_checkout'
     ** input set, we need to recognize that condition and perform a POST-less redirect back to the
@@ -438,6 +450,15 @@ class OnePageCheckout extends base
     {
         $this->guestIsActive = false;
         $redirect_required = false;
+        
+        // -----
+        // If the order's sendto address was previously saved, restore that value and reset its clone.
+        //
+        if (isset($this->sendtoSaved)) {
+            $_SESSION['sendto'] = $this->sendtoSaved;
+            unset($this->sendtoSaved);
+        }
+        
         if ($this->guestCheckoutEnabled()) {
             $redirect_required = ($GLOBALS['current_page_base'] == FILENAME_CHECKOUT_ONE && isset($_POST['guest_checkout']));
             if ($this->isGuestCheckout() || $redirect_required) {
@@ -643,12 +664,13 @@ class OnePageCheckout extends base
     
     /* -----
     ** This function, called from the OPC's observer-class, provides any address/tax-basis
-    ** update when an order includes one or more temporary addresses (a superset of guest
+    ** update when an order includes one or more temporary addresses (a subset of guest
     ** checkout).
     */
     public function updateOrderAddresses($order, &$taxCountryId, &$taxZoneId)
     {
         $this->debugMessage("updateOrderAddresses, on entry:" . var_export($order, true) . var_export($this, true));
+        $this->debugMessage("Current sendto: " . ((isset($_SESSION['sendto'])) ? $_SESSION['sendto'] : 'not set'));
         if (zen_in_guest_checkout()) {
             $address = (array)$order->customer;
             $order->customer = array_merge($address, $this->createOrderAddressFromTemporary('bill'), $this->getGuestCustomerInfo());
@@ -657,8 +679,14 @@ class OnePageCheckout extends base
         $temp_billing_address = $temp_shipping_address = false;
         if (isset($_SESSION['sendto']) && ($_SESSION['sendto'] == $this->tempSendtoAddressBookId || $_SESSION['sendto'] == $this->tempBilltoAddressBookId)) {
             $temp_shipping_address = true;
-            $address = (array)$order->delivery;
-            $order->delivery = array_merge($address, $this->createOrderAddressFromTemporary('ship'));
+            if ($_SESSION['sendto'] == $this->tempSendtoAddressBookId) {
+                $address = (array)$order->delivery;
+                $which = 'ship';
+            } else {
+                $address = (array)$order->billing;
+                $which = 'bill';
+            }
+            $order->delivery = array_merge($address, $this->createOrderAddressFromTemporary($which));
         }
         if (isset($_SESSION['billto']) && $_SESSION['billto'] == $this->tempBilltoAddressBookId) {
             $temp_billing_address = true;
@@ -670,7 +698,7 @@ class OnePageCheckout extends base
             $taxCountryId = $tax_info['tax_country_id'];
             $taxZoneId = $tax_info['tax_zone_id'];
         }
-        $this->debugMessage("updateOrderAddresses, $temp_billing_address, $temp_shipping_address, $taxCountryId, $taxZoneId" . var_export($order->customer, true) . var_export($order->billing, true) . var_export($order->delivery, true));
+        $this->debugMessage("updateOrderAddresses, $temp_billing_address, $temp_shipping_address, $taxCountryId, $taxZoneId" . PHP_EOL . json_encode($order->customer) . PHP_EOL . json_encode($order->billing) . PHP_EOL . json_encode($order->delivery));
     }
     
     // -----
@@ -721,7 +749,7 @@ class OnePageCheckout extends base
             'country_id' => $country_id,
             'format_id' => (int)$country_info->fields['address_format_id']
         );
-        $this->debugMessage("createOrderAddressFromTemporary($which), returning:" . var_export($address, true));
+        $this->debugMessage("createOrderAddressFromTemporary($which), returning: " . json_encode($address));
         return $address;
     }
     
@@ -799,6 +827,9 @@ class OnePageCheckout extends base
     /* -----
     ** This function validates (true) or not (false) the specified order-related
     ** address ('bill' or 'ship').
+    **
+    ** Side-effects: Might affect the current session's sendto/billto address-book-ids if
+    ** temporary addresses are being used.
     */
     public function validateBilltoSendto($which)
     {

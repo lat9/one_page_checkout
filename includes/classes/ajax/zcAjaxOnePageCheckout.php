@@ -105,6 +105,7 @@ class zcAjaxOnePageCheckout extends base
                         'title' => FREE_SHIPPING_TITLE, 
                         'cost' => 0 
                     );
+                    $order->info['shipping_method'] = 'free_free';
                     $_POST['shipping'] = 'free_free';
                     $checkout_one->debug_message('Modifying shipping method, (' . $_POST['shipping'] . ') submitted; free-shipping and virtual orders should be free_free.', false, 'zcAjaxOnePageCheckout');
                     
@@ -130,9 +131,12 @@ class zcAjaxOnePageCheckout extends base
                     unset($_SESSION['shipping']);
                     $method = '';
                     $module = '';
+                    $order->info['shipping_method'] = '';
                 }
                 
-                global ${$module};           
+                if ($module != '') {
+                    global ${$module};
+                }
                 require DIR_WS_CLASSES . 'shipping.php';
                 $shipping_modules = new shipping;
             
