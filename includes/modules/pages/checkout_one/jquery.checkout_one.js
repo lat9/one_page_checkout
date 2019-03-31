@@ -432,6 +432,15 @@ jQuery(document).ready(function(){
                     shippingError = true;
                 },
             }).done(function( response ) {
+                // -----
+                // If a session timeout was detected by the AJAX handler, display a message to the customer
+                // and redirect to the time_out page.
+                //
+                if (response.status == 'timeout') {
+                    alert( sessionTimeoutErrorMessage );
+                    jQuery(location).attr( 'href', timeoutUrl );
+                }
+                
                 jQuery('#orderTotalDivs').html(response.orderTotalHtml);
                 
                 // -----
@@ -466,11 +475,6 @@ jQuery(document).ready(function(){
                         });                        
                     }
                 } else {
-                    if (response.status == 'timeout') {
-                        alert( sessionTimeoutErrorMessage );
-                        jQuery(location).attr( 'href', timeoutUrl );
-                    }
-                    
                     shippingError = true;
                     if (response.status == 'invalid') {
                         if (type == 'shipping-billing') {
@@ -589,6 +593,15 @@ jQuery(document).ready(function(){
                 }
             },
         }).done(function( response ) {
+            // -----
+            // If a session timeout was detected by the AJAX handler, display a message to the customer
+            // and redirect to the time_out page.
+            //
+            if (response.status == 'timeout') {
+                alert( sessionTimeoutErrorMessage );
+                jQuery(location).attr( 'href', timeoutUrl );
+            }
+            
             jQuery('#orderTotalDivs').html(response.orderTotalHtml);
         });
     });
@@ -701,6 +714,15 @@ jQuery(document).ready(function(){
                 }
             },
         }).done(function( response ) {
+            // -----
+            // If a session timeout was detected by the AJAX handler, display a message to the customer
+            // and redirect to the time_out page.
+            //
+            if (response.status == 'timeout') {
+                alert( sessionTimeoutErrorMessage );
+                jQuery(location).attr( 'href', timeoutUrl );
+            }
+            
             jQuery(address_block).replaceWith(response.addressHtml);
             if (typeof initializeStateZones != 'undefined') {
                 initializeStateZones();
@@ -760,12 +782,21 @@ jQuery(document).ready(function(){
                 }
             },
         }).done(function( response ) {
-            var messageBlock = '#messages-'+which;
+            // -----
+            // If a session timeout was detected by the AJAX handler, display a message to the customer
+            // and redirect to the time_out page.
+            //
+            if (response.status == 'timeout') {
+                alert( sessionTimeoutErrorMessage );
+                jQuery(location).attr( 'href', timeoutUrl );
+            }
+            
             // -----
             // If the response returns a non-empty array of messages, there were one or more
             // "issues" with the submitted information.  Highlight the errant fields and display
             // the messages at the bottom of the active address-block.
             //
+            var messageBlock = '#messages-'+which;
             if (response.messages.length != 0) {
                 var focusSet = false;
                 jQuery(messageBlock).html('<ul></ul>').addClass('opc-error');
@@ -870,6 +901,15 @@ jQuery(document).ready(function(){
                 }
             },
         }).done(function( response ) {
+            // -----
+            // If a session timeout was detected by the AJAX handler, display a message to the customer
+            // and redirect to the time_out page.
+            //
+            if (response.status == 'timeout') {
+                alert( sessionTimeoutErrorMessage );
+                jQuery(location).attr( 'href', timeoutUrl );
+            }
+            
             jQuery('#checkoutOneGuestInfo').html(response.infoHtml);
         });
     }
@@ -888,12 +928,21 @@ jQuery(document).ready(function(){
                 }
             },
         }).done(function( response ) {
-            var messageBlock = '#messages-guest';
+            // -----
+            // If a session timeout was detected by the AJAX handler, display a message to the customer
+            // and redirect to the time_out page.
+            //
+            if (response.status == 'timeout') {
+                alert( sessionTimeoutErrorMessage );
+                jQuery(location).attr( 'href', timeoutUrl );
+            }
+            
             // -----
             // If the response returns a non-empty array of messages, there were one or more
             // "issues" with the submitted information.  Highlight the errant fields and display
             // the messages at the bottom of the guest-information block.
             //
+            var messageBlock = '#messages-guest';
             if (response.messages.length != 0) {
                 var focusSet = false;
                 jQuery(messageBlock).html('<ul></ul>').addClass('opc-error');
