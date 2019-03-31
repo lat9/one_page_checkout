@@ -381,6 +381,22 @@ jQuery(document).ready(function(){
     jQuery(document).ajaxStop(function () {
         jQuery('*').css('cursor', '');
     });
+    
+    // -----
+    // A function, called after each AJAX request, to determine if the response indicates
+    // that a redirect is required.
+    //
+    function checkForRedirect(status_code)
+    {
+        // -----
+        // If a session timeout was detected by the AJAX handler, display a message to the customer
+        // and redirect to the time_out page.
+        //
+        if (status_code == 'timeout') {
+            alert( sessionTimeoutErrorMessage );
+            jQuery(location).attr( 'href', timeoutUrl );
+        }
+    }
 
     function changeShippingSubmitForm(type)
     {
@@ -433,13 +449,9 @@ jQuery(document).ready(function(){
                 },
             }).done(function( response ) {
                 // -----
-                // If a session timeout was detected by the AJAX handler, display a message to the customer
-                // and redirect to the time_out page.
+                // Handle any redirects required, based on the AJAX response's status.
                 //
-                if (response.status == 'timeout') {
-                    alert( sessionTimeoutErrorMessage );
-                    jQuery(location).attr( 'href', timeoutUrl );
-                }
+                checkForRedirect(response.status);
                 
                 jQuery('#orderTotalDivs').html(response.orderTotalHtml);
                 
@@ -594,13 +606,9 @@ jQuery(document).ready(function(){
             },
         }).done(function( response ) {
             // -----
-            // If a session timeout was detected by the AJAX handler, display a message to the customer
-            // and redirect to the time_out page.
+            // Handle any redirects required, based on the AJAX response's status.
             //
-            if (response.status == 'timeout') {
-                alert( sessionTimeoutErrorMessage );
-                jQuery(location).attr( 'href', timeoutUrl );
-            }
+            checkForRedirect(response.status);
             
             jQuery('#orderTotalDivs').html(response.orderTotalHtml);
         });
@@ -715,13 +723,9 @@ jQuery(document).ready(function(){
             },
         }).done(function( response ) {
             // -----
-            // If a session timeout was detected by the AJAX handler, display a message to the customer
-            // and redirect to the time_out page.
+            // Handle any redirects required, based on the AJAX response's status.
             //
-            if (response.status == 'timeout') {
-                alert( sessionTimeoutErrorMessage );
-                jQuery(location).attr( 'href', timeoutUrl );
-            }
+            checkForRedirect(response.status);
             
             jQuery(address_block).replaceWith(response.addressHtml);
             if (typeof initializeStateZones != 'undefined') {
@@ -783,13 +787,9 @@ jQuery(document).ready(function(){
             },
         }).done(function( response ) {
             // -----
-            // If a session timeout was detected by the AJAX handler, display a message to the customer
-            // and redirect to the time_out page.
+            // Handle any redirects required, based on the AJAX response's status.
             //
-            if (response.status == 'timeout') {
-                alert( sessionTimeoutErrorMessage );
-                jQuery(location).attr( 'href', timeoutUrl );
-            }
+            checkForRedirect(response.status);
             
             // -----
             // If the response returns a non-empty array of messages, there were one or more
@@ -902,13 +902,9 @@ jQuery(document).ready(function(){
             },
         }).done(function( response ) {
             // -----
-            // If a session timeout was detected by the AJAX handler, display a message to the customer
-            // and redirect to the time_out page.
+            // Handle any redirects required, based on the AJAX response's status.
             //
-            if (response.status == 'timeout') {
-                alert( sessionTimeoutErrorMessage );
-                jQuery(location).attr( 'href', timeoutUrl );
-            }
+            checkForRedirect(response.status);
             
             jQuery('#checkoutOneGuestInfo').html(response.infoHtml);
         });
@@ -929,13 +925,9 @@ jQuery(document).ready(function(){
             },
         }).done(function( response ) {
             // -----
-            // If a session timeout was detected by the AJAX handler, display a message to the customer
-            // and redirect to the time_out page.
+            // Handle any redirects required, based on the AJAX response's status.
             //
-            if (response.status == 'timeout') {
-                alert( sessionTimeoutErrorMessage );
-                jQuery(location).attr( 'href', timeoutUrl );
-            }
+            checkForRedirect(response.status);
             
             // -----
             // If the response returns a non-empty array of messages, there were one or more
