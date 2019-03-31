@@ -50,9 +50,10 @@ define('ERROR_IN_SHIPPING', '[Shipping]: ');
 
 // -----
 // NOTE: The following constants are used in the page's jscript_main.php file as javascript text literals.  If you want to include single-quotes in a value,
-// you'll need to specify them as \\\'; for a new-line, use \n.  Just be sure to keep a constant's string within a set of single-quots and you should be good-to-go!
+// you'll need to specify them as \\\'; for a new-line, use \n.  Just be sure to keep a constant's string within a set of single-quotes and you should be good-to-go!
 //
 define('JS_ERROR_SESSION_TIMED_OUT', 'Sorry, your session has timed out.\n\nThe items in your cart have been saved and will be restored the next time you log in.');
+define('JS_ERROR_OPC_NOT_ENABLED', 'Our expedited checkout process is temporarily unavailable.  You\\\'ll be redirected to our alternate checkout process.');
 define('JS_ERROR_AJAX_TIMEOUT', 'It\\\'s taking a little longer than normal to update your order\\\'s shipping cost.  Please close this message and try again.\n\nIf you continue to receive this message, please contact us.');
 
 // -----

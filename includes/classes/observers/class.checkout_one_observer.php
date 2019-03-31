@@ -39,6 +39,18 @@ class checkout_one_observer extends base
         }
         
         // -----
+        // Initialize the plugin's debug filename and enabled control.
+        //
+        $this->debug = (defined('CHECKOUT_ONE_DEBUG') && (CHECKOUT_ONE_DEBUG == 'true' || CHECKOUT_ONE_DEBUG == 'full'));
+        if ($this->debug && defined('CHECKOUT_ONE_DEBUG_EXTRA') && CHECKOUT_ONE_DEBUG_EXTRA != '' && CHECKOUT_ONE_DEBUG_EXTRA != '*') {
+            $debug_customers = explode(',', str_replace(' ', '', CHECKOUT_ONE_DEBUG_EXTRA));
+            if (!in_array($_SESSION['customer_id'], $debug_customers)) {
+                $this->debug = false;
+            }
+        }
+        $this->debug_logfile = $_SESSION['opc']->getDebugLogFileName();
+        
+        // -----
         // If no previous jQuery error was noted and an account-holder is not logged in,
         // check the shopping-cart's current contents to see if one or more Gift Certificates
         // are present (only account-holders can purchase GC's).
@@ -109,14 +121,6 @@ class checkout_one_observer extends base
         //
         if (!$unsupported_browser && $plugin_enabled) {
             $this->enabled = true;
-            $this->debug = (CHECKOUT_ONE_DEBUG == 'true' || CHECKOUT_ONE_DEBUG == 'full');
-            if ($this->debug && CHECKOUT_ONE_DEBUG_EXTRA != '' && CHECKOUT_ONE_DEBUG_EXTRA != '*') {
-                $debug_customers = explode(',', str_replace(' ', '', CHECKOUT_ONE_DEBUG_EXTRA));
-                if (!in_array($_SESSION['customer_id'], $debug_customers)) {
-                    $this->debug = false;
-                }
-            }
-            $this->debug_logfile = $_SESSION['opc']->getDebugLogFileName();
             $this->current_page_base = $GLOBALS['current_page_base'];
             
             // -----
@@ -179,6 +183,15 @@ class checkout_one_observer extends base
                     'NOTIFY_HEADER_START_SHOPPING_CART',
                 )
             );
+        }
+        
+        // -----
+        // If the One-Page Checkout processing is **not** enabled, make sure that the customer's
+        // session is cleaned of any 'left-over' settings, in case OPC was enabled for some portion
+        // of the customer's checkout process.
+        //
+        if (!$this->enabled) {
+            $_SESSION['opc']->resetGuestSessionValues();
         }
         
         // -----

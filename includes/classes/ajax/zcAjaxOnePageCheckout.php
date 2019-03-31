@@ -1,7 +1,7 @@
 <?php
 // -----
-// Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2018, Vinos de Frutas Tropicales.  All rights reserved.
+// Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
+// Copyright (C) 2013-2019, Vinos de Frutas Tropicales.  All rights reserved.
 //
 class zcAjaxOnePageCheckout extends base
 {
@@ -10,9 +10,6 @@ class zcAjaxOnePageCheckout extends base
     //
     public function updateShipping()
     {
-        if (!(defined('CHECKOUT_ONE_ENABLED') && (CHECKOUT_ONE_ENABLED == 'true' || CHECKOUT_ONE_ENABLED == 'conditional'))) {
-            trigger_error('Invalid request; One-Page Checkout processing is not installed or not enabled.', E_USER_ERROR);
-        }
         // -----
         // Since we're running as a function, need to declare the objects we're instantiating here, for use by the various classes
         // involved in creating the order's total-block.
@@ -27,17 +24,13 @@ class zcAjaxOnePageCheckout extends base
         $this->loadLanguageFiles();       
         
         $error_message = $order_total_html = $shipping_html = $payment_html = '';
-        $status = 'ok';
         $shipping_choose_message = '';
         
         // -----
-        // Check for a session timeout (i.e. no more customer_id in the session), returning a specific
-        // status and message for that case.
+        // Initialize the response's status code, continuing only if all is 'ok'.
         //
-        if (!isset($_SESSION['customer_id'])) {
-            $status = 'timeout';
-            $checkout_one->debug_message("Session time-out detected.", 'zcAjaxOnePageCheckout::updateShipping');
-        } else {
+        $status = $this->initializeResponseStatus('updateShipping');
+        if ($status == 'ok') {
             // -----
             // Include the class required by some of the shipping methods, e.g. USPS.
             //
@@ -301,16 +294,12 @@ class zcAjaxOnePageCheckout extends base
     public function restoreAddressValues()
     {
         $error_message = $address_html = '';
-        $status = 'ok';
         
         // -----
-        // Check for a session timeout (i.e. no more customer_id in the session), returning a specific
-        // status and message for that case.
+        // Initialize the response's status code, continuing only if all is 'ok'.
         //
-        if (!isset($_SESSION['customer_id'])) {
-            $status = 'timeout';
-            $GLOBALS['checkout_one']->debug_message("Session time-out detected.", 'zcAjaxOnePageCheckout::restoreAddressValues');
-        } else {
+        $status = $this->initializeResponseStatus('restoreAddressValues');
+        if ($status == 'ok') {
             $this->loadLanguageFiles();
             if (!isset($_POST['which']) || ($_POST['which'] != 'bill' && $_POST['which'] != 'ship')) {
                 $status = 'error';
@@ -340,16 +329,12 @@ class zcAjaxOnePageCheckout extends base
     {
         $error_message = $address_html = '';
         $messages = array();
-        $status = 'ok';
         
         // -----
-        // Check for a session timeout (i.e. no more customer_id in the session), returning a specific
-        // status and message for that case.
+        // Initialize the response's status code, continuing only if all is 'ok'.
         //
-        if (!isset($_SESSION['customer_id'])) {
-            $status = 'timeout';
-            $GLOBALS['checkout_one']->debug_message("Session time-out detected.", 'zcAjaxOnePageCheckout::restoreAddressValues');
-        } else {
+        $status = $this->initializeResponseStatus('validateAddressValues');
+        if ($status == 'ok') {
             $this->loadLanguageFiles();
             if (!isset($_POST['which']) || ($_POST['which'] != 'bill' && $_POST['which'] != 'ship')) {
                 $status = 'error';
@@ -377,16 +362,12 @@ class zcAjaxOnePageCheckout extends base
     {
         $error_message = $address_html = '';
         $messages = array();
-        $status = 'ok';
         
         // -----
-        // Check for a session timeout (i.e. no more customer_id in the session), returning a specific
-        // status and message for that case.
+        // Initialize the response's status code, continuing only if all is 'ok'.
         //
-        if (!isset($_SESSION['customer_id'])) {
-            $status = 'timeout';
-            $GLOBALS['checkout_one']->debug_message("Session time-out detected.", 'zcAjaxOnePageCheckout::restoreAddressValues');
-        } else {
+        $status = $this->initializeResponseStatus('validateCustomerInfo');
+        if ($status == 'ok') {
             $this->loadLanguageFiles();
             $messages = $_SESSION['opc']->validateAndSaveAjaxCustomerInfo();
         }
@@ -407,16 +388,12 @@ class zcAjaxOnePageCheckout extends base
     public function restoreCustomerInfo()
     {
         $error_message = $info_html = '';
-        $status = 'ok';
         
         // -----
-        // Check for a session timeout (i.e. no more customer_id in the session), returning a specific
-        // status and message for that case.
+        // Initialize the response's status code, continuing only if all is 'ok'.
         //
-        if (!isset($_SESSION['customer_id'])) {
-            $status = 'timeout';
-            $GLOBALS['checkout_one']->debug_message("Session time-out detected.", 'zcAjaxOnePageCheckout::restoreAddressValues');
-        } else {
+        $status = $this->initializeResponseStatus('restoreCustomerInfo');
+        if ($status == 'ok') {
             $this->loadLanguageFiles();
             global $current_page_base, $template;
             $template_file = 'tpl_modules_opc_customer_info.php';
@@ -446,16 +423,12 @@ class zcAjaxOnePageCheckout extends base
     {
         $error_message = $address_html = '';
         $messages = array();
-        $status = 'ok';
         
         // -----
-        // Check for a session timeout (i.e. no more customer_id in the session), returning a specific
-        // status and message for that case.
+        // Initialize the response's status code, continuing only if all is 'ok'.
         //
-        if (!isset($_SESSION['customer_id'])) {
-            $status = 'timeout';
-            $GLOBALS['checkout_one']->debug_message("Session time-out detected.", 'zcAjaxOnePageCheckout::restoreAddressValues');
-        } else {
+        $status = $this->initializeResponseStatus('setAddressFromSavedSelections');
+        if ($status == 'ok') {
             $this->loadLanguageFiles();
             if (!isset($_POST['which']) || ($_POST['which'] != 'bill' && $_POST['which'] != 'ship')) {
                 $status = 'error';
@@ -495,16 +468,12 @@ class zcAjaxOnePageCheckout extends base
         $this->loadLanguageFiles();       
         
         $error_message = $order_total_html = '';
-        $status = 'ok';
         
         // -----
-        // Check for a session timeout (i.e. no more customer_id in the session), returning a specific
-        // status and message for that case.
+        // Initialize the response's status code, continuing only if all is 'ok'.
         //
-        if (!isset($_SESSION['customer_id'])) {
-            $status = 'timeout';
-            $checkout_one->debug_message("Session time-out detected.", 'zcAjaxOnePageCheckout::updateOrderTotals');
-        } else {
+        $status = $this->initializeResponseStatus('updatePaymentMethod');
+        if ($status == 'ok') {
             $this->disableGzip();
             
             if (empty($_POST['payment'])) {
@@ -585,5 +554,31 @@ class zcAjaxOnePageCheckout extends base
         $_GET['main_page'] = $current_page_base = $current_page = FILENAME_CHECKOUT_ONE;
         
         require DIR_WS_MODULES . zen_get_module_directory('require_languages.php');      
+    }
+    
+    // -----
+    // Common, for each AJAX request, checking for timeout and OPC-unavailable conditions.
+    //
+    protected function initializeResponseStatus($method_name)
+    {
+        $status = 'ok';
+        
+        // -----
+        // If One-Page Checkout is no longer available, return a status code to the jQuery handler which, in turn,
+        // will result in the customer being redirected to the checkout_shipping page.
+        //
+        if (!$_SESSION['opc']->checkEnabled()) {
+            $status = 'unavailable';
+            $GLOBALS['checkout_one']->debug_message('OPC is no longer available.', "zcAjaxOnePageCheckout::$method_name");            
+        // -----
+        // Check for a session timeout (i.e. no more customer_id in the session), returning a specific
+        // status and message for that case.
+        //
+        } elseif (!isset($_SESSION['customer_id'])) {
+            $status = 'timeout';
+            $GLOBALS['checkout_one']->debug_message("Session time-out detected.", "zcAjaxOnePageCheckout::$method_name");
+        }
+        
+        return $status;
     }
 }

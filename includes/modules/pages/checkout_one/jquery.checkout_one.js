@@ -390,11 +390,19 @@ jQuery(document).ready(function(){
     {
         // -----
         // If a session timeout was detected by the AJAX handler, display a message to the customer
-        // and redirect to the time_out page.
+        // and redirect to the login page.
         //
         if (status_code == 'timeout') {
             alert( sessionTimeoutErrorMessage );
             jQuery(location).attr( 'href', timeoutUrl );
+        }
+        // -----
+        // If the AJAX handler has detected that OPC is no longer enabled, display a message to the customer
+        // and redirect to the checkout_shipping page.
+        //
+        if (status_code == 'unavailable') {
+            alert( ajaxNotAvailableMessage );
+            jQuery(location).attr( 'href', checkoutShippingUrl );
         }
     }
 

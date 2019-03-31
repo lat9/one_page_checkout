@@ -16,12 +16,14 @@ $show_state_dropdowns = (ACCOUNT_STATE_DRAW_INITIAL_DROPDOWN == 'true');
 var confirmation_required = [<?php echo $required_list; ?>];
 
 var virtual_order = <?php echo ($is_virtual_order) ? 'true' : 'false'; ?>;
-var timeoutUrl = '<?php echo zen_href_link (FILENAME_LOGIN, '', 'SSL'); ?>';
+var timeoutUrl = '<?php echo zen_href_link(FILENAME_LOGIN, '', 'SSL'); ?>';
 var sessionTimeoutErrorMessage = '<?php echo JS_ERROR_SESSION_TIMED_OUT; ?>';
 var ajaxTimeoutErrorMessage = '<?php echo JS_ERROR_AJAX_TIMEOUT; ?>';
+var ajaxNotAvailableMessage = '<?php echo JS_ERROR_OPC_NOT_ENABLED; ?>';
+var checkoutShippingUrl = '<?php echo zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'); ?>';
 var noShippingSelectedError = '<?php echo ERROR_NO_SHIPPING_SELECTED; ?>';
 var flagOnSubmit = <?php echo ($flagOnSubmit) ? 'true' : 'false'; ?>;
-var shippingTimeout = <?php echo (int)((defined ('CHECKOUT_ONE_SHIPPING_TIMEOUT')) ? CHECKOUT_ONE_SHIPPING_TIMEOUT : 5000); ?>;
+var shippingTimeout = <?php echo (int)((defined('CHECKOUT_ONE_SHIPPING_TIMEOUT')) ? CHECKOUT_ONE_SHIPPING_TIMEOUT : 5000); ?>;
 var textPleaseSelect = '<?php echo PLEASE_SELECT; ?>';
 var displayShippingBlock = <?php echo ($display_shipping_block) ? 'true' : 'false'; ?>;
 var displayPaymentBlock = <?php echo ($display_payment_block) ? 'true' : 'false'; ?>;

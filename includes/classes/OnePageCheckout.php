@@ -380,6 +380,8 @@ class OnePageCheckout extends base
                 $_SESSION['customer_id'], 
                 $_SESSION['customers_email_address'],
                 $_SESSION['customers_authorization'],
+                $_SESSION['customer_first_name'],
+                $_SESSION['customer_last_name'],
                 $_SESSION['sendto'], 
                 $_SESSION['billto'],
                 $_SESSION['customer_default_address_id'],
@@ -419,7 +421,7 @@ class OnePageCheckout extends base
         $this->guestIsActive = false;
         $this->isGuestCheckoutEnabled = false;
         $this->registeredAccounts = false;
-        unset($this->tempAddressValues, $this->guestCustomerInfo); 
+        unset($this->tempAddressValues, $this->guestCustomerInfo, $this->sendtoSaved); 
         
         $this->initializeGuestCheckout();
     }
