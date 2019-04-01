@@ -534,6 +534,7 @@ class OnePageCheckout extends base
     {
         if (!isset($this->guestCustomerInfo)) {
             trigger_error("Guest customer-info not set during guest checkout.", E_USER_ERROR);
+            exit();
         }
         return $this->guestCustomerInfo['email_address'];
     }
@@ -546,6 +547,7 @@ class OnePageCheckout extends base
     {
         if (!isset($this->guestCustomerInfo)) {
             trigger_error("Guest customer-info not set during guest checkout.", E_USER_ERROR);
+            exit();
         }
         return $this->guestCustomerInfo['telephone'];
     }
@@ -558,6 +560,7 @@ class OnePageCheckout extends base
     {
         if (!isset($this->guestCustomerInfo)) {
             trigger_error("Guest customer-info not set during guest checkout.", E_USER_ERROR);
+            exit();
         }
         return (isset($this->guestCustomerInfo['dob'])) ? $this->guestCustomerInfo['dob'] : '';
     }
@@ -710,6 +713,7 @@ class OnePageCheckout extends base
     {
         if (!isset($this->guestCustomerInfo)) {
             trigger_error("Guest customer-info not set during guest checkout.", E_USER_ERROR);
+            exit();
         }
         return $this->guestCustomerInfo;
     }
@@ -730,6 +734,7 @@ class OnePageCheckout extends base
         );
         if ($country_info->EOF) {
             trigger_error("Unknown or disabled country present for '$which' address ($country_id).", E_USER_ERROR);
+            exit();
         }
         
         $address = array(
@@ -963,6 +968,7 @@ class OnePageCheckout extends base
         $address_info = $GLOBALS['db']->Execute($address_info_query);
         if ($address_info->EOF) {
             trigger_error("unknown $which/$session_var_name address_book_id (" . $address_book_id . ') for customer_id (' . $_SESSION['customer_id'] . ')', E_USER_ERROR);
+            exit();
         }
 
         $address_info->fields['error_state_input'] = $address_info->fields['error'] = false;
@@ -1174,6 +1180,7 @@ class OnePageCheckout extends base
     {
         if (!isset($_POST['email_address'])) {
             trigger_error('validateAndSaveAjaxCustomerInfo, invalid POST: ' . var_export($_POST, true), E_USER_ERROR);
+            exit();
         }
         
         $messages = array();
@@ -1267,9 +1274,11 @@ class OnePageCheckout extends base
     {
         if ($which != 'bill' && $which != 'ship') {
             trigger_error("Unknown address selection ($which) received.", E_USER_ERROR);
+            exit();
         }
         if (!isset($this->tempAddressValues)) {
             trigger_error("Invalid request, tempAddressValues not set.", E_USER_ERROR);
+            exit();
         }
     }
     
@@ -1592,6 +1601,7 @@ class OnePageCheckout extends base
         $password_error = (strlen((string)$password) < ENTRY_PASSWORD_MIN_LENGTH);
         if (!$this->guestIsActive || !isset($this->guestCustomerInfo) || !isset($this->tempAddressValues) || $password_error) {
             trigger_error("Invalid access ($password_error):" . var_export($this, true), E_USER_ERROR);
+            exit();
         }
         
         $customer_id = $this->createCustomerRecordFromGuestInfo($password, $newsletter);
