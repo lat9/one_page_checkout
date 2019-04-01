@@ -83,10 +83,12 @@ class zcAjaxOnePageCheckout extends base
             
             $free_shipping = $_SESSION['opc']->isOrderFreeShipping($_SESSION['sendto']);
             $is_virtual_order = $_SESSION['opc']->isVirtualOrder();
+            $current_shipping = (isset($_SESSION['shipping'])) ? json_encode($_SESSION['shipping']) : 'shipping not set';
             
             $checkout_one->debug_message(
                 "Shipping method change to $module ($method), sendto ($ship_to), free_shipping ($free_shipping), virtual order ($is_virtual_order). Current values: " .
-                json_encode($_SESSION['shipping']) . PHP_EOL . 
+                $current_shipping . PHP_EOL . 
+                json_encode($order->info) . PHP_EOL .
                 json_encode($_POST), true, 'zcAjaxOnePageCheckout'
             );
 
@@ -120,7 +122,7 @@ class zcAjaxOnePageCheckout extends base
                 // a change has now invalidated that shipping method.  Perform some 'clean-up' so that a non-free
                 // shipping method will be used.
                 //
-                if ($_SESSION['shipping'] == 'free_free') {
+                if (isset($_SESSION['shipping']) && $_SESSION['shipping'] == 'free_free') {
                     unset($_SESSION['shipping']);
                     $method = '';
                     $module = '';
@@ -157,17 +159,30 @@ class zcAjaxOnePageCheckout extends base
 //-eof-product_delivery_by_postcode (PDP) integration
     
                 $quote = $shipping_modules->quote($method, $module);
-                $checkout_one->debug_message("Current quote for " . $_POST['shipping'] . ": " . var_export($quote, true) . PHP_EOL);
-                if (isset($quote[0]['methods'][0]['title']) && isset($quote[0]['methods'][0]['cost'])) {
-                    $_SESSION['shipping'] = array(
-                        'id' => $_POST['shipping'],
-                        'title' => $quote[0]['module'] . ' (' . $quote[0]['methods'][0]['title'] . ')',
-                        'cost' => $quote[0]['methods'][0]['cost']
-                    );
-                    if (isset($quote[0]['extras'])) {
-                        $_SESSION['shipping']['extras'] = $quote[0]['extras'];
-                    }
+                $session_shipping = (isset($_SESSION['shipping'])) ? json_encode($_SESSION['shipping']) : 'Shipping not set';
+                $checkout_one->debug_message("Current quote for " . $_POST['shipping'] . ": " . PHP_EOL . json_encode($quote) . PHP_EOL . $session_shipping);
+
+                if (!isset($quote[0]['methods'][0]['title']) || !isset($quote[0]['methods'][0]['cost'])) {
+                    $shipping_invalid = true;
                 } else {
+                    $shipping_cost = $quote[0]['methods'][0]['cost'];
+                    $shipping_title = $quote[0]['module'] . ' (' . $quote[0]['methods'][0]['title'] . ')';
+                    if (isset($_SESSION['shipping']) && $_SESSION['shipping']['id'] == $_POST['shipping'] && ($_SESSION['shipping']['title'] != $shipping_title || $_SESSION['shipping']['cost'] != $shipping_cost)) {
+                        $shipping_invalid = true;
+                    } else {
+                        $shipping_invalid = false;
+                        $_SESSION['shipping'] = array(
+                            'id' => $_POST['shipping'],
+                            'title' => $shipping_title,
+                            'cost' => $shipping_cost
+                        );
+                        if (isset($quote[0]['extras'])) {
+                            $_SESSION['shipping']['extras'] = $quote[0]['extras'];
+                        }
+                    }
+                }
+                
+                if ($shipping_invalid) {
                     $checkout_one->debug_message('Shipping method returned empty result; no longer valid.');
                     $error_message = ERROR_PLEASE_RESELECT_SHIPPING_METHOD;
                     $status = 'invalid';
@@ -199,7 +214,8 @@ class zcAjaxOnePageCheckout extends base
                 $this->disableGzip();
               
                 $shipping_html = '';
-                if ($status == 'invalid' || $_POST['shipping_request'] == 'shipping-billing') {
+
+                if ($_POST['shipping_request'] == 'shipping-billing') {
                     $quotes = $shipping_modules->quote();
                     if (count($quotes) > 1 && count($quotes[0]) > 1) {
                         $shipping_choose_message = TEXT_CHOOSE_SHIPPING_METHOD;
@@ -207,6 +223,10 @@ class zcAjaxOnePageCheckout extends base
                         $shipping_choose_message = TEXT_ENTER_SHIPPING_INFORMATION;
                     }
                     $checkout_one->debug_message("Updating shipping section, message ($shipping_choose_message), quotes:" . var_export($quotes, true), false, 'zcAjaxOnePageCheckout');
+                    
+                    if ((!isset($_SESSION['shipping']) || (!isset($_SESSION['shipping']['id']) || $_SESSION['shipping']['id'] == '') && zen_count_shipping_modules() >= 1)) {
+                        $_SESSION['shipping'] = $shipping_modules->cheapest();
+                    }
                     
                     ob_start ();
                     require $template->get_template_dir('tpl_modules_checkout_one_shipping.php', DIR_WS_TEMPLATE, $GLOBALS['current_page_base'], 'templates'). '/tpl_modules_checkout_one_shipping.php';
@@ -231,8 +251,8 @@ class zcAjaxOnePageCheckout extends base
                 // Pull in, also, any changes to the shipping-methods available, given the change to shipping.
                 //
                 $shipping_module_available = ($free_shipping || $is_virtual_order || zen_count_shipping_modules() > 0);
-
-                $checkout_one->debug_message("Shipping method changed: " . json_encode($quote) . json_encode($_SESSION['shipping']), false, 'zcAjaxOnePageCheckout');
+                $session_shipping = (isset($_SESSION['shipping'])) ? json_encode($_SESSION['shipping']) : 'Shipping not set';
+                $checkout_one->debug_message("Shipping method changed: " . json_encode($quote) . PHP_EOL . $session_shipping, false, 'zcAjaxOnePageCheckout');
             }
             
             $checkout_one->debug_message("Billing/shipping, exit (" . json_encode($_POST['shipping_is_billing']) . "), " . $_SESSION['sendto'] . ", " . $_SESSION['billto']  . ", (" . $_SESSION['shipping_billing'] . ")", 'zcAjaxOnePageCheckout::updateShipping');
@@ -282,7 +302,8 @@ class zcAjaxOnePageCheckout extends base
             'paymentHtml' => $payment_html,
             'paymentHtmlAction' => CHECKOUT_ONE_PAYMENT_BLOCK_ACTION,
         );
-        $checkout_one->debug_message('updateShipping, returning:' . var_export($return_array, true) . var_export($_SESSION['shipping'], true));
+        $session_shipping = (isset($_SESSION['shipping'])) ? json_encode($_SESSION['shipping']) : 'Shipping not set';
+        $checkout_one->debug_message('updateShipping, returning:' . json_encode($return_array) . PHP_EOL . $session_shipping);
 
         return $return_array;
     }
@@ -460,7 +481,7 @@ class zcAjaxOnePageCheckout extends base
         //
         global $db, $order, $currencies, $checkout_one, $total_weight, $total_count, $discount_coupon, $messageStack;
         global $shipping_weight, $uninsurable_value, $shipping_quoted, $shipping_num_boxes, $template, $template_dir;
-        global $language_page_directory, $shipping_modules, $payment_modules;
+        global $language_page_directory, $shipping_modules, $payment_modules, $current_page_base;
 
         // -----
         // Load the One-Page Checkout page's language files.

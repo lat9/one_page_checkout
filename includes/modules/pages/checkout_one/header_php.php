@@ -225,9 +225,12 @@ if (!$is_virtual_order && $customer_info_ok && $temp_shipto_addr_ok) {
         foreach ($quotes as $key => $val) {
             if ($val['methods'] != '') {
                 foreach ($val['methods'] as $key2 => $method) {
-                    $checklist[] = $val['id'] . '_' . $method['id'];
                     if ($val['id'] == $selected_shipping_elements[0] && $method['id'] == $selected_shipping_elements[1]) {
-                        $_SESSION['shipping']['cost'] = $method['cost'];
+                        if ($_SESSION['shipping']['cost'] == $method['cost'] && $_SESSION['shipping']['title'] == ($val['module'] . ' (' . $method['title'] . ')')) {
+                            $checklist[] = $val['id'] . '_' . $method['id'];
+                        }
+                    } else {
+                        $checklist[] = $val['id'] . '_' . $method['id'];
                     }
                 }
             }
