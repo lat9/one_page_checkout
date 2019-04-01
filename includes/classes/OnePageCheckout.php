@@ -1024,7 +1024,7 @@ class OnePageCheckout extends base
                 "SELECT address_book_id 
                    FROM " . TABLE_ADDRESS_BOOK . " 
                   WHERE customers_id = " . (int)$_SESSION['customer_id'] . "
-               ORDER BY address_book_id"
+               ORDER BY entry_company ASC, entry_firstname ASC, entry_lastname ASC, address_book_id ASC"
             );
             if (!$addresses->EOF) {
                 $select_array[] = array(

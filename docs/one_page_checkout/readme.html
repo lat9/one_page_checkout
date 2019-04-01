@@ -699,7 +699,7 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a> <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color.</p>
               <ul>
-                <li>v2.1.0, 2019-03-xx:<ul>
+                <li>v2.1.0, 2019-04-xx:<ul>
                     <li>BUGFIX: Return the expected value from <code class="no-pad">OnePageCheckout::startGuestOnePageCheckout</code>.</li>
                     <li>BUGFIX: Correct conditional in the <code class="no-pad">checkout_one</code> page's header processing, causing PHP warnings.</li>
                     <li>CHANGE: zc156 interoperability, empty array from <code class="no-pad">ot_gv</code> causes PHP warning to be logged.</li>
@@ -724,6 +724,7 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                     <li>BUGFIX: Check for session time-out when handling <em>each</em> AJAX response.</li>
                     <li>BUGFIX: Detect the condition where <em>OPC</em> is disabled in the middle of a customer's checkout.</li>
                     <li>BUGFIX: Include PHP <b>exit()</b> after triggering user errors.</li>
+                    <li>CHANGE: Order the drop-down addresses' list to be less haphazard.</li>
                     <li>The following files were affected:<ol>
                         <li>/includes/auto_loaders/paypal_ipn.checkout_one.php <span class="smaller">(Added)</span></li>
                         <li>/includes/classes/OnePageCheckout.php</li>
