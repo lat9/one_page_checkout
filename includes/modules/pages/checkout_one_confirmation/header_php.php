@@ -62,12 +62,6 @@ if (!empty($_SESSION['cart']->cartID)) {
     }
 }
 
-// if no shipping method has been selected, redirect the customer to the shipping method selection page
-if (!isset($_SESSION['shipping'])) {
-    $checkout_one->debug_message('NOTIFY_CHECKOUT_ONE_CONFIRMATION_NO_SHIPPING');
-    zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));
-}
-
 $checkout_one->debug_message ('Starting confirmation, shipping and request data follows:' . print_r ($_SESSION['shipping'], true), true);
 
 $free_shipping_enabled = (defined('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING') && MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING == 'true');
@@ -136,6 +130,12 @@ $total_count = $_SESSION['cart']->count_contents();
 
 require DIR_WS_CLASSES . 'order.php';
 $order = new order;
+
+// if no shipping method has been selected (and the order is not virtual), redirect the customer to the shipping method selection page
+if (!isset($_SESSION['shipping']) && $order->content_type != 'virtual') {
+    $checkout_one->debug_message('NOTIFY_CHECKOUT_ONE_CONFIRMATION_NO_SHIPPING');
+    zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));
+}
 
 // -----
 // Generate a starting hash of the session information, so that we can check to see if anything has changed
