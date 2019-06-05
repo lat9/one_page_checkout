@@ -1596,7 +1596,7 @@ class OnePageCheckout extends base
     ** This function, called from the 'checkout_success' OPC header processing, creates a
     ** customer-account from the information associated with the just-placed order.
     */
-    public function createAccountFromGuestInfo($order_id, $password, $newsletter)
+    public function createAccountFromGuestInfo($order_id, $password, $newsletter, $email_format)
     {
         $password_error = (strlen((string)$password) < ENTRY_PASSWORD_MIN_LENGTH);
         if (!$this->guestIsActive || !isset($this->guestCustomerInfo) || !isset($this->tempAddressValues) || $password_error) {
@@ -1604,7 +1604,7 @@ class OnePageCheckout extends base
             exit();
         }
         
-        $customer_id = $this->createCustomerRecordFromGuestInfo($password, $newsletter);
+        $customer_id = $this->createCustomerRecordFromGuestInfo($password, $newsletter, $email_format);
         $_SESSION['customer_id'] = $customer_id;
         $GLOBALS['db']->Execute(
             "UPDATE " . TABLE_ORDERS . "
@@ -1649,15 +1649,18 @@ class OnePageCheckout extends base
     // This internal function creates a customer record in the database for the
     // current guest.
     //
-    protected function createCustomerRecordFromGuestInfo($password, $newsletter)
+    protected function createCustomerRecordFromGuestInfo($password, $newsletter, $email_format)
     {
+        if ($email_format != 'HTML' && $email_format != 'TEXT') {
+            $email_format = (ACCOUNT_EMAIL_PREFERENCE == '1' ? 'HTML' : 'TEXT');
+        }
         $sql_data_array = array(
             array('fieldName' => 'customers_firstname', 'value' => $this->guestCustomerInfo['firstname'], 'type' => $this->dbStringType),
             array('fieldName' => 'customers_lastname', 'value' => $this->guestCustomerInfo['lastname'], 'type' => $this->dbStringType),
             array('fieldName' => 'customers_email_address', 'value' => $this->guestCustomerInfo['email_address'], 'type' => $this->dbStringType),
             array('fieldName' => 'customers_telephone', 'value' => $this->guestCustomerInfo['telephone'], 'type' => $this->dbStringType),
             array('fieldName' => 'customers_newsletter', 'value' => $newsletter, 'type' => 'integer'),
-            array('fieldName' => 'customers_email_format', 'value' => 'TEXT', 'type' => $this->dbStringType),
+            array('fieldName' => 'customers_email_format', 'value' => $email_format, 'type' => $this->dbStringType),
             array('fieldName' => 'customers_default_address_id', 'value' => 0, 'type' => 'integer'),
             array('fieldName' => 'customers_password', 'value' => zen_encrypt_password($password), 'type' => $this->dbStringType),
             array('fieldName' => 'customers_authorization', 'value' => 0, 'type' => 'integer'),

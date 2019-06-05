@@ -37,6 +37,8 @@ if ($offer_account_creation) {
 
             <label class="inputLabel" for="password-confirm"><?php echo ENTRY_PASSWORD_CONFIRMATION; ?></label>
             <?php echo zen_draw_password_field('confirmation', '', 'id="password-confirm" autocomplete="off" placeholder="' . ENTRY_PASSWORD_CONFIRMATION_TEXT . '"'); ?>
+            
+            <h3><?php echo ENTRY_EMAIL_PREFERENCE; ?></h3>
 <?php
     if (ACCOUNT_NEWSLETTER_STATUS != 0) {
 ?>
@@ -47,7 +49,14 @@ if ($offer_account_creation) {
             <?php echo(zen_not_null(ENTRY_NEWSLETTER_TEXT) ? '<span class="alert">' . ENTRY_NEWSLETTER_TEXT . '</span>': ''); ?>
 <?php 
     } 
-?>       
+?>
+            <span class="custom-control custom-radio custom-control-inline">
+            <?php echo zen_draw_radio_field('email_format', 'HTML', ($email_format == 'HTML' ? true : false),'id="email-format-html"') . '<label class="custom-control-label" for="email-format-html">' . ENTRY_EMAIL_HTML_DISPLAY . '</label>'; ?> 
+            </span>&nbsp;&nbsp;
+            <span class="custom-control custom-radio custom-control-inline">
+            <?php echo zen_draw_radio_field('email_format', 'TEXT', ($email_format == 'TEXT' ? true : false), 'id="email-format-text"') . '<label class="custom-control-label" for="email-format-text">' . ENTRY_EMAIL_TEXT_DISPLAY . '</label>'; ?>
+            </span>
+            
             <div class="buttonRow"><?php echo zen_image_submit(BUTTON_IMAGE_CREATE_ACCOUNT, BUTTON_CREATE_ACCOUNT_ALT); ?></div>
         <?php echo '</form>'; ?>
         

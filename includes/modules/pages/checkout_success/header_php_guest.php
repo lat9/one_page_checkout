@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2018, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2018-2019, Vinos de Frutas Tropicales.  All rights reserved.
 //
 // If the previous order was placed via the One-Page Checkout's "Guest Checkout", set a flag for the
 // template processing (to load the alternate template) and reset the session-related information
@@ -22,12 +22,13 @@ if (isset($_SESSION['order_placed_by_guest'])) {
         $password = zen_db_prepare_input($_POST['password']);
         $confirmation = zen_db_prepare_input($_POST['confirmation']);
         $newsletter = (isset($_POST['newsletter']));
+        $email_format = $_POST['email_format'];
         if (strlen($password) < ENTRY_PASSWORD_MIN_LENGTH) {
             $messageStack->add('checkout_success', ENTRY_PASSWORD_ERROR);
         } elseif ($password != $confirmation) {
             $messageStack->add('checkout_success', ENTRY_PASSWORD_ERROR_NOT_MATCHING);
         } else {
-            $_SESSION['opc']->createAccountFromGuestInfo($_SESSION['order_placed_by_guest'], $password, $newsletter);
+            $_SESSION['opc']->createAccountFromGuestInfo($_SESSION['order_placed_by_guest'], $password, $newsletter, $email_format);
             if (SESSION_RECREATE == 'True') {
                 zen_session_recreate();
             }
