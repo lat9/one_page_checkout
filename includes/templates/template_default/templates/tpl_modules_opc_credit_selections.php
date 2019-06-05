@@ -35,6 +35,7 @@ if ($shipping_module_available) {
         // a jQuery event handler binds.  When CSS buttons are used, the "secondary class" input must be used; otherwise,
         // the class is submitted to the function as part of the to-be-created parameter list.
         //
+        $ot_class = str_replace('ot_', '', $current_selection['id']);
         if (strtolower(IMAGE_USE_CSS_BUTTONS) == 'yes') {
             $secondary_class = 'opc-cc-submit';
             $additional_parms = '';
@@ -43,7 +44,6 @@ if ($shipping_module_available) {
             $additional_parms = 'name="apply_' . $ot_class . '"' . ' class="opc-cc-submit"';
         }
         
-        $ot_class = str_replace('ot_', '', $current_selection['id']);
         foreach ($current_selection['fields'] as $current_field) {
 ?>
     <div class="checkoutOne<?php echo ucfirst($ot_class); ?>">

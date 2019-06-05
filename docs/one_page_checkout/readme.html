@@ -86,7 +86,7 @@ a[target=_blank] { text-decoration: underline; }
 
 <body>
   <h1>One-Page Checkout &hellip; with Guest &hellip; <span class="smaller">for Zen Cart v1.5.5b (and later)</span></h1>
-  <h3>Version 2.1.0 by lat9</h3>
+  <h3>Version 2.1.1 by lat9</h3>
   <h3>Copyright &copy; 2013-2019 <a href="https://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
   <p>Released under the General Public License (see the file named <code class="no-pad">license.txt</code> in the plugin's distribution for full details). This script is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</p>
   <hr />
@@ -699,6 +699,13 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a> <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color.</p>
               <ul>
+                <li>v2.1.1, 2019-06-xx:<ul>
+                    <li>BUGFIX: PHP Notice &quot;thrown&quot; when the site <b><i>doesn't use</i></b> CSS buttons.</li>
+                    <li>The following files were affected:<ol>
+                        <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_credit_selections.php</span></li>
+                        <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
+                    </ol></li>
+                </ul></li>
                 <li>v2.1.0, 2019-04-07:<ul>
                     <li>BUGFIX: Return the expected value from <code class="no-pad">OnePageCheckout::startGuestOnePageCheckout</code>.</li>
                     <li>BUGFIX: Correct conditional in the <code class="no-pad">checkout_one</code> page's header processing, causing PHP warnings.</li>
