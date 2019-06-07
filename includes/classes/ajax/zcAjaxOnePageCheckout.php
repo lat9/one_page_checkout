@@ -94,13 +94,15 @@ class zcAjaxOnePageCheckout extends base
 
             if ($free_shipping || $is_virtual_order) {
                 $shipping_module_available = true;
-                if ($_POST['shipping'] != 'free_free') {
-                    $_SESSION['shipping'] = array(
-                        'id' => 'free_free', 
-                        'title' => FREE_SHIPPING_TITLE, 
-                        'cost' => 0 
-                    );
-                    $order->info['shipping_method'] = 'free_free';
+                $_SESSION['shipping'] = array(
+                    'id' => 'free_free', 
+                    'title' => FREE_SHIPPING_TITLE, 
+                    'cost' => 0 
+                );
+                $order->info['shipping_method'] = 'free_free';
+                if ($is_virtual_order) {
+                    $_SESSION['sendto'] = false;
+                } elseif ($_POST['shipping'] != 'free_free') {
                     $_POST['shipping'] = 'free_free';
                     $checkout_one->debug_message('Modifying shipping method, (' . $_POST['shipping'] . ') submitted; free-shipping and virtual orders should be free_free.', false, 'zcAjaxOnePageCheckout');
                     
