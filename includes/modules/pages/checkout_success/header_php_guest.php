@@ -5,11 +5,12 @@
 //
 // If the previous order was placed via the One-Page Checkout's "Guest Checkout", set a flag for the
 // template processing (to load the alternate template) and reset the session-related information
-// associated with that guest-checkout.
+// associated with that guest-checkout (handled by OPC's session-based class).
 //
 $order_placed_by_guest = false;
 if (isset($_SESSION['order_placed_by_guest'])) {
     $order_placed_by_guest = true;
+    $email_format = (ACCOUNT_EMAIL_PREFERENCE == '1') ? 'HTML' : 'TEXT';
     $check = $db->Execute(
         "SELECT customers_id
            FROM " . TABLE_CUSTOMERS . "
