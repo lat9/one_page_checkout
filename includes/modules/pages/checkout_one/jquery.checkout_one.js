@@ -353,16 +353,29 @@ jQuery(document).ready(function(){
             url: "ajax.php?act=ajaxPayment&method=prepareConfirmation",
             data: str
         }).done(function( response ) {
+            // -----
+            // On return from a successful AJAX request, the updated HTML includes some
+            // 'jQuery(document).ready(function()' processing to be performed, but the document's
+            // already 'ready'.  Need to change the '.ready' to '.ajaxComplete' to allow that
+            // jQuery to do its thing.
+            //
             jQuery('#checkoutPayment').hide();
-            jQuery('#navBreadCrumb').html(response.breadCrumbHtml);
-            jQuery('#checkoutPayment').before(response.confirmationHtml);
+            jQuery('#navBreadCrumb').html(response.breadCrumbHtml.replace(/\.ready/g, ".ajaxComplete"));
+            jQuery('#checkoutPayment').before(response.confirmationHtml.replace(/\.ready/g, ".ajaxComplete"));
             jQuery(document).attr('title', response.pageTitle);
             jQuery(document).scrollTop( 0 );
             if (confirmation_required.indexOf( lastPaymentValue ) == -1) {
                 zcLog2Console( 'Preparing to submit form, since confirmation is not required for "'+lastPaymentValue+'", per the required list: "'+confirmation_required );
                 jQuery('#checkoutOneLoading').show();
                 jQuery('#checkoutConfirmationDefault').hide();
-                jQuery('form[name="checkout_confirmation"]')[0].submit();
+                
+                // -----
+                // Wait, since this is the last on the .ajaxComplete 'chain' of events until
+                // all the just-downloaded jQuery finishes, then submit the AJAX-supplied form.
+                //
+                jQuery(document).ajaxComplete(function() {
+                    jQuery('form[name="checkout_confirmation"]')[0].submit();
+                });
             } else {
                 zcLog2Console( 'Confirmation required, displaying for '+lastPaymentValue+'.' );
                 jQuery('#checkoutConfirmDefault').show();

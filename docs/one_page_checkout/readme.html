@@ -702,8 +702,11 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                 <li>v2.1.2, 2019-06-xx:<ul>
                     <li>BUGFIX: Correct the <em>root-cause</em> of the &quot;virtual&quot; issue, previously changed for v2.1.1.</li>
                     <li>BUGFIX: PHP Notice thrown on initial guest account-creation form on the <code class="no-pad">checkout_success</code> page.</li>
+                    <li>BUGFIX: Correct interaction with payment methods, e.g. <em>paypaldp</em>, that &quot;collect credit-card info on-site&quot;.</li>
                     <li>The following files were affected:<ol>
                         <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
+                        <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
+                        <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
                         <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
                         <li>/includes/modules/pages/checkout_success/header_php_guest.php</li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
