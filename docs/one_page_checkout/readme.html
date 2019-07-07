@@ -86,7 +86,7 @@ a[target=_blank] { text-decoration: underline; }
 
 <body>
   <h1>One-Page Checkout &hellip; with Guest &hellip; <span class="smaller">for Zen Cart v1.5.5b (and later)</span></h1>
-  <h3>Version 2.1.2 by lat9</h3>
+  <h3>Version 2.1.3 by lat9</h3>
   <h3>Copyright &copy; 2013-2019 <a href="https://vinosdefrutastropicales.com" target="_blank">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
   <p>Released under the General Public License (see the file named <code class="no-pad">license.txt</code> in the plugin's distribution for full details). This script is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</p>
   <hr />
@@ -419,10 +419,11 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
               <hr />
               <p>There are <span class="template">template-override</span> and, depending on your store's base Zen Cart version, <span class="corefile">core-file</span> changes required by this plugin; you should <strong>always</strong> backup your cart's database and files prior to making any changes.  Unzip the plugin's package file and then:</p>
               <ol type="A"> 
-                <li>Rename the YOUR_TEMPLATE sub-directories <b>(4 of them)</b> to match your store's template name:<ol type="a">
+                <li>Rename the YOUR_TEMPLATE sub-directories <b>(5 of them)</b> to match your store's template name:<ol type="a">
                   <li>/includes/languages/english/YOUR_TEMPLATE</li>
                   <li>/includes/languages/english/html_includes/YOUR_TEMPLATE</li>
                   <li>/includes/languages/english/modules/order_total/YOUR_TEMPLATE</li>
+                  <li>/includes/modules/sideboxes/YOUR_TEMPLATE</li>
                   <li>/includes/templates/YOUR_TEMPLATE</li>
                 </ol></li>
                 <li>Rename the YOUR_ADMIN sub-directory to match your store's admin-sub-directory name.</li>
@@ -430,6 +431,7 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                   <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_coupon.php</span></li>
                   <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_gv.php</span></li>
                   <li><span class="template">/includes/languages/english/YOUR_TEMPLATE/checkout_confirmation.php</span></li>
+                  <li><span class="template">/includes/modules/sideboxes/YOUR_TEMPLATE/information.php</span> <span class="smaller">(Added in v2.1.3)</span></li>
                 </ol></li>
                 <li><em><b>If your store is running a Zen Cart version less than 1.5.6 and you want to quickly identify those orders placed by guests</b></em>, there are additional edits required for <code class="no-pad corefile">/YOUR_ADMIN/orders.php</code>.  See <a href="https://lat9.github.io/one_page_checkout/pages/admin_orders_configuration.html" target="_blank">these</a> instructions from the <em>OPC</em>'s additional-documentation pages.</li>
                 <li>Sign into your Zen Cart's admin panel.  Due the the number of files that require uploading, I suggest that you place the site into <em>Maintenance Mode</em> by setting <b><i>Configuration-&gt;Website Maintenance-&gt;Down for Maintenance: ON/OFF</i></b> to <em>true</em>.</li>
@@ -640,6 +642,7 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                 <li>/includes/modules/pages/login/header_php_login_guest.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/modules/pages/login/main_template_vars.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/modules/pages/order_status/header_php.php <span class="smaller">(Added in v2.0.0)</span></li>
+                <li><span class="template">/includes/modules/sideboxes/YOUR_TEMPLATE/information.php</span> <span class="smaller">(Added in v2.1.3)</li>
                 <li>/includes/templates/template_default/css/checkout_one.css</li>
                 <li>/includes/templates/template_default/css/checkout_one_confirmation.css</li>
                 <li>/includes/templates/template_default/css/checkout_success.css <span class="smaller">(Added in v2.0.0)</span></li>
@@ -699,6 +702,14 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository.</a> <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color.</p>
               <ul>
+                <li>v2.1.3, 2019-07-07:<ul>
+                    <li>BUGFIX: <code class="no-pad">order_status</code> page-link missing from information sidebox.</li>
+                    <li>The following files were affected:<ol>
+                        <li>/includes/languages/english/extra_definitions/checkout_one_extra_definitions.php</li>
+                        <li><span class="template">/includes/modules/sideboxes/YOUR_TEMPLATE/information.php</span> <span class="added smaller">(Added)</span></li>
+                        <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
+                    </ol></li>
+                </ul></li>
                 <li>v2.1.2, 2019-07-02:<ul>
                     <li>BUGFIX: Correct the <em>root-cause</em> of the &quot;virtual&quot; issue, previously changed for v2.1.1.</li>
                     <li>BUGFIX: PHP Notice thrown on initial guest account-creation form on the <code class="no-pad">checkout_success</code> page.</li>

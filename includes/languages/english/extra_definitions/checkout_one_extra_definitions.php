@@ -13,3 +13,9 @@ define('WARNING_GUEST_CHECKOUT_NOT_AVAILABLE', 'Sorry, our guest-checkout is tem
 define('WARNING_GUEST_NO_GCS', '<b>Note</b>: You must have (or create) an account with our store to purchase Gift Certificates.');
 define('WARNING_GUEST_GCS_RESET', 'If you continue to <em>Checkout</em>, any information that you have entered during &quot;Guest Checkout&quot; will be lost.');
 define('WARNING_GUEST_REMOVE_GC', 'To continue with &quot;Guest Checkout&quot;, remove the Gift Certificate(s) from your shopping-cart <em>before</em> clicking a &quot;Checkout&quot; button or link.');
+
+// -----
+// This language-constant can be used in the store's update to /includes/modules/[YOUR_TEMPLATE/]information.php
+// to point the customer to the order_status page link.
+//
+define('BOX_INFORMATION_ORDER_STATUS', 'Order Status');
