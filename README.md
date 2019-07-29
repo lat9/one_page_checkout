@@ -21,6 +21,7 @@ Refer to the links below for additional information.
 ## Additional Information ###
 
 [Storefront Considerations](pages/storefront.md)
+
 [HTML/jQuery Selectors](pages/jquery_selectors.md)
 
 [Admin Considerations](pages/admin.md)
