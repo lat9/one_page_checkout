@@ -316,7 +316,7 @@ class OnePageCheckout extends base
     {
         $this->checkEnabled();
         $this->isGuestCheckoutEnabled = !zen_is_spider_session() && (defined('CHECKOUT_ONE_ENABLE_GUEST') && CHECKOUT_ONE_ENABLE_GUEST == 'true');
-        if (isset($_SESSION['opc_error']) && $_SESSION['opc_error'] == self::OPC_ERROR_NO_GC) {
+        if (isset($_SESSION['opc_error']) && ($_SESSION['opc_error'] == self::OPC_ERROR_NO_GC || $_SESSION['opc_error'] == self::OPC_ERROR_NO_JS)) {
             $this->isGuestCheckoutEnabled = false;
         }
         $this->guestCustomerId = (defined('CHECKOUT_ONE_GUEST_CUSTOMER_ID')) ? (int)CHECKOUT_ONE_GUEST_CUSTOMER_ID : 0;
@@ -407,9 +407,11 @@ class OnePageCheckout extends base
     public function resetSessionVariables()
     {
         unset(
-            $_SESSION['shipping_billing'], 
-            $_SESSION['opc_error']
-        );        
+            $_SESSION['shipping_billing']
+        );
+        if (isset($_SESSION['opc_error']) && $_SESSION['opc_error'] != self::OPC_ERROR_NO_JS) {
+            unset($_SESSION['opc_error']);
+        }
     }
     
     // -----

@@ -26,16 +26,21 @@ class checkout_one_observer extends base
         // The 'opctype' variable is applied to the checkout_shipping page's link by the checkout_one page's alternate link
         // (available if there's a jQuery error affecting that page's ability to perform a 1-page checkout).
         //
-        // If that's set, set a session variable to override the OPC processing, allowing the customer to check out!  As a
-        // developer "assist", that value can be reset by supplying &opctype=retry to any link to try again.
+        // If that's set, set a session variable to override the OPC processing, allowing the customer to check out via the
+        // built-in 3-page checkout!
         //
         if (isset($_GET['opctype'])) {
             if ($_GET['opctype'] == 'jserr') {
                 $_SESSION['opc_error'] = OnePageCheckout::OPC_ERROR_NO_JS;
             }
-            if ($_GET['opctype'] == 'retry') {
-                unset($_SESSION['opc_error']);
-            }
+            
+            // -----
+            // Un-comment the following three lines (during testing) to enable a developer "assist", 
+            // allowing the above value to be reset by supplying &opctype=retry to any link to try again.
+            //
+//            if ($_GET['opctype'] == 'retry') {
+//                unset($_SESSION['opc_error']);
+//            }
         }
         
         // -----
