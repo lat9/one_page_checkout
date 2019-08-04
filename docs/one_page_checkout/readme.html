@@ -705,9 +705,11 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                 <li>v2.1.3, 2019-07-07:<ul>
                     <li>BUGFIX: <code class="no-pad">order_status</code> page-link missing from information sidebox.</li>
                     <li>BUGFIX: Updates to properly handle the case where javascript is disabled.</li>
+                    <li>BUGFIX: Additional guest-account address-book entries improperly recorded.</li>
                     <li>The following files were affected:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/classes/observers/class.checkout_one_observer.php</li>
+                        <li>/includes/functions/extra_functions/one_page_checkout_functions.php</li>
                         <li>/includes/languages/english/extra_definitions/checkout_one_extra_definitions.php</li>
                         <li><span class="template">/includes/modules/sideboxes/YOUR_TEMPLATE/information.php</span> <span class="added smaller">(Added)</span></li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
