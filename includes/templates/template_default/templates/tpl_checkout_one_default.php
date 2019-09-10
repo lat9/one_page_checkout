@@ -24,7 +24,7 @@ $nojs_link = zen_href_link(FILENAME_CHECKOUT_SHIPPING, 'opctype=jserr', 'SSL');
 ?>
 <div class="centerColumn opc-base" id="checkoutPayment" style="display:none;">
 <?php
-  echo zen_draw_form ('checkout_payment', zen_href_link(FILENAME_CHECKOUT_ONE_CONFIRMATION, '', 'SSL'), 'post', 'id="checkout_payment"') . zen_draw_hidden_field('action', 'process') . zen_draw_hidden_field('javascript_enabled', '0', 'id="javascript-enabled"'); 
+  echo zen_draw_form('checkout_payment', zen_href_link(FILENAME_CHECKOUT_ONE_CONFIRMATION, '', 'SSL'), 'post', 'id="checkout_payment"') . zen_draw_hidden_field('action', 'process') . zen_draw_hidden_field('javascript_enabled', '0', 'id="javascript-enabled"'); 
 ?>
   <h1 id="checkoutOneHeading"><?php echo HEADING_TITLE; ?></h1>
 <?php
@@ -33,10 +33,10 @@ if (TEXT_CHECKOUT_ONE_TOP_INSTRUCTIONS != '') {
   <div id="co1-top-message"><p><?php echo TEXT_CHECKOUT_ONE_TOP_INSTRUCTIONS; ?></p></div>
 <?php
 }
-$messages_to_check = array('checkout_shipping', 'checkout_payment', 'redemptions');
+$messages_to_check = array('checkout_shipping', 'checkout_payment', 'redemptions', 'checkout');
 foreach ($messages_to_check as $page_check) {
-    if ($messageStack->size ($page_check) > 0) {
-        echo $messageStack->output ($page_check);
+    if ($messageStack->size($page_check) > 0) {
+        echo $messageStack->output($page_check);
     }
 }
 ?>
