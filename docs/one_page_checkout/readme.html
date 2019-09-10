@@ -704,7 +704,9 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
               <ul>
                 <li>v2.1.4, 2019-09-10:<ul>
                     <li>BUGFIX: <em>Guest</em> accessed to the checkout's shipping-/payment-address pages should go back to the main <em>OPC</em> page.</li>
+                    <li>CHANGE: Future-proofing for the inclusion of &quot;Multi-lingual Country Names&quot; in zc157.</li>
                     <li>The following files were affected:<ol>
+                        <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                     </ol></li>

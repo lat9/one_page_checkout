@@ -724,6 +724,9 @@ class OnePageCheckout extends base
     // This internal function creates an address-array in the format used by the built-in Zen Cart
     // order-class from the selected temporary address.
     //
+    // Note: Updated to use zen_get_country_name as a future-proofing for the inclusion of
+    // "Multi-lingual Country Names" in zc157.
+    //
     protected function createOrderAddressFromTemporary($which)
     {
         $country_id = $this->tempAddressValues[$which]['country'];
@@ -751,7 +754,7 @@ class OnePageCheckout extends base
             'zone_id' => $this->tempAddressValues[$which]['zone_id'],
             'country' => array(
                 'id' => $country_id, 
-                'title' => $country_info->fields['countries_name'], 
+                'title' => zen_get_country_name($country_id), 
                 'iso_code_2' => $country_info->fields['countries_iso_code_2'], 
                 'iso_code_3' => $country_info->fields['countries_iso_code_3']
             ),
