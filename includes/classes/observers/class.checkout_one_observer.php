@@ -186,6 +186,7 @@ class checkout_one_observer extends base
                     'NOTIFY_PAYMENT_PAYPALEC_BEFORE_SETEC',
                     'NOTIFY_PAYPALEXPRESS_BYPASS_ADDRESS_CREATION',
                     'NOTIFY_HEADER_START_SHOPPING_CART',
+                    'NOTIFY_HEADER_START_CHECKOUT_PAYMENT_ADDRESS',
                 )
             );
         }
@@ -247,11 +248,29 @@ class checkout_one_observer extends base
                 break;
                 
             // -----
-            // When a customer navigates to the 'checkout_shipping_address' page, reset the
+            // When a *logged-in* customer navigates to the 'checkout_shipping_address' page, reset the
             // shipping=billing flag to indicate that shipping is no longer the same as billing.
             //
+            // If a _guest_ customer navigates here, redirect back to the main checkout_one page to 
+            // allow that address change.
+            //
             case 'NOTIFY_HEADER_START_CHECKOUT_SHIPPING_ADDRESS':
+                if ($_SESSION['opc']->isGuestCheckout()) {
+                    $this->debug_message('checkout_one redirect: ', true, 'checkout_one_observer');
+                    zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, zen_get_all_get_params(), 'SSL'));
+                }
                 $_SESSION['shipping_billing'] = false;
+                break;
+                
+            // -----
+            // When a _guest_ customer navigates to the 'checkout_payment_address' page, redirect
+            // to the main checkout_one page to allow that address change.
+            //
+            case 'NOTIFY_HEADER_START_CHECKOUT_PAYMENT_ADDRESS':
+                if ($_SESSION['opc']->isGuestCheckout()) {
+                    $this->debug_message('checkout_one redirect: ', true, 'checkout_one_observer');
+                    zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, zen_get_all_get_params(), 'SSL'));
+                }
                 break;
                 
             // -----
