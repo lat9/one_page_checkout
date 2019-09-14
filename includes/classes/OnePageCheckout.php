@@ -28,6 +28,14 @@ class OnePageCheckout extends base
     // tempBilltoAddressBookId .. Contains a sanitized/int version of the configured "temporary" bill-to address-book ID.
     // tempSendtoAddressBookId .. Contains a sanitized/int version of the configured "temporary" ship-to address-book ID.
     // dbStringType ............. Identifies the form of string data "binding" to use on $db requests; 'string' for ZC < 1.5.5b, 'stringIgnoreNull', otherwise.
+    // paypalAddressOverride .... Contains, if set, the formatted version of any temporary shipping address, as entered.  Used when
+    //                            paypalwpp's processing returns a shipping address different from that entered.
+    // paypalTotalValue ......... Contains, for a paypalwpp-placed order, the order's total value initially sent to PayPal.  Used to
+    //                            compare the total value based on the ship-to address returned by PayPal.
+    // paypalTotalValueChanged .. Set, for a paypalwpp-placed order, if the order's total value after the return from PayPal
+    //                            is different from its initial value.
+    // paypalNoShipping ......... Set, for a paypalwpp-placed order, to the value sent to PayPal that indicates that no shipping
+    //                            address is required, i.e. a virtual order.
     //
     // Some processing flags, identifying whether/not various "temporary" values have been validated.
     //
@@ -52,6 +60,10 @@ class OnePageCheckout extends base
               $tempBilltoAddressBookId,
               $tempSendtoAddressBookId,
               $dbStringType,
+              $paypalAddressOverride,
+              $paypalTotalValue,
+              $paypalTotalValueChanged,
+              $paypalNoShipping,
               $customerInfoOk,
               $billtoTempAddrOk,
               $sendtoTempAddrOk,
@@ -91,7 +103,7 @@ class OnePageCheckout extends base
         //   - Conditional enablement and the current customer is in the conditional-customers list
         //
         // Note: If we're currently in the PayPal Express Checkout's "Express Checkout" 
-        // (aka in_special_checkout) processing; if so, OPC will (currently) be disabled.
+        // (aka in_special_checkout) processing, OPC will (currently) be disabled.
         //
         $this->isEnabled = false;
         if (defined('CHECKOUT_ONE_ENABLED') && (!isset($_SESSION['opc_error']) || $_SESSION['opc_error'] != self::OPC_ERROR_NO_JS)) {
@@ -102,7 +114,21 @@ class OnePageCheckout extends base
                     $this->isEnabled = true;
                 }
             }
-            if ($this->isPayPalExpressCheckout()) {
+            
+            // -----
+            // Perform some OPC-session cleanup if, after starting a paypalwpp-paid order, the
+            // customer decides to change payment methods.
+            //
+            if (!empty($_SESSION['payment']) && $_SESSION['payment'] != 'paypalwpp') {
+                unset(
+                    $this->paypalAddressOverride,
+                    $this->paypalTotalValue,
+                    $this->paypalTotalValueChanged,
+                    $this->paypalNoShipping
+                ); 
+            }
+            
+            if (empty($this->paypalTotalValueChanged) && $this->isPayPalExpressCheckout()) {
                 $this->isEnabled = false;
             }
         }
@@ -423,7 +449,15 @@ class OnePageCheckout extends base
         $this->guestIsActive = false;
         $this->isGuestCheckoutEnabled = false;
         $this->registeredAccounts = false;
-        unset($this->tempAddressValues, $this->guestCustomerInfo, $this->sendtoSaved); 
+        unset(
+            $this->tempAddressValues, 
+            $this->guestCustomerInfo, 
+            $this->sendtoSaved,
+            $this->paypalAddressOverride,
+            $this->paypalTotalValue,
+            $this->paypalTotalValueChanged,
+            $this->paypalNoShipping
+        ); 
         
         $this->initializeGuestCheckout();
     }
@@ -833,7 +867,7 @@ class OnePageCheckout extends base
         
         $address = $this->createOrderAddressFromTemporary($which);
         
-        return zen_address_format($address['format_id'], $address, 0, '', "\n");
+        return zen_address_format($address['format_id'], $address, 0, '', ', ');
     }
     
     /* -----
@@ -1797,12 +1831,16 @@ class OnePageCheckout extends base
     }
     
     /* -----
-    ** This public function is called by the OPC observer-class upon receipt of the indication that
+    ** This public method is called by the OPC observer-class upon receipt of the indication that
     ** PayPal Express Checkout is preparing to send the order up to PayPal for fulfilment.  If temporary
     ** addresses are currently in use, this processing will return a PayPal-formatted array to be combined
     ** with the order's current PayPal options.
+    **
+    ** This method also records the order's total value, to be sent to PayPal, for comparison on the PayPal
+    ** return to ensure that the order's total remains the same ... just in case the ship-to address returned
+    ** from PayPal has a different taxation.
     */
-    public function createPayPalTemporaryAddressInfo()
+    public function createPayPalTemporaryAddressInfo($paypal_options, $order)
     {
         $which = $this->determineTempShippingAddress();       
         $paypal_temp = array();
@@ -1811,14 +1849,13 @@ class OnePageCheckout extends base
             $paypal_temp = array(
                 'PAYMENTREQUEST_0_SHIPTONAME' => $temp_address['firstname'] . ' ' . $temp_address['lastname'],
                 'PAYMENTREQUEST_0_SHIPTOSTREET' => $temp_address['street_address'],
+                'PAYMENTREQUEST_0_SHIPTOSTREET2' => (!empty($temp_address['suburb'])) ? $temp_address['suburb'] : '',
                 'PAYMENTREQUEST_0_SHIPTOCITY' => $temp_address['city'],
                 'PAYMENTREQUEST_0_SHIPTOZIP' => $temp_address['postcode'],
                 'PAYMENTREQUEST_0_SHIPTOSTATE' => zen_get_zone_code($temp_address['country']['id'], $temp_address['zone_id'], $temp_address['state']),
                 'PAYMENTREQUEST_0_SHIPTOCOUNTRYCODE' => $temp_address['country']['iso_code_2']
             );
-            if (!empty($temp_address['suburb'])) {
-                $paypal_temp['PAYMENTREQUEST_0_SHIPTOSTREET2'] = $temp_address['suburb'];
-            }            
+ 
             if ($this->isGuestCheckout()) {
                 $paypal_temp['EMAIL'] = $this->guestCustomerInfo['email_address'];
                 if (!empty($this->guestCustomerInfo['telephone'])) {
@@ -1827,79 +1864,161 @@ class OnePageCheckout extends base
             }
             $this->debugMessage("createPayPalTemporaryAddressInfo, returning ($which): " . json_encode($paypal_temp));
         }
-        
+        $this->paypalTotalValue = $order->info['total'];
+        $this->paypalNoShipping = $paypal_options['NOSHIPPING'];
         return $paypal_temp;
     }
     
     /* -----
-    ** This public function is called by the OPC observer-class upon receipt of the indication that
+    ** This public method is called by the OPC observer-class upon receipt of the indication that
     ** PayPal Express Checkout is preparing to check/create the address associated with the PayPal-approved
-    ** payment.  If temporary addresses are currently in use, this processing will return (bool)true to
-    ** indicate to the paypalwpp payment method that it should bypass that processing clause.
+    ** payment. If the current ship-to address is temporary or, for virtual orders, the bill-to address is
+    ** temporary, this processing will indicate that PayPal should bypass its automatic address-book creation.
     **
+    ** If the order is virtual and the "shipping" address is temporary, a guest has placed a virtual order and
+    ** we'll simply return that PayPal should bypass its address-creation process.
+    **
+    ** Otherwise, the address returned by PayPal **will be used as** the current temporary ship-to address.
+    ** Note that the return from determineTempShippingAddress, for guest-checkout, is guaranteed to return either
+    ** 'bill' or 'ship' as that method will error-out otherwise!  If the PayPal address returned _is different_ 
+    ** from the current temporary shipping address -- for either guests or account-holders:
+    **
+    ** 1) Record the as-entered (and now overwritten) address within the OPC data; it'll be written
+    **    to an order status-history record and "messaged" to the customer to let them know that the
+    **    address change occurred.
+    ** 2) Set the shipping=billing flag to indicate that the shipping/billing addresses don't match.
+    ** 3) The PayPal-returned address is recorded as the current ship-to address.
+    **
+    ** The method returns a boolean flag, indicating whether or not the paypalwpp payment-method should bypass
+    ** its automatic address-record creation.
     */
     public function setPayPalAddressCreationBypass($paypal_ec_payment_info)
     {
         $which = $this->determineTempShippingAddress();
+        $bypass_address_creation = false;
+        unset($this->paypalAddressOverride);
         
         // -----
         // If a temporary address is currently in use as the shipping address, it was sent
         // to PayPal via the createPayPalTemporaryAddressInfo method.  Check to see that the
-        // shipping address returned by PayPal was unchanged and, if so, indicate that the
-        // address-creation should be bypassed.
+        // shipping address returned by PayPal was changed.
         //
-        // If that address *was* changed, let paypalwpp continue its default processing.
+        // Note: $which is returned as (bool)false if the current shipping address is not a temporary one.
         //
         if ($which !== false) {
+            // -----
+            // If the shipping-address is currently 'temporary', we'll instruct PayPal to bypass its
+            // address-creation processing.
+            //
+            $bypass_address_creation = true;
+
+            // -----
+            // Gather the information for the temporary ship-to address that was previously sent
+            // to PayPal.
+            //
             $temp_address = $this->createOrderAddressFromTemporary($which);
             $temp_address['customer_name'] = $temp_address['firstname'] . ' ' . $temp_address['lastname'];
             
             // -----
-            // Loop through some of the more 'static' values in the ship-to address (the country and state
-            // will be checked separately).
+            // If the order was submitted to PayPal with 'NOSHIPPING' required, the order is virtual
+            // and the PayPal response contains no shipping-address information.  We'll bypass the
+            // shipping-address override processing in that case.
             //
-            $compare_fields = array(
-                'customer_name' => 'ship_name',
-                'street_address' => 'ship_street_1',
-                'suburb' => 'ship_street_2',
-                'city' => 'ship_city',
-                'postcode' => 'ship_postal_code',
-            );
-            foreach ($compare_fields as $t => $pp) {
-                if (strtoupper($temp_address[$t]) != strtoupper($paypal_ec_payment_info[$pp])) {
-                    $which = false;
-                    break;
+            // Note: Checking *after* creating the temporary address array, since it's output as a debug
+            // prior to return and we don't want any PHP notices generated for an undefined variable.
+            //
+            if (!$this->paypalNoShipping) {
+                // -----
+                // Loop through some of the more 'static' values in the ship-to address (the country and state
+                // will be checked separately).
+                //
+                $compare_fields = array(
+                    'customer_name' => 'ship_name',
+                    'street_address' => 'ship_street_1',
+                    'suburb' => 'ship_street_2',
+                    'city' => 'ship_city',
+                    'postcode' => 'ship_postal_code',
+                );
+                $address_match = true;
+                foreach ($compare_fields as $t => $pp) {
+                    if (strtoupper(trim($temp_address[$t])) != strtoupper(trim($paypal_ec_payment_info[$pp]))) {
+                        $address_match = false;
+                        break;
+                    }
                 }
-            }
-            
-            // -----
-            // If neither the state "code" (e.g. 'FL') nor the full state name (e.g. 'Florida') of the
-            // temporary address matches the state field returned by PayPal, it's not a match.
-            //
-            $state_code = zen_get_zone_code($temp_address['country']['id'], $temp_address['zone_id'], $temp_address['state']);
-            $paypal_state = strtoupper($paypal_ec_payment_info['ship_state']);
-            if ($paypal_state != $state_code && $paypal_state != strtoupper($temp_address['state'])) {
-                $which = false;
-            }
-            
-            // -----
-            // If neither the country "code" (e.g. 'US') nor the full country name (e.g. 'United States') of
-            // the temporary address matches the country name returned by PayPal, it's not a match.
-            //
-            $country_name = strtoupper($paypal_ec_payment_info['ship_country_name']);
-            if ($country_name != $temp_address['country']['iso_code_2'] && $country_name != strtoupper($temp_address['country']['title'])) {
-                $which = false;
+                
+                // -----
+                // If neither the state "code" (e.g. 'FL') nor the full state name (e.g. 'Florida') of the
+                // temporary address matches the state field returned by PayPal, it's not a match.
+                //
+                $state_code = zen_get_zone_code($temp_address['country']['id'], $temp_address['zone_id'], $temp_address['state']);
+                $paypal_state = strtoupper(trim($paypal_ec_payment_info['ship_state']));
+                if ($paypal_state != $state_code && $paypal_state != strtoupper($temp_address['state'])) {
+                    $address_match = false;
+                }
+                
+                // -----
+                // If neither the country "code" (e.g. 'US') nor the full country name (e.g. 'United States') of
+                // the temporary address matches the country name returned by PayPal, it's not a match.
+                //
+                $country_name = strtoupper(trim($paypal_ec_payment_info['ship_country_name']));
+                if ($country_name != $temp_address['country']['iso_code_2'] && $country_name != strtoupper($temp_address['country']['title'])) {
+                    $address_match = false;
+                }
+                
+                // -----
+                // If an address mismatch was detected ...
+                //
+                if (!$address_match) {
+                    // -----
+                    // 1) Record the as-entered address into the OPC's session data, for use by the identifyPayPalAddressChange method.
+                    //
+                    $this->paypalAddressOverride = zen_address_format(zen_get_address_format_id($temp_address['country']['id']), $temp_address, false, '', ', ');
+                    
+                    // -----
+                    // 2) Indicate that the shipping/billing addresses don't match.
+                    //
+                    $_SESSION['shipping_billing'] = false;
+                    
+                    // -----
+                    // 3) Replace the temporary shipping address with the information supplied by PayPal, taking into account that
+                    //    it might need to be created -- if the customer hasn't set shipping != billing.  Also make sure that the
+                    //    temporary shipping address' status is set to OK!
+                    //
+                    $_SESSION['sendto'] = $this->tempSendtoAddressBookId;
+                    
+                    foreach ($compare_fields as $t => $pp) {
+                        if ($t == 'customer_name') {
+                            $name_pieces = explode(' ', $paypal_ec_payment_info[$pp]);
+                            $this->tempAddressValues['ship']['firstname'] = trim($name_pieces[0]);
+                            $this->tempAddressValues['ship']['lastname'] = (isset($name_pieces[1])) ? trim($name_pieces[1]) : '';
+                        } else {
+                            $this->tempAddressValues['ship'][$t] = $paypal_ec_payment_info[$pp];
+                        }
+                    }
+                    $this->tempAddressValues['ship']['company'] = '';
+                    
+                    $country_info = $this->getCountryInfoFromIsoCode2($paypal_ec_payment_info['ship_country_code']);
+                    $this->tempAddressValues['ship']['country'] = $country_info['id'];
+                    $this->tempAddressValues['ship']['country_id'] = $country_info['id'];
+                    $this->tempAddressValues['ship']['format_id'] = $this->tempAddressValues['ship']['country']['format_id'];
+                    
+                    $zone_info = $this->getZoneInfoFromCode($country_info['id'], $paypal_ec_payment_info['ship_state']);
+                    $this->tempAddressValues['ship']['state'] = $zone_info['state'];
+                    $this->tempAddressValues['ship']['zone_id'] = $zone_info['zone_id'];
+                    
+                    $this->sendtoTempAddrOk = true;
+                }
             }
             
             // -----
             // Leave some 'breadcrumbs' in the OPC log to indicate the results of the processing.
             //
-            $this->debugMessage("setPayPalAddressCreationBypass, returning ($which) from comparison: " . json_encode($paypal_ec_payment_info) . PHP_EOL . json_encode($temp_address));
+            $this->debugMessage("setPayPalAddressCreationBypass, override from comparison: " . json_encode($paypal_ec_payment_info) . PHP_EOL . json_encode($temp_address));
         }
-        
-        return ($which !== false);
+        return $bypass_address_creation;
     }
-    
+
     // -----
     // This internal function returns 'which' temporary address is currently being used as
     // the order's shipping address; the value returned is (bool)false if a permanent address is in use.
@@ -1920,7 +2039,111 @@ class OnePageCheckout extends base
                 $which = 'bill';
             }
         }
+        
+        // -----
+        // If we're currently processing in guest-checkout mode, the shipping address "should"
+        // be one of the temporary ship/bill entries -- if not, bail out with an error since
+        // someone's mucked with the session-based values and it's not a recoverable case.
+        //
+        if ($which === false && $this->isGuestCheckout()) {
+            trigger_error('Cannot determine guest shipping address, $_SESSION:' . PHP_EOL . var_export($_SESSION, true), E_USER_ERROR);
+            exit;
+        }
         return $which;
+    }
+    
+    // -----
+    // This internal method returns a country-array containing its id, name, iso-code-2 and iso-code-3
+    // values, based on an iso_code_2 value input.
+    //
+    protected function getCountryInfoFromIsoCode2($iso_code_2)
+    {
+        $country_info = $GLOBALS['db']->Execute(
+            "SELECT *
+               FROM " . TABLE_COUNTRIES . "
+              WHERE countries_iso_code_2 = '" . zen_db_input($iso_code_2) . "'
+                AND status = 1
+              LIMIT 1"
+        );
+        if ($country_info->EOF) {
+            trigger_error("Could not locate the country with the iso-code-2 of $iso_code_2.", E_USER_ERROR);
+            exit;
+        } else {
+            $country = array(
+                'id' => $country_info->fields['countries_id'],
+                'title' => zen_get_country_name($country_info->fields['countries_id']),
+                'iso_code_2' => $country_info->fields['countries_iso_code_2'],
+                'iso_code_3' => $country_info->fields['countries_iso_code_3'],
+                'format_id' => $country_info->fields['address_format_id'],
+            );
+        }
+        return $country;
+    }
+    
+    // -----
+    // This internal method returns a zone/state array containing the zone_id and name of the
+    // state associated with the country/code provided.
+    //
+    protected function getZoneInfoFromCode($country_id, $zone_code)
+    {
+        $zone_code = zen_db_input($zone_code);
+        $zone_info = $GLOBALS['db']->Execute(
+            "SELECT zone_id
+               FROM " . TABLE_ZONES . "
+              WHERE zone_country_id = $country_id
+                AND zone_code = '$zone_code'
+                 OR zone_name = '$zone_code'
+             LIMIT 1"
+        );
+        return array(
+            'zone_id' => ($zone_info->EOF) ? 0 : $zone_info->fields['zone_id'],
+            'state' => $zone_code
+        );
+    }
+    
+    /* -----
+    ** This public method, called from OPC's observer, determines whether the order's total
+    ** value (as represented by the order-object supplied) has changed since the order was
+    ** originally 'pushed' to PayPal for authorization.  This could happen, for instance, if
+    ** the ship-to address originally 'pushed' was for an untaxed location and the customer
+    ** changed their address at PayPal to one that is taxed.
+    **
+    ** Returns (bool)true if the order's total value was changed; (bool)false otherwise.
+    */
+    public function didPayPalOrderTotalValueChange($order)
+    {
+        $value_changed = (isset($this->paypalTotalValue) && $this->paypalTotalValue != $order->info['total']);
+        unset($this->paypalTotalValue);
+        
+        // -----
+        // If the value has changed, OPC's observer class will redirect back to OPC's
+        // data-gathering page with a message.  Set a flag to let the opc::checkEnabled method
+        // to know that it's OK to continue processing.
+        //
+        if ($value_changed) {
+            $this->paypalTotalValueChanged = true;
+        }
+        
+        return $value_changed;
+    }
+
+    /* -----
+    ** This public method, called from OPC's observer, updates the order's comments to identify
+    ** any change to the order's shipping address based on the PayPal response.
+    */
+    public function identifyPayPalAddressChange(&$order)
+    {
+        if (!empty($this->paypalAddressOverride)) {
+            $message = sprintf(WARNING_PAYPAL_SENDTO_CHANGED, $this->paypalAddressOverride);
+            unset($this->paypalAddressOverride);
+            
+            $GLOBALS['messageStack']->add_session('header', $message, 'caution');
+            
+            if (!empty($order->info['comments'])) {
+                $order->info['comments'] .= "\n\n";
+            }
+            $order->info['comments'] .= $message;
+        }
     }
 
     // -----

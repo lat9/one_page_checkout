@@ -185,6 +185,7 @@ class checkout_one_observer extends base
                     'NOTIFY_OT_COUPON_USES_PER_USER_CHECK',
                     'NOTIFY_PAYMENT_PAYPALEC_BEFORE_SETEC',
                     'NOTIFY_PAYPALEXPRESS_BYPASS_ADDRESS_CREATION',
+                    'NOTIFY_PAYPALWPP_BEFORE_DOEXPRESSCHECKOUT',
                     'NOTIFY_HEADER_START_SHOPPING_CART',
                     'NOTIFY_HEADER_START_CHECKOUT_PAYMENT_ADDRESS',
                 )
@@ -232,7 +233,7 @@ class checkout_one_observer extends base
             case 'NOTIFY_HEADER_START_CHECKOUT_SHIPPING':
             case 'NOTIFY_HEADER_START_CHECKOUT_PAYMENT':
             case 'NOTIFY_HEADER_START_CHECKOUT_CONFIRMATION':
-                $this->debug_message('checkout_one redirect: ', true, 'checkout_one_observer');
+                $this->debug_message('checkout_one redirect 1: ', true, 'checkout_one_observer');
                 zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, zen_get_all_get_params(), 'SSL'));
                 break;
                 
@@ -256,7 +257,7 @@ class checkout_one_observer extends base
             //
             case 'NOTIFY_HEADER_START_CHECKOUT_SHIPPING_ADDRESS':
                 if ($_SESSION['opc']->isGuestCheckout()) {
-                    $this->debug_message('checkout_one redirect: ', true, 'checkout_one_observer');
+                    $this->debug_message('checkout_one redirect 2: ', true, 'checkout_one_observer');
                     zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, zen_get_all_get_params(), 'SSL'));
                 }
                 $_SESSION['shipping_billing'] = false;
@@ -268,7 +269,7 @@ class checkout_one_observer extends base
             //
             case 'NOTIFY_HEADER_START_CHECKOUT_PAYMENT_ADDRESS':
                 if ($_SESSION['opc']->isGuestCheckout()) {
-                    $this->debug_message('checkout_one redirect: ', true, 'checkout_one_observer');
+                    $this->debug_message('checkout_one redirect 3: ', true, 'checkout_one_observer');
                     zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, zen_get_all_get_params(), 'SSL'));
                 }
                 break;
@@ -343,10 +344,17 @@ class checkout_one_observer extends base
             // i.e. the information in the orders table.  This gives us the opportunity
             // to note that the order was created via guest-checkout, if needed.
             //
+            // If the order was placed via paypalwpp and a temporary shipping address
+            // and the address returned by PayPal was different from that specified
+            // during the order's data-gathering, the order's comments will be updated
+            // to identify the pre-PayPal address and a message will be recorded in the
+            // session for display on the 'checkout_success' page.
+            //
             // On entry:
             //
-            // $p1 ... (r/o) A copy of the SQL data-array used to create the header.
-            // $p2 ... (r/w) A reference to the newly-created order's ID value.
+            // $class ... (r/w) A reference to the current order's information.
+            // $p1 ...... (r/o) A copy of the SQL data-array used to create the header.
+            // $p2 ...... (r/w) A reference to the newly-created order's ID value.
             //
             case 'NOTIFY_ORDER_DURING_CREATE_ADDED_ORDER_HEADER':
                 if (zen_in_guest_checkout()) {
@@ -357,6 +365,7 @@ class checkout_one_observer extends base
                           LIMIT 1"
                     );
                 }
+                $_SESSION['opc']->identifyPayPalAddressChange($class);
                 break;
                 
             // -----
@@ -495,7 +504,7 @@ class checkout_one_observer extends base
             // -----
             // Issued by paypalwpp::ec_step1 just before sending the customer up to PayPal for payment
             // fulfilment.  Gives us the opportunity to record any temporary shipping address into the
-            // request.
+            // request and to save the order's current total in an OPC-class variable.
             //
             // On entry,
             //
@@ -505,7 +514,7 @@ class checkout_one_observer extends base
             // $p4 ... (r/w) A reference to the order's current totals array.
             //
             case 'NOTIFY_PAYMENT_PAYPALEC_BEFORE_SETEC':
-                $p2 = array_merge($p2, $_SESSION['opc']->createPayPalTemporaryAddressInfo());
+                $p2 = array_merge($p2, $_SESSION['opc']->createPayPalTemporaryAddressInfo($p2, $p3));
                 break;
                 
             // -----
@@ -526,6 +535,20 @@ class checkout_one_observer extends base
                 }
                 break;
                 
+            // -----
+            // Issued by paypalwpp::before_process just prior to sending the final order record off
+            // to PayPal for fulfilment.  If the session-based OPC class determines that a change
+            // in the order's total was made after the customer's authorization of the order via
+            // PayPal, we'll redirect back to the OPC data-gathering page to let the customer know.
+            //
+            case 'NOTIFY_PAYPALWPP_BEFORE_DOEXPRESSCHECKOUT':
+                if ($_SESSION['opc']->didPayPalOrderTotalValueChange($GLOBALS['order'])) {
+                    $this->debug_message('checkout_one redirect 4: ', true, 'checkout_one_observer');
+                    $GLOBALS['messageStack']->add_session('checkout_shipping', WARNING_PAYPALWPP_TOTAL_CHANGED, 'caution');
+                    zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, zen_get_all_get_params(), 'SSL'));
+                }
+                break;
+                
             default:
                 break;
         }
@@ -542,7 +565,7 @@ class checkout_one_observer extends base
                         unset($the_request[$name]);
                     }
                 }
-                $extra_info = var_export($the_request, true);
+                $extra_info = var_export($the_request, true) . "\n\n" . var_export($_SESSION, true);
             }
             
             // -----
@@ -623,5 +646,4 @@ class checkout_one_observer extends base
     {
         return $this->enabled;
     }
-
 }

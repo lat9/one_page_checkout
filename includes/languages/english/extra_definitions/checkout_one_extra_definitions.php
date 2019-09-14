@@ -15,6 +15,14 @@ define('WARNING_GUEST_GCS_RESET', 'If you continue to <em>Checkout</em>, any inf
 define('WARNING_GUEST_REMOVE_GC', 'To continue with &quot;Guest Checkout&quot;, remove the Gift Certificate(s) from your shopping-cart <em>before</em> clicking a &quot;Checkout&quot; button or link.');
 
 // -----
+// This constant is used when an order's temporary shipping address has been overridden by paypalwpp's
+// processing and identifies the address that was overridden by paypalwpp.  The message is both
+// displayed to the customer and recorded as a customer-visible orders-status-history record.
+//
+define('WARNING_PAYPAL_SENDTO_CHANGED', 'The delivery address that you entered (%s) was replaced by the address you selected at PayPal.  Please review your order and contact us if an update is needed.');
+define('WARNING_PAYPALWPP_TOTAL_CHANGED', 'Your order\'s total has changed, based on the delivery address you selected at PayPal.  Please review your order and re-submit.');
+
+// -----
 // This language-constant can be used in the store's update to /includes/modules/[YOUR_TEMPLATE/]information.php
 // to point the customer to the order_status page link.
 //
