@@ -2145,6 +2145,107 @@ class OnePageCheckout extends base
             $order->info['comments'] .= $message;
         }
     }
+    
+    /* -----
+    ** This public method, called from OPC's observer, provides an override to the order's
+    ** tax-locations when temporary addresses are in effect.
+    **
+    ** Noting that this is somewhat complicated, since for the 'Store' tax-basis the order might
+    ** have one temporary and one 'permanent' address in use.
+    */
+    public function getTaxLocations()
+    {
+        $billing_is_temp = (isset($_SESSION['billto']) && $_SESSION['billto'] == $this->tempBilltoAddressBookId);
+        $shipping_is_temp = (isset($_SESSION['sendto']) && $_SESSION['sendto'] == $this->tempSendtoAddressBookId);
+
+        switch (STORE_PRODUCT_TAX_BASIS) {
+            case 'Shipping':
+                if ($this->isVirtualOrder) {
+                    if ($billing_is_temp) {
+                        $country_id = $this->tempAddressValues['bill']['country'];
+                        $zone_id = $this->tempAddressValues['bill']['zone_id'];
+                    }
+                } else {
+                    if ($shipping_is_temp) {
+                        $country_id = $this->tempAddressValues['ship']['country'];
+                        $zone_id = $this->tempAddressValues['ship']['zone_id'];
+                    }
+                }
+                break;
+
+            case 'Billing':
+               if ($billing_is_temp) {
+                    $country_id = $this->tempAddressValues['bill']['country'];
+                    $zone_id = $this->tempAddressValues['bill']['zone_id'];
+                }
+                break;
+
+            case 'Store':
+                if ($billing_is_temp) {
+                    if ($this->isVirtualOrder || $this->tempAddressValues['bill']['zone_id'] == STORE_ZONE) {
+                        $country_id = $this->tempAddressValues['bill']['country'];
+                        $zone_id = $this->tempAddressValues['bill']['zone_id'];
+                    }
+                } else {
+                    $country_zone = $GLOBALS['db']->Execute(
+                        "SELECT ab.entry_country_id, ab.entry_zone_id
+                           FROM " . TABLE_ADDRESS_BOOK . " ab
+                                LEFT JOIN " . TABLE_ZONES . " z 
+                                    ON ab.entry_zone_id = z.zone_id
+                          WHERE ab.customers_id = " . (int)$_SESSION['customer_id'] . "
+                            AND ab.address_book_id = " . (int)$_SESSION['billto'] . "
+                          LIMIT 1"
+                    );
+                    if ($country_zone->EOF) {
+                        trigger_error("Unknown/invalid billto address #{$_SESSION['billto']} for customer#{$_SESSION['customer_id']}.", E_USER_ERROR);
+                        exit();
+                    }
+                    if ($this->isVirtualOrder || $country_zone->fields['entry_zone_id'] == STORE_ZONE) {
+                        $country_id = $country_zone->fields['entry_country_id'];
+                        $zone_id = $country_zone->fields['entry_zone_id'];
+                    }
+                }
+                
+                if (!isset($country_id)) {
+                    if ($shipping_is_temp) {
+                        $country_id = $this->tempAddressValues['ship']['country'];
+                        $zone_id = $this->tempAddressValues['ship']['zone_id'];
+                    } else {
+                        $country_zone = $GLOBALS['db']->Execute(
+                            "SELECT ab.entry_country_id, ab.entry_zone_id
+                               FROM " . TABLE_ADDRESS_BOOK . " ab
+                                    LEFT JOIN " . TABLE_ZONES . " z 
+                                        ON ab.entry_zone_id = z.zone_id
+                              WHERE ab.customers_id = " . (int)$_SESSION['customer_id'] . "
+                                AND ab.address_book_id = " . (int)$_SESSION['sendto'] . "
+                              LIMIT 1"
+                        );
+                        if ($country_zone->EOF) {
+                            trigger_error("Unknown/invalid sendto address #{$_SESSION['sendto']} for customer#{$_SESSION['customer_id']}.", E_USER_ERROR);
+                            exit();
+                        }
+                        $country_id = $country_zone->fields['entry_country_id'];
+                        $zone_id = $country_zone->fields['entry_zone_id'];
+                    }
+                }
+                break;
+
+            default:
+                trigger_error('Unknown value (' . STORE_PRODUCT_TAX_BASIS . ') found for \'STORE_PRODUCT_TAX_BASIS\'.', E_USER_ERROR);
+                exit();
+                break;
+        }
+        
+        if (!isset($country_id)) {
+            $tax_locations = false;
+        } else {
+            $tax_locations = array(
+                'country_id' => $country_id,
+                'zone_id' => $zone_id
+            );
+        }
+        return $tax_locations;
+    }
 
     // -----
     // This internal function issues a debug-message using the OPC's observer-class

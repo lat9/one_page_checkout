@@ -188,6 +188,7 @@ class checkout_one_observer extends base
                     'NOTIFY_PAYPALWPP_BEFORE_DOEXPRESSCHECKOUT',
                     'NOTIFY_HEADER_START_SHOPPING_CART',
                     'NOTIFY_HEADER_START_CHECKOUT_PAYMENT_ADDRESS',
+                    'ZEN_GET_TAX_LOCATIONS',
                 )
             );
         }
@@ -546,6 +547,28 @@ class checkout_one_observer extends base
                     $this->debug_message('checkout_one redirect 4: ', true, 'checkout_one_observer');
                     $GLOBALS['messageStack']->add_session('checkout_shipping', WARNING_PAYPALWPP_TOTAL_CHANGED, 'caution');
                     zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, zen_get_all_get_params(), 'SSL'));
+                }
+                break;
+                
+            // -----
+            // Issued by the zen_get_tax_locations function, allowing us to modify the taxed location
+            // when temporary addresses are in effect for the current order.
+            //
+            // On entry:
+            //
+            // $p1 ... (r/o) An associative array, containing the 'country' and 'zone' values passed to that function.
+            // $p2 ... (r/w) A reference to the $tax_address variable, initialized to (bool)false; set to an array containing
+            //               the overriding 'country_id' and 'zone_id' if temporary addresses are in effect.
+            //
+            case 'ZEN_GET_TAX_LOCATIONS':
+                // -----
+                // If the tax locations are already overridden, log a PHP warning identifying the condition.  Note
+                // that follow-on order processing **might result** in a PHP error!
+                //
+                if ($p2 !== false) {
+                    trigger_error('zen_get_tax_locations, overridden by another observer; OPC processing bypassed.', E_USER_WARNING);
+                } else {
+                    $p2 = $_SESSION['opc']->getTaxLocations();
                 }
                 break;
                 

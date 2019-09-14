@@ -707,12 +707,16 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                     <li>CHANGE: Future-proofing for the inclusion of &quot;Multi-lingual Country Names&quot; in zc157.</li>
                     <li>CHANGE: On entry to the main <em>OPC</em> page, display messages from the 'checkout' group, too.</li>
                     <li>BUGFIX: Correct interaction with paypalwpp, when the delivery address returned by PayPal is different from that entered in the store.</li>
+                    <li>BUGFIX: Correct tax-calculations for order totals that use <code class="no-pad">zen_get_tax_locations</code>.</li>
                     <li>The following files were affected:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                         <li>/includes/languages/english/extra_definitions/checkout_one_extra_definitions.php</li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_checkout_one_default.php</span></li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
+                        <li><span class="corefile">/zc155f/includes/functions/functions_taxes.php</span> <span class="smaller added">(Added)</span><ul>
+                            <li><b>Note:</b> Stores running a version of Zen Cart <em>prior to</em> v1.5.6 should copy this file to their store's <code class="no-pad">/includes/functions</code> sub-directory.</li>
+                        </ul></li>
                     </ol></li>
                 </ul></li>
                 <li>v2.1.3, 2019-08-04:<ul>

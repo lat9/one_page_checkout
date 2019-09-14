@@ -112,6 +112,7 @@ Copy the files listed below from the _OPC_ distribution's `/zc156b` sub-director
 1. `/includes/classes/observers/auto.downloads_via_redirect.php`
 1. `/includes/classes/observers/auto.downloads_via_streaming.php`
 1. `/includes/classes/observers/auto.downloads_via_url.php`
+2. `/includes/functions/functions_taxes.php`
 1. `/includes/modules/pages/download/header_php.php`
 2. `/includes/modules/pages/login/header_php.php`
 1. `/includes/modules/downloads.php`
@@ -283,7 +284,7 @@ The file previously distributed as `/includes/templates/YOUR_TEMPLATE/templates/
 
 #### Copy Files
 
-Copy the files listed below from the _OPC_ distribution's `/zc156b` sub-directory to your store's file-system, bringing these files up to their Zen Cart 1.5.6b version:
+For Zen Cart versions 1.5.6 and 1.5.6a, copy the files listed below from the _OPC_ distribution's `/zc156b` sub-directory to your store's file-system, bringing these files up to their Zen Cart 1.5.6b version:
 
 1. `/includes/classes/message_stack.php`
 1. `/includes/classes/observers/auto.downloads_via_aws.php`
@@ -322,6 +323,7 @@ Copy the files listed below from the _OPC_ distribution's `/zc156b` sub-director
 1. `/includes/classes/observers/auto.downloads_via_redirect.php`
 1. `/includes/classes/observers/auto.downloads_via_streaming.php`
 1. `/includes/classes/observers/auto.downloads_via_url.php`
+2. `/includes/functions/functions_taxes.php`
 1. `/includes/modules/pages/download/header_php.php`
 1. `/includes/modules/pages/login/header_php.php`
 1. `/includes/modules/downloads.php`
