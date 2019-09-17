@@ -2160,7 +2160,7 @@ class OnePageCheckout extends base
 
         switch (STORE_PRODUCT_TAX_BASIS) {
             case 'Shipping':
-                if ($this->isVirtualOrder) {
+                if ($this->isVirtualOrder || $this->getShippingBilling()) {
                     if ($billing_is_temp) {
                         $country_id = $this->tempAddressValues['bill']['country'];
                         $zone_id = $this->tempAddressValues['bill']['zone_id'];
@@ -2244,6 +2244,7 @@ class OnePageCheckout extends base
                 'zone_id' => $zone_id
             );
         }
+        $this->debugMessage("getTaxLocations ($billing_is_temp:$shipping_is_temp), " . json_encode($tax_locations));
         return $tax_locations;
     }
 
