@@ -705,8 +705,10 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
               <ul>
                 <li>v2.1.5-beta1, 2019-09-17:<ul>
                     <li>BUGFIX: Correct tax-locations returned when using temporary addresses and billing equals shipping.</li>
+                    <li>CHANGE: Use common constant, if defined, as an option separator for products in the current cart.</li>
                     <li>The following files were affected:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
+                        <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_shopping_cart.php</span></li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                     </ol></li>
                 </ul></li>

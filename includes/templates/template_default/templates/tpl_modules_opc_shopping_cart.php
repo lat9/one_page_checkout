@@ -1,8 +1,14 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2017, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2019, Vinos de Frutas Tropicales.  All rights reserved.
 //
+// The following definition is used in multiple pages and will in the main language file, e.g. english.php, for
+// Zen Cart versions 1.5.7 and later.
+//
+// Provide an in-script override for the case it's not defined.
+//
+if (!defined('TEXT_OPTION_DIVIDER')) define('TEXT_OPTION_DIVIDER', '&nbsp;-&nbsp;');
 ?>
 <!--bof shopping-cart block -->
   <div id="checkoutOneShoppingCart">
@@ -41,9 +47,9 @@ for ($i = 0, $n = count($order->products); $i < $n; $i++) {
 ?>
             <ul class="cartAttribsList">
 <?php
-        for ($j = 0, $n2 = count($order->products[$i]['attributes']); $j<$n2; $j++) {
+        for ($j = 0, $n2 = count($order->products[$i]['attributes']); $j < $n2; $j++) {
 ?>
-              <li><?php echo $order->products[$i]['attributes'][$j]['option'] . ': ' . nl2br(zen_output_string_protected($order->products[$i]['attributes'][$j]['value'])); ?></li>
+              <li><?php echo $order->products[$i]['attributes'][$j]['option'] . TEXT_OPTION_DIVIDER . nl2br(zen_output_string_protected($order->products[$i]['attributes'][$j]['value'])); ?></li>
 <?php
         } // end loop
 ?>
