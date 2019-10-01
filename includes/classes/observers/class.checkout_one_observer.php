@@ -229,13 +229,20 @@ class checkout_one_observer extends base
                 break;
                 
             // -----
-            // Redirect any accesses to the "3-page" checkout process to the one-page.
+            // Redirect any accesses to the "3-page" non-confirmation pages to the one-page version.
             //
             case 'NOTIFY_HEADER_START_CHECKOUT_SHIPPING':
             case 'NOTIFY_HEADER_START_CHECKOUT_PAYMENT':
-            case 'NOTIFY_HEADER_START_CHECKOUT_CONFIRMATION':
-                $this->debug_message('checkout_one redirect 1: ', true, 'checkout_one_observer');
+                $this->debug_message('checkout_one redirect 1a: ', true, 'checkout_one_observer');
                 zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, zen_get_all_get_params(), 'SSL'));
+                break;
+                
+            // -----
+            // Redirect any accesses to the "3-page" checkout confirmation to the one-page version.
+            //
+            case 'NOTIFY_HEADER_START_CHECKOUT_CONFIRMATION':
+                $this->debug_message('checkout_one redirect 1b: ', true, 'checkout_one_observer');
+                zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE_CONFIRMATION, zen_get_all_get_params() . 'redirect=true', 'SSL'));
                 break;
                 
             // -----

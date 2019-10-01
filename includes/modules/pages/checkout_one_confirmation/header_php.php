@@ -85,7 +85,7 @@ if (isset($_SESSION['shipping']['id']) && $_SESSION['shipping']['id'] == 'free_f
 // -----
 // If we've received control from the checkout_one page's form, the action should be 'process'.
 //
-if (!isset($_POST['action']) || $_POST['action'] != 'process') {
+if (!isset($_GET['redirect']) && (!isset($_POST['action']) || $_POST['action'] != 'process')) {
     $checkout_one->debug_message('NOTIFY_CHECKOUT_ONE_CONFIRMATION_BAD_POST', true);
     zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));
 }
@@ -122,13 +122,11 @@ if (!$_SESSION['opc']->validateTemporaryEntries()) {
     $messageStack->add_session('checkout_payment', ERROR_INVALID_TEMPORARY_ENTRIES, 'error');
 }
 
-$shipping_billing = ($_POST['javascript_enabled'] != '0' && isset($_POST['shipping_billing']) && $_POST['shipping_billing'] == '1');
-$_SESSION['shipping_billing'] = $shipping_billing;
-if ($shipping_billing) {
+if ($_SESSION['shipping_billing']) {
     $_SESSION['sendto'] = $_SESSION['billto'];
 }
 
-$_SESSION['comments'] = (zen_not_null($_POST['comments'])) ? zen_clean_html($_POST['comments']) : '';
+$_SESSION['comments'] = (!empty($_POST['comments'])) ? zen_clean_html($_POST['comments']) : '';
 $comments = $_SESSION['comments'];
 
 $total_weight = $_SESSION['cart']->show_weight();
@@ -141,7 +139,10 @@ $order = new order;
 // Generate a starting hash of the session information, so that we can check to see if anything has changed
 // after processing the order-total modules.
 //
-$session_start_hash = $checkout_one->hashSession($_POST['current_order_total']);
+// Note: The posted data won't be present for some payment methods (notably gps), if they bypass the checkout_one
+// page's transition to this page.
+//
+$session_start_hash = $checkout_one->hashSession(!empty($_POST['current_order_total']) ? $_POST['current_order_total'] : 0);
 
 $checkout_one->debug_message('Initial order information:' . var_export($order, true));
 
@@ -236,7 +237,9 @@ $checkout_one->debug_message('Returned from call to order-totals:' . var_export(
 // -----
 // Process the payment modules **only if** the order has been confirmed.  Don't want/need this processing for coupon/GC actions.
 //
-$order_confirmed = !empty($_POST['order_confirmed']);
+// Note: The order is considered 'confirmed' if we've been redirected from the 'checkout_confirmation' page, too.
+//
+$order_confirmed = (!empty($_GET['redirect']) || !empty($_POST['order_confirmed']));
 if ($order_confirmed) {
     $payment_modules = new payment($_SESSION['payment']);
     $payment_modules->update_status();
@@ -265,8 +268,13 @@ $order_totals = $order_total_modules->process();
 // If so, redirect back to the checkout_one page so that the customer sees what they're confirming on the next pass through the
 // confirmation page.
 //
+// Note: Some payment methods, notably gps, perform a redirect to 'checkout_confirmation' which is redirected
+// here by the OPC observer.  Bypass the hash-check if the current payment method is in the list of those requiring
+// confirmation.
+//
+$confirmation_required = in_array($_SESSION['payment'], explode(',', str_replace(' ', '', CHECKOUT_ONE_CONFIRMATION_REQUIRED)));
 $session_end_hash = $checkout_one->hashSession($currencies->format ($order->info['total']));
-if ($order_confirmed && $session_end_hash != $session_start_hash) {
+if (!$confirmation_required && $order_confirmed && $session_end_hash != $session_start_hash) {
     $error = true;
     $messageStack->add_session('checkout_payment', ERROR_NOJS_ORDER_CHANGED, 'error');
 }
