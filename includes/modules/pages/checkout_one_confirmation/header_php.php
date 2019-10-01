@@ -33,7 +33,7 @@ if ($_SESSION['cart']->count_contents() <= 0) {
 }
 
 // if the customer is not logged on, redirect them to the login page
-if (!$_SESSION['customer_id']) {
+if (!zen_is_logged_in()) {
     $_SESSION['navigation']->set_snapshot(array('mode' => 'SSL', 'page' => FILENAME_CHECKOUT_ONE));
     zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
 } else {
@@ -68,7 +68,7 @@ if (!isset($_SESSION['shipping'])) {
     zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));
 }
 
-$checkout_one->debug_message ('Starting confirmation, shipping and request data follows:' . print_r ($_SESSION['shipping'], true), true);
+$checkout_one->debug_message('Starting confirmation, shipping and request data follows:' . print_r($_SESSION['shipping'], true), true);
 
 $free_shipping_enabled = (defined('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING') && MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING == 'true');
 $free_shipping_over = 0;
