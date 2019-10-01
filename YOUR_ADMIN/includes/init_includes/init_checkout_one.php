@@ -15,7 +15,7 @@ if (!defined('IS_ADMIN_FLAG')) {
 // 500-599 ... Registered-account settings
 // 1000+ ..... Debug settings
 //
-define('CHECKOUT_ONE_CURRENT_VERSION', '2.1.5-beta3');
+define('CHECKOUT_ONE_CURRENT_VERSION', '2.1.5');
 define('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2019-10-01');
 
 if (isset($_SESSION['admin_id'])) {
