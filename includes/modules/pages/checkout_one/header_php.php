@@ -374,24 +374,32 @@ $flagDisablePaymentAddressChange = false;
 $editShippingButtonLink = true;
 if (isset($_SESSION['payment'])) {
     // -----
-    // Fix-up required for PayPal Express Checkout shortcut-button since the payment method is pre-set on entry to the checkout process.
+    // If the payment method previously recorded for the checkout is no longer enabled, reset the session
+    // value so that the customer can re-select.
     //
-    if (is_object(${$_SESSION['payment']}) && $order->info['payment_method'] == '') {
-        $order->info['payment_method'] = ${$_SESSION['payment']}->title;
-        $order->info['payment_module_code'] = ${$_SESSION['payment']}->code;
-    }
-
-    // if shipping-edit button should be overridden, do so
-    if (isset($_SESSION['payment']) && method_exists(${$_SESSION['payment']}, 'alterShippingEditButton')) {
-        $theLink = ${$_SESSION['payment']}->alterShippingEditButton();
-        if ($theLink) {
-            $editShippingButtonLink = $theLink;
+    if (empty(${$_SESSION['payment']})) {
+        unset($_SESSION['payment']);
+    } else {
+        // -----
+        // Fix-up required for PayPal Express Checkout shortcut-button since the payment method is pre-set on entry to the checkout process.
+        //
+        if (is_object(${$_SESSION['payment']}) && $order->info['payment_method'] == '') {
+            $order->info['payment_method'] = ${$_SESSION['payment']}->title;
+            $order->info['payment_module_code'] = ${$_SESSION['payment']}->code;
         }
-    }
-    
-    // deal with billing address edit button
-    if (isset(${$_SESSION['payment']}->flagDisablePaymentAddressChange)) {
-        $flagDisablePaymentAddressChange = ${$_SESSION['payment']}->flagDisablePaymentAddressChange;
+
+        // if shipping-edit button should be overridden, do so
+        if (isset($_SESSION['payment']) && method_exists(${$_SESSION['payment']}, 'alterShippingEditButton')) {
+            $theLink = ${$_SESSION['payment']}->alterShippingEditButton();
+            if ($theLink) {
+                $editShippingButtonLink = $theLink;
+            }
+        }
+        
+        // deal with billing address edit button
+        if (isset(${$_SESSION['payment']}->flagDisablePaymentAddressChange)) {
+            $flagDisablePaymentAddressChange = ${$_SESSION['payment']}->flagDisablePaymentAddressChange;
+        }
     }
 }
 
