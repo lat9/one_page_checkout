@@ -365,7 +365,7 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                 </tr>
                 <tr>
                     <td>Enable One-Page Checkout Debug?</td>
-                    <td>When enabled, debug files named myDEBUG-one_page_checkout-<em>xx</em>-YYYY-mm-dd.log are created in your /logs sub-directory, where <em>xx</em> is the customer_id for the checkout and <em>YYYY-mm-dd</em> is the date associated with the information. Use the <b>true</b> or <b>full</b> settings in combination with the <em>Debug: Customer List</em> setting to limit the customers for which the debug-action is taken.  Setting the value to <b>full</b> will also set the PHP error-level for the checkout_one page's processing so that <b>all</b> PHP errors are logged.</td>
+                    <td>When enabled, debug files named <code>one_page_checkout-<em>xx</em>-YYYY-mm-dd.log</code> are created in your /logs sub-directory, where <em>xx</em> is the customer_id for the checkout and <em>YYYY-mm-dd</em> is the date associated with the information. Use the <b>true</b> or <b>full</b> settings in combination with the <em>Debug: Customer List</em> setting to limit the customers for which the debug-action is taken.  Setting the value to <b>full</b> will also set the PHP error-level for the checkout_one page's processing so that <b>all</b> PHP errors are logged.</td>
                     <td>1.0.0</td>
                 </tr>
                 <tr>
@@ -706,7 +706,9 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
               <ul>
                 <li>v2.2.0, 2019-10-06:<ul>
                     <li>BUGFIX: Correct PHP notices for no-longer-enabled payment methods.</li>
+                    <li>CHANGE: Remove 'myDEBUG-' prefix on <em>OPC</em> debug filenames.</li>
                     <li>The following files were affected:<ol>
+                        <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/modules/pages/checkout_one/header_php.php</li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                     </ol></li>
