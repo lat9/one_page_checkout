@@ -3,13 +3,15 @@
 *OPC-GC/RA*'s `checkout_one` page guides a customer through the checkout process using jQuery and AJAX handlers.  The majority of this page's display is documented in the plugin's readme; this section identifies the changes specific to the support for guest-checkout and temporary addresses.
 
 
-## Gathering Contact Information ##
+## Starting Guest Checkout ##
 
-When a *guest-customer* starts the checkout process, the first step is to gather some *contact information*.  The `checkout_one` page's jQuery gives focus to the "Contact Information" block, requiring that the customer supply this information before proceeding.
+When a *guest-customer* starts the checkout process, the first step is to gather some *contact information* and their billing address.  The `checkout_one` page's jQuery gives focus to the "Contact Information" block, requiring that the customer supply the information in both of these blocks before proceeding.  Until the guest-customer has supplied their contact information and billing address, the shipping- and payment-method blocks aren't rendered.
+
+Since the customer has no saved addresses &mdash; they're a *guest* &mdash; neither the saved-address dropdown nor the *Save this Address* checkbox are displayed. 
 
 ----------
 
-![](images/checkout_one_ci.jpg)
+![](images/checkout_one_guest_start.jpg)
 
 ----------
 
@@ -23,14 +25,6 @@ While the ***Telephone*** element is *always* displayed, its value is required o
 ## Updating Addresses (Billing and Shipping) ##
 
 The address-gathering within the page has been updated for v2.0.0, now displaying a full address form when an order's billing and/or shipping addresses are changed.  That display changes depending on the [mode](address_management.md) in which the checkout is being processed.
-
-## Guest Checkout ##
-
-For a guest-checkout, once the customer has supplied their **Contact Information**, the **Billing Address** block is given focus.  Since the customer has no saved addresses &mdash; they're a *guest* &mdash; neither the saved-address dropdown nor the *Save this Address* checkbox are displayed. 
-
-----------
-
-![](images/checkout_one_addr_gc.jpg)
 
 ----------
 

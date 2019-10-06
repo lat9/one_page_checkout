@@ -27,7 +27,7 @@ Other than the address-entry requirement, the address-information gathering is s
 ## Guest Checkout ##
 This mode starts when a not-logged-in customer with an item in their cart enters the checkout process via click of a guest-checkout link in the store (normally from the store's `login` page).  The customer *might* have a pre-existing account with the store. On entry, the customer's ***Email Address*** and ***Telephone Number*** are gathered to allow the store's admin to contact the customer with any questions and/or notifications regarding the current order.
 
-Once supplied, the ***Billing Address*** block is given focus, requiring the customer to supply that information.  Upon validation, the information is stored in the customer's session and is used as the order's current billing- and shipping-address.
+The ***Billing Address*** block is also displayed on a guest's initial entry to the checkout process, requiring the customer to supply that information before proceeding.  Upon validation, the information is stored in the customer's session and is used as the order's current billing- and shipping-address.
 
 If the customer chooses to have a different ship-to address, they un-tick the ***Billing, same as Shipping*** checkbox and supply that address' information.  Upon validation, the information is stored in the customer's session and is used as the order's current shipping address.
 
