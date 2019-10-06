@@ -683,22 +683,30 @@ jQuery(document).ready(function(){
         jQuery(this).addClass('opc-changed');
         jQuery('#checkoutOneBillto .opc-buttons').show();
         jQuery('#checkoutPayment > .opc-overlay').addClass('active');
-        jQuery('#checkoutOneBillto').addClass('opc-view');
+        jQuery('#checkoutOneGuestInfo, #checkoutOneBillto').addClass('opc-view');
     }
-    jQuery(document).on('change', '#checkoutOneBillto input, #checkoutOneBillto select:not(#select-address-bill)', changeBillingFields);
+    jQuery(document).on('change', '#checkoutOneGuestInfo input, #checkoutOneBillto input, #checkoutOneBillto select:not(#select-address-bill)', changeBillingFields);
 
     function restoreBilling()
     {
-        restoreAddressValues('bill', '#checkoutOneBillto');
+        if (jQuery('#checkoutOneGuestInfo').length) {
+            restoreCustomerInfo();
+        } else {
+            restoreAddressValues('bill', '#checkoutOneBillto');
+        }
         jQuery('#checkoutPayment > .opc-overlay').removeClass('active');
-        jQuery('#checkoutOneBillto').removeClass('opc-view');
+        jQuery('#checkoutOneGuestInfo, #checkoutOneBillto').removeClass('opc-view');
         jQuery('#checkoutOneBillto .opc-buttons').hide();
     }
     jQuery(document).on('click', '#opc-bill-cancel', restoreBilling);
 
     function saveBilling()
     {
-        saveAddressValues('bill', '#checkoutOneBillto');
+        if (jQuery('#checkoutOneGuestInfo').length) {
+            saveCustomerInfo();
+        } else {
+            saveAddressValues('bill', '#checkoutOneBillto');
+        }
     }
     jQuery(document).on('click', '#opc-bill-save', saveBilling);
     
@@ -858,33 +866,16 @@ jQuery(document).ready(function(){
     
     // -----
     // If the checkout process is currently being performed in "guest" mode, make sure that any
-    // required fields in the guest-login block are currently filled-in and, if not, give focus
-    // to the first required input in that block.
+    // required fields in the guest-login and billing-address blocks are currently filled-in 
+    // and, if not, give focus to the first required input in the block.
     //
-    var guestInputsOk = true;
-    jQuery('#checkoutOneGuestInfo').find('input').each(function() {
-        if (jQuery(this).prop('required') && jQuery(this).val() == '') {
-            jQuery('#checkoutOneGuestInfo .opc-buttons').show();
-            jQuery('#opc-guest-cancel').hide();
-            jQuery('#checkoutPayment > .opc-overlay').addClass('active');
-            jQuery('#checkoutOneGuestInfo').addClass('opc-view');
-            jQuery(this).focus();
-            guestInputsOk = false;
-            return false;
-        }
-    });
-    
-    // -----
-    // If the guest customer-information inputs are OK (or not required), make sure
-    // that the billing-address block's required fields are all set, too.
-    //
-    if (guestInputsOk) {
-        jQuery('#checkoutOneBillto').find('input').each(function() {
+    if (jQuery('#checkoutOneGuestInfo').length) {
+        jQuery('#checkoutOneGuestInfo, #checkoutOneBillto').find('input').each(function() {
             if (jQuery(this).prop('required') && jQuery(this).val() == '') {
                 jQuery('#checkoutOneBillto .opc-buttons').show();
                 jQuery('#opc-bill-cancel').hide();
                 jQuery('#checkoutPayment > .opc-overlay').addClass('active');
-                jQuery('#checkoutOneBillto').addClass('opc-view');
+                jQuery('#checkoutOneGuestInfo, #checkoutOneBillto').addClass('opc-view');
                 jQuery(this).focus();
                 return false;
             }
@@ -892,23 +883,8 @@ jQuery(document).ready(function(){
     }
     
     // -----
-    // Monitor the guest customer-information block's inputs for change.
+    // Methods to restore/save the guest-customer's information.
     //
-    jQuery(document).on('change', '#checkoutOneGuestInfo input', function(event) {
-        jQuery(this).addClass('opc-changed');
-        jQuery('#checkoutOneGuestInfo .opc-buttons').show();
-        jQuery('#checkoutPayment > .opc-overlay').addClass('active');
-        jQuery('#checkoutOneGuestInfo').addClass('opc-view');
-    });
-    jQuery(document).on('click', '#opc-guest-cancel', function(event) {
-        restoreCustomerInfo();
-        jQuery('#checkoutPayment > .opc-overlay').removeClass('active');
-        jQuery('#checkoutOneGuestInfo').removeClass('opc-view');
-        jQuery('#checkoutOneGuestInfo .opc-buttons').hide();
-    });
-    jQuery(document).on('click', '#opc-guest-save', function(event) {
-        saveCustomerInfo();
-    });
     function restoreCustomerInfo()
     {
         zcLog2Console('restoreCustomerInfo, starts ...');
@@ -928,6 +904,7 @@ jQuery(document).ready(function(){
             checkForRedirect(response.status);
             
             jQuery('#checkoutOneGuestInfo').html(response.infoHtml);
+            restoreAddressValues('bill', '#checkoutOneBillto');
         });
     }
     
@@ -970,13 +947,8 @@ jQuery(document).ready(function(){
                         }
                     }
                 });
-            // -----
-            // Otherwise, the information-update was successful.  Since the shipping, payment and order-total
-            // modules might have address-related dependencies, simply hard-refresh (i.e. from the
-            // server) the page's display to allow that processing to do its thing.
-            //
             } else {
-                window.location.reload(true);
+                saveAddressValues('bill', '#checkoutOneBillto');
             }
         });
     }

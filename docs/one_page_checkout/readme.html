@@ -707,9 +707,12 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                 <li>v2.2.0, 2019-10-06:<ul>
                     <li>BUGFIX: Correct PHP notices for no-longer-enabled payment methods.</li>
                     <li>CHANGE: Remove 'myDEBUG-' prefix on <em>OPC</em> debug filenames.</li>
+                    <li>CHANGE: Guest checkout: Combine customer-info and billing-address steps.</li>
                     <li>The following files were affected:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/modules/pages/checkout_one/header_php.php</li>
+                        <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
+                        <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                     </ol></li>
                 </ul></li>
