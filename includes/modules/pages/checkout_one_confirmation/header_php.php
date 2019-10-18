@@ -126,7 +126,7 @@ if ($_SESSION['shipping_billing']) {
     $_SESSION['sendto'] = $_SESSION['billto'];
 }
 
-$_SESSION['comments'] = (!empty($_POST['comments'])) ? zen_clean_html($_POST['comments']) : '';
+$_SESSION['comments'] = (!empty($_POST['comments'])) ? htmlspecialchars($_POST['comments'], ENT_NOQUOTES, CHARSET, true) : '';
 $comments = $_SESSION['comments'];
 
 $total_weight = $_SESSION['cart']->show_weight();
