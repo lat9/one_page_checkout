@@ -341,7 +341,17 @@ class OnePageCheckout extends base
     protected function initializeGuestCheckout()
     {
         $this->checkEnabled();
-        $this->isGuestCheckoutEnabled = !zen_is_spider_session() && (defined('CHECKOUT_ONE_ENABLE_GUEST') && CHECKOUT_ONE_ENABLE_GUEST == 'true');
+        
+        // -----
+        // Give a watching observer the opportunity to disable the guest checkout, e.g. if an unwanted IP address is making the access.
+        //
+        $allow_guest_checkout = true;
+        $this->notify('NOTIFY_OPC_GUEST_CHECKOUT_OVERRIDE', '', $allow_guest_checkout);
+        if ($allow_guest_checkout !== true) {
+            $this->debugMessage("Guest checkout disabled via observer.");
+        }
+        
+        $this->isGuestCheckoutEnabled = $allow_guest_checkout === true && !zen_is_spider_session() && (defined('CHECKOUT_ONE_ENABLE_GUEST') && CHECKOUT_ONE_ENABLE_GUEST == 'true');
         if (isset($_SESSION['opc_error']) && ($_SESSION['opc_error'] == self::OPC_ERROR_NO_GC || $_SESSION['opc_error'] == self::OPC_ERROR_NO_JS)) {
             $this->isGuestCheckoutEnabled = false;
         }
