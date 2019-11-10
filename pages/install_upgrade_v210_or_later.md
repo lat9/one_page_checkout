@@ -74,7 +74,7 @@ In the module's `ec_step2_finish` function, find this section:
       if (strtoupper($_SESSION['paypal_ec_payer_info']['ship_address_status']) != 'NONE' && $_SESSION['paypal_ec_payer_info']['ship_street_1'] != '') {
 ```
 
-and add the notification required for OPC's proper operation:
+and add the notification required for OPC's proper operation.  Note that this was corrected for #221, adding single-quotes so that there are _two_ parameters for the call to `$this->zcLog`:
 
 ```php
 
@@ -92,7 +92,7 @@ and add the notification required for OPC's proper operation:
       $bypass_address_creation = false;
       $this->notify('NOTIFY_PAYPALEXPRESS_BYPASS_ADDRESS_CREATION', $paypal_ec_payer_info, $bypass_address_creation);
       if ($bypass_address_creation) {
-          $this->zcLog('ec_step2_finish - 2a, address-creation bypassed based on observer setting.');
+          $this->zcLog('ec_step2_finish - 2a', 'address-creation bypassed based on observer setting.');
       }
 
       // if no address required for shipping (or overridden by above), leave shipping portion alone
@@ -161,7 +161,7 @@ In the module's `ec_step2_finish` function, find this section:
       if (strtoupper($_SESSION['paypal_ec_payer_info']['ship_address_status']) != 'NONE' && $_SESSION['paypal_ec_payer_info']['ship_street_1'] != '') {
 ```
 
-and add the notification required for OPC's proper operation:
+and add the notification required for OPC's proper operation.  Note that this was corrected for #221, adding single-quotes so that there are _two_ parameters for the call to `$this->zcLog`:
 
 ```php
 
@@ -179,7 +179,7 @@ and add the notification required for OPC's proper operation:
       $bypass_address_creation = false;
       $this->notify('NOTIFY_PAYPALEXPRESS_BYPASS_ADDRESS_CREATION', $paypal_ec_payer_info, $bypass_address_creation);
       if ($bypass_address_creation) {
-          $this->zcLog('ec_step2_finish - 2a, address-creation bypassed based on observer setting.');
+          $this->zcLog('ec_step2_finish - 2a', 'address-creation bypassed based on observer setting.');
       }
 
       // if no address required for shipping (or overridden by above), leave shipping portion alone
@@ -213,7 +213,7 @@ Add a notification to allow _OPC_'s temporary addresses to be recorded in the or
       if (strtoupper($_SESSION['paypal_ec_payer_info']['ship_address_status']) != 'NONE' && $_SESSION['paypal_ec_payer_info']['ship_street_1'] != '') {
 ```
 
-and add the notification required for OPC's proper operation:
+and add the notification required for OPC's proper operation.  Note that this was corrected for #221, adding single-quotes so that there are _two_ parameters for the call to `$this->zcLog`:
 
 ```php
 
@@ -231,7 +231,7 @@ and add the notification required for OPC's proper operation:
       $bypass_address_creation = false;
       $this->notify('NOTIFY_PAYPALEXPRESS_BYPASS_ADDRESS_CREATION', $paypal_ec_payer_info, $bypass_address_creation);
       if ($bypass_address_creation) {
-          $this->zcLog('ec_step2_finish - 2a, address-creation bypassed based on observer setting.');
+          $this->zcLog('ec_step2_finish - 2a', 'address-creation bypassed based on observer setting.');
       }
 
       // if no address required for shipping (or overridden by above), leave shipping portion alone
