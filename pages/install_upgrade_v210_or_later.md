@@ -4,7 +4,12 @@ v2.1.0 (and later) of **_One-Page Checkout_** supports Zen Cart versions **zc155
 
 Use these instructions when you **upgrade** an existing _OPC_ installation from _v2.0.x_ to the currently-released version, or if you are performing an **initial install** of _OPC_.  The goal of these instructions is to lay a path so that you have a smooth transition when you upgrade your store to Zen Cart 1.5.6b or later.
 
-**Note**: If you are upgrading an existing _OPC_ installation from a version _prior to v2.0.0_, you'll need to uninstall that previous version and perform a fresh installation of _OPC_ v2.1.0.  Too many changes are now present in the Zen Cart core to properly address any update!
+**Notes**: 
+
+
+1. If you are upgrading an existing _OPC_ installation from a version _prior to v2.0.0_, you'll need to uninstall that previous version and perform a fresh installation of _OPC_ v2.1.0.  Too many changes are now present in the Zen Cart core to properly address any update!
+2. There are required edits to the `shipping_estimator` to enable its integration with _OPC_.  See [this](https://github.com/lat9/one_page_checkout/issues/193) GitHub issue for version-specific changes required!
+
 
 Choose the instructions, below, based on the action to be performed for your _currently-installed_ version of Zen Cart. 
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="icon" href="../vinos_favicon.ico" type="image/x-icon" />
 <link href="http://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
@@ -91,6 +91,7 @@ a[target=_blank] { text-decoration: underline; }
   <p>Released under the General Public License (see the file named <code class="no-pad">license.txt</code> in the plugin's distribution for full details). This script is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</p>
   <hr />
   <p><i class="fas fa-exclamation-circle fa-5x red"></i> The installation instructions for <em>OPC</em> v2.1.0 and later have changed <b>significantly</b>, as the <span class="corefile">core file</span> changes required are now <em>in-core</em>, starting with Zen Cart 1.5.6b. If you are updating <em>OPC</em> from a previous version or are performing an initial installation for a Zen Cart version <em>prior to</em> 1.5.6b, refer to <a href="https://github.com/lat9/one_page_checkout/blob/master/pages/install_upgrade_v210_or_later.md" target="_blank">these</a> additional instructions <span class="new-code">before</span> that update or installation!  Note also that initial installations on Zen Cart versions <em>prior to</em> 1.5.5b <b>are no longer supported</b>.</p>
+  <p><i class="fas fa-exclamation-circle fa-5x red"></i> For versions of Zen Cart <em>1.5.6c and earlier</em>, there are edits required for the <code class="no-pad">shipping_estimator</code> if your store enables <em>OPC</em>'s guest-checkout.  Refer to <a href="https://github.com/lat9/one_page_checkout/issues/193" target="_blank">this</a> GitHub issue for version-specific changes required.</p>
   <hr />
   <p><b>Credits:</b></p>
   <ol>
@@ -707,6 +708,7 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                 <li>v2.2.1-beta2, 2019-11-09:<ul>
                     <li>BUGFIX: Restore line-breaks in multi-line order comments.</li>
                     <li>CHANGE: Add notification to allow 'external' processing to disallow guest-checkout.</li>
+                    <li>BUGFIX: Zen Cart version-specfic changes needed for the &quot;shipping_estimator&quot;; see <a href="https://github.com/lat9/one_page_checkout/issues/193" target="_blank">this</a> GitHub issue for details.</li>
                     <li>The following files were affected:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
