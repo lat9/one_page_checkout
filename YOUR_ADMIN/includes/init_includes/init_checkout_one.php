@@ -15,8 +15,8 @@ if (!defined('IS_ADMIN_FLAG')) {
 // 500-599 ... Registered-account settings
 // 1000+ ..... Debug settings
 //
-define('CHECKOUT_ONE_CURRENT_VERSION', '2.2.1-beta2');
-define('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2019-11-09');
+define('CHECKOUT_ONE_CURRENT_VERSION', '2.2.1');
+define('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2019-11-10');
 
 if (isset($_SESSION['admin_id'])) {
     $version_release_date = CHECKOUT_ONE_CURRENT_VERSION . ' (' . CHECKOUT_ONE_CURRENT_UPDATE_DATE . ')';
@@ -269,16 +269,7 @@ if (isset($_SESSION['admin_id'])) {
     // Register the plugin's configuration page for display on the menus.
     //
     if (!zen_page_key_exists('configOnePageCheckout')) {
-        $next_sort = $db->Execute(
-            "SELECT MAX(sort_order) AS max_sort 
-               FROM " . TABLE_ADMIN_PAGES . " 
-              WHERE menu_key='configuration'", 
-              false, 
-              false, 
-              0, 
-              true
-        );
-        zen_register_admin_page('configOnePageCheckout', 'BOX_TOOLS_CHECKOUT_ONE', 'FILENAME_CONFIGURATION', "gID=$cgi", 'configuration', 'Y', $next_sort->fields['max_sort'] + 1);
+        zen_register_admin_page('configOnePageCheckout', 'BOX_TOOLS_CHECKOUT_ONE', 'FILENAME_CONFIGURATION', "gID=$cgi", 'configuration', 'Y');
     }
         
     // -----
