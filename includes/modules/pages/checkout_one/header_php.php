@@ -351,14 +351,11 @@ if (!($display_payment_block && $shipping_module_available)) {
 // The generated list is used within the /includes/modules/pages/checkout_one/jscript_main.php module to determine what text to
 // display for the order-submittal text/title.
 //
-$confirmation_required = array();
-foreach ($enabled_payment_modules as $current_selection) {
-    $current_module = $current_selection['id'];
-    if (in_array($current_module, explode(',', CHECKOUT_ONE_CONFIRMATION_REQUIRED))) {
-        $confirmation_required[] = $current_module;
-    }
+$required_list = '';
+if (!empty(CHECKOUT_ONE_CONFIRMATION_REQUIRED)) {
+    $confirmation_required = explode(',', CHECKOUT_ONE_CONFIRMATION_REQUIRED);
+    $required_list = '"' . implode('", "', $confirmation_required) . '"';
 }
-$required_list = '"' . implode('", "', $confirmation_required) . '"';
 
 if (isset($_GET['payment_error']) && is_object(${$_GET['payment_error']}) && ($error = ${$_GET['payment_error']}->get_error())) {
     $messageStack->add('checkout_payment', $error['error'], 'error');
