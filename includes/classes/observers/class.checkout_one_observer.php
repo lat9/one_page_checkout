@@ -467,7 +467,7 @@ class checkout_one_observer extends base
                         $old_shipping_address = 
                             EMAIL_TEXT_DELIVERY_ADDRESS . "\n" . 
                             EMAIL_SEPARATOR . "\n" . 
-                            zen_address_label($_SESSION['customer_id'], $_SESSION['sendto'], 0, '', "\n");
+                            zen_address_label($_SESSION['customer_id'], $_SESSION['sendto'], false, '', "\n");
                         $email_text = str_replace($old_shipping_address, $new_shipping_address, $email_text);
                         
                         $html_msg['ADDRESS_DELIVERY_DETAIL'] = nl2br($shipping_address);
@@ -483,7 +483,7 @@ class checkout_one_observer extends base
                         $old_billing_address =
                             EMAIL_TEXT_BILLING_ADDRESS . "\n" .
                             EMAIL_SEPARATOR . "\n" .
-                            zen_address_label($_SESSION['customer_id'], $_SESSION['billto'], 0, '', "\n");
+                            zen_address_label($_SESSION['customer_id'], $_SESSION['billto'], false, '', "\n");
                         $email_text = str_replace($old_billing_address, $new_billing_address, $email_text);
                         
                         $html_msg['ADDRESS_BILLING_DETAIL'] = nl2br($billing_address);

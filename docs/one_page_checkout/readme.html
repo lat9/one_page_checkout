@@ -708,7 +708,9 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
               <ul>
                 <li>v2.2.2-beta1, 2019-11-12:<ul>
                     <li>BUGFIX: Enable interoperation with <em>Ship2Pay</em> payment method.</li>
+                    <li>BUGFIX: Use (bool)false to identify no HTML in address labels.</li>
                     <li>The following files were affected:<ol>
+                        <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                         <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                     </ol></li>
