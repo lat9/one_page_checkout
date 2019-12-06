@@ -2011,7 +2011,7 @@ class OnePageCheckout extends base
                     $country_info = $this->getCountryInfoFromIsoCode2($paypal_ec_payment_info['ship_country_code']);
                     $this->tempAddressValues['ship']['country'] = $country_info['id'];
                     $this->tempAddressValues['ship']['country_id'] = $country_info['id'];
-                    $this->tempAddressValues['ship']['format_id'] = $this->tempAddressValues['ship']['country']['format_id'];
+                    $this->tempAddressValues['ship']['format_id'] = $country_info['format_id'];
                     
                     $zone_info = $this->getZoneInfoFromCode($country_info['id'], $paypal_ec_payment_info['ship_state']);
                     $this->tempAddressValues['ship']['state'] = $zone_info['state'];
