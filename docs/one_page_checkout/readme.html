@@ -220,6 +220,7 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                   <li>Stripe-Pay</li>
                   <li>Gateway Processing Services (gps).  <strong>Note:</strong> The payment method must be present in the OPC setting <em>Payment Methods Requiring Confirmation</em> for proper operation.</li>
                   <li>Ship2Pay (starting with <em>OPC</em> v2.2.2)</li>
+                  <li>Ceon Sage Pay Direct (starting with <em>OPC</em> v2.2.2)</li>
                 </ol>
               </div>
               <div class="clearBoth"></div>
@@ -706,10 +707,11 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color.</p>
               <ul>
-                <li>v2.2.2-beta3, 2019-12-06:<ul>
+                <li>v2.2.2-beta4, 2019-12-08:<ul>
                     <li>BUGFIX: Enable interoperation with <em>Ship2Pay</em> payment method.</li>
                     <li>BUGFIX: Use (bool)false to identify no HTML in address labels.</li>
                     <li>BUGFIX: PayPal Express Checkout, address override not recording address' format_id.</li>
+                    <li>BUGFIX: Enable interoperation with <em>Ceon Sage Pay Direct</em> payment method.</li>
                     <li>The following files were affected:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/classes/observers/class.checkout_one_observer.php</li>

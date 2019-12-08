@@ -1,6 +1,6 @@
 <?php
 // -----
-// Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
+// Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2019, Vinos de Frutas Tropicales.  All rights reserved.
 //
 if (!defined('IS_ADMIN_FLAG')) {
@@ -625,12 +625,12 @@ class checkout_one_observer extends base
         }
         
         // -----
-        // Some of the payment methods (e.g. ceon_manual_card) and possibly shipping/order_totals update
+        // Some of the payment methods (e.g. ceon_manual_card and ceon_sage_pay_direct) and possibly shipping/order_totals update
         // information into the session upon their processing ... and ultimately cause the hash on entry
         // to be different from the hash on exit.  Simply update the following list with the variables that
         // can be safely ignored in the hash.
         //
-        unset (
+        unset(
             $session_data['ceon_manual_card_card_holder'],
             $session_data['ceon_manual_card_card_type'],
             $session_data['ceon_manual_card_card_expiry_month'],
@@ -639,7 +639,15 @@ class checkout_one_observer extends base
             $session_data['ceon_manual_card_card_start_month'],
             $session_data['ceon_manual_card_card_start_year'],
             $session_data['ceon_manual_card_card_issue_number'],
-            $session_data['ceon_manual_card_data_entered']
+            $session_data['ceon_manual_card_data_entered'],
+            $session_data['ceon_sage_pay_direct_card_holder'],
+            $session_data['ceon_sage_pay_direct_card_type'],
+            $session_data['ceon_sage_pay_direct_card_expiry_month'],
+            $session_data['ceon_sage_pay_direct_card_expiry_year'],
+            $session_data['ceon_sage_pay_direct_card_start_month'] ,
+            $session_data['ceon_sage_pay_direct_card_start_year'] ,
+            $session_data['ceon_sage_pay_direct_card_issue_number'],
+            $session_data['ceon_sage_pay_direct_data_entered']
         );
         
         // -----
