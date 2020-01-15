@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2017-2019, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2017-2020, Vinos de Frutas Tropicales.  All rights reserved.
 //
 // This class, instantiated in the current customer session, keeps track of a customer's login and checkout
 // progression with the aid of the OPC's observer- and AJAX-classes.
@@ -2011,7 +2011,7 @@ class OnePageCheckout extends base
                     $country_info = $this->getCountryInfoFromIsoCode2($paypal_ec_payment_info['ship_country_code']);
                     $this->tempAddressValues['ship']['country'] = $country_info['id'];
                     $this->tempAddressValues['ship']['country_id'] = $country_info['id'];
-                    $this->tempAddressValues['ship']['format_id'] = $country_info['format_id'];
+                    $this->tempAddressValues['ship']['format_id'] = $country_info['address_format_id'];
                     
                     $zone_info = $this->getZoneInfoFromCode($country_info['id'], $paypal_ec_payment_info['ship_state']);
                     $this->tempAddressValues['ship']['state'] = $zone_info['state'];
