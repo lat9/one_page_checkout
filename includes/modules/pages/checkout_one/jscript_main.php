@@ -1,11 +1,21 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
-// Copyright (C) 2013-2019, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2020, Vinos de Frutas Tropicales.  All rights reserved.
 //
 ?>
 <script type="text/javascript"><!--
 <?php
+// -----
+// Introduced in OPC v2.3.0 to identify the template-specific selector for the
+// order's current total.  If not defined, default to the selector associated with
+// the 'responsive_classic' template.
+//
+if (!defined('CHECKOUT_ONE_OTTOTAL_SELECTOR')) {
+    define('CHECKOUT_ONE_OTTOTAL_SELECTOR', '#ottotal > div:first-child');
+//    define('CHECKOUT_ONE_OTTOTAL_SELECTOR', '#ottotal div span');   //-Value for YourStore template
+}
+
 // -----
 // The "confirmation_required" array contains a list of payment modules for which, er, confirmation
 // is required.  This is used to determine whether the "confirm-order" or "review-order" button is displayed.
@@ -27,6 +37,7 @@ var shippingTimeout = <?php echo (int)((defined('CHECKOUT_ONE_SHIPPING_TIMEOUT')
 var textPleaseSelect = '<?php echo PLEASE_SELECT; ?>';
 var displayShippingBlock = <?php echo ($display_shipping_block) ? 'true' : 'false'; ?>;
 var displayPaymentBlock = <?php echo ($display_payment_block) ? 'true' : 'false'; ?>;
+var ottotalSelector = '<?php echo CHECKOUT_ONE_OTTOTAL_SELECTOR; ?>';
 <?php
 // -----
 // If dropdown states are to be displayed, include that json-formatted array of countries/zones.

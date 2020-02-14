@@ -191,6 +191,20 @@ switch (true) {
               WHERE configuration_key = 'CHECKOUT_ONE_DEBUG'
               LIMIT 1"
         );
+    
+    // -----
+    // v2.3.0:
+    //
+    // - Add configuration setting, enabling different 'selectors' to locate an order's total
+    //   value for their customized template.
+    //
+    case version_compare(CHECKOUT_ONE_MODULE_VERSION, '2.3.0', '<'):    //-Fall-through processing from above
+        $db->Execute(
+            "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
+                (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function) 
+                VALUES 
+                ('Order Total, jQuery Selector', 'CHECKOUT_ONE_OTTOTAL_SELECTOR', '#ottotal > div:first-child', 'Identify the CSS/jQuery <code>selector</code> used to locate an order\'s current total value.  The default value, <code>#ottotal > div:first-child</code> applies to the Zen Cart <em>responsive_classic</em> template\'s format.<br>', $cgi, now(), 18, NULL, NULL)"
+        );
 
     default:                                                            //-Fall-through processing from above
         break;

@@ -1,6 +1,6 @@
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
-// Copyright (C) 2013-2019, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2020, Vinos de Frutas Tropicales.  All rights reserved.
 //
 var selected;
 var submitter = null;
@@ -54,52 +54,6 @@ function zcLog2Console(message)
             console.log(message);
         }
     }
-}
-
-// -----
-// Used by the on-page processing and also by various "credit-class" order-totals (e.g. ot_coupon, ot_gv) to
-// initialize the checkout_payment form's submittal.  The (global) "submitter" value is set on return to either
-// null/0 (payment-handling required) or 1 (no payment-handling required) and is used by the Zen Cart payment class
-// to determine whether to "invoke" the selected payment method.
-// 
-function submitFunction($gv,$total) 
-{
-    var arg_count = arguments.length;
-    submitter = null;
-    var arg_list = '';
-    for (var i = 0; i < arg_count; i++) {
-        arg_list += arguments[i] + ', ';
-    }
-    zcLog2Console( 'submitFunction, '+arg_count+' arguments: '+arg_list );
-    if (arg_count == 2) {
-        var ot_total = document.getElementById( 'ottotal' );
-        var value_index = 0;
-        if (ot_total.tagName != 'DIV') {
-            value_index = 1;
-        }
-        var total = ot_total.children[value_index].textContent.substr(1);
-        zcLog2Console( 'Current order total: '+total+', text: '+ot_total.children[value_index].textContent );
-        document.getElementById( 'current-order-total' ).value = ot_total.children[value_index].textContent;
-        if (total == 0) {
-            zcLog2Console( 'Order total is 0, setting submitter' );
-            submitter = 1;
-        } else {
-            var ot_codes = [].slice.call(document.querySelectorAll( '[id^=disc-]' ));
-            for (var i = 0; i < ot_codes.length; i++) {
-                if (ot_codes[i].value != '') {
-                    submitter = 1;
-                }
-            }
-            var ot_gv = document.getElementsByName( 'cot_gv' );
-            if (ot_gv.length != 0) {
-                zcLog2Console( 'Checking ot_gv value ('+ot_gv[0].value+') against order total ('+total+')' );
-                if (ot_gv[0].value >= total) {
-                    submitter = 1;
-                }
-            }
-        }
-    }
-    zcLog2Console('submitFunction, on exit submitter='+submitter);
 }
 
 // -----
@@ -177,29 +131,33 @@ jQuery(document).ready(function(){
     // in those "corner-cases".
     //
     if (checkMissingElements) {
-        if (jQuery( '#current-order-total' ).length == 0) {
+        if (jQuery('#current-order-total').length == 0) {
             elementsMissing = true;
-            zcLog2Console ( 'Missing #current-order-total' );
+            zcLog2Console ('Missing #current-order-total');
         }
-        if (jQuery( '#opc-order-confirm' ).length == 0) {
+        if (jQuery('#opc-order-confirm').length == 0) {
             elementsMissing = true;
-            zcLog2Console( 'Missing #opc-order-confirm' );
+            zcLog2Console('Missing #opc-order-confirm');
         }
-        if (jQuery( '#opc-order-review' ).length == 0) {
+        if (jQuery('#opc-order-review').length == 0) {
             elementsMissing = true;
-            zcLog2Console( 'Missing #opc-order-review' );
+            zcLog2Console('Missing #opc-order-review');
+        }
+        if (jQuery(ottotalSelector).length == 0) {
+            elementsMissing = true;
+            zcLog2Console('Missing '+ottotalSelector);
         }
     }
 
     if (!virtual_order) {
-        if (jQuery( '#otshipping' ).length == 0) {
+        if (jQuery('#otshipping').length == 0) {
             elementsMissing = true;
-            zcLog2Console( 'Missing #otshipping' );
+            zcLog2Console('Missing #otshipping');
         }
     }
 
     if (elementsMissing) {
-        alert( 'Please contact the store owner; some required elements of this page are missing.' );
+        alert('Please contact the store owner; some required elements of this page are missing.');
     }
 
     // -----
@@ -279,6 +237,47 @@ jQuery(document).ready(function(){
     {
         var scrollPos =  jQuery( "#checkoutShippingMethod" ).offset().top;
         jQuery(window).scrollTop( scrollPos );
+    }
+    
+    // -----
+    // Used by the on-page processing and also by various "credit-class" order-totals (e.g. ot_coupon, ot_gv) to
+    // initialize the checkout_payment form's submittal.  The (global) "submitter" value is set on return to either
+    // null/0 (payment-handling required) or 1 (no payment-handling required) and is used by the Zen Cart payment class
+    // to determine whether to "invoke" the selected payment method.
+    // 
+    submitFunction = function($gv,$total) 
+    {
+        var arg_count = arguments.length;
+        submitter = null;
+        var arg_list = '';
+        for (var i = 0; i < arg_count; i++) {
+            arg_list += arguments[i] + ', ';
+        }
+        zcLog2Console('submitFunction, '+arg_count+' arguments: '+arg_list);
+        if (arg_count == 2) {
+            var total = jQuery(ottotalSelector).text();
+            zcLog2Console('Current order total: '+total);
+            jQuery('#current-order-total').val(total);
+            if (total == 0) {
+                zcLog2Console('Order total is 0, setting submitter');
+                submitter = 1;
+            } else {
+                var ot_codes = [].slice.call(document.querySelectorAll('[id^=disc-]'));
+                for (var i = 0; i < ot_codes.length; i++) {
+                    if (ot_codes[i].value != '') {
+                        submitter = 1;
+                    }
+                }
+                var ot_gv = document.getElementsByName('cot_gv');
+                if (ot_gv.length != 0) {
+                    zcLog2Console('Checking ot_gv value ('+ot_gv[0].value+') against order total ('+total+')');
+                    if (ot_gv[0].value >= total) {
+                        submitter = 1;
+                    }
+                }
+            }
+        }
+        zcLog2Console('submitFunction, on exit submitter='+submitter);
     }
 
     // -----

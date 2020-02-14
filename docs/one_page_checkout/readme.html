@@ -307,6 +307,11 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                     <td>2.0.5</td>
                 </tr>
                 <tr>
+                    <td>Order Total, jQuery Selector</td>
+                    <td>Identify the CSS/jQuery <a href="https://www.w3schools.com/cssref/css_selectors.asp" target="_blank">selector</a> used to determine an order's current total-value (<code class="no-pad">ot_total</code>).  The value defaults to <code class="no-pad">#ottotal &gt; div:first-child</code>, the selector value for the built-in <em>responsive_classic</em> and <em>template_default</em> templates.</td>
+                    <td>2.3.0</td>
+                </tr>
+                <tr>
                     <td>Enable Shipping=Billing?</td>
                     <td>When enabled, the &quot;checkout_one&quot; page presents the customer with a checkbox-input to indicate that their shipping and billing addresses are the same.  If you don't want that control to be shown, i.e. the billing and shipping addresses are both always displayed, set the value to <em>false</em>.</td>
                     <td>1.3.0</td>
@@ -688,7 +693,7 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one_upgrade.php <span class="smaller">(Added in v2.3.0)</span></li>
                 <li>/YOUR_ADMIN/includes/languages/english/extra_definitions/checkout_one_name.php</li>
               </ol>
-              <p>The following Zen Cart <span class="corefile">core files</span> are not required for initial installations on Zen Cart 1.5.6b and later.  Refer to <a href="https://github.com/lat9/one_page_checkout/blob/master/pages/install_upgrade_v210_or_later.md" target="_blank">these</a> additional installation/upgrade instructions regarding which files should be copied to your Zen Cart installation's file-system:</p>
+              <p>The following Zen Cart <span class="corefile">core files</span> are not required for initial installations on Zen Cart 1.5.6b and later; changes are already &quot;baked into&quot; that and follow-on Zen Cart versions.  Refer to <a href="https://github.com/lat9/one_page_checkout/blob/master/pages/install_upgrade_v210_or_later.md" target="_blank">these</a> additional installation/upgrade instructions regarding which files should be copied to your Zen Cart installation's file-system:</p>
               <ol>
                 <li><span class="corefile">/zc155f/includes/classes/order.php</span> <span class="smaller">(Added in v2.0.0, one marked change section based on the zc155f version of the file)</span></li>
                 <li><span class="corefile">/zc155f/includes/modules/order_total/ot_coupon.php</span> <span class="smaller">(Added in v2.0.0, one marked change section based on the zc155f version of the file)</span></li>
@@ -713,7 +718,11 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
               <ul>
                 <li>v2.3.0-beta1, 2020-02-14:<ul>
                     <li>CHANGE: Split admin initial-install and upgrade scripts, reducing usual memory 'footprint'.</li>
+                    <li>CHANGE: Move template-specific 'location' of order's current total to a configuration setting.</li>
                     <li>The following files were changed or <span class="added">added</span>:<ol>
+                        <li>/includes/modules/pages/checkout_one/jquery_checkout_one.js</li>
+                        <li>/includes/modules/pages/checkout_one/jquery_checkout_one.min.js</li>
+                        <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                         <li><span class="added">/YOUR_ADMIN/includes/init_includes/init_checkout_one_install.php</span></li>
                         <li><span class="added">/YOUR_ADMIN/includes/init_includes/init_checkout_one_upgrade.php</span></li>

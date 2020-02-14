@@ -131,4 +131,17 @@ if (isset($_SESSION['admin_id'])) {
         }
         $template_check->MoveNext();
     }
+    
+    // -----
+    // The setting 'CHECKOUT_ONE_OTTOTAL_SELECTOR', introduced in OPC v2.3.0, can validly contain 'special'
+    // HTML characters '>' and '"', since the value is a CSS/jQuery selector.  The admin sanitizer will convert
+    // those characters to their HTML symbols, &gt; and &quot; respectively, so we'll change those back to
+    // keep the values as-edited when the value is updated in the store's configuration settings.
+    //
+    if (isset($_POST['submitCHECKOUT_ONE_OTTOTAL_SELECTOR'])) {
+        $opc_config_value = $_POST['configuration_value'];
+        if (strpos($opc_config_value, '&gt;') !== false || strpos($opc_config_value, '&quot;') !== false) {
+            $_POST['configuration_value'] = str_replace(array('&gt;', '&quot;'), array('>', '"'), $opc_config_value);
+        }
+    }
 }
