@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
-// Copyright (C) 2013-2019, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2020, Vinos de Frutas Tropicales.  All rights reserved.
 //
 
 // This should be first line of the script:
@@ -285,12 +285,9 @@ if ($error || $messageStack->size('checkout_payment') > 0 || !$order_confirmed) 
     // on the checkout_one page.
     //
     if ($messageStack->size('checkout') > 0) {
-        foreach ($messageStack->messages as $current_message) {
-            if ($current_message['class'] == 'checkout' && preg_match('^messageStack(.*) larger^', $current_message['params'], $matches)) {
-                $severity = strtolower ($matches[1]);
-                if (preg_match ('^(<img(.*)>)?(.*)^', $current_message['text'], $matches)) {
-                    $messageStack->add_session('checkout_payment', $matches[3], $severity);
-                }
+        foreach ($messageStack->messages as $i => $current_message) {
+            if ($current_message['class'] == 'checkout') {
+                $messageStack->messages[$i]['class'] = 'checkout_payment';
             }
         }
     }
