@@ -1283,8 +1283,8 @@ class OnePageCheckout extends base
         //
         $additional_messages = array();
         $additional_fields = array();
-        $this->notify('NOTIFY_OPC_VALIDATE_SAVE_GUEST_INFO', '', $additional_messages, $additional_fields);
-        if (is_array($additional_messages) && is_array($additional_fields) && (count($additional_messages) != 0 || count($additional_fields) != 0)) {
+        $this->notify('NOTIFY_OPC_VALIDATE_SAVE_GUEST_INFO', $messages, $additional_messages, $additional_fields);
+        if (is_array($additional_messages) && count($additional_messages) != 0) {
             $this->debugMessage('validateAndSaveAjaxCustomerInfo, additional messages (' . json_encode($additional_messages) . '), additional fields (' . json_encode($additional_fields) . ')');
             $messages = array_merge($messages, $additional_messages);
         }
@@ -1371,7 +1371,7 @@ class OnePageCheckout extends base
         $suburb = '';
         
         if (ACCOUNT_COMPANY == 'true') {
-            $company = zen_db_prepare_input($_POST['company']);
+            $company = zen_db_prepare_input($address_values['company']);
             if (((int)ENTRY_COMPANY_MIN_LENGTH > 0) && strlen($company) < ((int)ENTRY_COMPANY_MIN_LENGTH)) {
                 $error = true;
                 $messages['company'] = $message_prefix . ENTRY_COMPANY_ERROR;
@@ -1405,7 +1405,7 @@ class OnePageCheckout extends base
         }
         
         if (ACCOUNT_SUBURB == 'true') {
-            $suburb = zen_db_prepare_input($_POST['suburb']);
+            $suburb = zen_db_prepare_input($address_values['suburb']);
         }
         
         $city = zen_db_prepare_input($address_values['city']);
