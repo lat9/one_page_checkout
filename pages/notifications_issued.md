@@ -12,7 +12,7 @@ These notifications are issued in `function` scope via `$this`, so watching obse
 | [NOTIFY_OPC_GUEST_CUSTOMER_INFO_INIT](#add-guest-customer-fields) | Issued at the start of the guest-checkout processing, *if* guest-checkout is enabled. |
 | [NOTIFY_OPC_INIT_ADDRESS_FROM_DB](#initialize-customer-address) | Issued prior to the formatting of an address, for account-holding customers. |
 | [NOTIFY_OPC_INIT_ADDRESS_FOR_GUEST](#initialize-guest-address) | Issued prior to the formatting of an address, for guest customers. |
-| [NOTIFY_OPC_VALIDATE_SAVE_GUEST_INFO](#validate_guest_information) | Issued upon a *change* in a guest-customer's information. |
+| [NOTIFY_OPC_VALIDATE_SAVE_GUEST_INFO](#validate-guest-information) | Issued upon a *change* in a guest-customer's information. |
 | [NOTIFY_OPC_ADDED_ADDRESS_BOOK_RECORD](#added-address-book-record) | Issued for account-holding customers, when an address-book record has been added. |
 | [OPC_ADDED_CUSTOMER_RECORD_FOR_GUEST](#creating-customer-record-for-guest) | Issued during the `checkout_success` page's processing when a guest customer chooses to convert their account to a registered one. |
 | [NOTIFY_OPC_CREATED_ADDRESS_BOOK_DB_ENTRY](#create-address-record-for-guest) | Issued during the `checkout_success` page's processing when a guest customer chooses to convert their account to a registered one. |
