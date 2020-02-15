@@ -719,7 +719,9 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                 <li>v2.3.0-beta1, 2020-02-14:<ul>
                     <li>CHANGE: Split admin initial-install and upgrade scripts, reducing usual memory 'footprint'.</li>
                     <li>CHANGE: Move template-specific 'location' of order's current total to a configuration setting.</li>
+                    <li>CHANGE: Gather <b>all</b> 'address_book' fields for pre-existing customers.</li>
                     <li>The following files were changed or <span class="added">added</span>:<ol>
+                        <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/modules/pages/checkout_one/jquery_checkout_one.js</li>
                         <li>/includes/modules/pages/checkout_one/jquery_checkout_one.min.js</li>
                         <li>/includes/modules/pages/checkout_one/jscript_main.php</li>

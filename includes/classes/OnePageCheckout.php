@@ -1000,10 +1000,7 @@ class OnePageCheckout extends base
     protected function getAddressValuesFromDb($address_book_id)
     {
         $address_info_query = 
-            "SELECT ab.entry_gender AS gender, ab.entry_company AS company, ab.entry_firstname AS firstname, ab.entry_lastname AS lastname, 
-                    ab.entry_street_address AS street_address, ab.entry_suburb AS suburb, ab.entry_city AS city, ab.entry_postcode AS postcode, 
-                    ab.entry_state AS state, ab.entry_country_id AS country, ab.entry_zone_id AS zone_id, z.zone_name, ab.address_book_id,
-                    ab.address_book_id
+            "SELECT ab.*, z.zone_name
                FROM " . TABLE_ADDRESS_BOOK . "  ab
                     LEFT JOIN " . TABLE_ZONES . " z
                         ON z.zone_id = ab.entry_zone_id
@@ -1016,8 +1013,19 @@ class OnePageCheckout extends base
 
         $address_info = $GLOBALS['db']->Execute($address_info_query);
         if ($address_info->EOF) {
-            trigger_error("unknown $which/$session_var_name address_book_id (" . $address_book_id . ') for customer_id (' . $_SESSION['customer_id'] . ')', E_USER_ERROR);
+            trigger_error("unknown address_book_id (" . $address_book_id . ') for customer_id (' . $_SESSION['customer_id'] . ')', E_USER_ERROR);
             exit();
+        }
+        
+        foreach ($address_info->fields as $key => $value) {
+            if (strpos($key, 'entry_') === 0) {
+                $new_key = substr($key, 6);
+                if ($new_key == 'country_id') {
+                    $new_key = 'country';
+                }
+                $address_info->fields[$new_key] = $value;
+                unset($address_info->fields[$key]);
+            }
         }
 
         $address_info->fields['error_state_input'] = $address_info->fields['error'] = false;
