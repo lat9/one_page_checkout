@@ -1185,19 +1185,6 @@ class OnePageCheckout extends base
         return $address_values;
     }
     
-    public function validatePostedAddress($which)
-    {
-        $this->inputPreCheck($which);
-        
-        $messages = $this->validateUpdatedAddress($_POST[$which], $which);
-        if (!$_POST[$which]['validated']) {
-            foreach ($messages as $field_name => $message) {
-                $GLOBALS['messageStack']->add_session('addressbook', $message, 'error');
-            }
-        }
-        return !$_POST[$which]['validated'];
-    }
-    
     public function formatAddressElement($which, $field_name, $field_value, $field_text, $db_table, $db_fieldname, $min_length, $placeholder)
     {
         $this->inputPreCheck($which);
