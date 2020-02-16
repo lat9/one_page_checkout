@@ -13,6 +13,7 @@ These notifications are issued in `function` scope via `$this`, so watching obse
 | [NOTIFY_OPC_INIT_ADDRESS_FROM_DB](#initialize-customer-address) | Issued prior to the formatting of an address, for account-holding customers. |
 | [NOTIFY_OPC_INIT_ADDRESS_FOR_GUEST](#initialize-guest-address) | Issued prior to the formatting of an address, for guest customers. |
 | [NOTIFY_OPC_VALIDATE_SAVE_GUEST_INFO](#validate-guest-information) | Issued upon a *change* in a guest-customer's information. |
+| [NOTIFY_OPC_ADDRESS_VALIDATION](address-validation) | Issued upon a change to one of a customer's addresses.  Added for *OPC* v2.3.0. |
 | [NOTIFY_OPC_ADDED_ADDRESS_BOOK_RECORD](#added-address-book-record) | Issued for account-holding customers, when an address-book record has been added. |
 | [OPC_ADDED_CUSTOMER_RECORD_FOR_GUEST](#creating-customer-record-for-guest) | Issued during the `checkout_success` page's processing when a guest customer chooses to convert their account to a registered one. |
 | [NOTIFY_OPC_CREATED_ADDRESS_BOOK_DB_ENTRY](#create-address-record-for-guest) | Issued during the `checkout_success` page's processing when a guest customer chooses to convert their account to a registered one. |
@@ -105,6 +106,39 @@ The following variables are passed with the notification:
 In each of the `$p2` and `$p3` arrays, the 'key' is the variable name used in the active template's `tpl_modules_opc_customer_info.php`.  For the message-array (`$p2`), any value is a language-specific message to be displayed, implying that a field data-error was detected.
 
 If neither the base OPC nor the observers' value-checking detects any data-errors, the fields provided in `$p3` are merged with the current guest-customer's information.
+
+#### Address Validation
+
+This notifier fires upon a change to one of the customer's addresses.  An observer has the opportunity to provide additional checks on (and messaging) for OPC's base address values as well as any customized fields provided by the observer itself.
+
+The following variables are passed with the notification:
+
+| Variable 'name' | Description                                                  |
+| :-------------: | :----------------------------------------------------------- |
+|       $p1       | (r/o) An associative array, identifying which address-type is to be validated and the address-related fields for the validation.  See below for additional details. |
+|       $p2       | (r/w) An associative message-array, initially empty, to be set by the observer to contain any error messages associated with the 'key' field.  See below for additional details. |
+|       $p3       | (r/w) An associative field-array, initially empty, to be set by the observer to contain any key/value pairs to be saved in the address' information.  See below for additional details. |
+
+###### Address-type and Fields
+
+The array supplied in the notification's `$p1` array contains the following information:
+
+| Key              | Value                                                        |
+| ---------------- | ------------------------------------------------------------ |
+| `which`          | Identifies the 'type' of address being validated, either 'bill' or 'ship'. |
+| `address_values` | An associative array, containing the posted values for the address-form's update. |
+
+###### Additional Messages
+
+This associative array, initially empty, can be set by the observer to contain field-specific error-messages to display to the customer.  Each element of the array is keyed on a field present in the `address_values` supplied in the `$p1` parameter.
+
+If this array is not empty on return to *OPC*, the address' validation is considered to have failed.
+
+###### Additional Fields
+
+This associative array, initially empty, can be set by the observer to contain field-specific values to be recorded upon a successful address validation.  Each element of the array is keyed on a field present in the `address_values` supplied in the `$p1` parameter.
+
+An observer can override the value to be stored for any of OPC's base address fields, e.g. setting a `firstname` value in the array results in the supplied value being recorded for the customer's firstname.
 
 #### Added Address Book Record
 

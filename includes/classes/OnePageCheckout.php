@@ -1472,10 +1472,44 @@ class OnePageCheckout extends base
                 }
             }
         }
+        
+        // -----
+        // Give an observer the opportunity to check any additional fields that might be used by its
+        // customizations, supplying these inputs:
+        //
+        // $p1 ... (r/o) An associative array containing two keys:
+        //         - 'which' ............ contains either 'ship' or 'bill', identifying which address-type is being validated.
+        //         - 'address_values' ... contains an array of posted values associated with the to-be-validated address.
+        // $p2 ... (r/w) A reference to the, initially empty, $additional_messages associative array.  That array is keyed on the
+        //         like-named key within $p1's 'address_values' array, with the associated value being a language-specific message to
+        //         display to the customer.  If this array is _not empty_, the address is considered unvalidated.
+        // $p3 ... (r/w) A reference to the, initially empty, $additional_address_values associative array.  That array is keyed on
+        //         the like-named key within $p1's 'address_values' array, with the associated value being that to be stored for the
+        //         address.
+        //
+        // Notes:
+        //
+        // 1) Messages returned in the $additional_messages array **will override** any field-specific message recorded by this method's
+        //    prior processing, e.g. if a 'company' message is provided when processing has already identified a company-related issue then
+        //    that message is displayed to the customer instead of the OPC-determined one.
+        // 2) Values in the $additional_address_values array **will override** OPC base values, e.g. if a 'company' key is provided then
+        //    that value is used for the address' 'company' entry.
+        //
+        $additional_messages = array();
+        $additional_address_values = array();
+        $this->notify('NOTIFY_OPC_ADDRESS_VALIDATION', array('which' => $which, 'address_values' => $address_values), $additional_messages, $additional_address_values);
+        if (count($additional_messages) != 0) {
+            $this->debugMessage('validateUpdatedAddress, observer returned errors: ' . var_export($additional_messages, true));
+            $error = true;
+            $messages = array_merge($messages, $additional_messages);
+        }
 
         if ($error) {
             $address_values['validated'] = false;
         } else {
+            if (count($additional_address_values) != 0) {
+                $this->debugMessage('validateUpdatedAddress, observer returned additional address values: ' . var_export($additional_address_values, true));
+            }
             $address_values = array_merge(
                 $address_values,
                 array(
@@ -1496,7 +1530,8 @@ class OnePageCheckout extends base
                     'show_pulldown_states' => false,
                     'error' => false,
                     'validated' => true
-                )
+                ),
+                $additional_address_values
             );
             $address_values = $this->updateStateDropdownSettings($address_values);
             if ($which == 'bill') {
