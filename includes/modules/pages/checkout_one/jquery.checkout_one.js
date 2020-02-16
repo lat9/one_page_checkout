@@ -680,7 +680,8 @@ jQuery(document).ready(function(){
     function changeBillingFields(event)
     {
         jQuery(this).addClass('opc-changed');
-        jQuery('#checkoutOneBillto .opc-buttons').show();
+        jQuery('#checkoutOneBillto .opc-buttons, #opc-bill-save').show();
+        jQuery('#opc-bill-edit').hide();
         jQuery('#checkoutPayment > .opc-overlay').addClass('active');
         jQuery('#checkoutOneGuestInfo, #checkoutOneBillto').addClass('opc-view');
     }
@@ -709,10 +710,28 @@ jQuery(document).ready(function(){
     }
     jQuery(document).on('click', '#opc-bill-save', saveBilling);
     
+    function editBilling()
+    {
+        jQuery('#address-bill').hide();
+        jQuery('#address-form-bill').show();
+        jQuery('#checkoutOneBillto .opc-buttons').show();
+        jQuery('#opc-bill-save, #opc-add-bill, #opc-add-bill+label').hide();
+    }
+    jQuery(document).on('click', '#opc-bill-edit', editBilling);
+    
+    function editShipping()
+    {
+        jQuery('#address-ship').hide();
+        jQuery('#address-form-ship').show();
+        jQuery('#checkoutOneShipto .opc-buttons').show();
+        jQuery('#opc-ship-save, #opc-add-ship, #opc-add-ship+label').hide();
+    }
+    jQuery(document).on('click', '#opc-ship-edit', editShipping);
+    
     function changeShippingFields(event)
     {
         jQuery(this).addClass('opc-changed');
-        jQuery('#checkoutOneShipto .opc-buttons').show();
+        jQuery('#checkoutOneShipto .opc-buttons, #opc-ship-save').show();
         jQuery('#checkoutPayment > .opc-overlay').addClass('active');
         jQuery('#checkoutOneShipto').removeClass('visibleField');
         jQuery('#checkoutOneShipto').addClass('opc-view');

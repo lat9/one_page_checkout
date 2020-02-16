@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2017-2019, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2017-2020, Vinos de Frutas Tropicales.  All rights reserved.
 //
 // This module is included by tpl_modules_opc_billing_address.php and tpl_modules_opc_shipping_address.php and
 // provides a common-formatting for those two address-blocks.
@@ -18,6 +18,49 @@ if (!isset($opc_address_type) || !in_array($opc_address_type, array('bill', 'shi
 }
 
 // -----
+// Start address formatting ...
+//
+$which = $opc_address_type;
+$address = $_SESSION['opc']->getAddressValues($which);
+if ($address['validated']) {
+    $display_condensed_address = true;
+    $address_form_class = ' class="hiddenField"';
+} else {
+    $display_condensed_address = false;
+    $address_form_class = '';
+}
+
+// -----
+// The first section of an address-block contains the condensed formatting of the address, to reduce
+// on-screen real-estate required.
+//
+if ($display_condensed_address) {
+?>
+<div id="address-<?php echo $which; ?>">
+    <div class="floatingBox back"><?php echo zen_address_format(zen_get_address_format_id($address['country_id']), $address, true, '', '<br>'); ?></div>
+<?php
+if (!$opc_disable_address_change) {
+?>
+    <div class="floatingBox forward opc-right" id="opc-<?php echo $which; ?>-edit"><?php echo zen_image_button(BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT); ?></div>
+<?php
+}
+?>
+</div>
+<div class="clearBoth"></div>
+<?php
+}
+
+// -----
+// The second section contains the address-form through which an address can be changed, if enabled.  If the
+// address can't be changed, perform a quick return so that the form elements aren't rendered.
+//
+if ($opc_disable_address_change) {
+    return;
+}
+?>
+<div id="address-form-<?php echo $which; ?>"<?php echo $address_form_class; ?>>
+<?php
+// -----
 // If the address can be changed and an account-bearing customer has previously-defined addresses, create a dropdown list
 // from which they can select.
 //
@@ -27,18 +70,14 @@ if (!isset($opc_address_type) || !in_array($opc_address_type, array('bill', 'shi
 if (!$opc_disable_address_change) {
     $address_selections = $_SESSION['opc']->formatAddressBookDropdown();
     if (count($address_selections) > 2) {
-        $selected = $_SESSION['opc']->getAddressDropDownSelection($opc_address_type);
+        $selected = $_SESSION['opc']->getAddressDropDownSelection($which);
 ?>
-    <div id="choices-<?php echo $opc_address_type; ?>"><?php echo zen_draw_pull_down_menu("address-$opc_address_type", $address_selections, $selected); ?></div>
+    <div id="choices-<?php echo $which; ?>"><?php echo zen_draw_pull_down_menu("address-$which", $address_selections, $selected); ?></div>
 <?php
     }
 }
 
-// -----
-// Start address formatting ...
-//
-$which = $opc_address_type;
-$address = $_SESSION['opc']->getAddressValues($which);
+
 if (ACCOUNT_GENDER == 'true') {
     $field_name = "gender[$which]";
     $male_id = "gender-male-$which";
@@ -107,4 +146,5 @@ $field_id = "country-$which";
       <div class="clearBoth"></div>
       
       <div id="messages-<?php echo $which; ?>"></div>
+</div>
 <!--eof address block -->

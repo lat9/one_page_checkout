@@ -993,6 +993,9 @@ class OnePageCheckout extends base
         } else {
             $address_values = $this->getAddressValuesFromDb($address_book_id);
         }
+        if (!isset($address_values['country_id'])) {
+            $address_values['country_id'] = $address_values['country'];
+        }
         
         return $this->updateStateDropdownSettings($address_values);
     }
@@ -1021,7 +1024,7 @@ class OnePageCheckout extends base
             if (strpos($key, 'entry_') === 0) {
                 $new_key = substr($key, 6);
                 if ($new_key == 'country_id') {
-                    $new_key = 'country';
+                    $address_info->fields['country'] = $value;
                 }
                 $address_info->fields[$new_key] = $value;
                 unset($address_info->fields[$key]);
@@ -1051,6 +1054,7 @@ class OnePageCheckout extends base
             'postcode' => '',
             'state' => '',
             'country' => (int)STORE_COUNTRY,
+            'country_id' => (int)STORE_COUNTRY,
             'zone_id' => 0,
             'zone_name' => '',
             'address_book_id' => 0,

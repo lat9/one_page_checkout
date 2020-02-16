@@ -33,7 +33,7 @@ textarea { width: 100%; }
 .corefile, .red { color: red; }
 .template { color: green; }
 .forward { float: right; }
-.added { color: #342d7e; }
+.added { color: #1f45fc; }
 .removed { text-decoration: line-through; }
 .back { float: back; }
 .clearBoth { clear: both; }
@@ -716,7 +716,7 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color.</p>
               <ul>
-                <li>v2.3.0-beta2, 2020-02-15:<ul>
+                <li>v2.3.0-beta3, 2020-02-16:<ul>
                     <li>CHANGE: Split admin initial-install and upgrade scripts, reducing usual memory 'footprint'.</li>
                     <li>CHANGE: Move template-specific 'location' of order's current total to a configuration setting.</li>
                     <li>CHANGE: Gather <b>all</b> 'address_book' fields for pre-existing customers.</li>
@@ -724,12 +724,16 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                     <li>BUGFIX: Use as-passed address information when validating an address.</li>
                     <li>CHANGE: Add a notification, enabling an observer to provide additional address-validation checks.</li>
                     <li>CHANGE: Remove no longer used method <em>OnePageCheckout::validatePostedAddress</em>.</li>
+                    <li>CHANGE: Display 'compressed' addresses with an associated <em>Edit</em> button to conserve on-screen real-estate.</li>
                     <li>The following files were changed or <span class="added">added</span>:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/modules/pages/checkout_one/jquery_checkout_one.js</li>
                         <li>/includes/modules/pages/checkout_one/jquery_checkout_one.min.js</li>
                         <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
                         <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
+                        <li><span class="template-changed">/includes/templates/template_default/css/checkout_one.css</span></li>
+                        <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_address_block.php</span></li>
+                        <li><span class="template-changed">/includes/templates/YOUR_TEMPLATE/css/checkout_one.css</span></li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                         <li><span class="added">/YOUR_ADMIN/includes/init_includes/init_checkout_one_install.php</span></li>
                         <li><span class="added">/YOUR_ADMIN/includes/init_includes/init_checkout_one_upgrade.php</span></li>
