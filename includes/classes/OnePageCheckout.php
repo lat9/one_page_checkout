@@ -1033,6 +1033,7 @@ class OnePageCheckout extends base
 
         $address_info->fields['error_state_input'] = $address_info->fields['error'] = false;
         $address_info->fields['country_has_zones'] = $this->countryHasZones($address_info->fields['country']);
+        $address_info->fields['validated'] = true;
         
         $this->notify('NOTIFY_OPC_INIT_ADDRESS_FROM_DB', $address_book_id, $address_info->fields);
         
