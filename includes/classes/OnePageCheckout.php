@@ -1219,7 +1219,8 @@ class OnePageCheckout extends base
         unset($address_info['securityToken'], $address_info['add_address'], $address_info['shipping_billing']);
         $messages = $this->validateUpdatedAddress($address_info, $which, false);
         if ($address_info['validated']) {
-            $this->saveCustomerAddress($address_info, $which, (isset($_POST['add_address']) && $_POST['add_address'] === 'true'));
+            $add_address = ($this->customerAccountNeedsPrimaryAddress() || (isset($_POST['add_address']) && $_POST['add_address'] === 'true'));
+            $this->saveCustomerAddress($address_info, $which, $add_address);
         }
         
         return !$address_info['validated'];
@@ -1549,12 +1550,11 @@ class OnePageCheckout extends base
         $this->debugMessage("saveCustomerAddress($which, $add_address), " . (($this->getShippingBilling()) ? 'shipping=billing' : 'shipping!=billing') . ' ' . var_export($address, true));
         
         // -----
-        // If the checkout is not on behalf of a registered customer who has not yet
-        // created their primary address _AND_ either the address is **not** to be added to the 
-        // customer's address book or if guest-checkout is currently active, the updated address 
-        // is stored in a temporary address-book record.
+        // If the address is **not** to be added to the customer's address book or if
+        // guest-checkout is currently active, the updated address is stored in
+        // a temporary address-book record.
         //
-        if ((!$this->isGuestCheckout() && !$this->customerAccountNeedsPrimaryAddress()) && (!$add_address || $this->isGuestCheckout())) {
+        if (!$add_address || $this->isGuestCheckout()) {
             $this->tempAddressValues[$which] = $address;
             if ($which == 'ship') {
                 $_SESSION['sendto'] = $this->tempSendtoAddressBookId;
