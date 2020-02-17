@@ -43,4 +43,16 @@ if (!$flagDisablePaymentAddressChange) {
       <div class="opc-overlay<?php echo ($flagDisablePaymentAddressChange) ? ' active' : ''; ?>"></div>
 
     </div>
+<?php
+// -----
+// If not in guest-checkout, see if the checkout is on behalf of a registered-account
+// that doesn't currently have a primary address.  If so, include an HTML indicator (used by
+// the plugin's jQuery) to 'force' the customer to enter their primary address.
+//
+if (!zen_in_guest_checkout() && $_SESSION['opc']->customerAccountNeedsPrimaryAddress()) {
+?>
+    <span id="opc-need-primary-address">&nbsp;</span>
+<?php
+}
+?>
 <!--eof billing-address block -->
