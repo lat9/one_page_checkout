@@ -727,6 +727,7 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                     <li>CHANGE: Display 'compressed' addresses with an associated <em>Edit</em> button to conserve on-screen real-estate.</li>
                     <li>CHANGE: Dynamically update billing-address title, based on &quot;billing=shipping&quot; selection.</li>
                     <li>CHANGE: Use &quot;standard&quot; <code class="no-pad">responsive_classic</code> formatting for registered-account creation.</li>
+                    <li>BUGFIX: Correct checkout processing for registered-account customers who have not yet supplied their default address.</li>
                     <li>The following files were changed or <span class="added">added</span>:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li><span class="template-changed">/includes/languages/english/checkout_one.php</span></li>
@@ -739,6 +740,7 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_create_account_register.php</span></li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_address_block.php</span></li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_billing_address.php</span></li>
+                        <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_customer_info.php</span></li>
                         <li><span class="template-changed">/includes/templates/YOUR_TEMPLATE/css/checkout_one.css</span></li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                         <li><span class="added">/YOUR_ADMIN/includes/init_includes/init_checkout_one_install.php</span></li>

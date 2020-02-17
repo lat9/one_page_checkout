@@ -700,7 +700,7 @@ class OnePageCheckout extends base
     public function showAddAddressField()
     {
         $show_add_address = false;
-        if (!zen_in_guest_checkout() && !empty($_SESSION['customer_id'])) {
+        if (!zen_in_guest_checkout() && !empty($_SESSION['customer_id']) && !$this->customerAccountNeedsPrimaryAddress()) {
             $check = $GLOBALS['db']->Execute(
                 "SELECT COUNT(*) as count
                    FROM " . TABLE_ADDRESS_BOOK . "
@@ -1033,7 +1033,7 @@ class OnePageCheckout extends base
 
         $address_info->fields['error_state_input'] = $address_info->fields['error'] = false;
         $address_info->fields['country_has_zones'] = $this->countryHasZones($address_info->fields['country']);
-        $address_info->fields['validated'] = true;
+        $address_info->fields['validated'] = !$this->customerAccountNeedsPrimaryAddress();
         
         $this->notify('NOTIFY_OPC_INIT_ADDRESS_FROM_DB', $address_book_id, $address_info->fields);
         
@@ -1549,11 +1549,12 @@ class OnePageCheckout extends base
         $this->debugMessage("saveCustomerAddress($which, $add_address), " . (($this->getShippingBilling()) ? 'shipping=billing' : 'shipping!=billing') . ' ' . var_export($address, true));
         
         // -----
-        // If the address is **not** to be added to the customer's address book or if
-        // guest-checkout is currently active, the updated address is stored in
-        // a temporary address-book record.
+        // If the checkout is not on behalf of a registered customer who has not yet
+        // created their primary address _AND_ either the address is **not** to be added to the 
+        // customer's address book or if guest-checkout is currently active, the updated address 
+        // is stored in a temporary address-book record.
         //
-        if (!$add_address || $this->isGuestCheckout()) {
+        if ((!$this->isGuestCheckout() && !$this->customerAccountNeedsPrimaryAddress()) && (!$add_address || $this->isGuestCheckout())) {
             $this->tempAddressValues[$which] = $address;
             if ($which == 'ship') {
                 $_SESSION['sendto'] = $this->tempSendtoAddressBookId;
@@ -1611,18 +1612,27 @@ class OnePageCheckout extends base
             }
             
             // -----
-            // If a matching address-book entry is found for this logged-in customer, use that pre-saved
-            // address entry.  Otherwise, save the new address for the customer.
+            // If a matching address-book entry is found for this logged-in customer (whose account has
+            // a primary address), use that pre-saved address entry.  Otherwise, save the new/updated address for the customer.
             //
-            $existing_address_book_id = $this->findAddressBookEntry($address);
+            $existing_address_book_id = !$this->customerAccountNeedsPrimaryAddress() && $this->findAddressBookEntry($address);
             if ($existing_address_book_id !== false) {
                 $address_book_id = $existing_address_book_id;
             } else {
-                $sql_data_array[] = array('fieldName' => 'customers_id', 'value' => $_SESSION['customer_id'], 'type'=>'integer');
-                $GLOBALS['db']->perform(TABLE_ADDRESS_BOOK, $sql_data_array);
-                $address_book_id = $GLOBALS['db']->Insert_ID();
-                
-                $this->notify('NOTIFY_OPC_ADDED_ADDRESS_BOOK_RECORD', array('address_book_id' => $address_book_id), $sql_data_array);
+                if (!$this->customerAccountNeedsPrimaryAddress()) {
+                    $sql_data_array[] = array('fieldName' => 'customers_id', 'value' => $_SESSION['customer_id'], 'type'=>'integer');
+                    $GLOBALS['db']->perform(TABLE_ADDRESS_BOOK, $sql_data_array);
+                    $address_book_id = $GLOBALS['db']->Insert_ID();
+                    
+                    $this->notify('NOTIFY_OPC_ADDED_ADDRESS_BOOK_RECORD', array('address_book_id' => $address_book_id), $sql_data_array);
+                } else {
+                    $address_book_id = (int)$_SESSION['customer_default_address_id'];
+                    $customer_id = (int)$_SESSION['customer_id'];
+                    $where_string = "customers_id = $customer_id AND address_book_id = $address_book_id LIMIT 1";
+                    $GLOBALS['db']->perform(TABLE_ADDRESS_BOOK, $sql_data_array, 'update', $where_string);
+                    
+                    $this->notify('NOTIFY_OPC_ADDED_PRIMARY_ADDRESS', array('address_book_id' => $address_book_id), $sql_data_array);
+                }
             }
             
             // -----
@@ -1669,11 +1679,23 @@ class OnePageCheckout extends base
     }
     public function validateTempBilltoAddress()
     {
-        return (!$this->isGuestCheckout() || (!empty($_SESSION['billto']) && ($_SESSION['billto'] != $this->tempBilltoAddressBookId || $this->billtoTempAddrOk)));
+        if (!$this->isGuestCheckout()) {
+            $address_ok = !$this->customerAccountNeedsPrimaryAddress();
+        } else {
+            $address_ok = (!empty($_SESSION['billto']) && ($_SESSION['billto'] != $this->tempBilltoAddressBookId || $this->billtoTempAddrOk));
+        }
+        return $address_ok;
     }
     public function validateTempShiptoAddress()
     {
-        return (!$this->isGuestCheckout() || $this->isVirtualOrder || (!empty($_SESSION['sendto']) && ($_SESSION['sendto'] == $this->tempSendtoAddressBookId || $this->sendtoTempAddrOk)));
+        if ($this->isVirtualOrder) {
+            $address_ok = true;
+        } elseif (!$this->isGuestCheckout()) {
+            $address_ok = !$this->customerAccountNeedsPrimaryAddress();
+        } else {
+            $address_ok = (!empty($_SESSION['sendto']) && ($_SESSION['sendto'] == $this->tempSendtoAddressBookId || $this->sendtoTempAddrOk));
+        }
+        return $address_ok;
     }
     
     /* -----

@@ -903,6 +903,22 @@ jQuery(document).ready(function(){
     }
     
     // -----
+    // If the checkout process is currently being performed for a registered-account customer
+    // who has not (yet) created their primary address, enable the "Save" button on the
+    // billing-address block and focus on the first required billing-address field.
+    //
+    if (jQuery('#opc-need-primary-address').length) {
+        jQuery('#checkoutOneBillto').find('input').each(function() {
+            if (jQuery(this).prop('required') && jQuery(this).val() == '') {
+                jQuery(this).focus();
+                return false;
+            }
+        });
+        jQuery('#checkoutOneBillto .opc-buttons').show();
+        jQuery('#opc-bill-cancel, #checkoutOneShippingFlag').hide();
+    }
+    
+    // -----
     // Methods to restore/save the guest-customer's information.
     //
     function restoreCustomerInfo()

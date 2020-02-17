@@ -1,7 +1,11 @@
 <?php
 // -----
-// Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2018-2019, Vinos de Frutas Tropicales.  All rights reserved.
+// Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
+// Copyright (C) 2018-2020, Vinos de Frutas Tropicales.  All rights reserved.
+//
+// -----
+// If currently operating in guest-checkout mode, render the fields for the customer's
+// contact information.
 //
 if ($_SESSION['opc']->isGuestCheckout()) {
     $cancel_title = 'title="' . BUTTON_CANCEL_CHANGES_TITLE . '"';
@@ -56,5 +60,14 @@ if ($_SESSION['opc']->isGuestCheckout()) {
         </fieldset>
     </div>
 <!--eof customer-information block -->
+<?php
+// -----
+// Otherwise, not in guest-checkout, see if the checkout is on behalf of a registered-account
+// that doesn't currently have a primary address.  If so, include an HTML indicator (used by
+// the plugin's jQuery) to 'force' the customer to enter their primary address.
+//
+} elseif ($_SESSION['opc']->customerAccountNeedsPrimaryAddress()) {
+?>
+    <span id="opc-need-primary-address">&nbsp;</span>
 <?php
 }
