@@ -169,7 +169,7 @@ if (CUSTOMERS_REFERRAL_STATUS == 2) {
 <?php 
 } 
 ?>
-    <div class="buttonRow forward"><?php echo zen_image_submit(BUTTON_IMAGE_SUBMIT, BUTTON_SUBMIT_ALT); ?></div>
+    <div class="buttonRow forward"><?php echo zen_image_submit(BUTTON_IMAGE_SUBMIT, BUTTON_SUBMIT_REGISTER_ALT); ?></div>
 <?php
 echo '</form>';
 ?>
