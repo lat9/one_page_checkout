@@ -173,8 +173,10 @@ jQuery(document).ready(function(){
         if (jQuery('#checkoutOneShipto').length) {
             if (jQuery("#shipping_billing").is(':checked')) {
                 jQuery('#checkoutOneShipto').hide();
+                jQuery('#opc-billing-title').text(billingShippingTitle);
             } else {
                 jQuery('#checkoutOneShipto').show();
+                jQuery('#opc-billing-title').text(billingTitle);
             }
         }
     }

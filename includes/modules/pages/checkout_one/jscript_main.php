@@ -38,6 +38,8 @@ var textPleaseSelect = '<?php echo PLEASE_SELECT; ?>';
 var displayShippingBlock = <?php echo ($display_shipping_block) ? 'true' : 'false'; ?>;
 var displayPaymentBlock = <?php echo ($display_payment_block) ? 'true' : 'false'; ?>;
 var ottotalSelector = '<?php echo CHECKOUT_ONE_OTTOTAL_SELECTOR; ?>';
+var billingTitle = '<?php echo TITLE_BILLING_ADDRESS; ?>';
+var billingShippingTitle = '<?php echo TITLE_BILLING_SHIPPING_ADDRESS; ?>';
 <?php
 // -----
 // If dropdown states are to be displayed, include that json-formatted array of countries/zones.

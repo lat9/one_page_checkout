@@ -1,13 +1,13 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2018, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2020, Vinos de Frutas Tropicales.  All rights reserved.
 //
 ?>
 <!--bof billing-address block -->
     <div id="checkoutOneBillto"<?php echo ($flagDisablePaymentAddressChange) ? ' class="opc-base"' : ''; ?>>
       <fieldset>
-        <legend><?php echo TITLE_BILLING_ADDRESS; ?></legend>
+        <legend id="opc-billing-title"><?php echo ($shipping_billing) ? TITLE_BILLING_SHIPPING_ADDRESS : TITLE_BILLING_ADDRESS; ?></legend>
 <?php
 $opc_address_type = 'bill';
 $opc_disable_address_change = $flagDisablePaymentAddressChange;
