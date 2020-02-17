@@ -1,7 +1,6 @@
 # *Create Account Success* Page Modifications #
 
-When a store has enabled the *OPC*'s registered-account handling (setting ***Configuration->One-Page Checkout Settings->
-Enable Account Registration?*** to *true*) and a customer completes their account-registration, the customer is shown a modified version of the `create_account_success` page's content.  That modification removes the display of the customer's primary address information &hellip; since it's not yet been entered.
+When a store has enabled the *OPC*'s registered-account handling (setting ***Configuration->One-Page Checkout Settings->Enable Account Registration?*** to *true*) and a customer completes their account-registration, the customer is shown a modified version of the `create_account_success` page's content.  That modification removes the display of the customer's primary address information &hellip; since it's not yet been entered.
 
 ----------
 

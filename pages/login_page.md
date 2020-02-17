@@ -1,11 +1,8 @@
 # *Login* Page Modifications #
 
-When a store has enabled the *OPC* as well as either its *registered-account* handling (setting ***Configuration->One-Page Checkout Settings->
-Enable Account Registration?*** to *true*) or *guest-checkout* (setting ***Configuration->One-Page Checkout Settings->
-Enable Guest Checkout?*** to *true*) feature, the store's `login` page display is altered.
+When a store has enabled the *OPC* as well as either its *registered-account* handling (setting ***Configuration->One-Page Checkout Settings->Enable Account Registration?*** to *true*) or *guest-checkout* (setting ***Configuration->One-Page Checkout Settings->Enable Guest Checkout?*** to *true*) feature, the store's `login` page display is altered.
 
-The page's layout is controlled by the setting ***Configuration->One-Page Checkout Settings->
-Login Page Layout***, which maps the page's five (5) blocks into one of three columns.  That value is entered as an *encoded string*, using semi-colons (;) to separate columns and commas (,) to separate the blocks &mdash; the default value **L;P,G,C;B** was used to create the sample screenshot below.
+The page's layout is controlled by the setting ***Configuration->One-Page Checkout Settings->Login Page Layout***, which maps the page's five (5) blocks into one of three columns.  That value is entered as an *encoded string*, using semi-colons (;) to separate columns and commas (,) to separate the blocks &mdash; the default value **L;P,G,C;B** was used to create the sample screenshot below.
 
 Those page-level blocks are:
 
