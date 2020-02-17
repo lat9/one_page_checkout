@@ -436,7 +436,6 @@ if (isset($_SESSION['opc']) && $_SESSION['opc']->accountRegistrationEnabled()) {
     $zco_notifier->notify('NOTIFY_NICK_SET_TEMPLATE_FLAG', 0, $display_nick_field);
 
     $breadcrumb->add(NAVBAR_TITLE_REGISTER);
-    $flag_disable_left = $flag_disable_right = true;
 }
 
 // This should be last line of the script:
