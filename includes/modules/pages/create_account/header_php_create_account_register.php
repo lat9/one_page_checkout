@@ -432,7 +432,6 @@ if (isset($_POST['action']) && ($_POST['action'] == 'register')) {
 //
 if (isset($_SESSION['opc']) && $_SESSION['opc']->accountRegistrationEnabled()) {
     $display_nick_field = false;
-    $is_guest_checkout = true;
     $zco_notifier->notify('NOTIFY_NICK_SET_TEMPLATE_FLAG', 0, $display_nick_field);
 
     $breadcrumb->add(NAVBAR_TITLE_REGISTER);
