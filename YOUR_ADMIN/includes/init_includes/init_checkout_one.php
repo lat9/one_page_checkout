@@ -15,8 +15,8 @@ if (!defined('IS_ADMIN_FLAG')) {
 // 500-599 ... Registered-account settings
 // 1000+ ..... Debug settings
 //
-define('CHECKOUT_ONE_CURRENT_VERSION', '2.3.0-beta4');
-define('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2020-02-17');
+define('CHECKOUT_ONE_CURRENT_VERSION', '2.3.0');
+define('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2020-02-18');
 
 if (isset($_SESSION['admin_id'])) {
     $version_release_date = CHECKOUT_ONE_CURRENT_VERSION . ' (' . CHECKOUT_ONE_CURRENT_UPDATE_DATE . ')';
@@ -26,7 +26,7 @@ if (isset($_SESSION['admin_id'])) {
     if ($configuration->EOF) {
         $db->Execute("INSERT INTO " . TABLE_CONFIGURATION_GROUP . " 
                      (configuration_group_title, configuration_group_description, sort_order, visible) 
-                     VALUES ('$configurationGroupTitle', '$configurationGroupTitle', '1', '1');");
+                     VALUES ('$configurationGroupTitle', '$configurationGroupTitle', 1, 1);");
         $cgi = $db->Insert_ID(); 
         $db->Execute("UPDATE " . TABLE_CONFIGURATION_GROUP . " SET sort_order = $cgi WHERE configuration_group_id = $cgi");
     } else {
