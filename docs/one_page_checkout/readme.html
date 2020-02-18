@@ -728,8 +728,10 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                     <li>CHANGE: Dynamically update billing-address title, based on &quot;billing=shipping&quot; selection.</li>
                     <li>CHANGE: Use &quot;standard&quot; <code class="no-pad">responsive_classic</code> formatting for registered-account creation.</li>
                     <li>BUGFIX: Correct checkout processing for registered-account customers who have not yet supplied their default address.</li>
+                    <li>BUGFIX: Correct address-display by the &quot;Shipping Estimator&quot; for guest-checkout and registered account-holders.</li>
                     <li>The following files were changed or <span class="added">added</span>:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
+                        <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                         <li><span class="template-changed">/includes/languages/english/checkout_one.php</span></li>
                         <li><span class="template-changed">/includes/languages/english/create_account_register.php</span></li>
                         <li>/includes/modules/pages/checkout_one/jquery_checkout_one.js</li>

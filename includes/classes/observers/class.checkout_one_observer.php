@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
-// Copyright (C) 2013-2019, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2020, Vinos de Frutas Tropicales.  All rights reserved.
 //
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
@@ -296,8 +296,16 @@ class checkout_one_observer extends base
                 break;
                 
             // -----
-            // Issued by the zen_is_logged_in function, allowing an observer to note that
+            // Issued by the zen_is_logged_in function, allowing an observer to note whether
             // a customer is currently logged into the store.
+            //
+            // The "Shipping Estimator", present on either the shopping_cart page or as the
+            // popup_shipping_estimator page, requires some special handling for guests and
+            // registered account-holders, since a pseudo-address-book entry is available,
+            // but incomplete.
+            //
+            // Any requests for logged-in status on either of those two pages will indicate
+            // a not-logged-in status for the above conditions.
             //
             // On entry:
             //
@@ -305,7 +313,26 @@ class checkout_one_observer extends base
             // $p2 ... (r/w) Value is set to boolean true/false to indicate the condition.
             //
             case 'NOTIFY_ZEN_IS_LOGGED_IN':
-                $p2 = $_SESSION['opc']->isLoggedIn();
+                $current_page_base = (isset($GLOBALS['current_page_base'])) ? $GLOBALS['current_page_base'] : '';
+                $is_logged_in = $_SESSION['opc']->isLoggedIn();
+                if ($is_logged_in) {
+                    if ($current_page_base == FILENAME_POPUP_SHIPPING_ESTIMATOR) {
+                        $is_logged_in = !$_SESSION['opc']->isGuestCheckout() && !$_SESSION['opc']->customerAccountNeedsPrimaryAddress();
+                    } elseif ($current_page_base == FILENAME_SHOPPING_CART && SHOW_SHIPPING_ESTIMATOR_BUTTON == '2') {
+                        $calling_list = debug_backtrace();
+                        $is_shipping_estimator = false;
+                        foreach ($calling_list as $next_caller) {
+                            if (strpos($next_caller['file'], 'tpl_modules_shipping_estimator.php') !== false) {
+                                $is_shipping_estimator = true;
+                                break;
+                            }
+                        }
+                        if ($is_shipping_estimator) {
+                            $is_logged_in = !$_SESSION['opc']->isGuestCheckout() && !$_SESSION['opc']->customerAccountNeedsPrimaryAddress();
+                        }
+                    }
+                }
+                $p2 = $is_logged_in;
                 break;
                 
             // -----
