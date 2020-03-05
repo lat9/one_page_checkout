@@ -430,7 +430,8 @@ class OnePageCheckout extends base
             );
         }
         unset(
-            $_SESSION['is_guest_checkout']
+            $_SESSION['is_guest_checkout'],
+            $_SESSION['order_placed_by_guest']
         );
         $this->resetSessionVariables();
         $this->reset();

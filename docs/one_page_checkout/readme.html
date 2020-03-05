@@ -719,6 +719,7 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                 <li>v2.3.1, 2020-03-05:<ul>
                     <li>CHANGE: Notification added for store-specific session handling.</li>
                     <li>BUGFIX: Correct address display when state dropdowns aren't being used.</li>
+                    <li>BUGFIX: Ensure that the session's &quot;order_placed_by_guest&quot; element is cleared post checkout.</li>
                     <li>The following files were changed:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/classes/observers/class.checkout_one_observer.php</li>
