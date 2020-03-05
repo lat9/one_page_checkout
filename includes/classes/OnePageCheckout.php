@@ -1191,7 +1191,7 @@ class OnePageCheckout extends base
         return $address_values;
     }
     
-    public function formatAddressElement($which, $field_name, $field_value, $field_text, $db_table, $db_fieldname, $min_length, $placeholder)
+    public function formatAddressElement($which, $field_name, $field_value, $field_text, $db_table, $db_fieldname, $min_length, $placeholder, $field_params = '')
     {
         $this->inputPreCheck($which);
         
@@ -1202,7 +1202,7 @@ class OnePageCheckout extends base
         
         return
             '<label class="inputLabel" for="' . $field_id . '">' . $field_text . '</label>' . PHP_EOL .
-            zen_draw_input_field($field_name, $field_value, "$field_len id=\"$field_id\" placeholder=\"$placeholder\" $field_required") . PHP_EOL .
+            zen_draw_input_field($field_name, $field_value, "$field_len id=\"$field_id\" placeholder=\"$placeholder\" $field_required$field_params") . PHP_EOL .
             '<br class="clearBoth" />';
     }
     
