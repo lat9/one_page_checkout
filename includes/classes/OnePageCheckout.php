@@ -1181,7 +1181,7 @@ class OnePageCheckout extends base
     
     protected function updateStateDropdownSettings($address_values)
     {
-        $show_pulldown_states = ACCOUNT_STATE_DRAW_INITIAL_DROPDOWN == 'true' || (($address_values['zone_name'] == '' && $address_values['country_has_zones']) || $address_values['error_state_input']);
+        $show_pulldown_states = ACCOUNT_STATE_DRAW_INITIAL_DROPDOWN == 'true' && (($address_values['zone_name'] == '' && $address_values['country_has_zones']) || $address_values['error_state_input']);
         $address_values['selected_country'] = $address_values['country'];
         $address_values['state'] = ($show_pulldown_states) ? $address_values['state'] : $address_values['zone_name'];
         $address_values['state_field_label'] = ($show_pulldown_states) ? '' : ENTRY_STATE;
