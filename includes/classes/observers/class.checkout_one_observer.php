@@ -702,6 +702,15 @@ class checkout_one_observer extends base
             unset($session_data['payment']);
         }
         
+        // -----
+        // Give a watching observer the opportunity to provide fix-ups over-and-above the prior processing.
+        //
+        $saved_session_data = $session_data;
+        $this->notify('NOTIFY_OPC_OBSERVER_SESSION_FIXUPS', '', $session_data);
+        if ($session_data != $saved_session_data) {
+            $this->debug_message("hashSession, observer override: " . PHP_EOL . json_encode($session_data) . PHP_EOL . json_encode($saved_session_data));
+        }
+        
         $hash_values = var_export($session_data, true);
         $this->debug_message("hashSession returning an md5 of $hash_values", false, 'checkout_one_observer');
         return md5($hash_values);
