@@ -1720,6 +1720,12 @@ class OnePageCheckout extends base
               LIMIT 1"
         );
         
+        // -----
+        // Issue a notification, indicating that the customer's record has been successfully created
+        // based on the guest's just-placed order.
+        //
+        $this->notify('NOTIFY_OPC_CREATE_ACCOUNT_ORDER_UPDATED', array('customer_id' => $customer_id, 'order_id' => $order_id));
+        
         $default_address_id = $this->createAddressBookRecord($customer_id, 'bill');
         $GLOBALS['db']->Execute(
             "UPDATE " . TABLE_CUSTOMERS . "
