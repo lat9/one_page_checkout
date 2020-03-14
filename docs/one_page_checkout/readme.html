@@ -716,13 +716,15 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color.</p>
               <ul>
-                <li>v2.3.1, 2020-03-05:<ul>
+                <li>v2.3.1, 2020-03-14:<ul>
                     <li>CHANGE: Notifications added for store-specific session handling.</li>
                     <li>BUGFIX: Correct address display when state dropdowns aren't being used.</li>
                     <li>BUGFIX: Ensure that the session's &quot;order_placed_by_guest&quot; element is cleared post checkout.</li>
                     <li>CHANGE: Enable site-specific customizations to add parameters to an address-related field.</li>
+                    <li>BUGFIX: Conditionally load the &quot;Vinos_Browser&quot; class and update that class to v1.9.4 (Dec-2019).</li>
                     <li>The following files were changed:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
+                        <li>/includes/classes/Vinos_Browser.php</li>
                         <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                     </ol></li>

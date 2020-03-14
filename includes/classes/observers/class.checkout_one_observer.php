@@ -17,7 +17,9 @@ class checkout_one_observer extends base
         // Determine if the current session browser is an Internet Explorer version less than 9 (that don't properly support
         // jQuery).
         //
-        require DIR_WS_CLASSES . 'Vinos_Browser.php';
+        if (!class_exists('Vinos_Browser')) {
+            require DIR_WS_CLASSES . 'Vinos_Browser.php';
+        }
         $browser = new Vinos_Browser();
         $unsupported_browser = ($browser->getBrowser() == Vinos_Browser::BROWSER_IE && $browser->getVersion() < 9);
         $this->browser = $browser->getBrowser() . '::' . $browser->getVersion();
