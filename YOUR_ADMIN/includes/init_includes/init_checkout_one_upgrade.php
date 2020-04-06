@@ -89,7 +89,7 @@ switch (true) {
             "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
                 ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) 
                 VALUES 
-                ( 'Guest Checkout: Disallowed Pages', 'CHECKOUT_ONE_GUEST_PAGES_DISALLOWED', 'account, account_edit, account_history, account_history_info, account_newsletters, account_notifications, account_password, address_book, address_book_process, create_account_success, gv_redeem, gv_send, password_forgotten, product_reviews_write, unsubscribe', 'Identify (using a comma-separated list, intervening blanks are OK) the pages that are <em>disallowed</em> during guest-checkout.<br /><br />These pages <em>normally</em> require a logged-in customer prior to display, e.g. <code>account</code>.  <b>Do not</b> include the <code>login</code>, <code>create_account</code> or <code>logoff</code> pages in this list!<br />', $cgi, now(), 100, NULL, NULL)"
+                ( 'Guest Checkout: Disallowed Pages', 'CHECKOUT_ONE_GUEST_PAGES_DISALLOWED', 'account, account_edit, account_history, account_history_info, account_newsletters, account_notifications, account_password, address_book, address_book_process, create_account_success, gv_redeem, gv_send, product_reviews_write, unsubscribe', 'Identify (using a comma-separated list, intervening blanks are OK) the pages that are <em>disallowed</em> during guest-checkout.<br /><br />These pages <em>normally</em> require a logged-in customer prior to display, e.g. <code>account</code>.  <b>Do not</b> include the <code>login</code>, <code>create_account</code>, <code>password_forgotten</code> or <code>logoff</code> pages in this list!<br />', $cgi, now(), 100, NULL, NULL)"
         );
         $db->Execute(
             "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
@@ -205,6 +205,28 @@ switch (true) {
                 VALUES 
                 ('Order Total, jQuery Selector', 'CHECKOUT_ONE_OTTOTAL_SELECTOR', '#ottotal > div:first-child', 'Identify the CSS/jQuery <code>selector</code> used to locate an order\'s current total value.  The default value, <code>#ottotal > div:first-child</code> applies to the Zen Cart <em>responsive_classic</em> template\'s format.<br>', $cgi, now(), 18, NULL, NULL)"
         );
+    
+    // -----
+    // v2.3.1:
+    //
+    // - Remove 'password_forgotten' from the guest-checkout disallowed pages' setting.
+    //
+    case version_compare(CHECKOUT_ONE_MODULE_VERSION, '2.3.1', '<'):    //-Fall-through processing from above
+        if (defined('CHECKOUT_ONE_GUEST_PAGES_DISALLOWED')) {
+            $guest_pages_disallowed = CHECKOUT_ONE_GUEST_PAGES_DISALLOWED;
+            if (strpos(CHECKOUT_ONE_GUEST_PAGES_DISALLOWED, 'password_forgotten') !== false) {
+                $disallowed_pages = explode(',', str_replace(' ', '', $guest_pages_disallowed));
+                $guest_pages_disallowed = array_diff($disallowed_pages, array('password_forgotten'));
+                $guest_pages_disallowed = implode(', ', $guest_pages_disallowed);
+            }
+            $db->Execute(
+                "UPDATE " . TABLE_CONFIGURATION . "
+                    SET configuration_value = '$guest_pages_disallowed',
+                        configuration_description = 'Identify (using a comma-separated list, intervening blanks are OK) the pages that are <em>disallowed</em> during guest-checkout.<br /><br />These pages <em>normally</em> require a logged-in customer prior to display, e.g. <code>account</code>.  <b>Do not</b> include the <code>login</code>, <code>create_account</code>, <code>password_forgotten</code> or <code>logoff</code> pages in this list!<br />'
+                  WHERE configuration_key = 'CHECKOUT_ONE_GUEST_PAGES_DISALLOWED'
+                  LIMIT 1"
+            );
+        }
 
     default:                                                            //-Fall-through processing from above
         break;
