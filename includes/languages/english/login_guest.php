@@ -1,13 +1,14 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2017-2018, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2017-2020, Vinos de Frutas Tropicales.  All rights reserved.
 //
 define('HEADING_NEW_CUSTOMER_OPC', 'New Customers');
 define('TEXT_NEW_CUSTOMER_OPC', 'Creating an account is easy.  Simply fill in the form on the next page and enjoy the benefits of having an account.');
 
 define('HEADING_GUEST_OPC', 'Guest Checkout');
 define('TEXT_GUEST_OPC', 'You don\'t need an account to checkout. If you change your mind, you will have a chance to create one when you have finished checking out.');
+define('BUTTON_GUEST_CHECKOUT_CONTINUE', 'Continue Guest Checkout');
 
 define('HEADING_RETURNING_CUSTOMER_OPC', 'Returning Customers');
 define('TEXT_RETURNING_CUSTOMER_OPC', 'If you have an account with <strong>' . STORE_NAME . '</strong>, please enter your email address and password to continue.');

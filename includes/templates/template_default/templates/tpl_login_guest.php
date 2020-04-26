@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2017, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2017-2020, Vinos de Frutas Tropicales.  All rights reserved.
 //
 ?>
 <div class="centerColumn" id="loginOpcDefault">
@@ -72,7 +72,7 @@ foreach ($column_blocks as $display_blocks) {
 <?php
                     } else {
 ?>
-        <div class="buttonRow"><a href="<?php echo zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'); ?>" rel="nofollow"><?php echo zen_image_button(BUTTON_IMAGE_CHECKOUT, BUTTON_CHECKOUT_ALT); ?></a></div>
+        <div class="buttonRow"><a href="<?php echo zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'); ?>" rel="nofollow"><?php echo zen_image_button(BUTTON_IMAGE_CONTINUE, BUTTON_GUEST_CHECKOUT_CONTINUE); ?></a></div>
 <?php
                     }
                     break;

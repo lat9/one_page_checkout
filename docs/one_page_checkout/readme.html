@@ -727,10 +727,13 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                     <li>BUGFIX: Correct layout within address-entry blocks for the customer's salutation.</li>
                     <li>BUGFIX: Disallow one-page checkout processing on robot accesses.</li>
                     <li>BUGFIX: Correct guest-customers' order-confirmation email address formatting.</li>
+                    <li>BUGFIX: Make it clear that a guest-checkout can continue on the &quot;login&quot; page.</li>
                     <li>The following files were changed:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/classes/Vinos_Browser.php</li>
                         <li>/includes/classes/observers/class.checkout_one_observer.php</li>
+                        <li><span class="template-changed">/includes/languages/english/login_guest.php</span></li>
+                        <li><span class="template-changed">/includes/templates/template_default/templates/tpl_login_guest.php</span></li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_address_block.php</span></li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                         <li>/YOUR_ADMIN/includes/init_incldues/init_checkout_one_upgrade.php</li>
