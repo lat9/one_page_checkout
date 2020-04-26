@@ -676,7 +676,9 @@ class checkout_one_observer extends base
             $session_data['ceon_sage_pay_direct_card_start_month'] ,
             $session_data['ceon_sage_pay_direct_card_start_year'] ,
             $session_data['ceon_sage_pay_direct_card_issue_number'],
-            $session_data['ceon_sage_pay_direct_data_entered']
+            $session_data['ceon_sage_pay_direct_data_entered'],
+            $session_data['ceon_sage_pay_direct_error_encountered'],
+            $session_data['ceon_sage_pay_direct_debug_file']
         );
         
         // -----
