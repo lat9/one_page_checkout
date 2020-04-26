@@ -9,7 +9,8 @@ if (!defined('IS_ADMIN_FLAG')) {
 
 class checkout_one_observer extends base 
 {
-    private $enabled = false;
+    private $enabled = false,
+            $debug = false;
             
     public function __construct() 
     {
@@ -23,6 +24,20 @@ class checkout_one_observer extends base
         $browser = new Vinos_Browser();
         $unsupported_browser = ($browser->getBrowser() == Vinos_Browser::BROWSER_IE && $browser->getVersion() < 9);
         $this->browser = $browser->getBrowser() . '::' . $browser->getVersion();
+        
+        // -----
+        // If the plugin's configuration is not set or not enabled or if the browser/access is not supported, perform
+        // a quick return.  That will result in an overall 'OPC' disablement.
+        //
+        if (!defined('CHECKOUT_ONE_ENABLED') || CHECKOUT_ONE_ENABLED == 'false' || $unsupported_browser || $browser->isRobot()) {
+            // -----
+            // If the OPC session is present, ensure that any previous guest-related accesses are cleared.
+            //
+            if (isset($_SESSION['opc']) && is_object($_SESSION['opc'])) {
+                $_SESSION['opc']->resetGuestSessionValues();
+            }
+            return;
+        }
         
         // -----
         // The 'opctype' variable is applied to the checkout_shipping page's link by the checkout_one page's alternate link
@@ -116,17 +131,11 @@ class checkout_one_observer extends base
         }
         
         // -----
-        // Determine, via call to the OPC's session-handler, whether the overall OPC processing is to be
-        // enabled.
-        //
-        $plugin_enabled = $_SESSION['opc']->checkEnabled();
-        
-        // -----
-        // If the current browser is supported and the plugin's environment is supportable, then the processing for the
-        // OPC is enabled.  We'll attach notifiers to the various elements of the 3-page checkout to consolidate that
+        // If the plugin's environment is supportable, then the processing for the OPC is enabled.
+        // We'll attach notifiers to the various elements of the 3-page checkout to consolidate that
         // processing into a single page.
         //
-        if (!$unsupported_browser && $plugin_enabled) {
+        if ($_SESSION['opc']->checkEnabled()) {
             $this->enabled = true;
             $this->current_page_base = $GLOBALS['current_page_base'];
             
