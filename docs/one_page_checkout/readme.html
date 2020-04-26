@@ -724,10 +724,12 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                     <li>BUGFIX: Conditionally load the &quot;Vinos_Browser&quot; class and update that class to v1.9.4 (Dec-2019).</li>
                     <li>BUGFIX: Remove <code>password_forgotten</code> from the list of pages disallowed during guest-checkout.</li>
                     <li>CHANGE: Additional session-values to ignore for the <em>Ceon Sage Pay Direct</em> payment-method.</li>
+                    <li>BUGFIX: Correct layout within address-entry blocks for the customer's salutation.</li>
                     <li>The following files were changed:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/classes/Vinos_Browser.php</li>
                         <li>/includes/classes/observers/class.checkout_one_observer.php</li>
+                        <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_address_block.php</span></li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                         <li>/YOUR_ADMIN/includes/init_incldues/init_checkout_one_upgrade.php</li>
                     </ol></li>
