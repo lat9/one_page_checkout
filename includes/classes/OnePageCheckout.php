@@ -872,13 +872,13 @@ class OnePageCheckout extends base
     /* -----
     ** This function returns the Zen-Cart formatted address for the specified temporary address.
     */
-    public function formatAddress($which)
+    public function formatAddress($which, $use_html = false, $eoln = ', ')
     {
         $this->inputPreCheck($which);
         
         $address = $this->createOrderAddressFromTemporary($which);
         
-        return zen_address_format($address['format_id'], $address, 0, '', ', ');
+        return zen_address_format($address['format_id'], $address, ($use_html === true), '', $eoln);
     }
     
     /* -----

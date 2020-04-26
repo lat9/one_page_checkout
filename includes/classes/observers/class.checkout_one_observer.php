@@ -496,7 +496,7 @@ class checkout_one_observer extends base
                     
                     if ($class->content_type != 'virtual' && in_array($_SESSION['sendto'], $temp_addresses)) {
                         $which = ($_SESSION['sendto'] == CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID) ? 'ship' : 'bill';
-                        $shipping_address = $_SESSION['opc']->formatAddress($which);
+                        $shipping_address = $_SESSION['opc']->formatAddress($which, false, "\n");
                         
                         $new_shipping_address = 
                             EMAIL_TEXT_DELIVERY_ADDRESS . "\n" . 
@@ -512,7 +512,7 @@ class checkout_one_observer extends base
                     }
                     
                     if ($_SESSION['billto'] == CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID) {
-                        $billing_address = $_SESSION['opc']->formatAddress('bill');
+                        $billing_address = $_SESSION['opc']->formatAddress('bill', false, "\n");
                         
                         $new_billing_address =
                             EMAIL_TEXT_BILLING_ADDRESS . "\n" .
