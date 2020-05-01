@@ -149,7 +149,7 @@ jQuery(document).ready(function(){
         }
     }
 
-    if (!virtual_order) {
+    if (!virtual_order && checkMissingElements) {
         if (jQuery('#otshipping').length == 0) {
             elementsMissing = true;
             zcLog2Console('Missing #otshipping');
