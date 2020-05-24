@@ -1373,7 +1373,7 @@ class OnePageCheckout extends base
         }
 
         if (ACCOUNT_GENDER == 'true') {
-          $gender = zen_db_prepare_input($address_values['gender']);
+            $gender = (isset($address_values['gender'])) ? zen_db_prepare_input($address_values['gender']) : '';
             if ($gender != 'm' && $gender != 'f') {
                 $error = true;
                 $messages['gender'] = $message_prefix . ENTRY_GENDER_ERROR;
