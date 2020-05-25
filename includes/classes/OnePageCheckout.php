@@ -1036,6 +1036,8 @@ class OnePageCheckout extends base
         $address_info->fields['country_has_zones'] = $this->countryHasZones($address_info->fields['country']);
         $address_info->fields['validated'] = !$this->customerAccountNeedsPrimaryAddress();
         
+        $address_info->fields = $this->updateStateDropdownSettings($address_info->fields);
+        
         $this->notify('NOTIFY_OPC_INIT_ADDRESS_FROM_DB', $address_book_id, $address_info->fields);
         
         $this->debugMessage("getAddressValuesFromDb($address_book_id), returning: " . var_export($address_info->fields, true)); 
@@ -1063,7 +1065,7 @@ class OnePageCheckout extends base
             'selected_country' => (int)STORE_COUNTRY,
             'country_has_zones' => $this->countryHasZones((int)STORE_COUNTRY),
             'state_field_label' => '',
-            'show_pulldown_states' => false,
+            'show_pulldown_states' => true,
             'error' => false,
             'error_state_input' => false,
             'validated' => false,
@@ -1180,9 +1182,14 @@ class OnePageCheckout extends base
         return !$check->EOF;
     }
     
+    // -----
+    // Updated for v2.3.2, the state dropdown is *always* displayed, regardless of configuration
+    // setting.  Simplifies (and corrects) the OPC address-update processing for stores that have
+    // that setting set to 'false'.
+    //
     protected function updateStateDropdownSettings($address_values)
     {
-        $show_pulldown_states = ACCOUNT_STATE_DRAW_INITIAL_DROPDOWN == 'true' && (($address_values['zone_name'] == '' && $address_values['country_has_zones']) || $address_values['error_state_input']);
+        $show_pulldown_states = true;
         $address_values['selected_country'] = $address_values['country'];
         $address_values['state'] = ($show_pulldown_states) ? $address_values['state'] : $address_values['zone_name'];
         $address_values['state_field_label'] = ($show_pulldown_states) ? '' : ENTRY_STATE;
@@ -1521,7 +1528,7 @@ class OnePageCheckout extends base
                     'zone_name' => $zone_name,
                     'error_state_input' => $error_state_input,
                     'country_has_zones' => $country_has_zones,
-                    'show_pulldown_states' => false,
+                    'show_pulldown_states' => true,
                     'error' => false,
                     'validated' => true
                 ),

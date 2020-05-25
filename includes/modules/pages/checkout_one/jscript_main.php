@@ -21,7 +21,9 @@ if (!defined('CHECKOUT_ONE_OTTOTAL_SELECTOR')) {
 // is required.  This is used to determine whether the "confirm-order" or "review-order" button is displayed.
 // The $required_list value is created by the page's header_php.php processing.
 //
-$show_state_dropdowns = (ACCOUNT_STATE_DRAW_INITIAL_DROPDOWN == 'true');
+// Note: Starting with v2.3.2, the state dropdowns are **always** rendered.
+//
+$show_state_dropdowns = true;
 ?>
 var confirmation_required = [<?php echo $required_list; ?>];
 

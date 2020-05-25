@@ -723,12 +723,16 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                     <li>BUGFIX: Correct potential PHP warning when store changes the &quot;Gender&quot; customer setting.</li>
                     <li>BUGFIX: Ensure that the &quot;Add to Address Book&quot; checkbox is visible when required.</li>
                     <li>BUGFIX: Guest order-status update emails, point to the <code class="no-pad">order_status</code> page.</li>
+                    <li>BUGFIX: Correct address-entry, always use the state dropdown if the address' country has zones.</li>
                     <li>The following files were changed:<ol>
                         <li>/includes/auto_loaders/config.checkout_one.php</li>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li><span class="added">/includes/classes/observers/CheckoutOneEmailObserver.php</span></li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
+                        <li>/includes/modules/pages/checkout_one/jquery.checkout_one_addr.js</li>
+                        <li>/includes/modules/pages/checkout_one/jquery.checkout_one_addr.min.js</li>
+                        <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_billing_address.php</span></li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_shipping_address.php</span></li>
                         <li>/YOUR_ADMIN/includes/auto_loaders/config.checkout_one.php</li>

@@ -1,14 +1,17 @@
 // -----
-// Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2018, Vinos de Frutas Tropicales.  All rights reserved.
+// Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
+// Copyright (C) 2018-2020, Vinos de Frutas Tropicales.  All rights reserved.
 //
 
 // -----
 // Main processing section, starts when the browser has finished and the page is "ready" ...
 //
-// Note: This script-file is included in the page-load iff the store has enabled state dropdowns!
+// Note: Starting with OPC v2.3.2, this script is *always* loaded.
 //
 jQuery(document).ready(function() {
+    var last_country_bill = jQuery('#country-bill option:selected').val();
+    var last_country_ship = jQuery('#country-ship option:selected').val();
+    
     // -----
     // Initialize the display for the dropdown vs. hand-entry of the state fields.  If the initially-selected
     // country doesn't have zones, the dropdown will contain only 1 element ('Type a choice below ...').
@@ -33,11 +36,19 @@ jQuery(document).ready(function() {
     // -----
     // Monitor the billing- and shipping-address blocks for changes to the selected country.
     //
-    jQuery(document).on('change', '#country-bill', function(event) {
-        updateCountryZones('bill', this.value);
+    // Note: Monitoring *all* input changes, too, to workaround browsers' autofill processing.
+    //
+    jQuery(document).on('change', '#country-bill, #checkoutOneBillto input', function(event) {
+        if (last_country_bill != jQuery('#country-bill option:selected').val()) {
+            last_country_bill = jQuery('#country-bill option:selected').val();
+            updateCountryZones('bill', jQuery('#country-bill option:selected').val());
+        }
     });
-    jQuery(document).on('change', '#country-ship', function(event) {
-        updateCountryZones('ship', this.value);
+    jQuery(document).on('change', '#country-ship, #checkoutOneSendto input', function(event) {
+        if (last_country_ship != jQuery('#country-ship option:selected').val()) {
+            last_country_ship = jQuery('#country-ship option:selected').val();
+            updateCountryZones('ship', jQuery('#country-ship option:selected').val());
+        }
     });
     
     // -----
