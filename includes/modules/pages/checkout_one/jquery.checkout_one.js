@@ -682,7 +682,7 @@ jQuery(document).ready(function(){
     function changeBillingFields(event)
     {
         jQuery(this).addClass('opc-changed');
-        jQuery('#checkoutOneBillto .opc-buttons, #opc-bill-save').show();
+        jQuery('#checkoutOneBillto .opc-buttons, #opc-bill-save, #opc-add-bill, #opc-add-bill+label').show();
         jQuery('#opc-bill-edit').hide();
         jQuery('#checkoutPayment > .opc-overlay').addClass('active');
         jQuery('#checkoutOneGuestInfo, #checkoutOneBillto').addClass('opc-view');
