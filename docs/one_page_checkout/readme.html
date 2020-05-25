@@ -453,6 +453,7 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                   <li>/includes/classes/Vinos_Browser.php</li>
                   <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
                   <li>/includes/classes/observers/class.checkout_one_observer.php</li>
+                  <li>/includes/classes/observers/CheckoutOneEmailObserver.php</li>
                   <li>/includes/extra_datafiles/checkout_one_filenames.php</li>
                   <li>/includes/functions/extra_functions/one_page_checkout_functions.php</li>
                   <li>/includes/langauges/english/address_book_register.php</li>
@@ -717,8 +718,8 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color.</p>
               <ul>
-                <li>v2.3.2-beta3, 2020-05-25:<ul>
-                    <li>BUGFIX: Don't check for <em>#otshipping</em> until address-related information is supplied.</li>
+                <li>v2.3.2, 2020-05-25:<ul>
+                    <li>BUGFIX: Don't check for <em>#otshipping</em> until address-related information is supplied (zc157 interoperability).</li>
                     <li>BUGFIX: Ensure that changes to an address' <em>company</em> are properly recorded.</li>
                     <li>BUGFIX: Correct potential PHP warning when store changes the &quot;Gender&quot; customer setting.</li>
                     <li>BUGFIX: Ensure that the &quot;Add to Address Book&quot; checkbox is visible when required.</li>
@@ -745,7 +746,7 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                     <li>BUGFIX: Ensure that the session's &quot;order_placed_by_guest&quot; element is cleared post checkout.</li>
                     <li>CHANGE: Enable site-specific customizations to add parameters to an address-related field.</li>
                     <li>BUGFIX: Conditionally load the &quot;Vinos_Browser&quot; class and update that class to v1.9.4 (Dec-2019).</li>
-                    <li>BUGFIX: Remove <code>password_forgotten</code> from the list of pages disallowed during guest-checkout.</li>
+                    <li>BUGFIX: Remove <code class="no-pad">password_forgotten</code> from the list of pages disallowed during guest-checkout.</li>
                     <li>CHANGE: Additional session-values to ignore for the <em>Ceon Sage Pay Direct</em> payment-method.</li>
                     <li>BUGFIX: Correct layout within address-entry blocks for the customer's salutation.</li>
                     <li>BUGFIX: Disallow one-page checkout processing on robot accesses.</li>
