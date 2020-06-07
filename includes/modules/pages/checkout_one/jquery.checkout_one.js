@@ -733,7 +733,7 @@ jQuery(document).ready(function(){
     function changeShippingFields(event)
     {
         jQuery(this).addClass('opc-changed');
-        jQuery('#checkoutOneShipto .opc-buttons, #opc-ship-save').show();
+        jQuery('#checkoutOneShipto .opc-buttons, #opc-ship-save, #opc-add-ship, #opc-add-ship+label').show();
         jQuery('#checkoutPayment > .opc-overlay').addClass('active');
         jQuery('#checkoutOneShipto').removeClass('visibleField');
         jQuery('#checkoutOneShipto').addClass('opc-view');
