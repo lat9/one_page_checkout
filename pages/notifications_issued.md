@@ -14,6 +14,8 @@ These notifications are issued in `function` scope via `$this`, so watching obse
 | [NOTIFY_OPC_INIT_ADDRESS_FOR_GUEST](#initialize-guest-address) | Issued prior to the formatting of an address, for guest customers. |
 | [NOTIFY_OPC_VALIDATE_SAVE_GUEST_INFO](#validate-guest-information) | Issued upon a *change* in a guest-customer's information. |
 | [NOTIFY_OPC_ADDRESS_VALIDATION](address-validation) | Issued upon a change to one of a customer's addresses.  Added for *OPC* v2.3.0. |
+| [NOTIFY_OPC_ADDRESS_BOOK_SQL](#address-book-sql-override) | Issued while checking to see if a submitted address-change is a pre-existing address.  Added for _OPC_ v2.3.3. |
+| [NOTIFY_OPC_ADDRESS_ARRAY_TO_STRING](#address-to-string) | Issued during the processing to determine whether an in-database address-book record matches a change submitted by the customer.  Added for _OPC_ v2.3.3. |
 | [NOTIFY_OPC_ADDED_ADDRESS_BOOK_RECORD](#added-address-book-record) | Issued for account-holding customers, when an address-book record has been added. |
 | [OPC_ADDED_CUSTOMER_RECORD_FOR_GUEST](#creating-customer-record-for-guest) | Issued during the `checkout_success` page's processing when a guest customer chooses to convert their account to a registered one. |
 | [NOTIFY_OPC_CREATED_ADDRESS_BOOK_DB_ENTRY](#create-address-record-for-guest) | Issued during the `checkout_success` page's processing when a guest customer chooses to convert their account to a registered one. |
@@ -139,6 +141,28 @@ If this array is not empty on return to *OPC*, the address' validation is consid
 This associative array, initially empty, can be set by the observer to contain field-specific values to be recorded upon a successful address validation.  Each element of the array is keyed on a field present in the `address_values` supplied in the `$p1` parameter.
 
 An observer can override the value to be stored for any of OPC's base address fields, e.g. setting a `firstname` value in the array results in the supplied value being recorded for the customer's firstname.
+
+#### Address Book SQL Override
+
+This notifier fires &mdash; for account-holding customers _only_ &mdash; when a customer changes their address and requests that the change be saved as a permanent address.
+
+The following variables are passed with the notification:
+
+| Variable 'name' | Description                                                  |
+| :-------------: | :----------------------------------------------------------- |
+|       $p1       | (r/o) Contains an associative array, containing the address-related elements used to form the initial address-book SQL query present in `$p2`. |
+|       $p2       | (r/w) A string containing the current to-be-issued SQL query used to gather address-book records for the current customer. |
+
+#### Address To String
+
+This notifier fires &mdash; for account-holding customers _only_ &mdash; when a customer changes their address and requests that the change be saved as a permanent address.
+
+The following variables are passed with the notification:
+
+| Variable 'name' | Description                                                  |
+| :-------------: | :----------------------------------------------------------- |
+|       $p1       | (r/o) Contains an associative array, containing the address-related elements used to form the comparison-address-string contained in `$p2`. |
+|       $p2       | (r/w) A string containing the current to-be-issued SQL query used to gather address-book records for the current customer. |
 
 #### Added Address Book Record
 

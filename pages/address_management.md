@@ -15,6 +15,8 @@ When the customer changes an address (either billing or shipping), the address t
 
 If the address-change is *temporary* (i.e. the checkbox is not ticked), the updated address is temporarily stored in the customer's session.  Otherwise, the  OPC processing will attempt to find a pre-existing address-book record that matches the requested change, using that `address_book_id` if found; if not, a new address-book entry is created to contain the requested address-change.
 
+***Note***: OPC determines that an address "matches" by comparing all address-related fields entered to each current address-book entry set for the customer.  If a change is detected, even if it's _only_ the address' `gender`, a ***new*** address-book entry is created.
+
 In either case, the address-related session-variable (either `$_SESSION['billto']` or `$_SESSION['sendto']`) is updated to reflect the change.  Any *temporary* address-book information is stored for the current order, but is removed once the checkout process is completed.
 
 ## Registered-Account Checkout ##

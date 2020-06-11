@@ -1865,7 +1865,8 @@ class OnePageCheckout extends base
         // do a match on address, street, street2, city
         $sql = 
             "SELECT address_book_id, entry_street_address AS street_address, entry_suburb AS suburb, entry_city AS city, 
-                    entry_postcode AS postcode, entry_firstname AS firstname, entry_lastname AS lastname, entry_company AS company
+                    entry_postcode AS postcode, entry_firstname AS firstname, entry_lastname AS lastname, entry_company AS company,
+                    entry_gender AS gender
                FROM " . TABLE_ADDRESS_BOOK . "
               WHERE customers_id = :customerId
                 AND entry_country_id = $country_id";
@@ -1900,6 +1901,7 @@ class OnePageCheckout extends base
     {
         $the_address = 
             $address_array['company'] .
+            $address_array['gender'] .
             $address_array['firstname'] . 
             $address_array['lastname'] . 
             $address_array['street_address'] . 
