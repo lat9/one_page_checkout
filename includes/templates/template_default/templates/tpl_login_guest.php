@@ -11,6 +11,13 @@ if ($messageStack->size('login') > 0) {
     echo $messageStack->output('login');
 }
 
+// -----
+// The 'presumed' name of the login-form has changed in zc157 and is used by the login-page's
+// onload javascript processing.  Determine the name to use for that form, based on the
+// site's current Zen Cart version.
+//
+$login_formname = (PROJECT_VERSION_MAJOR . '.' . PROJECT_VERSION_MINOR >= '1.5.7') ? 'loginForm' : 'login';
+
 $block_class = 'opc-block-' . $num_columns;
 foreach ($column_blocks as $display_blocks) {
     if (count($display_blocks) > 0) {
@@ -27,7 +34,7 @@ foreach ($column_blocks as $display_blocks) {
         <h2><?php echo HEADING_RETURNING_CUSTOMER_OPC; ?></h2>
         <div class="information"><?php echo TEXT_RETURNING_CUSTOMER_OPC; ?></div>
 <?php 
-                    echo zen_draw_form('login', zen_href_link(FILENAME_LOGIN, 'action=process' . (isset($_GET['gv_no']) ? '&gv_no=' . preg_replace('/[^0-9.,%]/', '', $_GET['gv_no']) : ''), 'SSL'), 'post', 'id="loginForm"'); 
+                    echo zen_draw_form($login_formname, zen_href_link(FILENAME_LOGIN, 'action=process' . (isset($_GET['gv_no']) ? '&gv_no=' . preg_replace('/[^0-9.,%]/', '', $_GET['gv_no']) : ''), 'SSL'), 'post', 'id="loginForm"'); 
 ?>
         <div class="opc-label"><?php echo ENTRY_EMAIL_ADDRESS; ?></div>
 <?php 

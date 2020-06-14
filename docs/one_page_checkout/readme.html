@@ -718,13 +718,15 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color.</p>
               <ul>
-                <li>v2.3.3-beta2, 2020-06-11:<ul>
+                <li>v2.3.3-beta3, 2020-06-14:<ul>
                     <li>BUGFIX: Ensure that the &quot;Add to Address Book&quot; checkbox is visible when required, in the shipping-address block.</li>
                     <li>BUGFIX: Account-holders, a change in &quot;Salutation&quot; was not being recorded in the database, when requested.  See <a href="https://github.com/lat9/one_page_checkout/blob/master/pages/address_management.md" target="_blank">this</a> on-line documentation for additional information.</li>
+                    <li>CHANGE: zc157 interoperation; the name of the login-form on the <code class="no-pad">login</code> page was changed, resulting in javascript errors.</li>
                     <li>The following files were changed:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
+                        <li><span class="template-changed">/includes/templates/template_default/templates/tpl_login_guest.php</span></li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                     </ol></li>
                 </ul></li>
