@@ -1156,7 +1156,7 @@ class OnePageCheckout extends base
         if (count($c2z) == 0) {
             $output_string = '';
         } else {
-            $output_string = 'var c2z = \'' . json_encode($c2z) . '\';' . PHP_EOL;
+            $output_string = 'var c2z = \'' . addslashes(json_encode($c2z)) . '\';' . PHP_EOL;
         }
         return $output_string;
     }

@@ -74,7 +74,7 @@ if (isset($quotes) && is_array($quotes)) {
 ?>
 };
 <?php
-echo $input_array . '};';
+echo $input_array . '};'.PHP_EOL;
 ?>
 //--></script>
 <?php
