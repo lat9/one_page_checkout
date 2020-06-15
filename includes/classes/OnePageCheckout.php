@@ -1878,6 +1878,17 @@ class OnePageCheckout extends base
         $sql = $GLOBALS['db']->bindVars($sql, ':zoneId', $address['zone_id'], 'integer');
         $sql = $GLOBALS['db']->bindVars($sql, ':stateValue', $address['state'], 'string');
         $sql = $GLOBALS['db']->bindVars($sql, ':customerId', $_SESSION['customer_id'], 'integer');
+        
+        // -----
+        // Give a watching observer the opportunity to gather additional address-related fields to be
+        // used in the address-matching below, writing a debug-message if the information has
+        // been changed.
+        //
+        $sql_saved = $sql;
+        $this->notify('NOTIFY_OPC_ADDRESS_BOOK_SQL', $address, $sql);
+        if ($sql_saved !== $sql) {
+            $this->debugMessage("findAddressBookEntry, sql changed from\n$sql_saved\nto$sql.");
+        }
         $possible_addresses = $GLOBALS['db']->Execute($sql);
         
         $address_book_id = false;  //-Identifies that no match was found
@@ -1908,6 +1919,12 @@ class OnePageCheckout extends base
             $address_array['suburb'] . 
             $address_array['city'] . 
             $address_array['postcode'];
+            
+        // -----
+        // Give an observer the chance to include additional address-related fields for the
+        // address-match determination.
+        //
+        $this->notify('NOTIFY_OPC_ADDRESS_ARRAY_TO_STRING', $address_array, $the_address);
         $the_address = strtolower(str_replace(array("\n", "\t", "\r", "\0", ' ', ',', '.'), '', $the_address));
         
         return $the_address;
