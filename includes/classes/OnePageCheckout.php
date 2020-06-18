@@ -774,7 +774,17 @@ class OnePageCheckout extends base
     //
     protected function createOrderAddressFromTemporary($which)
     {
+        // -----
+        // Grab the country-id from the specified temporary address.  If it's empty, like
+        // in some situations during the shipping-estimator's processing, perform a
+        // quick return with an empty array, so that no elements of the incoming address
+        // will be modified.
+        //
         $country_id = $this->tempAddressValues[$which]['country'];
+        if (empty($country_id)) {
+            return array();
+        }
+        
         $country_info = $GLOBALS['db']->Execute(
             "SELECT *
                FROM " . TABLE_COUNTRIES . "

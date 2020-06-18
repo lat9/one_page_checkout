@@ -26,6 +26,15 @@ class checkout_one_observer extends base
         $this->browser = $browser->getBrowser() . '::' . $browser->getVersion();
         
         // -----
+        // If the session-based OPC 'brains' aren't available, there's nothing to be done.
+        // The plugin will not attach to its various notifications.
+        //
+        if (empty($_SESSION['opc']) || !is_object($_SESSION['opc'])) {
+//            trigger_error('Missing $_SESSION[\'opc\']:' . var_export($_SERVER, true) . PHP_EOL . var_export($_GET, true) . PHP_EOL . var_export($_POST, true), E_USER_WARNING);
+            return;
+        }
+        
+        // -----
         // If the plugin's configuration is not set or not enabled or if the browser/access is not supported, perform
         // a quick return.  That will result in an overall 'OPC' disablement.
         //
@@ -38,7 +47,7 @@ class checkout_one_observer extends base
             }
             return;
         }
-        
+
         // -----
         // The 'opctype' variable is applied to the checkout_shipping page's link by the checkout_one page's alternate link
         // (available if there's a jQuery error affecting that page's ability to perform a 1-page checkout).

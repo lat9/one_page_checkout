@@ -1,13 +1,20 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2017, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2017-2020, Vinos de Frutas Tropicales.  All rights reserved.
 //
 // This should be first line of the script:
 $zco_notifier->notify('NOTIFY_HEADER_START_CREATE_ACCOUNT_REGISTER');
 
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
+}
+
+// -----
+// If OPC's not installed or not properly set in the session, nothing to do here.
+//
+if (empty($_SESSION['opc']) || !is_object($_SESSION['opc'])) {
+    return;
 }
 
 // -----
@@ -430,7 +437,7 @@ if (isset($_POST['action']) && ($_POST['action'] == 'register')) {
 // If the OPC's registered accounts' processing is enabled, set some flags for the alternate
 // create-account page's processing.
 //
-if (isset($_SESSION['opc']) && $_SESSION['opc']->accountRegistrationEnabled()) {
+if ($_SESSION['opc']->accountRegistrationEnabled()) {
     $display_nick_field = false;
     $zco_notifier->notify('NOTIFY_NICK_SET_TEMPLATE_FLAG', 0, $display_nick_field);
 
