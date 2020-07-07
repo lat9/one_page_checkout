@@ -1,5 +1,9 @@
 # Installing or Upgrading _OPC_ v2.1.0 (and later)
 
+v2.3.3 (and later) of ***One-Page Checkout*** supports Zen Cart versions **zc155b** through **zc157**.  For zc157, there are no core-file changes required, so these additional installation steps don't apply!
+
+-------
+
 v2.1.0 (and later) of **_One-Page Checkout_** supports Zen Cart versions **zc155b-f** and **zc156+**, using zc156**b** as its change-basis (unless otherwise noted).   In that transition, the majority of the core-file changes required by _OPC_ are now _built into_ the base Zen Cart file-set and OPC's distribution has changed **_significantly_**.
 
 Use these instructions when you **upgrade** an existing _OPC_ installation from _v2.0.x_ to the currently-released version, or if you are performing an **initial install** of _OPC_.  The goal of these instructions is to lay a path so that you have a smooth transition when you upgrade your store to Zen Cart 1.5.6b or later.
