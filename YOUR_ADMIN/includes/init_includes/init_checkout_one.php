@@ -15,8 +15,8 @@ if (!defined('IS_ADMIN_FLAG')) {
 // 500-599 ... Registered-account settings
 // 1000+ ..... Debug settings
 //
-define('CHECKOUT_ONE_CURRENT_VERSION', '2.3.3');
-define('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2020-07-07');
+define('CHECKOUT_ONE_CURRENT_VERSION', '2.3.4-beta1');
+define('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2020-08-27');
 
 if (isset($_SESSION['admin_id'])) {
     $version_release_date = CHECKOUT_ONE_CURRENT_VERSION . ' (' . CHECKOUT_ONE_CURRENT_UPDATE_DATE . ')';
@@ -46,7 +46,7 @@ if (isset($_SESSION['admin_id'])) {
     if (CHECKOUT_ONE_MODULE_VERSION != $version_release_date) {
         require DIR_WS_INCLUDES . 'init_includes/init_checkout_one_upgrade.php';
     }
-        
+
     // -----
     // Make sure that the guest-/temporary-address indexes have been registered (in case the store-owner
     // somehow removes those settings).
@@ -72,8 +72,12 @@ if (isset($_SESSION['admin_id'])) {
         );
         zen_db_perform(TABLE_CUSTOMERS_INFO, $sql_data_array);
     }
-    
-    if (!defined('CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID')) {
+
+    // -----
+    // $opc_recreate_billto is set by the OPC upgrade initialization script if it finds that the
+    // billto address has been changed from its default and requires recreation.
+    //
+    if (!defined('CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID') || !empty($opc_recreate_billto)) {
         $sql_data_array = array(
             'customers_id' => $guest_customer_id,
             'entry_firstname' => 'Guest',
@@ -97,8 +101,12 @@ if (isset($_SESSION['admin_id'])) {
               LIMIT 1"
         );
     }
-    
-    if (!defined('CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID')) {
+
+    // -----
+    // $opc_recreate_sendto is set by the OPC upgrade initialization script if it finds that the
+    // sendto address has been changed from its default and requires recreation.
+    //
+    if (!defined('CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID') || !empty($opc_recreate_sendto)) {
         $sql_data_array = array(
             'customers_id' => $guest_customer_id,
             'entry_firstname' => 'Guest',
@@ -116,7 +124,7 @@ if (isset($_SESSION['admin_id'])) {
                 ( 'Guest Checkout: Shipping-Address ID', 'CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID', '$address_book_id', 'This (hidden) value identifies the address_book-table entry that is used as the pseudo-shipping-address entry for any guest checkout in your store, if different from the billing address.', 6, now(), 30, NULL, NULL)"
         );
     }
-        
+
     // -----
     // Now, check to make sure that the currently-active template's folder includes the jscript_framework.php file and disable the One-Page Checkout if
     // that file's not found.
