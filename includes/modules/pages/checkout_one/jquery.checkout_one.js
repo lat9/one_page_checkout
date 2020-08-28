@@ -687,7 +687,7 @@ jQuery(document).ready(function(){
         jQuery('#checkoutPayment > .opc-overlay').addClass('active');
         jQuery('#checkoutOneGuestInfo, #checkoutOneBillto').addClass('opc-view');
     }
-    jQuery(document).on('change', '#checkoutOneGuestInfo input, #checkoutOneBillto input, #checkoutOneBillto select:not(#select-address-bill)', changeBillingFields);
+    jQuery(document).on('focus', '#checkoutOneGuestInfo input, #checkoutOneBillto input, #checkoutOneBillto select:not(#select-address-bill)', changeBillingFields);
 
     function restoreBilling()
     {
@@ -738,7 +738,7 @@ jQuery(document).ready(function(){
         jQuery('#checkoutOneShipto').removeClass('visibleField');
         jQuery('#checkoutOneShipto').addClass('opc-view');
     }
-    jQuery(document).on('change', '#checkoutOneShipto input, #checkoutOneShipto select:not(#select-address-ship)', changeShippingFields);
+    jQuery(document).on('focus', '#checkoutOneShipto input, #checkoutOneShipto select:not(#select-address-ship)', changeShippingFields);
     
     function restoreShipping()
     {
