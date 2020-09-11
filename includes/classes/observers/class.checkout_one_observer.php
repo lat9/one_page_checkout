@@ -47,7 +47,7 @@ class checkout_one_observer extends base
             }
             return;
         }
-
+        
         // -----
         // The 'opctype' variable is applied to the checkout_shipping page's link by the checkout_one page's alternate link
         // (available if there's a jQuery error affecting that page's ability to perform a 1-page checkout).
@@ -717,10 +717,12 @@ class checkout_one_observer extends base
         $session_data['order_current_total'] = html_entity_decode($current_order_total, ENT_COMPAT, CHARSET);
         
         // -----
-        // If the order's current total is 0 (which it will be after a 100% coupon), don't include the session's
+        // If the order's current total is less than or equal to 0 (which it will be after a 100% coupon), don't include the session's
         // defined payment method, as that might change.
         //
-        if (preg_replace('/\D+/', '', $current_order_total) == 0) {
+        // Note: This also applies to the 'Reward Points' order-total, as its calculations can lead to a negative total-value.
+        //
+        if (preg_replace('/\D+/', '', $current_order_total) <= 0) {
             unset($session_data['payment']);
         }
         
