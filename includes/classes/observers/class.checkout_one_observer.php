@@ -717,14 +717,15 @@ class checkout_one_observer extends base
         $session_data['order_current_total'] = html_entity_decode($current_order_total, ENT_COMPAT, CHARSET);
         
         // -----
-        // If the order's current total is less than or equal to 0 (which it will be after a 100% coupon), don't include the session's
-        // defined payment method, as that might change.
+        // The order's payment-method (e.g. moneyorder) might not be present in the session after the
+        // order-confirmation pre-checks.  Specifically, if a credit-class order-totals 'credit' covers
+        // the full order payment (e.g. a 100%+free-shipping coupon), the payment-method is removed from
+        // the session ... after the first session-hash is computed.
         //
-        // Note: This also applies to the 'Reward Points' order-total, as its calculations can lead to a negative total-value.
+        // Since we're looking for a **monetary** change in the session values, that payment-method will be
+        // disregarded.
         //
-        if (preg_replace('/\D+/', '', $current_order_total) <= 0) {
-            unset($session_data['payment']);
-        }
+        unset($session_data['payment']);
         
         // -----
         // Give a watching observer the opportunity to provide fix-ups over-and-above the prior processing.
