@@ -1,6 +1,6 @@
 # Installing or Upgrading _OPC_ v2.1.0 (and later)
 
-v2.3.3 (and later) of ***One-Page Checkout*** supports Zen Cart versions **zc155b** through **zc157**.  For zc157, there are no core-file changes required, so these additional installation steps don't apply!
+v2.3.3 (and later) of ***One-Page Checkout*** supports Zen Cart versions **zc155b** through **zc157a**.  For zc157**a**, there are no core-file changes required, so these additional installation steps don't apply!
 
 -------
 
@@ -16,6 +16,75 @@ Use these instructions when you **upgrade** an existing _OPC_ installation from 
 
 
 Choose the instructions, below, based on the action to be performed for your _currently-installed_ version of Zen Cart. 
+
+## Installation and Upgrade For All Zen Cart Versions *Prior to* 1.5.7a
+
+**Note**: This change is required for ***all*** versions of Zen Cart prior to v1.5.7**a**.  Depending on your current Zen Cart version, there might be additional changes needed, so continue reading!
+
+If your store uses the **PayPal Express Checkout** (`paypalwpp`) payment method, you'll need to add a notification to enable _OPC_ to override the payment method's address-override method during guest-checkout.
+
+In the module's `getOverrideAddresses` function, find this section:
+
+```php
+      // debug
+      $this->zcLog('getOverrideAddress - 1', 'Now in markflow mode.' . "\n" . 'SESSION[sendto] = ' . (int)$_SESSION['sendto']);
+
+
+      // find the users default address id
+      if (!empty($_SESSIONsendto'])) {
+        $address_id = $_SESSION['sendto'];
+      } else {
+        $sql = "SELECT customers_default_address_id
+                FROM " . TABLE_CUSTOMERS . "
+                WHERE customers_id = :customerId";
+        $sql = $db->bindVars($sql, ':customerId', $_SESSION['customer_id'], 'integer');
+        $default_address_id_arr = $db->Execute($sql);
+        if (!$default_address_id_arr->EOF) {
+          $address_id = $default_address_id_arr->fields['customers_default_address_id'];
+        } else {
+          // couldn't find an address.
+          return false;
+        }
+      }
+```
+
+and add the notification required for OPC's proper operation:
+
+```php
+      // debug
+      $this->zcLog('getOverrideAddress - 1', 'Now in markflow mode.' . "\n" . 'SESSION[sendto] = ' . (int)$_SESSION['sendto']);
+
+
+      // find the users default address id
+      if (!empty($_SESSION['sendto'])) {
+        $address_id = $_SESSION['sendto'];
+      } else {
+        $sql = "SELECT customers_default_address_id
+                FROM " . TABLE_CUSTOMERS . "
+                WHERE customers_id = :customerId";
+        $sql = $db->bindVars($sql, ':customerId', $_SESSION['customer_id'], 'integer');
+        $default_address_id_arr = $db->Execute($sql);
+        if (!$default_address_id_arr->EOF) {
+          $address_id = $default_address_id_arr->fields['customers_default_address_id'];
+        } else {
+          // couldn't find an address.
+          return false;
+        }
+      }
+      
+      // -----
+      // Give a watching observer the opportunity to bypass this address-override.  An observer
+      // can disable the address-override processing by setting the $disable_address_override
+      // parameter to specifically (bool)true.
+      //
+      $disable_address_override = false;
+      $this->notify('NOTIFY_PAYPALWPP_DISABLE_GET_OVERRIDE_ADDRESS', $address_id, $disable_address_override);
+      if ($disable_address_override === true) {
+        $this->zcLog('getOverrideAddress - 1a', "Override disabled by observer request.\n");
+        return false;
+      }
+```
+
 
 ## Initial Installation
 
@@ -36,7 +105,6 @@ to
 ```php
 if (zen_is_logged_in() && !zen_in_guest_checkout()) {
 ```
-
 ### Zen Cart 1.5.6, 1.5.6a
 
 Perform the following actions on your store's core-/template-override files, then follow the installation instructions provided in the _OPC_ distribution's readme for the _OPC_-specific files.

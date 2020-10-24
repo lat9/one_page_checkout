@@ -94,7 +94,8 @@ a[target=_blank] { text-decoration: underline; }
   <ol class="clearBoth">
     <li>The installation instructions for <em>OPC</em> v2.1.0 and later have changed <b>significantly</b>, as the <span class="corefile">core file</span> changes required are now <em>in-core</em>, starting with Zen Cart 1.5.6b. If you are updating <em>OPC</em> from a previous version or are performing an initial installation for a Zen Cart version <em>prior to</em> 1.5.6b, refer to <a href="https://github.com/lat9/one_page_checkout/blob/master/pages/install_upgrade_v210_or_later.md" target="_blank" rel="noopener">these</a> additional instructions <span class="new-code">before</span> that update or installation!  Note also that initial installations on Zen Cart versions <em>prior to</em> 1.5.5b <b>are no longer supported</b>.</li>
     <li>For versions of Zen Cart <em>1.5.6c and earlier</em>, there are edits required for the <code class="no-pad">shipping_estimator</code> if your store enables <em>OPC</em>'s guest-checkout.  Refer to <a href="https://github.com/lat9/one_page_checkout/issues/193" target="_blank" rel="noopener">this</a> GitHub issue for version-specific changes required.</li>
-    <li>For versions of Zen Cart <em>1.5.7 and later</em>, there are <span class="corefile">no core-file changes</span> required; the plugin is now drop-in!</li>
+    <li>For versions of Zen Cart <em>prior to</em> <em>1.5.7<b>a</b></em>, there is a required edit for stores using the <code class="no-pad">paypalwpp</code> payment module when guest-checkout is enabled.  Refer to <a href="https://github.com/lat9/one_page_checkout/blob/master/pages/install_upgrade_v210_or_later.md" target="_blank" rel="noopener">these</a> additional instructions <span class="new-code">before</span> that update or installation!</li>
+    <li>For versions of Zen Cart <em>1.5.7<b>a</b> and later</em>, there are <span class="corefile">no core-file changes</span> required; the plugin is now drop-in!</li>
   </ol>
   <hr />
   <p><b>Credits:</b></p>
@@ -726,9 +727,10 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank" rel="noopener">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color.</p>
               <ul>
-                <li>v2.3.5-beta1, 2020-09-11:<ul>
+                <li>v2.3.5-beta2, 2020-10-24:<ul>
                     <li>BUGFIX: Correct processing for order-totals (e.g. <em>Reward Points</em>) that can result in a negative order-balance.</li>
                     <li>CHANGE: Add a diagnostic tool to retrieve the session-differences when a checkout-loop occurs.  See <a href="https://github.com/lat9/one_page_checkout/blob/master/pages/debugging_redirect.md" target="_blank" rel="noopener">this</a> on-line documentation for additional information.</li>
+                    <li>BUGFIX: Correct <code class="no-pad">paypalwpp</code> Error 10730 during guest-checkout.  For versions of Zen Cart <em>prior to</em> <em>1.5.7<b>a</b></em>, there is a required edit to that payment module.  Refer to <a href="https://github.com/lat9/one_page_checkout/blob/master/pages/install_upgrade_v210_or_later.md" target="_blank" rel="noopener">these</a> additional instructions.</li>
                     <li>The following files were changed:<ol>
                         <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                         <li><span class="added">/YOUR_ADMIN/opc_debug_redirection_error.php</span></li>

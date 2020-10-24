@@ -194,7 +194,7 @@ class checkout_one_observer extends base
         // Note: This is left as "legacy", just in case they need to be 'unobserved' in the future.
         // Right now (v2.1.0), that opc method returns an unconditional (bool)true.
         //
-        if ($this->enabled && $_SESSION['opc']->initTemporaryAddresses()) {    
+        if ($this->enabled && $_SESSION['opc']->initTemporaryAddresses()) {
             $this->attach(
                 $this, 
                 array(
@@ -206,6 +206,7 @@ class checkout_one_observer extends base
                     'NOTIFY_PAYMENT_PAYPALEC_BEFORE_SETEC',
                     'NOTIFY_PAYPALEXPRESS_BYPASS_ADDRESS_CREATION',
                     'NOTIFY_PAYPALWPP_BEFORE_DOEXPRESSCHECKOUT',
+                    'NOTIFY_PAYPALWPP_DISABLE_GET_OVERRIDE_ADDRESS',
                     'NOTIFY_HEADER_START_SHOPPING_CART',
                     'NOTIFY_HEADER_START_CHECKOUT_PAYMENT_ADDRESS',
                     'ZEN_GET_TAX_LOCATIONS',
@@ -602,6 +603,20 @@ class checkout_one_observer extends base
                     $GLOBALS['messageStack']->add_session('checkout_shipping', WARNING_PAYPALWPP_TOTAL_CHANGED, 'caution');
                     zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, zen_get_all_get_params(), 'SSL'));
                 }
+                break;
+                
+            // -----
+            // Issued by payaplwpp::getOverrideAddress at the beginning of its address-override check.  This
+            // gives OPC the chance to 'deny' that address-override during guest-checkout since there is no
+            // valid address-book table entry for a guest customer.
+            //
+            // Note: Not in core for Zen Cart versions prior to 1.5.7a!
+            //
+            // $p1 ... (r/o) The current address_book_id that will be used, if not overridden.
+            // $p2 ... (r/w) A reference to a boolean flag that indicates whether or not the default processing should proceed.
+            //
+            case 'NOTIFY_PAYPALWPP_DISABLE_GET_OVERRIDE_ADDRESS':
+                $p2 = $_SESSION['opc']->isGuestCheckout();
                 break;
                 
             // -----
