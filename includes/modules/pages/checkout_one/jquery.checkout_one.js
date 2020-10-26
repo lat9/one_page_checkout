@@ -420,8 +420,11 @@ jQuery(document).ready(function(){
         }
     }
 
-    function changeShippingSubmitForm(type)
+    function changeShippingSubmitForm(type, submit_type)
     {
+        if (typeof submit_type === "undefined" || submit_type === null) { 
+            submit_type = ''; 
+        }
         var shippingSelected = jQuery( 'input[name=shipping]' );
         if (shippingSelected.is( ':radio' )) {
             shippingSelected = jQuery( 'input[name=shipping]:checked' );
@@ -535,11 +538,11 @@ jQuery(document).ready(function(){
                     if (shippingError == true) {
                         zcLog2Console( 'Shipping error, correct to proceed.' );
                     } else {
-                        zcLog2Console ('Form submitted, type ('+type+'), orderConfirmed ('+orderConfirmed+')');
+                        zcLog2Console ('Form submitted, type ('+type+'), submit_type('+submit_type+'), orderConfirmed ('+orderConfirmed+')');
                         if (type == 'submit-cc') {
-                            jQuery( 'form[name="checkout_payment"]' ).submit();
+                            jQuery('form[name="checkout_payment"]').submit();
                         } else if (orderConfirmed) {
-                            jQuery( '#confirm-order' ).attr( 'disabled', true );
+                            jQuery('#confirm-the-order').attr('disabled', true);
                             
                             // -----
                             // If there is at least one payment method available, submit the form.
@@ -549,8 +552,18 @@ jQuery(document).ready(function(){
                                 zcLog2Console ('Form checked, passed ('+formPassed+')');
                                 
                                 if (formPassed) {
-                                    jQuery( '#confirm-order' ).attr('disabled', false);
-                                    jQuery( 'form[name="checkout_payment"]' ).submit();
+                                    // -----
+                                    // If we're submitting based on a "Confirm Order" button-click,
+                                    // activate the OPC overlay, disable that button and set the document's
+                                    // cursor to the 'wait' state.
+                                    //
+                                    if (submit_type == 'confirm') {
+                                        jQuery('*').css('cursor', 'wait');
+                                        jQuery('#checkoutPayment > .opc-overlay').addClass('active');
+                                        jQuery('#opc-order-confirm').attr('disabled', true);
+                                    }
+                                    jQuery('#confirm-the-order').attr('disabled', false);
+                                    jQuery('form[name="checkout_payment"]').submit();
                                 }
                             }
                         }
@@ -637,18 +650,31 @@ jQuery(document).ready(function(){
     });
     
     // -----
-    // When the form's pseudo-submit button, either "Review" or "Confirm", is clicked, the user is ready
+    // When the form's pseudo-submit "Review" button, the user is ready
     // to submit their order.  Set up the various "hidden" fields to reflect the order's current state,
-    // note that this is an order-confirmation request, and cause the order to be submitted.
+    // note that this is an order-review request, and cause the order to be submitted.
     //
-    jQuery('#opc-order-review, #opc-order-confirm').on('click', function( event ) {
+    jQuery('#opc-order-review').on('click', function(event) {
         submitFunction(0,0); 
         setOrderConfirmed(1);
 
-        zcLog2Console('Submitting order-creating form');
-        changeShippingSubmitForm( 'submit' );
+        zcLog2Console('Submitting order-creating form (review)');
+        changeShippingSubmitForm('submit', 'review');
     });
     
+    // -----
+    // When the form's pseudo-submit "Confirm" button, is clicked, the user is ready
+    // to submit their order.  Set up the various "hidden" fields to reflect the order's current state,
+    // note that this is an order-confirmation request, and cause the order to be submitted.
+    //
+    jQuery('#opc-order-confirm').on('click', function(event) {
+        submitFunction(0,0); 
+        setOrderConfirmed(1);
+
+        zcLog2Console('Submitting order-creating form (confirm)');
+        changeShippingSubmitForm('submit', 'confirm');
+    });
+
     // -----
     // Monitor the billing- and shipping-address blocks for changes.
     //
