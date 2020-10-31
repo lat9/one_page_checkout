@@ -111,8 +111,6 @@ echo $_SESSION['opc']->formatAddressElement($which, 'city', $address['city'], EN
 if (ACCOUNT_STATE == 'true') {
     $state_zone_id = "stateZone-$which";
     $zone_field_name = "zone_id[$which]";
-    $state_field_name = "state[$which]";
-    $state_field_id = "state-$which";
 ?>
       <label class="inputLabel"><?php echo ENTRY_STATE; ?></label>
 <?php    
@@ -126,10 +124,7 @@ if (ACCOUNT_STATE == 'true') {
         echo zen_draw_hidden_field($zone_field_name, $address['zone_name']);
     }
     
-    echo zen_draw_input_field($state_field_name, $address['state'], zen_set_field_length(TABLE_ADDRESS_BOOK, 'entry_state', '40') . " id=\"$state_field_id\"");
-    if (zen_not_null(ENTRY_STATE_TEXT)) {
-        echo '<span class="alert">' . ENTRY_STATE_TEXT . '</span>';
-    }
+    echo $_SESSION['opc']->formatAddressElement($which, 'state', $address['state'], '', TABLE_ADDRESS_BOOK, 'entry_state', ENTRY_STATE_MIN_LENGTH, ENTRY_STATE_TEXT);
 ?>
       <br class="clearBoth" />
 <?php

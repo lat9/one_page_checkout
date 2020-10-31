@@ -1216,9 +1216,10 @@ class OnePageCheckout extends base
         $field_name .= "[$which]";
         $field_len = zen_set_field_length($db_table, $db_fieldname, '40');
         $field_required = (((int)$min_length) > 0) ? ' required' : '';
+        $field_label = (empty($field_text)) ? '' : ('<label class="inputLabel" for="' . $field_id . '">' . $field_text . '</label>' . PHP_EOL);
         
         return
-            '<label class="inputLabel" for="' . $field_id . '">' . $field_text . '</label>' . PHP_EOL .
+            $field_label .
             zen_draw_input_field($field_name, $field_value, "$field_len id=\"$field_id\" placeholder=\"$placeholder\" $field_required$field_params") . PHP_EOL .
             '<br class="clearBoth" />';
     }

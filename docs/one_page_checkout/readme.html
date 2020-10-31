@@ -727,15 +727,18 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank" rel="noopener">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color.</p>
               <ul>
-                <li>v2.3.5-beta3, 2020-10-26:<ul>
+                <li>v2.3.5-beta4, 2020-10-31:<ul>
                     <li>BUGFIX: Correct processing for order-totals (e.g. <em>Reward Points</em>) that can result in a negative order-balance.</li>
                     <li>CHANGE: Add a diagnostic tool to retrieve the session-differences when a checkout-loop occurs.  See <a href="https://github.com/lat9/one_page_checkout/blob/master/pages/debugging_redirect.md" target="_blank" rel="noopener">this</a> on-line documentation for additional information.</li>
                     <li>BUGFIX: Correct <code class="no-pad">paypalwpp</code> Error 10730 during guest-checkout.  For versions of Zen Cart <em>prior to</em> <em>1.5.7<b>a</b></em>, there is a required edit to that payment module.  Refer to <a href="https://github.com/lat9/one_page_checkout/blob/master/pages/install_upgrade_v210_or_later.md" target="_blank" rel="noopener">these</a> additional instructions.</li>
                     <li>BUGFIX: Disable <em>Confirm Order</em> button on form submittal.</li>
+                    <li>BUGFIX: Show <em>placeholder</em> in non-dropdown &quot;State&quot; field in address blocks.</li>
                     <li>The following files were changed:<ol>
+                        <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                         <li>/includes/modules/pages/checkout_one/jquery_checkout_one.js</li>
                         <li>/includes/modules/pages/checkout_one/jquery_checkout_one.min.js</li>
+                        <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_address_block.php</span></li>
                         <li><span class="added">/YOUR_ADMIN/opc_debug_redirection_error.php</span></li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                     </ol></li>
