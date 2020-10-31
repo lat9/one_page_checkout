@@ -23,7 +23,7 @@ Choose the instructions, below, based on the action to be performed for your _cu
 
 If your store uses the **PayPal Express Checkout** (`paypalwpp`) payment method, you'll need to add a notification to enable _OPC_ to override the payment method's address-override method during guest-checkout.
 
-In the module's `getOverrideAddresses` function, find this section:
+In the module's `getOverrideAddress` function, find this section:
 
 ```php
       // debug
