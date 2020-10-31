@@ -1208,7 +1208,16 @@ class OnePageCheckout extends base
         return $address_values;
     }
     
-    public function formatAddressElement($which, $field_name, $field_value, $field_text, $db_table, $db_fieldname, $min_length, $placeholder, $field_params = '')
+    // -----
+    // For template assistance (to reduce parameters needed for formatAddressElement), provide a method
+    // to allow the template to set the default label parameters used for each subsequent call to
+    // that method.
+    //
+    public function setAddressLabelParams($label_params)
+    {
+        $this->label_params = $label_params;
+    }
+    public function formatAddressElement($which, $field_name, $field_value, $field_text, $db_table, $db_fieldname, $min_length, $placeholder, $field_params = '', $label_params = '')
     {
         $this->inputPreCheck($which);
         
@@ -1216,12 +1225,15 @@ class OnePageCheckout extends base
         $field_name .= "[$which]";
         $field_len = zen_set_field_length($db_table, $db_fieldname, '40');
         $field_required = (((int)$min_length) > 0) ? ' required' : '';
-        $field_label = (empty($field_text)) ? '' : ('<label class="inputLabel" for="' . $field_id . '">' . $field_text . '</label>' . PHP_EOL);
+        
+        if ($label_params === '' && !empty($this->label_params)) {
+            $label_params = $this->label_params;
+        }
+        $field_label = (empty($field_text)) ? '' : (zen_draw_label($field_text, $field_id, $label_params) . PHP_EOL);
         
         return
             $field_label .
-            zen_draw_input_field($field_name, $field_value, "$field_len id=\"$field_id\" placeholder=\"$placeholder\" $field_required$field_params") . PHP_EOL .
-            '<br class="clearBoth" />';
+            zen_draw_input_field($field_name, $field_value, "$field_len id=\"$field_id\" placeholder=\"$placeholder\" $field_required$field_params");
     }
     
     public function validateAndSaveAjaxPostedAddress($which, &$messages)
