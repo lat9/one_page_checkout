@@ -1,7 +1,0 @@
-#opc-ca-left, #opc-ca-right { width: 50%; float: left; padding: 10px; }
-.buttonRow { text-align: right; }
-.clearBoth { clear: both; }
-
-@media (max-width:767px){
-    #opc-ca-left, #opc-ca-right  { width: 100%; }
-}
