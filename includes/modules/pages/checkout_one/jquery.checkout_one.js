@@ -917,7 +917,7 @@ jQuery(document).ready(function(){
     //
     if (jQuery('#checkoutOneGuestInfo').length) {
         jQuery('#checkoutOneGuestInfo, #checkoutOneBillto').find('input').each(function() {
-            if (jQuery(this).prop('required') && jQuery(this).val() == '') {
+            if (jQuery(this).is(':visible') && jQuery(this).prop('required') && jQuery(this).val() == '') {
                 jQuery('#checkoutOneBillto .opc-buttons').show();
                 jQuery('#opc-bill-cancel').hide();
                 jQuery('#checkoutPayment > .opc-overlay').addClass('active');
@@ -935,7 +935,7 @@ jQuery(document).ready(function(){
     //
     if (jQuery('#opc-need-primary-address').length) {
         jQuery('#checkoutOneBillto').find('input').each(function() {
-            if (jQuery(this).prop('required') && jQuery(this).val() == '') {
+            if (jQuery(this).is(':visible') && jQuery(this).prop('required') && jQuery(this).val() == '') {
                 jQuery(this).focus();
                 return false;
             }
