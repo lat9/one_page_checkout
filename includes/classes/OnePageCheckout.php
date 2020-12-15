@@ -358,7 +358,7 @@ class OnePageCheckout extends base
         $this->guestCustomerId = (defined('CHECKOUT_ONE_GUEST_CUSTOMER_ID')) ? (int)CHECKOUT_ONE_GUEST_CUSTOMER_ID : 0;
         $this->tempBilltoAddressBookId = (defined('CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID')) ? (int)CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID : 0;
         $this->tempSendtoAddressBookId = (defined('CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID')) ? (int)CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID : 0;
-        $this->registeredAccounts = (CHECKOUT_ONE_ENABLE_REGISTERED_ACCOUNTS === 'true');
+        $this->registeredAccounts = (defined('CHECKOUT_ONE_ENABLE_REGISTERED_ACCOUNTS') && CHECKOUT_ONE_ENABLE_REGISTERED_ACCOUNTS === 'true');
         
         // -----
         // The 'stringIgnoreNull' type of database "bind" type was introduced in ZC1.5.5b; if the store
