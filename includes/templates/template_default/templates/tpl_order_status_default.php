@@ -171,11 +171,11 @@ echo zen_draw_form('order_status', zen_href_link(FILENAME_ORDER_STATUS, 'action=
         <p><?php echo TEXT_LOOKUP_INSTRUCTIONS; ?></p>
 
         <label class="inputLabel"><?php echo ENTRY_ORDER_NUMBER; ?></label>
-        <?php echo zen_draw_input_field('order_id', $orderID, 'size="10" id="order_id"', 'number'); ?> 
+        <?php echo zen_draw_input_field('order_id', $orderID, 'size="10" id="order_id" required', 'number'); ?> 
         <br />
         
         <label class="inputLabel"><?php echo ENTRY_EMAIL; ?></label>
-        <?php echo zen_draw_input_field('query_email_address', $query_email_address, 'size="35" id="query_email_address"', 'email'); ?> 
+        <?php echo zen_draw_input_field('query_email_address', $query_email_address, 'size="35" id="query_email_address" required', 'email'); ?> 
         <br />
         
         <?php echo zen_draw_input_field($spam_input_name, '', ' size="40" id="CUAS" style="visibility:hidden; display:none;" autocomplete="off"'); ?>
