@@ -112,7 +112,7 @@ jQuery(document).ready(function(){
     // Hide the shipping and/or payment blocks if the associated address is either
     // not yet entered or not validated.
     //
-    var checkMissingElements = true;
+    var checkMissingElements = shippingChoiceAvailable && paymentChoiceAvailable;
     if (!displayShippingBlock) {
         checkMissingElements = false;
         jQuery('#checkoutShippingMethod').hide();

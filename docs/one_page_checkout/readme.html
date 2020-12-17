@@ -731,8 +731,12 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                     <li>BUGFIX: Prevent blank-page on first load before admin installation is complete.</li>
                     <li>BUGFIX: Correct uninitialized-array PHP notice on information sidebox.</li>
                     <li>BUGFIX: Add 'required' attribute to <code class="no-pad">orders_status</code> page's form-fields.</li>
+                    <li>BUGFIX: Don't display &quot;Missing elements&quot; alert if no shipping or payment modules are available.</li>
                     <li>The following files were changed:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
+                        <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
+                        <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
+                        <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
                         <li><span class="template-changed">/includes/modules/sideboxes/YOUR_TEMPLATE/information.php</span></li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_order_status_default.php</span></li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>

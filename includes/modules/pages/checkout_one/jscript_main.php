@@ -42,6 +42,8 @@ var displayPaymentBlock = <?php echo ($display_payment_block) ? 'true' : 'false'
 var ottotalSelector = '<?php echo CHECKOUT_ONE_OTTOTAL_SELECTOR; ?>';
 var billingTitle = '<?php echo TITLE_BILLING_ADDRESS; ?>';
 var billingShippingTitle = '<?php echo TITLE_BILLING_SHIPPING_ADDRESS; ?>';
+var shippingChoiceAvailable = <?php echo (is_array($quotes) && count($quotes) > 0) ? 'true' : 'false'; ?>;
+var paymentChoiceAvailable = <?php echo (is_array($enabled_payment_modules) && count($enabled_payment_modules) > 0) ? 'true' : 'false'; ?>;
 <?php
 // -----
 // If dropdown states are to be displayed, include that json-formatted array of countries/zones.
