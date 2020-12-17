@@ -15,8 +15,8 @@ if (!defined('IS_ADMIN_FLAG')) {
 // 500-599 ... Registered-account settings
 // 1000+ ..... Debug settings
 //
-define('CHECKOUT_ONE_CURRENT_VERSION', '2.3.6');
-define('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2020-11-18');
+define('CHECKOUT_ONE_CURRENT_VERSION', '2.3.7-beta1');
+define('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2020-12-17');
 
 if (isset($_SESSION['admin_id'])) {
     $version_release_date = CHECKOUT_ONE_CURRENT_VERSION . ' (' . CHECKOUT_ONE_CURRENT_UPDATE_DATE . ')';
