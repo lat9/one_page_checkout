@@ -37,7 +37,10 @@ if ($is_virtual_order) {
         if ($free_shipping == true) {
 ?>
         <div id="freeShip" class="important" ><?php echo FREE_SHIPPING_TITLE; ?></div>
-        <div id="defaultSelected"><?php echo sprintf(FREE_SHIPPING_DESCRIPTION, $currencies->format(MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER)) . zen_draw_hidden_field('shipping', 'free_free'); ?></div>
+        <div id="defaultSelected">
+            <?php if (!empty(MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER)) echo sprintf(FREE_SHIPPING_DESCRIPTION, $currencies->format(MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER)); ?>
+        </div>
+        <?php echo zen_draw_hidden_field('shipping', 'free_free'); ?>
 
 <?php
         } else {
