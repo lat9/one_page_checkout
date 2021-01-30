@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
-// Copyright (C) 2013-2019, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2021, Vinos de Frutas Tropicales.  All rights reserved.
 //
 class zcAjaxOnePageCheckout extends base
 {
@@ -573,7 +573,7 @@ class zcAjaxOnePageCheckout extends base
         // -----
         // Set up some globals for use by 'require_languages.php'.
         //
-        global $current_page, $current_page_base, $template, $language_page_directory, $template_dir;
+        global $current_page, $current_page_base, $template, $language_page_directory, $template_dir, $languageLoader;
         $_GET['main_page'] = $current_page_base = $current_page = FILENAME_CHECKOUT_ONE;
         
         require DIR_WS_MODULES . zen_get_module_directory('require_languages.php');      
