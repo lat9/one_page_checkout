@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2017-2020, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2017-2021, Vinos de Frutas Tropicales.  All rights reserved.
 //
 // This class, instantiated in the current customer session, keeps track of a customer's login and checkout
 // progression with the aid of the OPC's observer- and AJAX-classes.
@@ -142,8 +142,9 @@ class OnePageCheckout extends base
     //
     protected function isPayPalExpressCheckout()
     {
+        global $current_page_base;
         $is_paypal_express_checkout = false;
-        if ($GLOBALS['current_page_base'] != FILENAME_CHECKOUT_PROCESS && defined('MODULE_PAYMENT_PAYPALWPP_STATUS') && MODULE_PAYMENT_PAYPALWPP_STATUS == 'True') {
+        if ($current_page_base != FILENAME_CHECKOUT_PROCESS && defined('MODULE_PAYMENT_PAYPALWPP_STATUS') && MODULE_PAYMENT_PAYPALWPP_STATUS == 'True') {
             if (!empty($_SESSION['paypal_ec_token']) && !empty($_SESSION['paypal_ec_payer_id']) && !empty($_SESSION['paypal_ec_payer_info'])) {
                 $this->debugMessage("PayPal Express Checkout, in special checkout.  One Page Checkout is disabled.");
                 $is_paypal_express_checkout = true;
@@ -298,6 +299,8 @@ class OnePageCheckout extends base
     */
     public function customerAccountNeedsPrimaryAddress()
     {
+        global $db;
+
         $account_needs_primary_address = true;
         $addresses_query = 
             "SELECT address_book_id, entry_firstname as firstname, entry_lastname as lastname,
@@ -309,9 +312,9 @@ class OnePageCheckout extends base
                 AND address_book_id = :addressBookID
               LIMIT 1";
 
-        $addresses_query = $GLOBALS['db']->bindVars($addresses_query, ':customersID', $_SESSION['customer_id'], 'integer');
-        $addresses_query = $GLOBALS['db']->bindVars($addresses_query, ':addressBookID', $_SESSION['customer_default_address_id'], 'integer');
-        $default_address = $GLOBALS['db']->Execute($addresses_query);
+        $addresses_query = $db->bindVars($addresses_query, ':customersID', $_SESSION['customer_id'], 'integer');
+        $addresses_query = $db->bindVars($addresses_query, ':addressBookID', $_SESSION['customer_default_address_id'], 'integer');
+        $default_address = $db->Execute($addresses_query);
         
         if (!$default_address->EOF) {
             if (strlen($default_address->fields['street_address']) >= (int)ENTRY_STREET_ADDRESS_MIN_LENGTH ||
@@ -497,6 +500,8 @@ class OnePageCheckout extends base
     */
     public function startGuestOnePageCheckout()
     {
+        global $current_page_base;
+
         $this->guestIsActive = false;
         $redirect_required = false;
         
@@ -509,7 +514,7 @@ class OnePageCheckout extends base
         }
         
         if ($this->guestCheckoutEnabled()) {
-            $redirect_required = ($GLOBALS['current_page_base'] == FILENAME_CHECKOUT_ONE && isset($_POST['guest_checkout']));
+            $redirect_required = ($current_page_base == FILENAME_CHECKOUT_ONE && isset($_POST['guest_checkout']));
             if ($this->isGuestCheckout() || $redirect_required) {
                 $this->guestIsActive = true;
                 if (!isset($this->guestCustomerInfo)) {
@@ -633,6 +638,8 @@ class OnePageCheckout extends base
     */
     public function validateUsesPerUserCoupon($coupon_info, $coupon_uses_per_user_exceeded)
     {
+        global $db;
+
         $uses_per_user = (int)$coupon_info['uses_per_user'];
         if ($uses_per_user > 0) {
             if ($this->isGuestCheckout() && isset($this->guestCustomerInfo) && !empty($this->guestCustomerInfo['email_address'])) {
@@ -645,7 +652,7 @@ class OnePageCheckout extends base
                 // current guest's email-address, stopping the search once we know that the number
                 // of coupon-uses per user has been exceeded.
                 //
-                $check = $GLOBALS['db']->Execute(
+                $check = $db->Execute(
                     "SELECT crt.coupon_id
                        FROM " . TABLE_ORDERS . " o
                             INNER JOIN " . TABLE_COUPON_REDEEM_TRACK . " crt
@@ -700,9 +707,11 @@ class OnePageCheckout extends base
     */
     public function showAddAddressField()
     {
+        global $db;
+
         $show_add_address = false;
         if (!zen_in_guest_checkout() && !empty($_SESSION['customer_id']) && !$this->customerAccountNeedsPrimaryAddress()) {
-            $check = $GLOBALS['db']->Execute(
+            $check = $db->Execute(
                 "SELECT COUNT(*) as count
                    FROM " . TABLE_ADDRESS_BOOK . "
                   WHERE customers_id = " . (int)$_SESSION['customer_id']
@@ -774,6 +783,8 @@ class OnePageCheckout extends base
     //
     protected function createOrderAddressFromTemporary($which)
     {
+        global $db;
+
         // -----
         // Grab the country-id from the specified temporary address.  If it's empty, like
         // in some situations during the shipping-estimator's processing, perform a
@@ -785,7 +796,7 @@ class OnePageCheckout extends base
             return array();
         }
         
-        $country_info = $GLOBALS['db']->Execute(
+        $country_info = $db->Execute(
             "SELECT *
                FROM " . TABLE_COUNTRIES . "
               WHERE countries_id = $country_id
@@ -900,6 +911,8 @@ class OnePageCheckout extends base
     */
     public function validateBilltoSendto($which)
     {
+        global $db;
+
         $this->inputPreCheck($which);
         
         // -----
@@ -932,9 +945,9 @@ class OnePageCheckout extends base
                       WHERE customers_id = :customersID
                         AND address_book_id = :addressBookID
                       LIMIT 1";
-                $check_query = $GLOBALS['db']->bindVars($check_query, ':customersID', $_SESSION['customer_id'], 'integer');
-                $check_query = $GLOBALS['db']->bindVars($check_query, ':addressBookID', $address_book_id, 'integer');
-                $check = $GLOBALS['db']->Execute($check_query);
+                $check_query = $db->bindVars($check_query, ':customersID', $_SESSION['customer_id'], 'integer');
+                $check_query = $db->bindVars($check_query, ':addressBookID', $address_book_id, 'integer');
+                $check = $db->Execute($check_query);
                 $is_valid = !$check->EOF;
             }
         }
@@ -1013,6 +1026,8 @@ class OnePageCheckout extends base
     
     protected function getAddressValuesFromDb($address_book_id)
     {
+        global $db;
+
         $address_info_query = 
             "SELECT ab.*, z.zone_name
                FROM " . TABLE_ADDRESS_BOOK . "  ab
@@ -1022,10 +1037,10 @@ class OnePageCheckout extends base
               WHERE ab.customers_id = :customersID 
                 AND ab.address_book_id = :addressBookID 
               LIMIT 1";
-        $address_info_query = $GLOBALS['db']->bindVars($address_info_query, ':customersID', $_SESSION['customer_id'], 'integer');
-        $address_info_query = $GLOBALS['db']->bindVars($address_info_query, ':addressBookID', $address_book_id, 'integer');
+        $address_info_query = $db->bindVars($address_info_query, ':customersID', $_SESSION['customer_id'], 'integer');
+        $address_info_query = $db->bindVars($address_info_query, ':addressBookID', $address_book_id, 'integer');
 
-        $address_info = $GLOBALS['db']->Execute($address_info_query);
+        $address_info = $db->Execute($address_info_query);
         if ($address_info->EOF) {
             trigger_error("unknown address_book_id (" . $address_book_id . ') for customer_id (' . $_SESSION['customer_id'] . ')', E_USER_ERROR);
             exit();
@@ -1089,13 +1104,15 @@ class OnePageCheckout extends base
     
     public function formatAddressBookDropdown()
     {
+        global $db;
+
         $select_array = array();
         if (isset($_SESSION['customer_id']) && !$this->isGuestCheckout() && !$this->customerAccountNeedsPrimaryAddress()) {
             // -----
             // Build up address list input to create a customer-specific selection list of 
             // pre-existing addresses from which to choose.
             //
-            $addresses = $GLOBALS['db']->Execute(
+            $addresses = $db->Execute(
                 "SELECT address_book_id 
                    FROM " . TABLE_ADDRESS_BOOK . " 
                   WHERE customers_id = " . (int)$_SESSION['customer_id'] . "
@@ -1136,7 +1153,9 @@ class OnePageCheckout extends base
     //
     public function getCountriesZonesJavascript()
     {
-        $countries = $GLOBALS['db']->Execute(
+        global $db;
+
+        $countries = $db->Execute(
             "SELECT DISTINCT zone_country_id
                FROM " . TABLE_ZONES . "
                     INNER JOIN " . TABLE_COUNTRIES . "
@@ -1150,7 +1169,7 @@ class OnePageCheckout extends base
             $current_country_id = $countries->fields['zone_country_id'];
             $c2z[$current_country_id] = array();
 
-            $states = $GLOBALS['db']->Execute(
+            $states = $db->Execute(
                 "SELECT zone_name, zone_id
                    FROM " . TABLE_ZONES . "
                   WHERE zone_country_id = $current_country_id
@@ -1183,7 +1202,9 @@ class OnePageCheckout extends base
     
     protected function countryHasZones($country_id)
     {
-        $check = $GLOBALS['db']->Execute(
+        global $db;
+
+        $check = $db->Execute(
             "SELECT zone_id
                FROM " . TABLE_ZONES . "
               WHERE zone_country_id = $country_id
@@ -1331,8 +1352,10 @@ class OnePageCheckout extends base
     //
     protected function isEmailBanned($email_address)
     {
-        $email_address = $GLOBALS['db']->prepare_input($email_address);
-        $check = $GLOBALS['db']->Execute(
+        global $db;
+
+        $email_address = $db->prepare_input($email_address);
+        $check = $db->Execute(
             "SELECT customers_id
                FROM " . TABLE_CUSTOMERS . "
               WHERE customers_email_address = '$email_address'
@@ -1370,6 +1393,8 @@ class OnePageCheckout extends base
     //
     protected function validateUpdatedAddress(&$address_values, $which, $prepend_which = true)
     {
+        global $db;
+
         $error = false;
         $zone_id = 0;
         $zone_name = '';
@@ -1463,10 +1488,10 @@ class OnePageCheckout extends base
                              zone_id = :zoneID
                    ORDER BY zone_code ASC, zone_name";
 
-                $zone_query = $GLOBALS['db']->bindVars($zone_query, ':zoneCountryID', $country, 'integer');
-                $zone_query = $GLOBALS['db']->bindVars($zone_query, ':zoneState', strtoupper($state), 'noquotestring');
-                $zone_query = $GLOBALS['db']->bindVars($zone_query, ':zoneID', $zone_id, 'integer');
-                $zone = $GLOBALS['db']->Execute($zone_query);
+                $zone_query = $db->bindVars($zone_query, ':zoneCountryID', $country, 'integer');
+                $zone_query = $db->bindVars($zone_query, ':zoneState', strtoupper($state), 'noquotestring');
+                $zone_query = $db->bindVars($zone_query, ':zoneID', $zone_id, 'integer');
+                $zone = $db->Execute($zone_query);
 
                 //look for an exact match on zone ISO code
                 $found_exact_iso_match = ($zone->RecordCount() == 1);
@@ -1578,6 +1603,8 @@ class OnePageCheckout extends base
     //
     protected function saveCustomerAddress($address, $which, $add_address = false)
     {
+        global $db;
+
         $this->debugMessage("saveCustomerAddress($which, $add_address), " . (($this->getShippingBilling()) ? 'shipping=billing' : 'shipping!=billing') . ' ' . var_export($address, true));
         
         // -----
@@ -1652,15 +1679,15 @@ class OnePageCheckout extends base
             } else {
                 if (!$this->customerAccountNeedsPrimaryAddress()) {
                     $sql_data_array[] = array('fieldName' => 'customers_id', 'value' => $_SESSION['customer_id'], 'type'=>'integer');
-                    $GLOBALS['db']->perform(TABLE_ADDRESS_BOOK, $sql_data_array);
-                    $address_book_id = $GLOBALS['db']->Insert_ID();
+                    $db->perform(TABLE_ADDRESS_BOOK, $sql_data_array);
+                    $address_book_id = $db->Insert_ID();
                     
                     $this->notify('NOTIFY_OPC_ADDED_ADDRESS_BOOK_RECORD', array('address_book_id' => $address_book_id), $sql_data_array);
                 } else {
                     $address_book_id = (int)$_SESSION['customer_default_address_id'];
                     $customer_id = (int)$_SESSION['customer_id'];
                     $where_string = "customers_id = $customer_id AND address_book_id = $address_book_id LIMIT 1";
-                    $GLOBALS['db']->perform(TABLE_ADDRESS_BOOK, $sql_data_array, 'update', $where_string);
+                    $db->perform(TABLE_ADDRESS_BOOK, $sql_data_array, 'update', $where_string);
                     
                     $this->notify('NOTIFY_OPC_ADDED_PRIMARY_ADDRESS', array('address_book_id' => $address_book_id), $sql_data_array);
                 }
@@ -1735,6 +1762,8 @@ class OnePageCheckout extends base
     */
     public function createAccountFromGuestInfo($order_id, $password, $newsletter, $email_format)
     {
+        global $db;
+
         $password_error = (strlen((string)$password) < ENTRY_PASSWORD_MIN_LENGTH);
         if (!$this->guestIsActive || !isset($this->guestCustomerInfo) || !isset($this->tempAddressValues) || $password_error) {
             trigger_error("Invalid access ($password_error):" . var_export($this, true), E_USER_ERROR);
@@ -1743,7 +1772,7 @@ class OnePageCheckout extends base
         
         $customer_id = $this->createCustomerRecordFromGuestInfo($password, $newsletter, $email_format);
         $_SESSION['customer_id'] = $customer_id;
-        $GLOBALS['db']->Execute(
+        $db->Execute(
             "UPDATE " . TABLE_ORDERS . "
                 SET customers_id = $customer_id
               WHERE orders_id = " . (int)$order_id . "
@@ -1757,7 +1786,7 @@ class OnePageCheckout extends base
         $this->notify('NOTIFY_OPC_CREATE_ACCOUNT_ORDER_UPDATED', array('customer_id' => $customer_id, 'order_id' => $order_id));
         
         $default_address_id = $this->createAddressBookRecord($customer_id, 'bill');
-        $GLOBALS['db']->Execute(
+        $db->Execute(
             "UPDATE " . TABLE_CUSTOMERS . "
                 SET customers_default_address_id = $default_address_id
               WHERE customers_id = $customer_id
@@ -1794,6 +1823,8 @@ class OnePageCheckout extends base
     //
     protected function createCustomerRecordFromGuestInfo($password, $newsletter, $email_format)
     {
+        global $db;
+
         if ($email_format != 'HTML' && $email_format != 'TEXT') {
             $email_format = (ACCOUNT_EMAIL_PREFERENCE == '1' ? 'HTML' : 'TEXT');
         }
@@ -1818,10 +1849,10 @@ class OnePageCheckout extends base
             $sql_data_array[] = array('fieldName' => 'customers_dob', 'value' => $dob, 'type' => 'date');
         }
 
-        $GLOBALS['db']->perform(TABLE_CUSTOMERS, $sql_data_array);
-        $customer_id = $GLOBALS['db']->Insert_ID();
+        $db->perform(TABLE_CUSTOMERS, $sql_data_array);
+        $customer_id = $db->Insert_ID();
         
-        $GLOBALS['db']->Execute(
+        $db->Execute(
             "INSERT INTO " . TABLE_CUSTOMERS_INFO . "
                     (customers_info_id, customers_info_number_of_logons, customers_info_date_account_created, customers_info_date_of_last_logon)
                 VALUES 
@@ -1839,6 +1870,8 @@ class OnePageCheckout extends base
     //
     protected function createAddressBookRecord($customer_id, $which)
     {
+        global $db;
+
         $sql_data_array = array(
             array('fieldName' => 'customers_id', 'value' => $customer_id, 'type' => 'integer'),
             array('fieldName' => 'entry_firstname', 'value' => $this->tempAddressValues[$which]['firstname'], 'type' => $this->dbStringType),
@@ -1868,8 +1901,8 @@ class OnePageCheckout extends base
                 $sql_data_array[] = array('fieldName' => 'entry_state', 'value' => $this->tempAddressValues[$which]['state'], 'type' => $this->dbStringType);
             }
         }
-        $GLOBALS['db']->perform(TABLE_ADDRESS_BOOK, $sql_data_array);
-        $address_book_id = $GLOBALS['db']->Insert_ID();
+        $db->perform(TABLE_ADDRESS_BOOK, $sql_data_array);
+        $address_book_id = $db->Insert_ID();
         
         $this->notify('NOTIFY_OPC_CREATED_ADDRESS_BOOK_DB_ENTRY', $address_book_id, $sql_data_array);
 
@@ -1882,6 +1915,8 @@ class OnePageCheckout extends base
     //
     protected function findAddressBookEntry($address)
     {
+        global $db;
+
         $country_id = $address['country'];
         $country_has_zones = $address['country_has_zones'];
 
@@ -1898,9 +1933,9 @@ class OnePageCheckout extends base
         } else {
             $sql .= " AND entry_zone_id = :zoneId LIMIT 1";
         }
-        $sql = $GLOBALS['db']->bindVars($sql, ':zoneId', $address['zone_id'], 'integer');
-        $sql = $GLOBALS['db']->bindVars($sql, ':stateValue', $address['state'], 'string');
-        $sql = $GLOBALS['db']->bindVars($sql, ':customerId', $_SESSION['customer_id'], 'integer');
+        $sql = $db->bindVars($sql, ':zoneId', $address['zone_id'], 'integer');
+        $sql = $db->bindVars($sql, ':stateValue', $address['state'], 'string');
+        $sql = $db->bindVars($sql, ':customerId', $_SESSION['customer_id'], 'integer');
         
         // -----
         // Give a watching observer the opportunity to gather additional address-related fields to be
@@ -1912,7 +1947,7 @@ class OnePageCheckout extends base
         if ($sql_saved !== $sql) {
             $this->debugMessage("findAddressBookEntry, sql changed from\n$sql_saved\nto$sql.");
         }
-        $possible_addresses = $GLOBALS['db']->Execute($sql);
+        $possible_addresses = $db->Execute($sql);
         
         $address_book_id = false;  //-Identifies that no match was found
         $address_to_match = $this->addressArrayToString($address);
@@ -2181,7 +2216,9 @@ class OnePageCheckout extends base
     //
     protected function getCountryInfoFromIsoCode2($iso_code_2)
     {
-        $country_info = $GLOBALS['db']->Execute(
+        global $db;
+
+        $country_info = $db->Execute(
             "SELECT *
                FROM " . TABLE_COUNTRIES . "
               WHERE countries_iso_code_2 = '" . zen_db_input($iso_code_2) . "'
@@ -2209,8 +2246,10 @@ class OnePageCheckout extends base
     //
     protected function getZoneInfoFromCode($country_id, $zone_code)
     {
+        global $db;
+
         $zone_code = zen_db_input($zone_code);
-        $zone_info = $GLOBALS['db']->Execute(
+        $zone_info = $db->Execute(
             "SELECT zone_id
                FROM " . TABLE_ZONES . "
               WHERE zone_country_id = $country_id
@@ -2256,11 +2295,13 @@ class OnePageCheckout extends base
     */
     public function identifyPayPalAddressChange(&$order)
     {
+        global $messageStack;
+
         if (!empty($this->paypalAddressOverride)) {
             $message = sprintf(WARNING_PAYPAL_SENDTO_CHANGED, $this->paypalAddressOverride);
             unset($this->paypalAddressOverride);
             
-            $GLOBALS['messageStack']->add_session('header', $message, 'caution');
+            $messageStack->add_session('header', $message, 'caution');
             
             if (!empty($order->info['comments'])) {
                 $order->info['comments'] .= "\n\n";
@@ -2278,6 +2319,8 @@ class OnePageCheckout extends base
     */
     public function getTaxLocations()
     {
+        global $db;
+
         $billing_is_temp = (isset($_SESSION['billto']) && $_SESSION['billto'] == $this->tempBilltoAddressBookId);
         $shipping_is_temp = (isset($_SESSION['sendto']) && $_SESSION['sendto'] == $this->tempSendtoAddressBookId);
 
@@ -2310,7 +2353,7 @@ class OnePageCheckout extends base
                         $zone_id = $this->tempAddressValues['bill']['zone_id'];
                     }
                 } else {
-                    $country_zone = $GLOBALS['db']->Execute(
+                    $country_zone = $db->Execute(
                         "SELECT ab.entry_country_id, ab.entry_zone_id
                            FROM " . TABLE_ADDRESS_BOOK . " ab
                                 LEFT JOIN " . TABLE_ZONES . " z 
@@ -2334,7 +2377,7 @@ class OnePageCheckout extends base
                         $country_id = $this->tempAddressValues['ship']['country'];
                         $zone_id = $this->tempAddressValues['ship']['zone_id'];
                     } else {
-                        $country_zone = $GLOBALS['db']->Execute(
+                        $country_zone = $db->Execute(
                             "SELECT ab.entry_country_id, ab.entry_zone_id
                                FROM " . TABLE_ADDRESS_BOOK . " ab
                                     LEFT JOIN " . TABLE_ZONES . " z 
@@ -2378,8 +2421,10 @@ class OnePageCheckout extends base
     //
     protected function debugMessage($message, $include_request = false)
     {
-        if (isset($GLOBALS['checkout_one'])) {
-            $GLOBALS['checkout_one']->debug_message($message, $include_request, 'OnePageCheckout');
+        global $checkout_one;
+
+        if (isset($checkout_one)) {
+            $checkout_one->debug_message($message, $include_request, 'OnePageCheckout');
         }
     }
 }

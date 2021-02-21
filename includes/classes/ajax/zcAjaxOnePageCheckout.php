@@ -115,7 +115,7 @@ class zcAjaxOnePageCheckout extends base
                     $quotes[0]['methods'][0]['cost'] = '0';
                     $quotes[0]['methods'][0]['icon'] = '';
                     ob_start ();
-                    require $template->get_template_dir('tpl_modules_checkout_one_shipping.php', DIR_WS_TEMPLATE, $GLOBALS['current_page_base'], 'templates') . '/tpl_modules_checkout_one_shipping.php';
+                    require $template->get_template_dir('tpl_modules_checkout_one_shipping.php', DIR_WS_TEMPLATE, $current_page_base, 'templates') . '/tpl_modules_checkout_one_shipping.php';
                     $shipping_html = ob_get_clean();
                 }
             } else {
@@ -231,7 +231,7 @@ class zcAjaxOnePageCheckout extends base
                     }
                     
                     ob_start ();
-                    require $template->get_template_dir('tpl_modules_checkout_one_shipping.php', DIR_WS_TEMPLATE, $GLOBALS['current_page_base'], 'templates'). '/tpl_modules_checkout_one_shipping.php';
+                    require $template->get_template_dir('tpl_modules_checkout_one_shipping.php', DIR_WS_TEMPLATE, $current_page_base, 'templates'). '/tpl_modules_checkout_one_shipping.php';
                     $shipping_html = ob_get_clean();
                 }
                 
@@ -270,7 +270,7 @@ class zcAjaxOnePageCheckout extends base
             $enabled_payment_modules = $_SESSION['opc']->validateGuestPaymentMethods($payment_modules->selection());
             $display_payment_block = ($_SESSION['opc']->validateCustomerInfo() && $_SESSION['opc']->validateTempBilltoAddress());
             ob_start ();
-            require $template->get_template_dir('tpl_modules_opc_payment_choices.php', DIR_WS_TEMPLATE, $GLOBALS['current_page_base'], 'templates'). '/tpl_modules_opc_payment_choices.php';
+            require $template->get_template_dir('tpl_modules_opc_payment_choices.php', DIR_WS_TEMPLATE, $current_page_base, 'templates'). '/tpl_modules_opc_payment_choices.php';
             $payment_html = ob_get_clean();
 
             // -----
@@ -316,6 +316,8 @@ class zcAjaxOnePageCheckout extends base
     //
     public function restoreAddressValues()
     {
+        global $checkout_one;
+
         $error_message = $address_html = '';
         
         // -----
@@ -338,7 +340,7 @@ class zcAjaxOnePageCheckout extends base
             'errorMessage' => $error_message,
             'addressHtml' => $address_html,
         );
-        $GLOBALS['checkout_one']->debug_message('restoreAddressValues, returning:' . var_export($return_array, true), true);
+        $checkout_one->debug_message('restoreAddressValues, returning:' . var_export($return_array, true), true);
         
         return $return_array;
     }
@@ -350,6 +352,8 @@ class zcAjaxOnePageCheckout extends base
     //
     public function validateAddressValues()
     {
+        global $checkout_one;
+
         $error_message = $address_html = '';
         $messages = array();
         
@@ -373,7 +377,7 @@ class zcAjaxOnePageCheckout extends base
             'errorMessage' => $error_message,
             'messages' => $messages
         );
-        $GLOBALS['checkout_one']->debug_message('validateAddressValues, returning:' . var_export($return_array, true) . var_export($_SESSION['opc'], true));
+        $checkout_one->debug_message('validateAddressValues, returning:' . var_export($return_array, true) . var_export($_SESSION['opc'], true));
         
         return $return_array;
     }
@@ -383,6 +387,8 @@ class zcAjaxOnePageCheckout extends base
     //
     public function validateCustomerInfo()
     {
+        global $checkout_one;
+
         $error_message = $address_html = '';
         $messages = array();
         
@@ -400,7 +406,7 @@ class zcAjaxOnePageCheckout extends base
             'errorMessage' => $error_message,
             'messages' => $messages
         );
-        $GLOBALS['checkout_one']->debug_message('validateAddressValues, returning:' . var_export($return_array, true) . var_export($_SESSION['opc'], true));
+        $checkout_one->debug_message('validateAddressValues, returning:' . var_export($return_array, true) . var_export($_SESSION['opc'], true));
         
         return $return_array;
     }
@@ -410,6 +416,8 @@ class zcAjaxOnePageCheckout extends base
     //
     public function restoreCustomerInfo()
     {
+        global $checkout_one;
+
         $error_message = $info_html = '';
         
         // -----
@@ -433,7 +441,7 @@ class zcAjaxOnePageCheckout extends base
             'errorMessage' => $error_message,
             'infoHtml' => $info_html,
         );
-        $GLOBALS['checkout_one']->debug_message('restoreContactInfo, returning:' . var_export($return_array, true), true);
+        $checkout_one->debug_message('restoreContactInfo, returning:' . var_export($return_array, true), true);
         
         return $return_array;
     }
@@ -444,6 +452,8 @@ class zcAjaxOnePageCheckout extends base
     //
     public function setAddressFromSavedSelections()
     {
+        global $checkout_one;
+
         $error_message = $address_html = '';
         $messages = array();
         
@@ -466,7 +476,7 @@ class zcAjaxOnePageCheckout extends base
             'status' => $status,
             'errorMessage' => $error_message,
         );
-        $GLOBALS['checkout_one']->debug_message('setAddressFromSavedSelections, returning:' . var_export($return_array, true), true);
+        $checkout_one->debug_message('setAddressFromSavedSelections, returning:' . var_export($return_array, true), true);
         
         return $return_array;
     }
@@ -576,7 +586,7 @@ class zcAjaxOnePageCheckout extends base
         global $current_page, $current_page_base, $template, $language_page_directory, $template_dir, $languageLoader;
         $_GET['main_page'] = $current_page_base = $current_page = FILENAME_CHECKOUT_ONE;
         
-        require DIR_WS_MODULES . zen_get_module_directory('require_languages.php');      
+        require DIR_WS_MODULES . zen_get_module_directory('require_languages.php');
     }
     
     // -----
@@ -584,6 +594,8 @@ class zcAjaxOnePageCheckout extends base
     //
     protected function initializeResponseStatus($method_name)
     {
+        global $checkout_one;
+
         $status = 'ok';
         
         // -----
@@ -592,14 +604,14 @@ class zcAjaxOnePageCheckout extends base
         //
         if (!$_SESSION['opc']->checkEnabled()) {
             $status = 'unavailable';
-            $GLOBALS['checkout_one']->debug_message('OPC is no longer available.', "zcAjaxOnePageCheckout::$method_name");            
+            $checkout_one->debug_message('OPC is no longer available.', "zcAjaxOnePageCheckout::$method_name");
         // -----
         // Check for a session timeout (i.e. no more customer_id in the session), returning a specific
         // status and message for that case.
         //
         } elseif (!isset($_SESSION['customer_id'])) {
             $status = 'timeout';
-            $GLOBALS['checkout_one']->debug_message("Session time-out detected.", "zcAjaxOnePageCheckout::$method_name");
+            $checkout_one->debug_message("Session time-out detected.", "zcAjaxOnePageCheckout::$method_name");
         }
         
         return $status;

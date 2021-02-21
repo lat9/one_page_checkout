@@ -727,10 +727,17 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank" rel="noopener">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color and removals are indicated like <span class="removed">this</span>.</p>
               <ul>
-                <li>v2.3.8-beta1, 2021-01-30 (lat9):<ul>
+                <li>v2.3.8-beta2, 2021-02-21 (lat9):<ul>
                     <li>BUGFIX: zc158 interoperation, correct PHP error during AJAX processing (missing $languageLoader).</li>
+                    <li>INTROP: PHP 8.1 interoperability, modifying use of <code>$GLOBALS</code> constructs.</li>
                     <li>The following files were changed:<ol>
+                        <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
+                        <li>/includes/classes/observers/OnePageCheckoutEmailObserver.php</li>
+                        <li>/includes/classes/observers/class.one_page_checkout_observer.php</li>
+                        <li>/includes/functions/extra_functions/one_page_checkout_functions.php</li>
+                        <li>/includes/modules/pages/checkout_success/header_php_guest.php</li>
+                        <li>/YOUR_ADMIN/includes/classes/observers/OnePageCheckoutAdminObserver.php</li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                     </ol></li>
                 </ul></li>

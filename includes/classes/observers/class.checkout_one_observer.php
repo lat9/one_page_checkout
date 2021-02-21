@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
-// Copyright (C) 2013-2020, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2021, Vinos de Frutas Tropicales.  All rights reserved.
 //
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
@@ -14,6 +14,9 @@ class checkout_one_observer extends base
             
     public function __construct() 
     {
+        global $current_page_base, 
+               $messageStack;
+
         // -----
         // Determine if the current session browser is an Internet Explorer version less than 9 (that don't properly support
         // jQuery).
@@ -111,12 +114,12 @@ class checkout_one_observer extends base
                             FILENAME_LOGIN,
                             FILENAME_CHECKOUT_ONE
                         );
-                        if (!in_array($GLOBALS['current_page_base'], $pages_to_reset_for_gc)) {
+                        if (!in_array($current_page_base, $pages_to_reset_for_gc)) {
                             $gift_certificate_message = WARNING_GUEST_NO_GCS;
                             if ($_SESSION['opc']->isGuestCheckout()) {
                                 $gift_certificate_message .= ' ' . WARNING_GUEST_GCS_RESET . '<br /><br />' . WARNING_GUEST_REMOVE_GC;
                             }
-                            $GLOBALS['messageStack']->add('header', $gift_certificate_message, 'caution');
+                            $messageStack->add('header', $gift_certificate_message, 'caution');
                         } else {
                             $_SESSION['opc']->resetGuestSessionValues();
                             $_SESSION['opc_error'] = OnePageCheckout::OPC_ERROR_NO_GC;
@@ -134,7 +137,7 @@ class checkout_one_observer extends base
         //
         $post_checkout_pages = explode(',', str_replace(' ', '', CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED));
         $post_checkout_pages[] = FILENAME_CHECKOUT_SUCCESS;
-        if (isset($_SESSION['order_placed_by_guest']) && !in_array($GLOBALS['current_page_base'], $post_checkout_pages)) {
+        if (isset($_SESSION['order_placed_by_guest']) && !in_array($current_page_base, $post_checkout_pages)) {
             unset($_SESSION['order_placed_by_guest'], $_SESSION['order_number_created']);
             $_SESSION['opc']->resetGuestSessionValues();
         }
@@ -146,7 +149,7 @@ class checkout_one_observer extends base
         //
         if ($_SESSION['opc']->checkEnabled()) {
             $this->enabled = true;
-            $this->current_page_base = $GLOBALS['current_page_base'];
+            $this->current_page_base = $current_page_base;
             
             // -----
             // If the customer is currently active in a guest-checkout ...
@@ -161,11 +164,11 @@ class checkout_one_observer extends base
                 if ($_SESSION['opc']->guestCheckoutEnabled()) {
                     $disallowed_pages = explode(',', str_replace(' ', '', CHECKOUT_ONE_GUEST_PAGES_DISALLOWED));
                     if (in_array($this->current_page_base, $disallowed_pages)) {
-                        $GLOBALS['messageStack']->add_session('header', ERROR_GUEST_CHECKOUT_PAGE_DISALLOWED, 'error');
+                        $messageStack->add_session('header', ERROR_GUEST_CHECKOUT_PAGE_DISALLOWED, 'error');
                         zen_redirect(zen_href_link(FILENAME_DEFAULT));
                     }
                 } else {
-                    $GLOBALS['messageStack']->add_session('header', WARNING_GUEST_CHECKOUT_NOT_AVAILABLE, 'warning');
+                    $messageStack->add_session('header', WARNING_GUEST_CHECKOUT_NOT_AVAILABLE, 'warning');
                     $_SESSION['opc']->resetGuestSessionValues();
                 }
             }
@@ -231,14 +234,14 @@ class checkout_one_observer extends base
         // If the customer has navigated off of the order_status/download pages, remove
         // those variables from the session.
         //
-        if (isset($_SESSION['email_is_os']) && ($GLOBALS['current_page_base'] != FILENAME_ORDER_STATUS && $GLOBALS['current_page_base'] != FILENAME_DOWNLOAD)) {
+        if (isset($_SESSION['email_is_os']) && ($current_page_base != FILENAME_ORDER_STATUS && $current_page_base != FILENAME_DOWNLOAD)) {
             unset($_SESSION['email_is_os'], $_SESSION['email_address']);
         }
     }
   
     public function update(&$class, $eventID, $p1, &$p2, &$p3, &$p4, &$p5, &$p6, &$p7) 
     {
-        switch ($eventID) {     
+        switch ($eventID) {
             // -----
             // If a customer has just successfully logged in, they might have logged in after
             // starting a guest-checkout.  Let the session-based OPC controller perform any
@@ -334,9 +337,10 @@ class checkout_one_observer extends base
             // $p2 ... (r/w) Value is set to boolean true/false to indicate the condition.
             //
             case 'NOTIFY_ZEN_IS_LOGGED_IN':
-                $current_page_base = (isset($GLOBALS['current_page_base'])) ? $GLOBALS['current_page_base'] : '';
+                global $current_page_base;
+
                 $is_logged_in = $_SESSION['opc']->isLoggedIn();
-                if ($is_logged_in) {
+                if ($is_logged_in && isset($current_page_base)) {
                     if ($current_page_base == FILENAME_POPUP_SHIPPING_ESTIMATOR) {
                         $is_logged_in = !$_SESSION['opc']->isGuestCheckout() && !$_SESSION['opc']->customerAccountNeedsPrimaryAddress();
                     } elseif ($current_page_base == FILENAME_SHOPPING_CART && SHOW_SHIPPING_ESTIMATOR_BUTTON == '2') {
@@ -361,9 +365,11 @@ class checkout_one_observer extends base
             // primary if the customer currently has no permanent addresses.
             //
             case 'NOTIFY_HEADER_START_ADDRESS_BOOK_PROCESS':
+                global $db;
+
                 if (zen_is_logged_in()) {
                     if (isset($_POST['action']) && $_POST['action'] == 'process') {
-                        $check = $GLOBALS['db']->Execute(
+                        $check = $db->Execute(
                             "SELECT address_book_id
                                FROM " . TABLE_ADDRESS_BOOK . "
                               WHERE customers_id = " . (int)$_SESSION['customer_id'] . "
@@ -413,8 +419,9 @@ class checkout_one_observer extends base
             // $p2 ...... (r/w) A reference to the newly-created order's ID value.
             //
             case 'NOTIFY_ORDER_DURING_CREATE_ADDED_ORDER_HEADER':
+                global $db;
                 if (zen_in_guest_checkout()) {
-                    $GLOBALS['db']->Execute(
+                    $db->Execute(
                         "UPDATE " . TABLE_ORDERS . "
                             SET is_guest_order = 1
                           WHERE orders_id = " . (int)$p2 . "
@@ -598,9 +605,12 @@ class checkout_one_observer extends base
             // PayPal, we'll redirect back to the OPC data-gathering page to let the customer know.
             //
             case 'NOTIFY_PAYPALWPP_BEFORE_DOEXPRESSCHECKOUT':
-                if ($_SESSION['opc']->didPayPalOrderTotalValueChange($GLOBALS['order'])) {
+                global $order,
+                       $messageStack;
+
+                if ($_SESSION['opc']->didPayPalOrderTotalValueChange($order)) {
                     $this->debug_message('checkout_one redirect 4: ', true, 'checkout_one_observer');
-                    $GLOBALS['messageStack']->add_session('checkout_shipping', WARNING_PAYPALWPP_TOTAL_CHANGED, 'caution');
+                    $messageStack->add_session('checkout_shipping', WARNING_PAYPALWPP_TOTAL_CHANGED, 'caution');
                     zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, zen_get_all_get_params(), 'SSL'));
                 }
                 break;

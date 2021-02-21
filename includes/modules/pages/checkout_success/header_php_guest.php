@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2018-2019, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2018-2021, Vinos de Frutas Tropicales.  All rights reserved.
 //
 // If the previous order was placed via the One-Page Checkout's "Guest Checkout", set a flag for the
 // template processing (to load the alternate template) and reset the session-related information
@@ -14,7 +14,7 @@ if (isset($_SESSION['order_placed_by_guest'])) {
     $check = $db->Execute(
         "SELECT customers_id
            FROM " . TABLE_CUSTOMERS . "
-          WHERE customers_email_address = '" . zen_db_input($GLOBALS['order']->customer['email_address']) . "'
+          WHERE customers_email_address = '" . zen_db_input($order->customer['email_address']) . "'
           LIMIT 1"
     );
     $offer_account_creation = $check->EOF;

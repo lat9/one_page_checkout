@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
-// Copyright (C) 2020, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2020-2021, Vinos de Frutas Tropicales.  All rights reserved.
 //
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
@@ -41,20 +41,22 @@ class CheckoutOneEmailObserver extends base
   
     public function update(&$class, $eventID, $p1, &$p2, &$p3, &$p4, &$p5, &$p6, &$p7) 
     {
-        switch ($eventID) {     
+        switch ($eventID) {
             // -----
             // An order-status-update is beginning, on entry:
             //
             // $p1 ... (r/o) An associative array containing the 'orders_id'.
             //
             case 'ZEN_UPDATE_ORDERS_HISTORY_STATUS_VALUES':
+                global $db;
+
                 $oID = (int)$p1['orders_id'];
                 
                 // -----
                 // Check to see if the order was placed by a guest-customer.  If not,
                 // nothing more to do here.
                 //
-                $check = $GLOBALS['db']->Execute(
+                $check = $db->Execute(
                     "SELECT is_guest_order
                        FROM " . TABLE_ORDERS . "
                       WHERE orders_id = $oID

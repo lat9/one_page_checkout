@@ -1,10 +1,10 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2018, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2018-2021, Vinos de Frutas Tropicales.  All rights reserved.
 //
 if (!defined('IS_ADMIN_FLAG') || IS_ADMIN_FLAG !== true) {
-  die('Illegal Access');
+    die('Illegal Access');
 }
 
 class OnePageCheckoutAdminObserver extends base 
@@ -47,10 +47,12 @@ class OnePageCheckoutAdminObserver extends base
             // $p4 ... (r/w) A reference to the "extra action icons" string (not used by this processing).
             //
             case 'NOTIFY_ADMIN_ORDERS_SHOW_ORDER_DIFFERENCE':
+                global $db;
+
                 if (isset($p2['is_guest_order'])) {
                     $is_guest_order = $p2['is_guest_order'];
                 } else {
-                    $check = $GLOBALS['db']->Execute(
+                    $check = $db->Execute(
                         "SELECT is_guest_order
                            FROM " . TABLE_ORDERS . "
                           WHERE orders_id = " . $p2['orders_id'] . "
