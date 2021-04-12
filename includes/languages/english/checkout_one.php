@@ -1,7 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
-// Copyright (C) 2013-2020, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2021, Vinos de Frutas Tropicales.  All rights reserved.
+//
+// Last updated for OPC v2.3.8.
 //
 define('NAVBAR_TITLE_1', 'Checkout');
 define('NAVBAR_TITLE_2', 'Select Shipping/Payment and Confirm Your Order');
@@ -38,7 +40,6 @@ define('TABLE_HEADING_COMMENTS', 'Special Instructions or Comments');
 
 define('ERROR_PLEASE_RESELECT_SHIPPING_METHOD', 'Your available shipping options have changed. Please re-select your desired shipping method.');
 define('ERROR_UNKNOWN_SHIPPING_SELECTION', 'An unknown shipping-method was submitted.  Please contact the store owner.');
-define('ERROR_NO_SHIPPING_SELECTED', 'You must choose a shipping method for your order before the order can be confirmed.');
 define('ERROR_INVALID_REQUEST', 'An unknown request was received.  Please contact the store owner.');
 
 // -----
@@ -55,6 +56,9 @@ define('ERROR_IN_SHIPPING', '[Shipping]: ');
 define('JS_ERROR_SESSION_TIMED_OUT', 'Sorry, your session has timed out.\n\nThe items in your cart have been saved and will be restored the next time you log in.');
 define('JS_ERROR_OPC_NOT_ENABLED', 'Our expedited checkout process is temporarily unavailable.  You\\\'ll be redirected to our alternate checkout process.');
 define('JS_ERROR_AJAX_TIMEOUT', 'It\\\'s taking a little longer than normal to update your order\\\'s shipping cost.  Please close this message and try again.\n\nIf you continue to receive this message, please contact us.');
+define('ERROR_NO_SHIPPING_SELECTED', 'You must choose a shipping method for your order before the order can be confirmed.');
+define('TITLE_BILLING_ADDRESS', 'Billing Address:');
+define('TITLE_BILLING_SHIPPING_ADDRESS', 'Billing/Shipping Address:');
 
 // -----
 // This definition is used on the default page display when there is a javascript/jQuery error (or when javascript is disabled).
@@ -70,8 +74,6 @@ define('TEXT_NOSCRIPT_JS_ERROR', 'Sorry, but our expedited checkout process cann
 
 define('TABLE_HEADING_BILLING_ADDRESS', 'Billing Address');
 define('TEXT_SELECTED_BILLING_DESTINATION', 'Your billing address is shown above. The billing address should match the address on your credit card statement. You can change the billing address by clicking the <em>Change Address</em> button.');
-define('TITLE_BILLING_ADDRESS', 'Billing Address:');
-define('TITLE_BILLING_SHIPPING_ADDRESS', 'Billing/Shipping Address:');
 
 define('TABLE_HEADING_PAYMENT_METHOD', 'Payment Method');
 define('TEXT_SELECT_PAYMENT_METHOD', 'Please select a payment method for this order.');
