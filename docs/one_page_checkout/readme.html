@@ -727,10 +727,11 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank" rel="noopener">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color and removals are indicated like <span class="removed">this</span>.</p>
               <ul>
-                <li>v2.3.8-beta3, 2021-04-12 (lat9):<ul>
+                <li>v2.3.8-beta4, 2021-04-16 (lat9):<ul>
                     <li>BUGFIX: zc158 interoperation, correct PHP error during AJAX processing (missing $languageLoader).</li>
-                    <li>INTROP: PHP 8.1 interoperability, modifying use of <code>$GLOBALS</code> constructs.</li>
+                    <li>INTROP: PHP 8.1 interoperability, modifying use of <code class="no-pad">$GLOBALS</code> constructs.</li>
                     <li>BUGFIX: Re-order the checkout_one page's language file, grouping all jQuery constants together as an aid in language translations.</li>
+                    <li>BUGFIX: Correct &quot;disappearing taxes&quot; when a store's country has zones and the tax-basis is <b>Store</b>.</li>
                     <li>The following files were changed:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>

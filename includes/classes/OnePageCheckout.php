@@ -1072,6 +1072,21 @@ class OnePageCheckout extends base
     
     protected function initAddressValuesForGuest()
     {
+        global $db;
+
+        $zone_id = (int)STORE_ZONE;
+        if ($zone_id === 0) {
+            $zone_name = STORE_ZONE;
+        } else {
+            $check = $db->Execute(
+                "SELECT zone_name
+                   FROM " . TABLE_ZONES . "
+                  WHERE zone_country_id = " . (int)STORE_COUNTRY . "
+                    AND zone_id = $zone_id
+                  LIMIT 1"
+            );
+            $zone_name = ($check->EOF) ? '' : $check->fields['zone_name'];
+        }
         $address_values = array(
             'gender' => '',
             'company' => '',
@@ -1084,8 +1099,8 @@ class OnePageCheckout extends base
             'state' => '',
             'country' => (int)STORE_COUNTRY,
             'country_id' => (int)STORE_COUNTRY,
-            'zone_id' => 0,
-            'zone_name' => '',
+            'zone_id' => $zone_id,
+            'zone_name' => $zone_name,
             'address_book_id' => 0,
             'selected_country' => (int)STORE_COUNTRY,
             'country_has_zones' => $this->countryHasZones((int)STORE_COUNTRY),
