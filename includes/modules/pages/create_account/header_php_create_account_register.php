@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2017-2020, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2017-2021, Vinos de Frutas Tropicales.  All rights reserved.
 //
 // This should be first line of the script:
 $zco_notifier->notify('NOTIFY_HEADER_START_CREATE_ACCOUNT_REGISTER');
@@ -23,11 +23,20 @@ if (empty($_SESSION['opc']) || !is_object($_SESSION['opc'])) {
 if (isset($_POST['action']) && ($_POST['action'] == 'register')) {
     $process = true;
     $company = '';
-    $antiSpam = isset($_POST['should_be_empty']) ? zen_db_prepare_input($_POST['should_be_empty']) : '';
+    
+    $antiSpamFieldName = isset($_SESSION['antispam_fieldname']) ? $_SESSION['antispam_fieldname'] : 'should_be_empty';
+    $antiSpam = !empty($_POST[$antiSpamFieldName]) ? 'spam' : '';
+    if (!empty($_POST['firstname']) && preg_match('~https?://?~', $_POST['firstname'])) {
+        $antiSpam = 'spam';
+    }
+    if (!empty($_POST['lastname']) && preg_match('~https?://?~', $_POST['lastname'])) {
+        $antiSpam = 'spam';
+    }
+
     $zco_notifier->notify('NOTIFY_CREATE_ACCOUNT_CAPTCHA_CHECK');
 
     if (isset($_POST['email_format'])) {
-        $email_format = zen_db_prepare_input($_POST['email_format']);
+        $email_format = in_array($_POST['email_format'], array('HTML', 'TEXT', 'NONE', 'OUT'), true) ? $_POST['email_format'] : 'TEXT';
     }
 
     $customers_authorization = (int)CUSTOMERS_APPROVAL_AUTHORIZATION;
@@ -70,6 +79,13 @@ if (isset($_POST['action']) && ($_POST['action'] == 'register')) {
     if (ACCOUNT_DOB == 'true') {
         $dob = zen_db_prepare_input($_POST['dob']);
         if (ENTRY_DOB_MIN_LENGTH > 0 or !empty($_POST['dob'])) {
+            // Support ISO-8601 style date
+            if (preg_match('/^([0-9]{4})(|-|\/)([0-9]{2})\2([0-9]{2})$/', $dob)) {
+                // Account for incorrect date format provided to strtotime such as swapping day and month instead of the expected yyyymmdd, yyyy-mm-dd, or yyyy/mm/dd format
+                if (strtotime($dob) !== false) {
+                    $_POST['dob'] = $dob = date(DATE_FORMAT, strtotime($dob));
+                }
+            }
             if (substr_count($dob, '/') > 2 || checkdate((int)substr(zen_date_raw($dob), 4, 2), (int)substr(zen_date_raw($dob), 6, 2), (int)substr(zen_date_raw($dob), 0, 4)) == false) {
                 $error = true;
                 $messageStack->add('create_account', ENTRY_DATE_OF_BIRTH_ERROR);
@@ -96,14 +112,13 @@ if (isset($_POST['action']) && ($_POST['action'] == 'register')) {
         $messageStack->add('create_account', ENTRY_EMAIL_ADDRESS_CHECK_ERROR);
     } else {
         $check_email_query = 
-            "SELECT customers_id
+            "SELECT COUNT(*) as total
                FROM " . TABLE_CUSTOMERS . "
-              WHERE customers_email_address = '" . zen_db_input($email_address) . "'
-              LIMIT 1";
+              WHERE customers_email_address = '" . zen_db_input($email_address) . "'";
         $zco_notifier->notify('NOTIFY_CREATE_ACCOUNT_LOOKUP_BY_EMAIL', $email_address, $check_email_query, $send_welcome_email);
         $check_email = $db->Execute($check_email_query);
 
-        if (!$check_email->EOF) {
+        if ($check_email->fields['total'] != 0) {
             $error = true;
             $messageStack->add('create_account', ENTRY_EMAIL_ADDRESS_ERROR_EXISTS);
         } else {
@@ -346,7 +361,7 @@ if (isset($_POST['action']) && ($_POST['action'] == 'register')) {
                                 INNER JOIN " . TABLE_COUPONS_DESCRIPTION . " cd
                                     ON cd.coupon_id = c.coupon_id
                                    AND cd.language_id = " . (int)$_SESSION['languages_id'] . "
-                          WHERE coupon_id = $coupon_id
+                          WHERE c.coupon_id = $coupon_id
                           LIMIT 1"
                     );
                     if ($coupon->EOF) {

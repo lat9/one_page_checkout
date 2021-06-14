@@ -729,7 +729,9 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
               <ul>
                 <li>v2.3.9-beta1, 2021-06-14 (lat9):<ul>
                     <li>BUGFIX: Correct CSS styling for &quot;checkout_one&quot; page's overlay.</li>
+                    <li>BUGFIX: Correcting 'ambiguous' field in coupon-select for customer registration.  The associated script was also updated to use zc157c as its basis.</li>
                     <li>The following files were changed:<ol>
+                        <li>/includes/modules/pages/create_account/header_php_create_account_register.php</li>
                         <li>/includes/templates/template_default/css/checkout_one.css</li>
                         <li><span class="template">/includes/templates/YOUR_TEMPLATE/css/checkout_one.css</span></li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
