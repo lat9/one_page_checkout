@@ -11,7 +11,6 @@
   define('MODULE_ORDER_TOTAL_COUPON_HEADER', TEXT_GV_NAMES . '/Discount Coupon');
   define('MODULE_ORDER_TOTAL_COUPON_DESCRIPTION', 'Discount Coupon');
   define('MODULE_ORDER_TOTAL_COUPON_TEXT_ENTER_CODE', TEXT_GV_REDEEM);
-  define('MODULE_ORDER_TOTAL_COUPON_HEADER', TEXT_GV_NAMES . '/Discount Coupon');
   define('SHIPPING_NOT_INCLUDED', ' [Shipping not included]');
   define('TAX_NOT_INCLUDED', ' [Tax not included]');
   define('IMAGE_REDEEM_VOUCHER', 'Redeem Voucher');
