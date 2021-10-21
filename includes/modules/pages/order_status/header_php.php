@@ -139,5 +139,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'status') {
 $extra_validation_html = '';
 $zco_notifier->notify('NOTIFY_ORDER_STATUS_EXTRA_VALIDATION', '', $extra_validation_html);
 
+$breadcrumb->add(NAVBAR_TITLE);
+
 // This should be last line of the script:
 $zco_notifier->notify('NOTIFY_HEADER_END_ORDER_STATUS');
