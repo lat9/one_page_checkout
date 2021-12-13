@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2020, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2021, Vinos de Frutas Tropicales.  All rights reserved.
 //
 ?>
 <!--bof shipping-address block -->
@@ -42,7 +42,7 @@ $opc_address_type = 'ship';
         if ($show_add_address) {
 ?>
                 <?php echo zen_draw_checkbox_field("add_address['ship']", '1', false, 'id="opc-add-ship"' . $parameters); ?>
-                <label class="checkboxLabel custom-control-label" for="add_address['ship']" title="<?php echo TITLE_ADD_TO_ADDRESS_BOOK; ?>"><?php echo TEXT_ADD_TO_ADDRESS_BOOK; ?></label>
+                <label class="checkboxLabel custom-control-label" for="opc-add-ship" title="<?php echo TITLE_ADD_TO_ADDRESS_BOOK; ?>"><?php echo TEXT_ADD_TO_ADDRESS_BOOK; ?></label>
 <?php
         }
 ?>
