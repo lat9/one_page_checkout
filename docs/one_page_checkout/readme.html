@@ -87,7 +87,7 @@ a[target=_blank] { text-decoration: underline; }
 <body>
   <h1>One-Page Checkout &hellip; with Guest &hellip; <span class="smaller">for Zen Cart v1.5.5b (and later)</span></h1>
   <h3>Version 2.3.10 by lat9/drbyte</h3>
-  <h3>Copyright &copy; 2013-2021 <a href="https://vinosdefrutastropicales.com" target="_blank" rel="noopener">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
+  <h3>Copyright &copy; 2013-2022 <a href="https://vinosdefrutastropicales.com" target="_blank" rel="noopener">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
   <p>Released under the General Public License (see the file named <code class="no-pad">license.txt</code> in the plugin's distribution for full details). This script is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</p>
   <hr />
   <i class="fas fa-exclamation-circle fa-5x red back"></i>&nbsp;&nbsp;<h2>Important Notes</h2>
@@ -727,9 +727,11 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank" rel="noopener">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color and removals are indicated like <span class="removed">this</span>.</p>
               <ul>
-                <li>v2.3.10-beta1, 2021-12-13 (lat9):<ul>
+                <li>v2.3.10-beta2, 2022-02-09 (lat9):<ul>
                     <li>BUGFIX: Correct label attributes for billing/shipping &quot;Add to Address Book&quot; checkbox.</li>
+                    <li>BUGFIX: OPC observer needs to be loaded earlier, so it properly responds to <code>zen_in_guest_checkout</code>.</li>
                     <li>The following files were changed:<ol>
+                        <li>/includes/auto_loaders/config.checkout_one.php</li>
                         <li>/includes/templates/template_default/templates/tpl_modules_opc_billing_address.php</li>
                         <li>/includes/templates/template_default/templates/tpl_modules_opc_shipping_address.php</li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
