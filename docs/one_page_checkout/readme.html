@@ -730,8 +730,11 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                 <li>v2.3.10-beta2, 2022-02-09 (lat9):<ul>
                     <li>BUGFIX: Correct label attributes for billing/shipping &quot;Add to Address Book&quot; checkbox.</li>
                     <li>BUGFIX: OPC observer needs to be loaded earlier, so it properly responds to <code>zen_in_guest_checkout</code>.</li>
+                    <li>BUGFIX: Correct MySQL Fatal Error for Ajax Search (MySql 5.7, ONLY_FULL_GROUP_BY).</li>
+                    <li>BUGFIX: Update <code>ot_coupon</code> language override to include zc157-added definitions.</li>
                     <li>The following files were changed:<ol>
                         <li>/includes/auto_loaders/config.checkout_one.php</li>
+                        <li>/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_coupon.php</li>
                         <li>/includes/templates/template_default/templates/tpl_modules_opc_billing_address.php</li>
                         <li>/includes/templates/template_default/templates/tpl_modules_opc_shipping_address.php</li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
