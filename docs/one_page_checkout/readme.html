@@ -727,14 +727,14 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank" rel="noopener">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color and removals are indicated like <span class="removed">this</span>.</p>
               <ul>
-                <li>v2.3.10-beta2, 2022-02-09 (lat9):<ul>
+                <li>v2.3.10-beta2, 2022-02-09 (lat9, siliconforks):<ul>
                     <li>BUGFIX: Correct label attributes for billing/shipping &quot;Add to Address Book&quot; checkbox.</li>
-                    <li>BUGFIX: OPC observer needs to be loaded earlier, so it properly responds to <code>zen_in_guest_checkout</code>.</li>
-                    <li>BUGFIX: Correct MySQL Fatal Error for Ajax Search (MySql 5.7, ONLY_FULL_GROUP_BY).</li>
-                    <li>BUGFIX: Update <code>ot_coupon</code> language override to include zc157-added definitions.</li>
+                    <li>BUGFIX: OPC observer needs to be loaded earlier, so it properly responds to <code class="no-pad">zen_in_guest_checkout</code>.</li>
+                    <li>BUGFIX: Update <code class="no-pad">ot_coupon</code> language override to include zc157-added definitions.</li>
+                    <li>BUGFIX: Remove duplicate definition from <code class="no-pad">ot_coupon</code> language override.</li>
                     <li>The following files were changed:<ol>
                         <li>/includes/auto_loaders/config.checkout_one.php</li>
-                        <li>/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_coupon.php</li>
+                        <li><span class="template-changed">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_coupon.php</span></li>
                         <li>/includes/templates/template_default/templates/tpl_modules_opc_billing_address.php</li>
                         <li>/includes/templates/template_default/templates/tpl_modules_opc_shipping_address.php</li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
