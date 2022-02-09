@@ -15,7 +15,7 @@ if (!defined('IS_ADMIN_FLAG')) {
 // 500-599 ... Registered-account settings
 // 1000+ ..... Debug settings
 //
-define('CHECKOUT_ONE_CURRENT_VERSION', '2.3.10-beta2');
+define('CHECKOUT_ONE_CURRENT_VERSION', '2.3.10');
 define('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2022-02-09');
 
 if (isset($_SESSION['admin_id'])) {
@@ -32,14 +32,14 @@ if (isset($_SESSION['admin_id'])) {
     } else {
         $cgi = $configuration->fields['configuration_group_id'];
     }
-    
+
     // -----
     // If One-Page Checkout is not yet installed, bring in the initial-installation script.
     //
     if (!defined('CHECKOUT_ONE_MODULE_VERSION')) {
         require DIR_WS_INCLUDES . 'init_includes/init_checkout_one_install.php';
     }
-    
+
     // -----
     // If a new version is present, bring in the plugin's upgrade script.
     //
@@ -139,7 +139,7 @@ if (isset($_SESSION['admin_id'])) {
         }
         $template_check->MoveNext();
     }
-    
+
     // -----
     // The setting 'CHECKOUT_ONE_OTTOTAL_SELECTOR', introduced in OPC v2.3.0, can validly contain 'special'
     // HTML characters '>' and '"', since the value is a CSS/jQuery selector.  The admin sanitizer will convert
