@@ -20,13 +20,14 @@ $autoLoadConfig[75][] = array(
 );
 
 // -----
-// Load the base observer at CP-85, since it needs the cart to be instantiated as well as the base OPC class.
+// Load the base observer at CP-97, since it needs the cart and currencies to be instantiated as well as the base OPC class as
+// well as init_sanitize to have run so that $current_page_base is set.
 //
-$autoLoadConfig[85][] = array(
+$autoLoadConfig[97][] = array(
     'autoType' => 'class',
     'loadFile' => 'observers/class.checkout_one_observer.php'
 );
-$autoLoadConfig[85][] = array(
+$autoLoadConfig[97][] = array(
     'autoType'   => 'classInstantiate',
     'className'  => 'checkout_one_observer',
     'objectName' => 'checkout_one'
