@@ -1,0 +1,60 @@
+class.checkout_one_observer.php
+        $this->notify('NOTIFY_OPC_OBSERVER_SESSION_FIXUPS', '', $session_data); (Added v2.3.1)
+            
+OnePageCheckout.php
+        $this->notify('NOTIFY_OPC_GUEST_CHECKOUT_OVERRIDE', '', $allow_guest_checkout);
+                    $this->notify('NOTIFY_OPC_GUEST_CUSTOMER_INFO_INIT', '', $additional_guest_fields);
+        $this->notify('NOTIFY_OPC_INIT_ADDRESS_FROM_DB', $address_book_id, $address_info->fields);
+        $this->notify('NOTIFY_OPC_INIT_ADDRESS_FOR_GUEST', '', $address_values);
+        $this->notify('NOTIFY_OPC_VALIDATE_SAVE_GUEST_INFO', '', $additional_messages, $additional_fields);
+                $this->notify('NOTIFY_OPC_ADDED_ADDRESS_BOOK_RECORD', array('address_book_id' => $address_book_id), $sql_data_array);
+        $this->notify('OPC_ADDED_CUSTOMER_RECORD_FOR_GUEST', $customer_id, $sql_data_array);
+        $this->notify('NOTIFY_OPC_CREATED_ADDRESS_BOOK_DB_ENTRY', $address_book_id, $sql_data_array);
+        
+one_page_checkout_functions
+        $GLOBALS['zco_notifier']->notify('NOTIFY_ZEN_IN_GUEST_CHECKOUT', '', $in_guest_checkout);
+        $GLOBALS['zco_notifier']->notify('NOTIFY_ZEN_IS_LOGGED_IN', '', $is_logged_in);
+        
+/includes/modules/pages/address_book/main_template_vars.php
+$zco_notifier->notify('NOTIFY_MAIN_TEMPLATE_VARS_START_ADDRESS_BOOK');
+$zco_notifier->notify('NOTIFY_MAIN_TEMPLATE_VARS_END_ADDRESS_BOOK');
+
+/includes/modules/pages/checkout_one/header_php.php
+$zco_notifier->notify('NOTIFY_HEADER_START_CHECKOUT_ONE');
+    $zco_notifier->notify('NOTIFY_CHECKOUT_ONE_NOT_ENABLED');
+$zco_notifier->notify('NOTIFY_HEADER_END_CHECKOUT_ONE');
+
+/includes/modules/pages/checkout_one_confirmation/header_php.php
+$zco_notifier->notify('NOTIFY_HEADER_START_CHECKOUT_ONE_CONFIRMATION');
+    $zco_notifier->notify('NOTIFY_CHECKOUT_ONE_NOT_ENABLED');
+$zco_notifier->notify('NOTIFY_HEADER_END_CHECKOUT_ONE_CONFIRMATION');
+
+/includes/modules/pages/create_account/header_php_create_account_register.php
+$zco_notifier->notify('NOTIFY_HEADER_START_CREATE_ACCOUNT_REGISTER');
+    $zco_notifier->notify('NOTIFY_CREATE_ACCOUNT_CAPTCHA_CHECK');
+        $zco_notifier->notify('NOTIFY_CREATE_ACCOUNT_LOOKUP_BY_EMAIL', $email_address, $check_email_query, $send_welcome_email);
+            $zco_notifier->notify('NOTIFY_NICK_CHECK_FOR_EXISTING_EMAIL', $email_address, $nick_error, $nick);
+    $zco_notifier->notify('NOTIFY_NICK_CHECK_FOR_MIN_LENGTH', $nick, $nick_error, $nick_length_min);
+    $zco_notifier->notify('NOTIFY_NICK_CHECK_FOR_DUPLICATE', $nick, $nick_error);
+    $zco_notifier->notify('NOTIFY_CREATE_ACCOUNT_VALIDATION_CHECK', array(), $error, $send_welcome_email);
+        $zco_notifier->notify('NOTIFY_FAILURE_DURING_CREATE_ACCOUNT');
+        $zco_notifier->notify('NOTIFY_SPAM_DETECTED_DURING_CREATE_ACCOUNT');
+        $zco_notifier->notify('NOTIFY_MODULE_CREATE_ACCOUNT_ADDED_CUSTOMER_RECORD', array_merge(array('customer_id' => $_SESSION['customer_id']), $sql_data_array));
+        $zco_notifier->notify('NOTIFY_HEADER_REGISTER_ADDED_CUSTOMER_RECORD', array_merge(array('customer_id' => $_SESSION['customer_id']), $sql_data_array));
+        $zco_notifier->notify('NOTIFY_HEADER_REGISTER_ADDED_ADDRESS_BOOK_RECORD', array_merge(array('address_id' => $address_id), $sql_data_array));
+        $zco_notifier->notify('NOTIFY_NICK_CREATE_NEW', $nick, $password, $nick_email, $extra_welcome_text);
+        $zco_notifier->notify('NOTIFY_LOGIN_SUCCESS_VIA_CREATE_ACCOUNT', $email_address, $extra_welcome_text, $send_welcome_email);
+    $zco_notifier->notify('NOTIFY_NICK_SET_TEMPLATE_FLAG', 0, $display_nick_field);
+$zco_notifier->notify('NOTIFY_HEADER_END_CREATE_ACCOUNT_REGISTER');
+
+/includes/modules/pages/create_account_success/main_template_vars.php
+$zco_notifier->notify('NOTIFY_MAIN_TEMPLATE_VARS_START_CREATE_ACCOUNT_SUCCESS');
+
+/includes/modules/pages/order_status/header_php.php
+$zco_notifier->notify('NOTIFY_HEADER_START_ORDER_STATUS');
+        $zco_notifier->notify('NOTIFY_ORDER_STATUS_SPAM_DETECTED');
+    $zco_notifier->notify('NOTIFY_ORDER_STATUS_VALIDATION_CHECK', '', $error);
+        $zco_notifier->notify('NOTIFY_ORDER_STATUS_SLAMMING_ALERT', $_SESSION['os_errors'], $slamming_threshold);
+            $zco_notifier->notify('NOTIFY_ORDER_STATUS_SLAMMING_LOCKOUT');
+$zco_notifier->notify('NOTIFY_ORDER_STATUS_EXTRA_VALIDATION', '', $extra_validation_html);
+$zco_notifier->notify('NOTIFY_HEADER_END_ORDER_STATUS');
