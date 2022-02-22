@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2021, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
 //
 
 // -----
@@ -83,7 +83,7 @@ if (!function_exists('zen_is_logged_in')) {
 if (!function_exists('zen_is_spider_session')) {
     function zen_is_spider_session()
     {
-        $user_agent = strtolower($_SERVER['HTTP_USER_AGENT']);
+        $user_agent = (isset($_SERVER['HTTP_USER_AGENT'])) ? strtolower($_SERVER['HTTP_USER_AGENT']) : '';
         $spider_flag = false;
         if (zen_not_null($user_agent)) {
             $spiders = file(DIR_WS_INCLUDES . 'spiders.txt');
