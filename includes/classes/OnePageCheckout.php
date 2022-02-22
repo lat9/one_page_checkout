@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2017-2021, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2017-2022, Vinos de Frutas Tropicales.  All rights reserved.
 //
 // This class, instantiated in the current customer session, keeps track of a customer's login and checkout
 // progression with the aid of the OPC's observer- and AJAX-classes.
@@ -504,7 +504,7 @@ class OnePageCheckout extends base
 
         $this->guestIsActive = false;
         $redirect_required = false;
-        
+
         // -----
         // If the order's sendto address was previously saved, restore that value and reset its clone.
         //
@@ -512,7 +512,7 @@ class OnePageCheckout extends base
             $_SESSION['sendto'] = $this->sendtoSaved;
             unset($this->sendtoSaved);
         }
-        
+
         if ($this->guestCheckoutEnabled()) {
             $redirect_required = ($current_page_base == FILENAME_CHECKOUT_ONE && isset($_POST['guest_checkout']));
             if ($this->isGuestCheckout() || $redirect_required) {
@@ -526,9 +526,10 @@ class OnePageCheckout extends base
                         'lastname' => '',
                         'email_address' => '',
                         'telephone' => '',
-                        'dob' => ''
+                        'dob' => '',
+                        'gender' => '',
                     );
-                    
+
                     // -----
                     // Allow an observer to add fields to the guest-customer's record.
                     //
@@ -554,13 +555,13 @@ class OnePageCheckout extends base
         }
 
         $this->debugMessage('startGuestOnePageCheckout, exit: sendto: ' . ((isset($_SESSION['sendto'])) ? $_SESSION['sendto'] : 'not set') . ', billto: ' . ((isset($_SESSION['billto'])) ? $_SESSION['billto'] : 'not set') . var_export($this, true));
-        
+
         if ($redirect_required) {
             zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));
         }
         return $this->isGuestCheckout();
     }
-    
+
     /* -----
     ** This function, called upon successful login or account-creation, removes any remnants
     ** of a previously-started guest-checkout from the customer's current session.
@@ -1632,7 +1633,7 @@ class OnePageCheckout extends base
         global $db;
 
         $this->debugMessage("saveCustomerAddress($which, $add_address), " . (($this->getShippingBilling()) ? 'shipping=billing' : 'shipping!=billing') . ' ' . var_export($address, true));
-        
+
         // -----
         // If the address is **not** to be added to the customer's address book or if
         // guest-checkout is currently active, the updated address is stored in
@@ -1646,7 +1647,8 @@ class OnePageCheckout extends base
                 if ($this->isGuestCheckout()) {
                     $this->guestCustomerInfo['firstname'] = $address['firstname'];
                     $this->guestCustomerInfo['lastname'] = $address['lastname'];
-                    
+                    $this->guestCustomerInfo['gender'] = $address['gender'];
+
                     $_SESSION['customer_first_name'] = $address['firstname'];
                     $_SESSION['customer_last_name'] = $address['lastname'];
                 }
@@ -1867,6 +1869,7 @@ class OnePageCheckout extends base
         );
 
         if (ACCOUNT_GENDER == 'true') {
+            $gender = $this->guestCustomerInfo['gender'];
             $sql_data_array[] = array('fieldName' => 'customers_gender', 'value' => $gender, 'type' => $this->dbStringType);
         }
         if (ACCOUNT_DOB == 'true') {
