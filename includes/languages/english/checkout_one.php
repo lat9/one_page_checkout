@@ -1,9 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
-// Copyright (C) 2013-2021, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated for OPC v2.3.8.
+// Last updated for OPC v2.3.12.
 //
 define('NAVBAR_TITLE_1', 'Checkout');
 define('NAVBAR_TITLE_2', 'Select Shipping/Payment and Confirm Your Order');
@@ -38,7 +38,7 @@ define('TEXT_NO_SHIPPING_AVAILABLE','<span class="alert">Sorry, we are not shipp
 
 define('TABLE_HEADING_COMMENTS', 'Special Instructions or Comments');
 
-define('ERROR_PLEASE_RESELECT_SHIPPING_METHOD', 'Your available shipping options have changed. Please re-select your desired shipping method.');
+define('ERROR_PLEASE_RESELECT_SHIPPING_METHOD', 'Either the available shipping options or your chosen shipping method\'s price has changed. Please re-select/review your desired shipping method.');
 define('ERROR_UNKNOWN_SHIPPING_SELECTION', 'An unknown shipping-method was submitted.  Please contact the store owner.');
 define('ERROR_INVALID_REQUEST', 'An unknown request was received.  Please contact the store owner.');
 

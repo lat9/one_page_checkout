@@ -1,7 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
-// Copyright (C) 2013-2019, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
+//
+// Last updated for OPC v2.3.12.
 //
 // -----
 // This should be first line of the script:
@@ -220,17 +222,16 @@ if (!$is_virtual_order && $customer_info_ok && $temp_shipto_addr_ok) {
     $shipping_selection_changed = false;
     if (isset($_SESSION['shipping'])) {
         $selected_shipping_cost = 0;
-        $selected_shipping_elements = explode('_', $_SESSION['shipping']['id']);
         $checklist = array();
-        foreach ($quotes as $key => $val) {
-            if ($val['methods'] != '') {
-                foreach ($val['methods'] as $key2 => $method) {
-                    if ($val['id'] == $selected_shipping_elements[0] && $method['id'] == $selected_shipping_elements[1]) {
-                        if ($_SESSION['shipping']['cost'] == $method['cost'] && $_SESSION['shipping']['title'] == ($val['module'] . ' (' . $method['title'] . ')')) {
-                            $checklist[] = $val['id'] . '_' . $method['id'];
+        foreach ($quotes as $quote) {
+            if (!empty($quote['methods'])) {
+                foreach ($quote['methods'] as $method) {
+                    if ($_SESSION['shipping']['id'] === $quote['id'] . '_' . $method['id']) {
+                        if ($_SESSION['shipping']['cost'] == $method['cost']) {
+                            $checklist[] = $quote['id'] . '_' . $method['id'];
                         }
                     } else {
-                        $checklist[] = $val['id'] . '_' . $method['id'];
+                        $checklist[] = $quote['id'] . '_' . $method['id'];
                     }
                 }
             }
