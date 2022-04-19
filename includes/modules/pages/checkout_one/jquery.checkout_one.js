@@ -1,6 +1,8 @@
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
-// Copyright (C) 2013-2020, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
+//
+// Last changed: OPC v2.4.0.
 //
 var selected;
 var submitter = null;
@@ -687,6 +689,7 @@ jQuery(document).ready(function(){
     function useSelectedAddress(which, address_id)
     {
         zcLog2Console('useSelectedAddress('+which+', '+address_id+')');
+        jQuery('#checkoutPayment > .opc-overlay').addClass('active');
         zcJS.ajax({
             url: "ajax.php?act=ajaxOnePageCheckout&method=setAddressFromSavedSelections",
             data: {
