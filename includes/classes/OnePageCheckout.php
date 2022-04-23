@@ -169,7 +169,7 @@ class OnePageCheckout extends base
     */    
     public function getShippingBilling()
     {
-        $_SESSION['shipping_billing'] = (isset($_SESSION['shipping_billing'])) ? $_SESSION['shipping_billing'] : true;
+        $_SESSION['shipping_billing'] = (isset($_SESSION['shipping_billing'])) ? $_SESSION['shipping_billing'] : (CHECKOUT_ONE_ENABLE_SHIPPING_BILLING === 'true');
         return $_SESSION['shipping_billing'];
     }
     

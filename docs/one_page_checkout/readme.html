@@ -729,7 +729,9 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
               <ul>
                 <li>v2.4.0-beta1, 2022-04-19 (lat9):<ul>
                     <li>BUGFIX: Provide overlay to 'hide' review/confirm buttons when address is changed via dropdown.</li>
+                    <li>BUGFIX: Correct handling when &quot;Enable Shipping=Billing&quot; is set to <em>false</em>.</li>
                     <li>The following files were changed:<ol>
+                        <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/modules/pages/checkout_one/jquery_checkout_one.js</li>
                         <li>/includes/modules/pages/checkout_one/jquery_checkout_one_min.js</li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
