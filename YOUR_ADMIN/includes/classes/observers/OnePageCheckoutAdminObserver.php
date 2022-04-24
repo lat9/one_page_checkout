@@ -15,15 +15,28 @@ class OnePageCheckoutAdminObserver extends base
             $this,
             [ 
                 /* Issued by /orders.php */
-                'NOTIFY_ADMIN_ORDERS_MENU_LEGEND',
+                'NOTIFY_ADMIN_ORDERS_SEARCH_PARMS',
+                'NOTIFY_ADMIN_ORDERS_MENU_LEGEND', 
                 'NOTIFY_ADMIN_ORDERS_SHOW_ORDER_DIFFERENCE',
             ]
         );
     }
 
-    public function update(&$class, $eventID, $p1, &$p2, &$p3, &$p4) 
+    public function update(&$class, $eventID, $p1, &$p2, &$p3, &$p4, &$p5, &$p6)
     {
         switch ($eventID) {
+            // -----
+            // Issued by Customers->Orders during the order-listing phase, allows us to identify additional
+            // database fields to pull in for the display.
+            //
+            // On entry (fields of interest only):
+            //
+            // $p4 ... (r/w) A reference to the (string)$new_fields, to which the order's is_guest_order field is added
+            //
+            case 'NOTIFY_ADMIN_ORDERS_SEARCH_PARMS':
+                $p4 .= ', o.is_guest_order';
+                break;
+
             // -----
             // Issued by Customers->Orders during the order-listing phase, allows us to identify
             // the icon used to identify any orders placed by guests.
@@ -47,20 +60,7 @@ class OnePageCheckoutAdminObserver extends base
             // $p4 ... (r/w) A reference to the "extra action icons" string (not used by this processing).
             //
             case 'NOTIFY_ADMIN_ORDERS_SHOW_ORDER_DIFFERENCE':
-                global $db;
-
-                if (isset($p2['is_guest_order'])) {
-                    $is_guest_order = $p2['is_guest_order'];
-                } else {
-                    $check = $db->Execute(
-                        "SELECT is_guest_order
-                           FROM " . TABLE_ORDERS . "
-                          WHERE orders_id = " . $p2['orders_id'] . "
-                          LIMIT 1"
-                    );
-                    $is_guest_order = (!$check->EOF) ? $check->fields['is_guest_order'] : 0;
-                }
-                if ($is_guest_order) {
+                if (!empty($p2['is_guest_order'])) {
                     $p3 .= '&nbsp;' . ICON_GUEST_CHECKOUT;
                 }
                 break;
