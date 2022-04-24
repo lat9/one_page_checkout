@@ -24,9 +24,10 @@ Like its predecessors, OPC-GC/RA provides an [order_status](order_status_page.md
 
 ## Implementation Notes ##
 
-*OPC*'s storefront guest-checkout and registered-accounts handling is controlled by two class modules:
+*OPC*'s storefront guest-checkout and registered-accounts handling is controlled by three class modules:
 
 1. `/includes/classes/OnePageCheckout.php`
+1. `/includes/classes/ajax/zcAjaxOnePageCheckout.php`
 2. `/includes/classes/observers/class.checkout_one_observer.php`
 
-The main class-file is session-based &mdash; instantiated as `$_SESSION['opc']` &mdash; so that it can remember a customer from `login` through `checkout`; its observer-class loads fresh on each page-load. This allows the observer-class to act as a *conductor*, instructing the session-based processing what to do next based on current customer action; it also acts to "refresh" the session-based settings, just in case an admin configuration occurred during the customer's session.
+The main class-file is session-based &mdash; instantiated as `$_SESSION['opc']` &mdash; so that it can remember a customer from `login` through `checkout`; its observer-class loads fresh on each page-load. This allows the observer-class to act as a *conductor*, instructing the session-based processing what to do next based on current customer action; it also acts to "refresh" the session-based settings, just in case an admin configuration occurred during the customer's session.  The `ajax` class handles the `checkout_one` page's AJAX updated.

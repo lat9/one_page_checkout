@@ -18,6 +18,7 @@ These notifications are issued in `function` scope via `$this`, so watching obse
 | [NOTIFY_OPC_ADDRESS_ARRAY_TO_STRING](#address-to-string) | Issued during the processing to determine whether an in-database address-book record matches a change submitted by the customer.  Added for _OPC_ v2.3.3. |
 | [NOTIFY_OPC_ADDED_ADDRESS_BOOK_RECORD](#added-address-book-record) | Issued for account-holding customers, when an address-book record has been added. |
 | [OPC_ADDED_CUSTOMER_RECORD_FOR_GUEST](#creating-customer-record-for-guest) | Issued during the `checkout_success` page's processing when a guest customer chooses to convert their account to a registered one. |
+| [NOTIFY_OPC_ADDED_CUSTOMER_RECORD_FOR_GUEST](#creating-customer-record-for-guest) | Added in *OPC v2.4.0* to provide integration with Zen Cart 1.5.8's auto-loaded observer class, provides the same interface as the notification above. |
 | [NOTIFY_OPC_CREATED_ADDRESS_BOOK_DB_ENTRY](#create-address-record-for-guest) | Issued during the `checkout_success` page's processing when a guest customer chooses to convert their account to a registered one. |
 
 ## Detailed Descriptions

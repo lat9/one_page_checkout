@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
-// Copyright (C) 2013-2020, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
 //
 
 // This should be first line of the script:
@@ -70,12 +70,12 @@ if (!isset($_SESSION['shipping'])) {
 
 $checkout_one->debug_message('Starting confirmation, shipping and request data follows:' . print_r($_SESSION['shipping'], true), true);
 
-$free_shipping_enabled = (defined('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING') && MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING == 'true');
+$free_shipping_enabled = (defined('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING') && MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING === 'true');
 $free_shipping_over = 0;
 if (defined('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER')) {
     $free_shipping_over = $currencies->value((float)MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER);
 }
-if (isset($_SESSION['shipping']['id']) && $_SESSION['shipping']['id'] == 'free_free' && $_SESSION['cart']->get_content_type() != 'virtual' && $free_shipping_enabled &&  $_SESSION['cart']->show_total() < $free_shipping_over) {
+if (isset($_SESSION['shipping']['id']) && $_SESSION['shipping']['id'] == 'free_free' && $_SESSION['cart']->get_content_type() !== 'virtual' && $free_shipping_enabled &&  $_SESSION['cart']->show_total() < $free_shipping_over) {
     $checkout_one->debug_message('NOTIFY_CHECKOUT_ONE_CONFIRMATION_FREE_SHIPPING');
     unset($_SESSION['shipping']);
     $messageStack->add_session('checkout_shipping', ERROR_PLEASE_RESELECT_SHIPPING_METHOD, 'error');
@@ -85,7 +85,7 @@ if (isset($_SESSION['shipping']['id']) && $_SESSION['shipping']['id'] == 'free_f
 // -----
 // If we've received control from the checkout_one page's form, the action should be 'process'.
 //
-if (!isset($_GET['redirect']) && (!isset($_POST['action']) || $_POST['action'] != 'process')) {
+if (!isset($_GET['redirect']) && (!isset($_POST['action']) || $_POST['action'] !== 'process')) {
     $checkout_one->debug_message('NOTIFY_CHECKOUT_ONE_CONFIRMATION_BAD_POST', true);
     zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));
 }
@@ -98,15 +98,15 @@ if (isset($_POST['payment'])) {
 // Start order-entry validation ...
 //
 $error = false;
-if (DISPLAY_CONDITIONS_ON_CHECKOUT == 'true') {
-    if (!isset($_POST['conditions']) || $_POST['conditions'] != '1') {
+if (DISPLAY_CONDITIONS_ON_CHECKOUT === 'true') {
+    if (!isset($_POST['conditions']) || $_POST['conditions'] !== '1') {
         $error = true;
         $messageStack->add_session('checkout_payment', ERROR_CONDITIONS_NOT_ACCEPTED, 'error');
     }
 }
 
-if ($_SESSION['opc']->isGuestCheckout() && DISPLAY_PRIVACY_CONDITIONS == 'true') {
-    if (!isset($_POST['privacy_conditions']) || ($_POST['privacy_conditions'] != '1')) {
+if ($_SESSION['opc']->isGuestCheckout() && DISPLAY_PRIVACY_CONDITIONS === 'true') {
+    if (!isset($_POST['privacy_conditions']) || ($_POST['privacy_conditions'] !== '1')) {
         $error = true;
         $messageStack->add_session('checkout_payment', ERROR_PRIVACY_STATEMENT_NOT_ACCEPTED, 'error');
     }
@@ -151,7 +151,7 @@ $checkout_one->debug_message('Initial order information:' . var_export($order, t
 // the shipping-related handling.
 //
 $shipping_modules_debug = '';
-if ($order->content_type != 'virtual') {
+if ($order->content_type !== 'virtual') {
     require DIR_WS_CLASSES . 'shipping.php';
     $shipping_modules = new shipping($_SESSION['shipping']);
 
@@ -163,26 +163,25 @@ if ($order->content_type != 'virtual') {
     // -----
     // Handle selected shipping module quote.
     //
-    $quote = array();
+    $quote = [];
     if (zen_count_shipping_modules() > 0 || $free_shipping) {
-        if (isset($_POST['shipping']) && strpos ($_POST['shipping'], '_')) {
+        if (isset($_POST['shipping']) && strpos($_POST['shipping'], '_') !== false) {
             /**
             * check to be sure submitted data hasn't been tampered with
             */
-            if ($_POST['shipping'] == 'free_free' && ($order->content_type != 'virtual' && !$free_shipping)) {
+            if ($_POST['shipping'] === 'free_free' && ($order->content_type !== 'virtual' && !$free_shipping)) {
                 $error = true;
                 $messageStack->add_session('checkout_shipping', ERROR_INVALID_SHIPPING_SELECTION, 'error');
             }
             list($module, $method) = explode('_', $_POST['shipping']);
-            if (is_object(${$module}) || $_POST['shipping'] == 'free_free') {
-                if ($_POST['shipping'] == 'free_free') {
+            if (is_object(${$module}) || $_POST['shipping'] === 'free_free') {
+                if ($_POST['shipping'] === 'free_free') {
                     $quote[0]['methods'][0]['title'] = FREE_SHIPPING_TITLE;
                     $quote[0]['methods'][0]['cost'] = 0;
                     $quote[0]['methods'][0]['icon'] = '';
-            
                 } else {
                     $quote = $shipping_modules->quote($method, $module);
-            
+
                 }
                 $checkout_one->debug_message("SHIPPING_QUOTE for " . $_POST['shipping'] . ":\n" . var_export($quote, true));
                 if (isset($quote['error'])) {
@@ -194,11 +193,11 @@ if ($order->content_type != 'virtual') {
                         $error = true;
                     }
                     if (isset($quote[0]['methods'][0]['title']) && isset($quote[0]['methods'][0]['cost'])) {
-                        $_SESSION['shipping'] = array( 
+                        $_SESSION['shipping'] = [
                             'id' => $_POST['shipping'],
                             'title' => ($free_shipping) ?  $quote[0]['methods'][0]['title'] : ($quote[0]['module'] . ' (' . $quote[0]['methods'][0]['title'] . ')'),
                             'cost' => $quote[0]['methods'][0]['cost'] 
-                        );
+                        ];
                         $_SESSION['shipping']['extras'] = (isset($quote[0]['extras'])) ? $quote[0]['extras'] : '';
                     }
                 }
@@ -212,9 +211,9 @@ if ($order->content_type != 'virtual') {
         unset($_SESSION['shipping']);
         $error = true;
     }
-    $shipping_modules_debug = var_export($shipping_modules, true) . var_export($quote, true);
+    $shipping_modules_debug = json_encode($shipping_modules) . PHP_EOL . json_encode($quote);
 }
-$checkout_one->debug_message('Shipping setup, preparing to call order-totals.' . $shipping_modules_debug . ((isset($_SESSION['shipping'])) ? var_export($_SESSION['shipping'], true) : 'Shipping not set'));
+$checkout_one->debug_message('Shipping setup, preparing to call order-totals.' . $shipping_modules_debug . ((isset($_SESSION['shipping'])) ? json_encode($_SESSION['shipping']) : 'Shipping not set'));
 
 if (!class_exists('order_total')) {
     require DIR_WS_CLASSES . 'order_total.php';
@@ -232,7 +231,7 @@ if ($credit_covers) {
     unset($_SESSION['payment']);
 }
 
-$checkout_one->debug_message('Returned from call to order-totals:' . var_export($order_total_modules, true));
+$checkout_one->debug_message('Returned from call to order-totals:' . json_encode($order_total_modules));
 
 // -----
 // Process the payment modules **only if** the order has been confirmed.  Don't want/need this processing for coupon/GC actions.
@@ -291,21 +290,21 @@ if ($error || $messageStack->size('checkout_payment') > 0 || !$order_confirmed) 
             }
         }
     }
-    $checkout_one->debug_message("Something causing redirection back to checkout_one, error ($error), order_confirmed ($order_confirmed)" . var_export($messageStack->messages, true) . var_export($ot_total, true));
+    $checkout_one->debug_message("Something causing redirection back to checkout_one, error ($error), order_confirmed ($order_confirmed)" . json_encode($messageStack->messages) . json_encode($ot_total));
     zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));
 }
 
 // Stock Check
 $flagAnyOutOfStock = false;
-$stock_check = array();
-if (STOCK_CHECK == 'true') {
-    for ($i=0, $n=count($order->products); $i<$n; $i++) {
+$stock_check = [];
+if (STOCK_CHECK === 'true') {
+    for ($i = 0, $n = count($order->products); $i<$n; $i++) {
         if ($stock_check[$i] = zen_check_stock($order->products[$i]['id'], $order->products[$i]['qty'])) {
             $flagAnyOutOfStock = true;
         }
     }
     // Out of Stock
-    if (STOCK_ALLOW_CHECKOUT != 'true' && $flagAnyOutOfStock) {
+    if (STOCK_ALLOW_CHECKOUT !== 'true' && $flagAnyOutOfStock) {
         zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
     }
 }
@@ -327,7 +326,7 @@ if (!empty($_SESSION['cc_id'])) {
     $customers_referral = $db->Execute($customers_referral_query);
 
     // only use discount coupon if set by coupon
-    if ($customers_referral->fields['customers_referral'] == '' and CUSTOMERS_REFERRAL_STATUS == 1) {
+    if ($customers_referral->fields['customers_referral'] === '' && CUSTOMERS_REFERRAL_STATUS === '1') {
         $sql = "UPDATE " . TABLE_CUSTOMERS . "
                 SET customers_referral = :customersReferral
                 WHERE customers_id = :customersID LIMIT 1";
@@ -346,7 +345,7 @@ if (isset(${$_SESSION['payment']}->form_action_url)) {
 
 // if shipping-edit button should be overridden, do so
 $editShippingButtonLink = zen_href_link(FILENAME_CHECKOUT_SHIPPING_ADDRESS, '', 'SSL');
-if (method_exists (${$_SESSION['payment']}, 'alterShippingEditButton')) {
+if (method_exists(${$_SESSION['payment']}, 'alterShippingEditButton')) {
     $theLink = ${$_SESSION['payment']}->alterShippingEditButton();
     if ($theLink) {
         $editShippingButtonLink = $theLink;

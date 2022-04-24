@@ -1,27 +1,27 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2018-2021, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2018-2022, Vinos de Frutas Tropicales.  All rights reserved.
 //
 if (!defined('IS_ADMIN_FLAG') || IS_ADMIN_FLAG !== true) {
     die('Illegal Access');
 }
 
-class OnePageCheckoutAdminObserver extends base 
+class OnePageCheckoutAdminObserver extends base
 {
-    function __construct() 
+    public function __construct()
     {
         $this->attach(
-            $this, 
-            array( 
+            $this,
+            [ 
                 /* Issued by /orders.php */
-                'NOTIFY_ADMIN_ORDERS_MENU_LEGEND', 
+                'NOTIFY_ADMIN_ORDERS_MENU_LEGEND',
                 'NOTIFY_ADMIN_ORDERS_SHOW_ORDER_DIFFERENCE',
-            )
+            ]
         );
     }
-  
-    function update(&$class, $eventID, $p1, &$p2, &$p3, &$p4) 
+
+    public function update(&$class, $eventID, $p1, &$p2, &$p3, &$p4) 
     {
         switch ($eventID) {
             // -----
@@ -35,7 +35,7 @@ class OnePageCheckoutAdminObserver extends base
             case 'NOTIFY_ADMIN_ORDERS_MENU_LEGEND':
                 $p2 .= '&nbsp;' . ICON_GUEST_CHECKOUT . '&nbsp;' . TEXT_GUEST_CHECKOUT;
                 break;
-          
+
             // -----
             // Issued by Customers->Orders, for each listed order, allows us to identify whether the
             // order was placed by a guest.
@@ -64,9 +64,9 @@ class OnePageCheckoutAdminObserver extends base
                     $p3 .= '&nbsp;' . ICON_GUEST_CHECKOUT;
                 }
                 break;
-                
+
             default:
                 break;
-        }      
+        }
     }
 }

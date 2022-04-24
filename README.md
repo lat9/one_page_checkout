@@ -8,6 +8,7 @@ This documentation contains implementation details associated with the *guest-ch
 1. v2.1.0 drops support for Zen Cart versions _prior to_ `1.5.5b`!
 2. For Zen Cart versions *prior to* `1.5.7`, there are required edits to the `shipping_estimator` to enable its integration with _OPC_.  See [this](https://github.com/lat9/one_page_checkout/issues/193) GitHub issue for version-specific changes required!
 3. v2.3.3 and later of *OPC* provide integration with Zen Cart `1.5.7`, with no core-file overwrites!
+3. v2.4.0 drops support for Zen Cart versions *prior to* **1.5.7a**!
 
 ## Overview ##
 

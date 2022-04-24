@@ -85,17 +85,14 @@ a[target=_blank] { text-decoration: underline; }
 </head>
 
 <body>
-  <h1>One-Page Checkout &hellip; with Guest &hellip; <span class="smaller">for Zen Cart v1.5.5b (and later)</span></h1>
+  <h1>One-Page Checkout &hellip; with Guest &hellip; <span class="smaller">for Zen Cart v1.5.7a (and later)</span></h1>
   <h3>Version 2.4.0 by lat9/niccol</h3>
   <h3>Copyright &copy; 2013-2022 <a href="https://vinosdefrutastropicales.com" target="_blank" rel="noopener">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
   <p>Released under the General Public License (see the file named <code class="no-pad">license.txt</code> in the plugin's distribution for full details). This script is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</p>
   <hr />
   <i class="fas fa-exclamation-circle fa-5x red back"></i>&nbsp;&nbsp;<h2>Important Notes</h2>
   <ol class="clearBoth">
-    <li>The installation instructions for <em>OPC</em> v2.1.0 and later have changed <b>significantly</b>, as the <span class="corefile">core file</span> changes required are now <em>in-core</em>, starting with Zen Cart 1.5.6b. If you are updating <em>OPC</em> from a previous version or are performing an initial installation for a Zen Cart version <em>prior to</em> 1.5.6b, refer to <a href="https://github.com/lat9/one_page_checkout/blob/master/pages/install_upgrade_v210_or_later.md" target="_blank" rel="noopener">these</a> additional instructions <span class="new-code">before</span> that update or installation!  Note also that initial installations on Zen Cart versions <em>prior to</em> 1.5.5b <b>are no longer supported</b>.</li>
-    <li>For versions of Zen Cart <em>1.5.6c and earlier</em>, there are edits required for the <code class="no-pad">shipping_estimator</code> if your store enables <em>OPC</em>'s guest-checkout.  Refer to <a href="https://github.com/lat9/one_page_checkout/issues/193" target="_blank" rel="noopener">this</a> GitHub issue for version-specific changes required.</li>
-    <li>For versions of Zen Cart <em>prior to</em> <em>1.5.7<b>a</b></em>, there is a required edit for stores using the <code class="no-pad">paypalwpp</code> payment module when guest-checkout is enabled.  Refer to <a href="https://github.com/lat9/one_page_checkout/blob/master/pages/install_upgrade_v210_or_later.md" target="_blank" rel="noopener">these</a> additional instructions <span class="new-code">before</span> that update or installation!</li>
-    <li>For versions of Zen Cart <em>1.5.7<b>a</b> and later</em>, there are <span class="corefile">no core-file changes</span> required; the plugin is now drop-in!</li>
+    <li>This version of <em>One-Page Checkout</em> supports Zen Cart <em>1.5.7<b>a</b> and later</em> &hellip; <b>only</b>, there are <span class="corefile">no core-file changes</span> required; the plugin is drop-in.</li>
   </ol>
   <hr />
   <p><b>Credits:</b></p>
@@ -106,17 +103,17 @@ a[target=_blank] { text-decoration: underline; }
     <li>Guest checkout, especially the <code class="no-pad">orders_status</code> page's processing, based on the <a href="https://www.zen-cart.com/showthread.php?196995-COWOA-%28for-ZC-v1-5-x%29" target="_blank" rel="noopener">COWOA</a> (by @DivaVocals, @countrycharm and others) and <a href="https://www.zen-cart.com/downloads.php?do=file&id=2131" target="_blank" rel="noopener">COWAA</a> (by @davewest) plugins.</li>
   </ol>
   <hr />
-  <p>Additional information (especially for features introduced in <em>OPC v2.0.0</em>) can be found in the plugin's <a href="https://github.com/lat9/one_page_checkout/blob/master/README.md" target="_blank" rel="noopener">Additional Documentation</a> page.</p>
+  <p>Additional information can be found in the plugin's <a href="https://github.com/lat9/one_page_checkout/blob/master/README.md" target="_blank" rel="noopener">Additional Documentation</a> page.</p>
   <hr />
   <p>Current Support Thread at Zen Cart Forums: <a href="https://www.zen-cart.com/showthread.php?220781-One-Page-Checkout-Support-Thread" target="_blank" rel="noopener">https://www.zen-cart.com/showthread.php?220781-One-Page-Checkout-Support-Thread</a></p>
-  
+
   <div class="tab-container" id="outer-container">
     <ul class="etabs">
       <li class="tab"><a href="#overview">Overview</a></li>
       <li class="tab"><a href="#installation">Installation and Troubleshooting</a></li>
       <li class="tab"><a href="#version">Change History</a></li>
     </ul>
-    
+
     <div class="panel-container">
     
       <div id="overview">
@@ -132,28 +129,16 @@ a[target=_blank] { text-decoration: underline; }
           <div class="panel-container">
             <div id="operation">
               <p>This plugin streamlines the flow that your customers see during your store's checkout process, combining the handling required for the <code class="no-pad">checkout_shipping</code>, <code class="no-pad">checkout_payment</code> and <code class="no-pad">checkout_confirmation</code> into a single-page display.</p>
-              <p>Starting with v2.0.0, your customers can also <em>Checkout as Guest</em> or create <em>Registered Accounts</em>!  The <em>Checkout as Guest</em> feature provides customers with a more streamlined checkout experience (no account-creation required), while <em>Registered Accounts</em> enable your customers to create their account with minimal information (no address-book record required), making it easier for your customers to sign up for &quot;newsletter-only&quot; accounts and other account-holder features that your store might have.</p>
+              <p>With <em>OPC</em> installed, your customers can also <em>Checkout as Guest</em> or create <em>Registered Accounts</em>!  The <em>Checkout as Guest</em> feature provides customers with a more streamlined checkout experience (no account-creation required), while <em>Registered Accounts</em> enable your customers to create their account with minimal information (no address-book record required), making it easier for your customers to sign up for &quot;newsletter-only&quot; accounts and other account-holder features that your store might have.</p>
               <div class="box-border">
                 <p>The plugin's design utilizes <b><i>standard Zen Cart</i></b> HTML/CSS layout when rendering its new pages, so the look-and-feel of your store gets &quot;inherited&quot;.  Some templates make <em>drastic</em>  modifications to that layout &mdash; removing those <em>standard</em> HTML/CSS selectors &mdash; which causes this plugin's newly-added pages to display improperly.  The following templates are known to be incompatible with the <em>One-Page Checkout</em> plugin:<p>
                 <ol>
                   <li>Tableau (numinix)</li>
                   <li>YourStore (themeforest)</li>
                 </ol>
-                <p>v2.0.0 of One-Page Checkout has been validated with the <a href="https://www.zen-cart.com/downloads.php?do=file&id=2191" target="_blank" rel="noopener">ZCA Bootstrap Template</a>, <b>v1.0.4</b>.  Since that template uses a table-based layout for the order-totals' formatting, you'll need to make a template-override change to <code class="no-pad">includes/templates/template_default/templates/tpl_modules_opc_shopping_cart.php</code>, wrapping the order-totals' output with table tags:</p>
-                <pre class="scroll">
-if (MODULE_ORDER_TOTAL_INSTALLED) {
-    $row_class = ($last_row_class == 'rowEven') ? 'rowOdd' : 'rowEven';
-//-bof-opc/bootstrap, added &lt;table&gt;&lt;/table&gt; since the order totals are displayed as table-rows.
-?>     
-        &lt;tr class="&lt;?php echo $row_class; ?&gt;" id="cartOrderTotals"&gt;
-            &lt;td colspan="&lt;?php echo (count($order-&gt;info['tax_groups']) &gt; 1) ? 4 : 3; ?&gt;" id="orderTotalDivs"&gt;<b style="color: red;">&lt;table width="100%"&gt;</b>&lt;?php $order_total_modules-&gt;process (); $order_total_modules-&gt;output(); ?&gt;<b style="color: red;">&lt;/table&gt;</b>&lt;/td&gt;
-        &lt;/tr&gt;
-&lt;?php
-//-eof-opc/bootstrap
-}
-                </pre>
+                <p>One-Page Checkout has been validated with the <a href="https://www.zen-cart.com/downloads.php?do=file&id=2191" target="_blank" rel="noopener">ZCA Bootstrap Template</a>, <b>v3.2.0</b> and its associated <a href="https://www.zen-cart.com/downloads.php?do=file&id=2305" target="_blank">integration</a> with <em>OPC</em>.</p>
               </div>
-              <br />
+              <br>
               <div class="box-border">
                 <p>The plugin checks (on confirmation) that the order's information hasn't changed by inspecting the customer's session, ensuring that what the customer saw on the checkout page is the same on confirmation page.  There are order-total modules that make changes to those session-based settings, resulting in an order-confirmation loop and are, as such, incompatible with <em>One-Page Checkout</em>:</p>
                 <ol>
@@ -174,7 +159,7 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                 </ol>
               </div>
               <p><em>One-Page Checkout's</em> installation loads all the plugin's files into the sub-directories associated with the <em>template_default</em> template's use; that way, the processing is available for <b>all</b> templates you might use in your store.  If you make changes to those default files, you'll use the Zen Cart &quot;override&quot; system to make your updates.  For example, if you're adding a top-of-page message, you'll copy the file /includes/languages/english/checkout_one.php to the /includes/languages/english/YOUR_TEMPLATE sub-directory and make your changes there.</p>
-              <p>The plugin has been validated on Zen Cart 1.5.5a through Zen Cart 1.5.6c, using the following shipping, order-total and payment methods:</p>
+              <p>The plugin has been validated on Zen Cart 1.5.7a through 1.5.7d, using the following shipping, order-total and payment methods:</p>
               <div class="multi-list">
                 <h3>Shipping Methods</h3>
                 <ol>
@@ -230,13 +215,12 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
               </div>
               <div class="clearBoth"></div>
             </div>
-            
+
             <div id="details">
-              <p><strong>Note:</strong> The following conventions apply to <em>OPC</em>, v1.3.0 or later.</p>
               <p>The primary interoperability issue between <em>OPC</em> (or any checkout-page &quot;consolidator&quot;) and a payment-method centers on the collective javascript/jQuery implementation. Newer payment-processors' APIs have become more complicated, resulting in additional jQuery/AJAX constructs within the associated Zen Cart payment-method.</p>
               <p>That issue arises when the checkout-page and the payment-method bind to the same DOM event, whether it's the submission of the form or a click of a submit-button. The net result is that some jQuery fragment is not run which, in turn, causes the page/payment-method integration to fail (i.e. orders cannot be placed).</p>
               <p>The following guidelines are <em>assumed</em> by One-Page Checkout in support of interoperation with the varied payment-methods, identifying which selectors each class of module binds to. This will serve to reduce those jQuery event conflicts and lessen the integration headaches for payment-method developers.</p>
-              
+
               <h2><code class="no-pad">checkout_payment</code>-loaded jscript modules</h2>
               <p>When a payment module requires a separate javascript/jQuery &quot;helper&quot; on the <code class="no-pad">checkout_payment</code> page, that separately-loaded script must be sensitive to the Zen Cart implementation of the <em>PayPal Express Checkout</em> &quot;shortcut button&quot;.  Specifically, when the customer is checking-out via that &quot;shortcut&quot;, <b>the only payment-method that is formatted</b> for the customer's use is that for <em>PayPal Express Checkout</em>. The Zen Cart payment-class method <code class="no-pad">in_special_checkout</code> can be used by a payment module's separately-loaded script to determine a case where that script should not be loaded.</p>
               <p>There are two known cases of this interoperability issue:</p>
@@ -250,7 +234,7 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
 }</pre></li>
               </ol>
               <p>If your site required a scripting patch, as described above, be sure to copy the updated jscript file to <code class="no-pad">/includes/modules/pages/checkout_one</code>!</p>
-              
+
               <h2>Common Page Elements</h2>
               <p>There are four (4) elements on the &quot;normal&quot; <code class="no-pad">checkout-payment</code> page that have bearing on the page's form submissions:</p>
               <ol>
@@ -263,15 +247,15 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                   <li>A gift-certificate has been applied to the order and its associated value &quot;covers&quot; the cost of the order.</li>
                 </ul></li>
               </ol>
-              
+
               <h2>One-Page Checkout Operations</h2>
               <p><em>OPC</em> renders its data-gathering page (<code class="no-pad">checkout_one</code>) <b>with no button that actually submits the form</b>.  All form submittals are handled via its jQuery processing (<code class="no-pad">/includes/modules/pages/checkout_one/jscript_main.php</code>), allowing <em>OPC</em> to properly sequence the checkout processing.</p>
               <p>Instead, the page's jQuery processing <em>binds</em> to a click of the form's pseudo-submit buttons (both order-confirmation and credit-class modules' &quot;Apply&quot; buttons).  Upon detecting such a click, the jQuery sets the value of the <code class="no-pad">submitter</code> variable in a manner similar to the <code class="no-pad">checkout_payment</code> page.  Additionally, that processing <strong>disables</strong> the <code class="no-pad">Enter</code> button from acting as a default form-submittal.  If that jQuery processing detects that no non-payment-related issues are present, that processing issues a programmatic submit of the page's form.</p>
-              
+
               <h2>Payment-Method Operations</h2>
               <p>If a payment method requires some special action on the submittal of the <code class="no-pad">checkout_payment</code> form, that payment method should <em>bind</em> <b>only to the form's <code class="no-pad">submit</code> event</b>, performing its actions only when the value of <code class="no-pad">submitter</code> is 0 and the payment-method is currently selected.</p>
             </div>
-            
+
             <div id="config">
               <p>Once you've installed the plugin, an additional item is available in your admin's <em>Configuration</em> menu: <b>One-Page Checkout Settings</b>.  The following settings are available:</p>
               <table>
@@ -393,22 +377,20 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                 <li><b>TEXT_CHECKOUT_ONE_INSTRUCTIONS</b>.  This constant, echoed within a <code class="no-pad">p</code> tag within a <code class="no-pad">fieldset</code> tag, defines any lower-page instructions just above the form's submit button.</li>
                 <li><b>TEXT_CHECKOUT_ONE_INSTRUCTION_LABEL</b>.  Defines the value to be used in the fieldset's <code class="no-pad">legend</code> tag; if the value is set as '', no legend is generated.</li>
               </ol>
-              <p>Starting with v1.0.4, the <code class="no-pad">checkout_one_confirmation</code> page's language file also has an instructional constant that you can use to customize your customers' experience: <b>CHECKOUT_ONE_CONFIRMATION_INSTRUCTIONS</b>.  These instructions are displayed just before the page's progress-spinner and <em>should</em> be supplied if your store requires additional time to process.</p>
+              <p>The <code class="no-pad">checkout_one_confirmation</code> page's language file also has an instructional constant that you can use to customize your customers' experience: <b>CHECKOUT_ONE_CONFIRMATION_INSTRUCTIONS</b>.  These instructions are displayed just before the page's progress-spinner and <em>should</em> be supplied if your store requires additional time to process.</p>
               <p><strong>Note:</strong> If you're going to change those constants, be sure to make a <span class="template">template-override</span> copy of the plugin's as-shipped language file so the file isn't mistakenly overwritten on an update to the plugin!</p>
             </div>
-            
+
             <div id="storefront">
               <p>When you've enabled the <em>One-Page Checkout</em>, the customer will see a single-page <em>similar to</em> the images shown in the plugin's <a href="https://github.com/lat9/one_page_checkout/blob/master/pages/checkout_one_page.md" target="_blank" rel="noopener">additional documentation</a>; the actual layout will depend on the template that is currently active for your store and the <em>OPC</em> options that you have enabled.  The customer uses the form to apply any coupon (or gift-certificate) codes, choose their shipping and payment methods and then clicks that &quot;Confirm Order&quot; button &hellip; which takes them to a transitional confirmation page and subsequently to the &quot;checkout_success&quot; page.  If they've chosen a payment method that accepts credit-cards onsite, then an additional confirmation page is displayed from which the customer re-confirms their order.</p>
               <p><strong>Notes:</strong></p>
               <ol>
-                  <li>Starting with v1.0.4, customers that access your site using a version of <b><em>Internet Explorer</em> less than 9.0</b> will continue to see the &quot;traditional&quot; multi-page version of the checkout process.</li>
-                  <li>Starting with v1.3.0, this page uses jQuery to handle the submittal of the checkout-related form.  If the customer has disabled javascript in their browser or if there's a jQuery-related error on the page, <em>the customer is unable to checkout via <b>OPC</b></em>.  In this case, the plugin displays a message to the customer with a link to the multi-page checkout handling so that they can still checkout.</li>
+                  <li>Customers that access your site using a version of <b><em>Internet Explorer</em> less than 9.0</b> will continue to see the &quot;traditional&quot; multi-page version of the checkout process.</li>
+                  <li>This page uses jQuery to handle the submittal of the checkout-related form.  If the customer has disabled javascript in their browser or if there's a jQuery-related error on the page, <em>the customer is unable to checkout via <b>OPC</b></em>.  In this case, the plugin displays a message to the customer with a link to the multi-page checkout handling so that they can still checkout.</li>
                   <li>This page's display <i><b>depends heavily</b></i> on the <em><a href="https://github.com/lat9/one_page_checkout/blob/master/pages/address_management.md" target="_blank" rel="noopener">mode</a></em> that a customer uses to perform their checkout.  See <a href="https://github.com/lat9/one_page_checkout/blob/master/pages/checkout_one_page.md" target="_blank" rel="noopener">this</a> additional-documentation page for details.</li>
               </ol>
               <div class="clearBoth"></div>
-                           
             </div>
-            
           </div>
         </div>
       </div>
@@ -428,7 +410,7 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
               <hr />
               <p><b>Notes:</b></p>
               <ol>
-                <li>These instructions have changed <b>significantly</b> for v2.1.0 of the <em>One-Page Checkout</em> plugin!  Please make sure that you've read the full instructions <b>before</b> beginning your installation or upgrade.</li>
+                <li>Please make sure that you've read the full instructions <b>before</b> beginning your installation or upgrade.</li>
               </ol>
               <hr />
               <p>There are <span class="template">template-override</span> and, depending on your store's base Zen Cart version, <span class="corefile">core-file</span> changes required by this plugin; you should <strong>always</strong> backup your cart's database and files prior to making any changes.  Unzip the plugin's package file and then:</p>
@@ -447,10 +429,8 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                   <li><span class="template">/includes/languages/english/YOUR_TEMPLATE/checkout_confirmation.php</span></li>
                   <li><span class="template">/includes/modules/sideboxes/YOUR_TEMPLATE/information.php</span> <span class="smaller">(Added in v2.1.3)</span></li>
                 </ol></li>
-                <li><em><b>If your store is running a Zen Cart version less than 1.5.6 and you want to quickly identify those orders placed by guests</b></em>, there are additional edits required for <code class="no-pad corefile">/YOUR_ADMIN/orders.php</code>.  See <a href="https://github.com/lat9/one_page_checkout/blob/master/pages/admin_orders_configuration.md" target="_blank" rel="noopener">these</a> instructions from the <em>OPC</em>'s additional-documentation pages.</li>
                 <li>Sign into your Zen Cart's admin panel.  Due the the number of files that require uploading, I suggest that you place the site into <em>Maintenance Mode</em> by setting <b><i>Configuration-&gt;Website Maintenance-&gt;Down for Maintenance: ON/OFF</i></b> to <em>true</em>.</li>
-                <li><span class="red"><b>Important!</b></span> <b>If your store runs on a version of Zen Cart <em>prior to</em> v1.5.7</b>, review the instructions provided in the <b>Initial Installation</b> section of <a href="https://github.com/lat9/one_page_checkout/blob/master/pages/install_upgrade_v210_or_later.md" target="_blank" rel="noopener">Installing or Upgrading <em>OPC</em> v2.1.0 (and later)</a> for your store's current Zen Cart version, making any additional changes indicated. Zen Cart v1.5.7 and later include all notifications required by <em>OPC</em> in the base, so no core-file overwrites are needed.</li>
-                <li>Copy the plugin's <em>new</em> files &mdash; with the sub-directories renamed as identified in steps <b>A</b> and <b>B</b> and the file-merges performed as identified in steps <b>C</b> and <b>D</b> &mdash; to your store's directory structure.  You'll use either your webhost's cPanel File Manager or an FTP program (like WinSCP or FileZilla) to perform this copy.<ol>
+                <li>Copy the plugin's <em>new</em> files &mdash; with the sub-directories renamed as identified in steps <b>A</b> and <b>B</b> and the file-merges performed as identified in step <b>C</b> &mdash; to your store's directory structure.  You'll use either your webhost's cPanel File Manager or an FTP program (like WinSCP or FileZilla) to perform this copy.<ol>
                   <li>/includes/auto_loaders/config.checkout_one.php</li>
                   <li>/includes/auto_loaders/paypal_ipn.checkout_one.php</li>
                   <li>/includes/classes/OnePageCheckout.php</li>
@@ -540,12 +520,12 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
                 </ol></li>
                 <li>Click the &quot;Admin Home&quot; link in your Zen Cart's top admin menu.  This action will cause the plugin's installation script to run.</li>
                 <li>Now, check your store's current <code class="no-pad">/includes/modules/pages/checkout_payment</code> directory's contents.  The &quot;base&quot; Zen Cart distribution includes two files in that directory: header_php.php and jscript_main.php.  <b>If your directory contains any other files</b>, be sure to copy them to your store's <code class="no-pad">/includes/modules/pages/checkout_one</code> directory.  Those additional files come from plugins and additional payment methods and will be required for those modifications to operate correctly in the one-page checkout environment.</li>
-                <li>If you placed your store into <em>Maintenance Mode</em>, as suggested at step <b>E</b>, you can now safely take your site out of <em>Maintenance Mode</em>.</li>
+                <li>If you placed your store into <em>Maintenance Mode</em>, as suggested at step <b>D</b>, you can now safely take your site out of <em>Maintenance Mode</em>.</li>
                 <li>Note that the plugin, upon initial installation, defaults its enabling settings to <em>false</em>; see the <em>Overview / Configuration</em> tab of this readme for additional information.</li>
                 <li>One last item to &quot;tidy up&quot; ... registering the two new checkout pages into the <b>ROBOTS_PAGES_TO_SKIP</b> value.  I don't think this is a high-priority item since the pages' names don't appear on any menus and include it only for completeness!  If you want to make sure that robots aren't indexing the <code class="no-pad">checkout_one</code> and <code class="no-pad">checkout_one_confirmation</code> pages, you'll need to edit your template's version of <code class="no-pad">/includes/languages/english/meta_tags.php</code> and add those two page-names to the end of that constant's comma-separated-list.</li>
               </ol>
             </div>
-            
+
             <div id="update">
               <hr />
               <p><b>Notes:</b></p>
@@ -556,34 +536,33 @@ if (MODULE_ORDER_TOTAL_INSTALLED) {
               <p>There are <span class="template">template-override</span> and, depending on your store's current Zen Cart version, <span class="corefile">core-file</span> changes required by this plugin; you should <strong>always</strong> backup your cart's database and files prior to making any changes.  Unzip the plugin's package file and then:</p>
               <ol type="A">
                 <li>Sign into your Zen Cart's admin panel.  Since there might be a number of files that require uploading, I suggest that you place the site into <em>Maintenance Mode</em> by setting <b><i>Configuration-&gt;Website Maintenance-&gt;Down for Maintenance: ON/OFF</i></b> to <em>true</em>.</li>
-                <li><span class="red"><b>Important!</b></span> Review the instructions provided in the <b>Upgrading</b> section of <a href="https://github.com/lat9/one_page_checkout/blob/master/pages/install_upgrade_v210_or_later.md" target="_blank" rel="noopener">Installing or Upgrading <em>OPC</em> v2.1.0 (and later)</a> for your store's current Zen Cart version, making any additional changes indicated.</li>
                 <li>Make note of the version-number of your current <em>One-Page Checkout</em> installation; see your admin's <b><em>Configuration-&gt;One-Page Checkout Settings-&gt;Version/Release Date</em></b>.</li>
                 <li>Review the <em>Change History</em> tab of this readme, noting all of the affected files starting with the <em>OPC</em> release just following your current version.  Copy those updated files from the <em>OPC</em> distribution to your store's file-system.</li>
-                <li>In the file-list created for step <b>D</b>, note any changes to <em>OPC</em>'s <span class="template-changed">base template and language files</span> and make sure to merge those changes with any template-override versions that you might have created!</li>
+                <li>In the file-list created for step <b>C</b>, note any changes to <em>OPC</em>'s <span class="template-changed">base template and language files</span> and make sure to merge those changes with any template-override versions that you might have created!</li>
                 <li>Click the &quot;Admin Home&quot; link in your Zen Cart's top admin menu.  This action will cause the plugin's upgrade script to run.</li>
                 <li>If you placed your store into <em>Maintenance Mode</em>, as suggested at step <b>A</b>, you can now safely take your site out of <em>Maintenance Mode</em>.</li>
               </ol>
             </div>
-             
+
             <div id="remove">
               <p>First, delete the files that were copied to your Zen Cart installation's file-system. Then use your admin's <em>Tools-&gt;Run SQL Patches</em> to run the file <code class="no-pad">/docs/checkout_one/uninstall/checkout_one_uninstall.sql</code>.</p>
             </div>
-            
+
             <div id="trouble">             
               <p><em>One-Page Checkout</em> relies <em><b>heavily</b></em> on your store to load <b>a single version</b> of jQuery for its use during the checkout processing.  If your store uses plugin payment-, shipping- or order-total-modules, you'll need to validate the <em>OPC</em> to make sure that your store is capable of supporting its processing.  That's why the <em>OPC</em>'s initial installation sets the plugin's configuration as <em><b>Disabled</b></em>, to give a store-owner the opportunity to make sure that his/her store's environment is compatible with the one-page checkout process.</p>
               <p><em>OPC</em>'s jQuery handling makes use of your browser's &quot;Console&quot; to identify its progress throughout the checkout process.  On most up-to-date browsers, you can view the browser's console by pressing the F12 key and then clicking on the &quot;Console&quot; tab that is shown (usually at the bottom of the viewed page).</p>
-              
+
               <h3>Some required elements on this page are missing</h3>
               <p>If you receive a javascript alert reading <em>Please contact the store owner; some required elements of this page are missing.</em>, then your template-override version of <code class="no-pad">/includes/templates/YOUR_TEMPLATE/templates/tpl_checkout_one_default.php</code> is missing one or more of the HTML <code class="no-pad">id</code> elements that <em>OPC</em> requires for its proper operation.</p>
               <p>Follow the instructions above to view the browser's console-log; the missing elements are identified there.  You'll need to compare your template-override version of the file with the version present in the <code class="no-pad">/includes/templates/template_default/templates</code> directory, adding those required elements back!</p>
-              
+
               <h3>Check for jQuery Errors</h3>
               <p>It's important that there are no jQuery errors reported within the browser-console as those can lead to a variety of symptoms:</p>
               <ol>
                 <li>The <code class="no-pad">checkout_one</code> page shows the message &quot;Sorry, but our expedited checkout process cannot be used.  Click here to use our alternate checkout process.&quot;, where the link presented is back to the multi-page-checkout process.</li>
                 <li>The above message is not displayed, but the <em>Review</em> or <em>Confirm</em> buttons are inoperative upon click.  Note that this symptom is <em>usually</em> associated with multiple jQuery versions being loaded by your store's template and/or plugins.</li>
               </ol>
-              
+
               <h3>Template-specific &quot;jscript_framework.php&quot; is Required</h3>
               <p>After installation of <em>OPC</em>, you might receive an admin error-message: <span class="red">The One-Page Checkout plugin has been disabled.</span>. That message identifies that the file <span class="red">&quot;DIR_FS_INCLUDES/templates/YOUR_TEMPLATE/jscript/jscript_framework.php&quot;</span> is required for the plugin's proper operation (where DIR_FS_INCLUDES identifies your store's file-system's /includes sub-directory and YOUR_TEMPLATE identifies your store's active template name).</p>
               <p>You'll need to create that file in your store's active template's <code class="no-pad">jscript</code> sub-directory, containing:</p>
@@ -704,37 +683,32 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one_upgrade.php <span class="smaller">(Added in v2.3.0)</span></li>
                 <li>/YOUR_ADMIN/includes/languages/english/extra_definitions/checkout_one_name.php</li>
               </ol>
-              <p>The following Zen Cart <span class="corefile">core files</span> are not required for initial installations on Zen Cart 1.5.6b and later; changes are already &quot;baked into&quot; that and follow-on Zen Cart versions.  Refer to <a href="https://github.com/lat9/one_page_checkout/blob/master/pages/install_upgrade_v210_or_later.md" target="_blank" rel="noopener">these</a> additional installation/upgrade instructions regarding which files should be copied to your Zen Cart installation's file-system:</p>
-              <ol>
-                <li><span class="corefile">/zc155f/includes/classes/order.php</span> <span class="smaller">(Added in v2.0.0, one marked change section based on the zc155f version of the file)</span></li>
-                <li><span class="corefile">/zc155f/includes/modules/order_total/ot_coupon.php</span> <span class="smaller">(Added in v2.0.0, one marked change section based on the zc155f version of the file)</span></li>
-                <li><span class="corefile">/zc156b/includes/classes/message_stack.php</span></li>
-                <li><span class="corefile">/zc156b/includes/classes/observers/auto.downloads_via_aws.php</span> <span class="smaller">(Added in v2.0.4)</span></li>
-                <li><span class="corefile">/zc156b/includes/classes/observers/auto.downloads_via_redirect.php</span> <span class="smaller">(Added in v2.0.4)</span></li>
-                <li><span class="corefile">/zc156b/includes/classes/observers/auto.downloads_via_streaming.php</span> <span class="smaller">(Added in v2.0.4)</span></li>
-                <li><span class="corefile">/zc156b/includes/classes/observers/auto.downloads_via_url.php</span> <span class="smaller">(Added in v2.0.4)</span></li>
-                <li><span class="corefile">/zc156b/includes/functions/functions_taxes.php</span> <span class="smaller">(Added in v2.1.4)</span></li>
-                <li><span class="corefile">/zc156b/includes/modules/downloads.php</span> <span class="smaller">(Added in v2.1.0, was previously distributed in the <code class="no-pad">YOUR_TEMPLATE</code> sub-directory)</span></li>
-                <li><span class="corefile">/zc156b/includes/modules/order_total/ot_coupon.php</span> <span class="smaller">(Added in v2.1.0)</span></li>
-                <li><span class="corefile">/zc156b/includes/modules/pages/download/header_php.php</span> <span class="smaller">(Added in v2.0.0)</span></li>
-                <li><span class="corefile">/zc156b/includes/modules/pages/login/header_php.php</span> <span class="smaller">(Added in v2.0.0, one marked change-section)</span></li>
-                <li><span class="corefile">/zc156b/includes/templates/responsive_classic/templates/tpl_ajax_checkout_confirmation_default.php</span> <span class="smaller">(Added in v2.1.0)</span></li>
-                <li><span class="corefile">/zc156b/includes/templates/template_default/templates/tpl_ajax_checkout_confirmation_default.php</span> <span class="smaller">(Added in v1.0.3, previously distributed in the <code class="no-pad">YOUR_TEMPLATE</code> sub-directory)</span></li>
-                <li><span class="corefile">/zc156b/includes/templates/template_default/templates/tpl_modules_downloads.php</span> <span class="smaller">(Added in v2.0.5)</span></li>
-              </ol>
             </div>
-            
+
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank" rel="noopener">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color and removals are indicated like <span class="removed">this</span>.</p>
               <ul>
                 <li>v2.4.0-beta1, 2022-04-19 (lat9):<ul>
                     <li>BUGFIX: Provide overlay to 'hide' review/confirm buttons when address is changed via dropdown.</li>
                     <li>BUGFIX: Correct handling when &quot;Enable Shipping=Billing&quot; is set to <em>false</em>.</li>
+                    <li>CHANGE: Drop support for Zen Cart versions prior to 1.5.7a.  Includes some reformatting.</li>
                     <li>The following files were changed:<ol>
+                        <li>/includes/auto_loaders/config.checkout_one.php</li>
                         <li>/includes/classes/OnePageCheckout.php</li>
+                        <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
+                        <li>/includes/classes/observers/class.checkout_one_observer.php</li>
+                        <li>/includes/modules/pages/checkout_one/header_php.php</li>
                         <li>/includes/modules/pages/checkout_one/jquery_checkout_one.js</li>
                         <li>/includes/modules/pages/checkout_one/jquery_checkout_one_min.js</li>
+                        <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
+                        <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
+                        <li>/includes/modules/pages/checkout_one_confirmation/jscript_main.php</li>
+                        <li>/YOUR_ADMIN/includes/auto_loaders/config.checkout_one.php</li>
+                        <li>/YOUR_ADMIN/includes/classes/observers/OnePageCheckoutAdminObserver.php</li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
+                        <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one_upgrade.php</li>
+                        <li><span class="removed">/zc155f/*.*</span></li>
+                        <li><span class="removed">/zc156b/*.*</span></li>
                     </ol></li>
                 </ul></li>
                 <li>v2.3.12, 2022-04-03(lat9):<ul>

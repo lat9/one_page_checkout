@@ -1,10 +1,10 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
-// Copyright (C) 2013-2020, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
 //
 ?>
-<script type="text/javascript"><!--
+<script>
 <?php
 // -----
 // Introduced in OPC v2.3.0 to identify the template-specific selector for the
@@ -60,7 +60,7 @@ var additionalShippingInputs = {
 //
 $input_array = 'var shippingInputs = {';
 if (isset($quotes) && is_array($quotes)) {
-    $additional_shipping_inputs = array();
+    $additional_shipping_inputs = [];
     foreach ($quotes as $current_quote) {
         if (isset($current_quote['required_input_names']) && is_array($current_quote['required_input_names'])) {
             foreach ($current_quote['required_input_names'] as $current_input_name => $selection_required) {
@@ -78,9 +78,9 @@ if (isset($quotes) && is_array($quotes)) {
 <?php
 echo $input_array . '};'.PHP_EOL;
 ?>
-//--></script>
+</script>
 <?php
-if (defined('CHECKOUT_ONE_MINIFIED_SCRIPT') && CHECKOUT_ONE_MINIFIED_SCRIPT == 'true') {
+if (defined('CHECKOUT_ONE_MINIFIED_SCRIPT') && CHECKOUT_ONE_MINIFIED_SCRIPT === 'true') {
     $main_script_filename = 'jquery.checkout_one.min.js';
     $addr_script_filename = 'jquery.checkout_one_addr.min.js';
 } else {
@@ -91,7 +91,7 @@ $main_script_filepath = DIR_WS_MODULES . "pages/checkout_one/$main_script_filena
 $main_script_mtime = filemtime($main_script_filepath);
 $main_script_filepath .= "?$main_script_mtime";
 ?>
-<script type="text/javascript" src="<?php echo $main_script_filepath; ?>" defer></script>
+<script src="<?php echo $main_script_filepath; ?>" defer></script>
 <?php
 // -----
 // Check to see if dropdown states are to be displayed, including that processing only
@@ -102,6 +102,6 @@ if ($show_state_dropdowns) {
     $addr_script_mtime = filemtime($addr_script_filepath);
     $addr_script_filepath .= "?$addr_script_mtime";
 ?>
-<script type="text/javascript" src="<?php echo $addr_script_filepath; ?>" defer></script>
+<script src="<?php echo $addr_script_filepath; ?>" defer></script>
 <?php
 }
