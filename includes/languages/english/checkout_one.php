@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
 // Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated for OPC v2.3.12.
+// Last updated for OPC v2.4.0.
 //
 define('NAVBAR_TITLE_1', 'Checkout');
 define('NAVBAR_TITLE_2', 'Select Shipping/Payment and Confirm Your Order');
@@ -55,7 +55,19 @@ define('ERROR_IN_SHIPPING', '[Shipping]: ');
 //
 define('JS_ERROR_SESSION_TIMED_OUT', 'Sorry, your session has timed out.\n\nThe items in your cart have been saved and will be restored the next time you log in.');
 define('JS_ERROR_OPC_NOT_ENABLED', 'Our expedited checkout process is temporarily unavailable.  You\\\'ll be redirected to our alternate checkout process.');
-define('JS_ERROR_AJAX_TIMEOUT', 'It\\\'s taking a little longer than normal to update your order\\\'s shipping cost.  Please close this message and try again.\n\nIf you continue to receive this message, please contact us.');
+
+define('JS_ERROR_AJAX_TIMEOUT', 'It\\\'s taking a little longer than normal to update your order\\\'s details.');
+define('JS_ERROR_AJAX_SHIPPING_TIMEOUT', 'It\\\'s taking a little longer than normal to update your order\\\'s shipping cost.');
+define('JS_ERROR_AJAX_PAYMENT_TIMEOUT', 'It\\\'s taking a little longer than normal to update your order\\\'s payment method.');
+define('JS_ERROR_AJAX_SET_ADDRESS_TIMEOUT', 'It\\\'s taking a little longer than normal to set your order\\\'s address.');
+define('JS_ERROR_AJAX_RESTORE_ADDRESS_TIMEOUT', 'It\\\'s taking a little longer than normal to restore your order\\\'s address values.');
+define('JS_ERROR_AJAX_VALIDATE_ADDRESS_TIMEOUT', 'It\\\'s taking a little longer than normal to validate your order\\\'s address details.');
+
+define('JS_ERROR_AJAX_RESTORE_CUSTOMER_TIMEOUT', 'It\\\'s taking a little longer than normal to restore your customer details.');
+define('JS_ERROR_AJAX_VALIDATE_CUSTOMER_TIMEOUT', 'It\\\'s taking a little longer than normal to validate your customer details.');
+
+define('JS_ERROR_CONTACT_US', '  Please close this message and try again.\n\nIf you continue to receive this message, please contact us.');
+
 define('ERROR_NO_SHIPPING_SELECTED', 'You must choose a shipping method for your order before the order can be confirmed.');
 define('TITLE_BILLING_ADDRESS', 'Billing Address:');
 define('TITLE_BILLING_SHIPPING_ADDRESS', 'Billing/Shipping Address:');
@@ -128,5 +140,5 @@ define ('CHECKOUT_ONE_LOADING_ALT', 'Please wait ...');
     // -----
     // These constants define the instructions that are inserted below the shopping-cart/totals and above the "confirm order" button.
     //
-    define ('TEXT_CHECKOUT_ONE_INSTRUCTION_LABEL', ''); //-Displays as the "legend" value for the fieldset that surrounds the message below
-    define ('TEXT_CHECKOUT_ONE_INSTRUCTIONS', '');      //-Displayed within a set of <p>...</p> tags if not empty
+    define ('TEXT_CHECKOUT_ONE_INSTRUCTION_LABEL', 'Bottom instructions'); //-Displays as the "legend" value for the fieldset that surrounds the message below
+    define ('TEXT_CHECKOUT_ONE_INSTRUCTIONS', 'Bottom instructions');      //-Displayed within a set of <p>...</p> tags if not empty

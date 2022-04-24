@@ -409,7 +409,7 @@ jQuery(document).ready(function(){
         // and redirect to the login page.
         //
         if (status_code == 'timeout') {
-            alert( sessionTimeoutErrorMessage );
+            alert(sessionTimeoutErrorMessage);
             jQuery(location).attr( 'href', timeoutUrl );
         }
         // -----
@@ -417,7 +417,7 @@ jQuery(document).ready(function(){
         // and redirect to the checkout_shipping page.
         //
         if (status_code == 'unavailable') {
-            alert( ajaxNotAvailableMessage );
+            alert(ajaxNotAvailableMessage);
             jQuery(location).attr( 'href', checkoutShippingUrl );
         }
     }
@@ -427,12 +427,12 @@ jQuery(document).ready(function(){
         if (typeof submit_type === "undefined" || submit_type === null) { 
             submit_type = ''; 
         }
-        var shippingSelected = jQuery( 'input[name=shipping]' );
+        var shippingSelected = jQuery('input[name=shipping]');
         if (shippingSelected.is( ':radio' )) {
-            shippingSelected = jQuery( 'input[name=shipping]:checked' );
+            shippingSelected = jQuery('input[name=shipping]:checked');
         }
         if (shippingSelected.length == 0 && type != 'shipping-billing') {
-            alert( noShippingSelectedError );
+            alert(noShippingSelectedError);
             focusOnShipping();
         } else {
             shippingSelected = shippingSelected.val();
@@ -462,7 +462,7 @@ jQuery(document).ready(function(){
                 shippingData = jQuery.extend(shippingData, shippingInputs);
             }
             
-            zcLog2Console( 'Updating shipping method to '+shippingSelected+', processing type: '+type );
+            zcLog2Console('Updating shipping method to '+shippingSelected+', processing type: '+type);
             zcJS.ajax({
                 url: "ajax.php?act=ajaxOnePageCheckout&method=updateShipping",
                 data: shippingData,
@@ -470,7 +470,7 @@ jQuery(document).ready(function(){
                 error: function (jqXHR, textStatus, errorThrown) {
                     zcLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
                     if (textStatus == 'timeout') {
-                        alert( ajaxTimeoutErrorMessage );
+                        alert(ajaxTimeoutShippingErrorMessage);
                     }
                     shippingError = true;
                 },
@@ -638,7 +638,7 @@ jQuery(document).ready(function(){
             error: function (jqXHR, textStatus, errorThrown) {
                 zcLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
                 if (textStatus == 'timeout') {
-                    alert( ajaxTimeoutErrorMessage );
+                    alert(ajaxTimeoutPaymentErrorMessage);
                 }
             },
         }).done(function( response ) {
@@ -700,7 +700,7 @@ jQuery(document).ready(function(){
             error: function (jqXHR, textStatus, errorThrown) {
                 zcLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
                 if (textStatus == 'timeout') {
-                    alert(ajaxTimeoutErrorMessage);
+                    alert(ajaxTimeoutSetAddressErrorMessage);
                 }
             },
         }).done(function( response ) {
@@ -796,7 +796,7 @@ jQuery(document).ready(function(){
             error: function (jqXHR, textStatus, errorThrown) {
                 zcLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
                 if (textStatus == 'timeout') {
-                    alert(ajaxTimeoutErrorMessage);
+                    alert(ajaxTimeoutRestoreAddressErrorMessage);
                 }
             },
         }).done(function( response ) {
@@ -860,7 +860,7 @@ jQuery(document).ready(function(){
             error: function (jqXHR, textStatus, errorThrown) {
                 zcLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
                 if (textStatus == 'timeout') {
-                    alert(ajaxTimeoutErrorMessage);
+                    alert(ajaxTimeoutValidateAddressErrorMessage);
                 }
             },
         }).done(function( response ) {
@@ -959,7 +959,7 @@ jQuery(document).ready(function(){
             error: function (jqXHR, textStatus, errorThrown) {
                 zcLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
                 if (textStatus == 'timeout') {
-                    alert(ajaxTimeoutErrorMessage);
+                    alert(ajaxTimeoutRestoreCustomerErrorMessage);
                 }
             },
         }).done(function( response ) {
@@ -983,7 +983,7 @@ jQuery(document).ready(function(){
             error: function (jqXHR, textStatus, errorThrown) {
                 zcLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
                 if (textStatus == 'timeout') {
-                    alert(ajaxTimeoutErrorMessage);
+                    alert(ajaxTimeoutValidateCustomerErrorMessage);
                 }
             },
         }).done(function( response ) {
