@@ -32,6 +32,11 @@ $autoLoadConfig[97][] = [
     'className'  => 'checkout_one_observer',
     'objectName' => 'checkout_one'
 ];
+$autoLoadConfig[131][] = [
+    'autoType' => 'objectMethod',
+    'objectName' => 'checkout_one',
+    'methodName' => 'messageCheck'
+];
 
 // -----
 // Remaining items observe page-specific notifications and are loaded 'last'.

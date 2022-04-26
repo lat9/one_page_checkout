@@ -10,11 +10,14 @@ if (!defined('IS_ADMIN_FLAG')) {
 class checkout_one_observer extends base
 {
     private $enabled = false,
-            $debug = false;
+            $debug = false,
+            $needGiftCertMessage = false,
+            $needUnsupportedPageMessage = false,
+            $needGuestCheckoutUnavailableMessage = false;
             
     public function __construct() 
     {
-        global $current_page_base, $messageStack;
+        global $current_page_base;
 
         // -----
         // Determine if the current session browser is an Internet Explorer version less than 9 (that don't properly support
@@ -114,11 +117,7 @@ class checkout_one_observer extends base
                             FILENAME_CHECKOUT_ONE
                         ];
                         if (!in_array($current_page_base, $pages_to_reset_for_gc)) {
-                            $gift_certificate_message = WARNING_GUEST_NO_GCS;
-                            if ($_SESSION['opc']->isGuestCheckout()) {
-                                $gift_certificate_message .= ' ' . WARNING_GUEST_GCS_RESET . '<br><br>' . WARNING_GUEST_REMOVE_GC;
-                            }
-                            $messageStack->add('header', $gift_certificate_message, 'caution');
+                            $this->needGiftCertMessage = true;
                         } else {
                             $_SESSION['opc']->resetGuestSessionValues();
                             $_SESSION['opc_error'] = OnePageCheckout::OPC_ERROR_NO_GC;
@@ -163,12 +162,11 @@ class checkout_one_observer extends base
                 if ($_SESSION['opc']->guestCheckoutEnabled()) {
                     $disallowed_pages = explode(',', str_replace(' ', '', CHECKOUT_ONE_GUEST_PAGES_DISALLOWED));
                     if (in_array($this->current_page_base, $disallowed_pages)) {
-                        $messageStack->add_session('header', ERROR_GUEST_CHECKOUT_PAGE_DISALLOWED, 'error');
-                        zen_redirect(zen_href_link(FILENAME_DEFAULT));
+                        $this->needUnsupportedPageMessage = true;
                     }
                 } else {
-                    $messageStack->add_session('header', WARNING_GUEST_CHECKOUT_NOT_AVAILABLE, 'warning');
                     $_SESSION['opc']->resetGuestSessionValues();
+                    $this->needGuestCheckoutUnavailableMessage = true;
                 }
             }
 
@@ -237,8 +235,33 @@ class checkout_one_observer extends base
             unset($_SESSION['email_is_os'], $_SESSION['email_address']);
         }
     }
+    
+    // -----
+    // This method performs some additional initialization checks which require the $messageStack to
+    // be instantiated.  It's run via OPC's auto_loader's 'call' via an 'objectMethod' record.
+    //
+    public function messageCheck()
+    {
+        global $messageStack;
 
-    public function update(&$class, $eventID, $p1, &$p2, &$p3, &$p4, &$p5, &$p6, &$p7)
+        if ($this->needGiftCertMessage === true) {
+            $gift_certificate_message = WARNING_GUEST_NO_GCS;
+            if ($_SESSION['opc']->isGuestCheckout()) {
+                $gift_certificate_message .= ' ' . WARNING_GUEST_GCS_RESET . '<br /><br />' . WARNING_GUEST_REMOVE_GC;
+            }
+            $messageStack->add('header', $gift_certificate_message, 'caution');
+        }
+        if ($this->needUnsupportedPageMessage === true) {
+            $messageStack->add_session('header', ERROR_GUEST_CHECKOUT_PAGE_DISALLOWED, 'error');
+            zen_redirect(zen_href_link(FILENAME_DEFAULT));
+        }
+        if ($this->needGuestCheckoutUnavailableMessage === true) {
+            $messageStack->add_session('header', WARNING_GUEST_CHECKOUT_NOT_AVAILABLE, 'warning');
+            zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
+        }
+    }
+  
+    public function update(&$class, $eventID, $p1, &$p2, &$p3, &$p4, &$p5, &$p6, &$p7) 
     {
         switch ($eventID) {
             // -----
