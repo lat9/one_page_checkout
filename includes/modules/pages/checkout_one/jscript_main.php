@@ -17,6 +17,18 @@ if (!defined('CHECKOUT_ONE_OTTOTAL_SELECTOR')) {
 }
 
 // -----
+// Introduced in OPC v2.4.0 to identify payment methods that handle the form's submittal directly.
+//
+if (!defined('CHECKOUT_ONE_PAYMENT_METHODS_THAT_SUBMIT')) {
+    define('CHECKOUT_ONE_PAYMENT_METHODS_THAT_SUBMIT', 'square_webPay');
+}
+$payments_that_submit = '';
+if (CHECKOUT_ONE_PAYMENT_METHODS_THAT_SUBMIT !== '') {
+    $payments_that_submit = explode(',', str_replace(' ', '', CHECKOUT_ONE_PAYMENT_METHODS_THAT_SUBMIT));
+    $payments_that_submit = '"' . implode('", "', $payments_that_submit) . '"';
+}
+
+// -----
 // The "confirmation_required" array contains a list of payment modules for which, er, confirmation
 // is required.  This is used to determine whether the "confirm-order" or "review-order" button is displayed.
 // The $required_list value is created by the page's header_php.php processing.
@@ -26,6 +38,7 @@ if (!defined('CHECKOUT_ONE_OTTOTAL_SELECTOR')) {
 $show_state_dropdowns = true;
 ?>
 var confirmation_required = [<?php echo $required_list; ?>];
+var paymentsThatSubmit = [<?php echo $payments_that_submit; ?>];
 
 var virtual_order = <?php echo ($is_virtual_order) ? 'true' : 'false'; ?>;
 var timeoutUrl = '<?php echo zen_href_link(FILENAME_LOGIN, '', 'SSL'); ?>';

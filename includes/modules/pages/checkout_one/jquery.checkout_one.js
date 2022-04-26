@@ -204,6 +204,10 @@ jQuery(document).ready(function(){
     // the "confirm-order" button is displayed and javascript "injected" by the Zen Cart
     // payment class will alert if no payment method is currently chosen.
     //
+    // v2.4.0: Adding a 'global' flag that indicates whether the currently-selected
+    // payment method handles the overall submission of the order-placement form.
+    //
+    var paymentMethodHandlesSubmit = false;
     function setFormSubmitButton()
     {
         var payment_module = null;
@@ -222,9 +226,14 @@ jQuery(document).ready(function(){
         }
         zcLog2Console( 'setFormSubmitButton, payment-module: '+payment_module );
         jQuery( '#opc-order-review, #opc-order-confirm' ).hide();
-        if (payment_module == null || confirmation_required.indexOf( payment_module ) == -1) {
+        if (payment_module == null || confirmation_required.indexOf(payment_module) == -1) {
             jQuery( '#opc-order-confirm' ).show();
-            zcLog2Console( 'Showing "confirm"' );
+            if (payment_module != null && paymentsThatSubmit.indexOf(payment_module) != -1) {
+                paymentMethodHandlesSubmit = true;
+            } else {
+                paymentMethodHandlesSubmit = false;
+            }
+            zcLog2Console('Showing "confirm", paymentMethodHandlesSubmit ('+paymentMethodHandlesSubmit+')');
         } else {
             jQuery( '#opc-order-review' ).show();
             zcLog2Console( 'Showing "review"' );
@@ -479,9 +488,9 @@ jQuery(document).ready(function(){
                 // Handle any redirects required, based on the AJAX response's status.
                 //
                 checkForRedirect(response.status);
-                
+
                 jQuery('#orderTotalDivs').html(response.orderTotalHtml);
-                
+
                 // -----
                 // Don't change the payment-method block if a form-submittal is requested.  Otherwise, the
                 // customer's just-entered credit-card credentials will be "wiped out".
@@ -499,7 +508,7 @@ jQuery(document).ready(function(){
                         });
                     }
                 }
-                
+
                 var shippingError = false;
                 jQuery('#otshipping, #otshipping+br').show();
                 if (response.status == 'ok') {
@@ -511,7 +520,7 @@ jQuery(document).ready(function(){
                         jQuery( '#checkoutShippingContentChoose' ).html( response.shippingMessage );
                         jQuery( '#checkoutShippingChoices' ).on('click', 'input[name=shipping]', function( event ) {
                             changeShippingSubmitForm( 'shipping-only' );
-                        });                        
+                        });
                     }
                 } else {
                     shippingError = true;
@@ -551,7 +560,7 @@ jQuery(document).ready(function(){
                             //
                             if (flagOnSubmit) {
                                 var formPassed = check_form();
-                                zcLog2Console ('Form checked, passed ('+formPassed+')');
+                                zcLog2Console('Form checked, passed ('+formPassed+')');
                                 
                                 if (formPassed) {
                                     // -----
@@ -565,7 +574,16 @@ jQuery(document).ready(function(){
                                         jQuery('#opc-order-confirm').attr('disabled', true);
                                     }
                                     jQuery('#confirm-the-order').attr('disabled', false);
-                                    jQuery('form[name="checkout_payment"]').submit();
+                                    
+                                    // -----
+                                    // If the currently-selected payment method handles the submission of the
+                                    // payment-form, defer the submission to its handling.
+                                    //
+                                    if (paymentMethodHandlesSubmit == true) {
+                                        zcLog2Console('Deferring form submittal to the currently-selected payment method.');
+                                    } else {
+                                        jQuery('form[name="checkout_payment"]').submit();
+                                    }
                                 }
                             }
                         }
