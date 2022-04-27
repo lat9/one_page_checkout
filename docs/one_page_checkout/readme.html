@@ -687,13 +687,15 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank" rel="noopener">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color and removals are indicated like <span class="removed">this</span>.</p>
               <ul>
-                <li>v2.4.0-beta2, 2022-04-26 (lat9, marco-pm):<ul>
+                <li>v2.4.0-beta3, 2022-04-27 (lat9, marco-pm):<ul>
                     <li>BUGFIX: Provide overlay to 'hide' review/confirm buttons when address is changed via dropdown.</li>
                     <li>BUGFIX: Correct handling when &quot;Enable Shipping=Billing&quot; is set to <em>false</em>.</li>
                     <li>BUGFIX: Improve admin orders' listing performance for sites with large number of orders.</li>
                     <li>CHANGE: Drop support for Zen Cart versions prior to 1.5.7a.  Includes some reformatting.</li>
                     <li>BUGFIX: Add breadcrumb to the <em>order_status</em> page.</li>
                     <li>BUGFIX: Correct PHP error when OPC initialization messages are required.</li>
+                    <li>CHANGE: Include the &quot;zone_code&quot; in the data for the &quot;NOTIFY_OPC_INIT_ADDRESS_FROM_DB&quot; notification.</li>
+                    <li>BUGFIX: Correct parameter count for &quot;zen_prepare_country_zones_pull_down&quot;.</li>
                     <li>The following files were changed:<ol>
                         <li>/includes/auto_loaders/config.checkout_one.php</li>
                         <li>/includes/classes/OnePageCheckout.php</li>
@@ -707,6 +709,7 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                         <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
                         <li>/includes/modules/pages/checkout_one_confirmation/jscript_main.php</li>
                         <li>/includes/modules/pages/order_status/header_php.php</li>
+                        <li><span class="template-changed">/includes/templates/template_default/tpl_modules_opc_address_block.php</span></li>
                         <li>/YOUR_ADMIN/includes/auto_loaders/config.checkout_one.php</li>
                         <li>/YOUR_ADMIN/includes/classes/observers/OnePageCheckoutAdminObserver.php</li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>

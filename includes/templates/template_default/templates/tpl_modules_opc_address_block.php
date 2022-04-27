@@ -1,10 +1,12 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2017-2020, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2017-2022, Vinos de Frutas Tropicales.  All rights reserved.
 //
 // This module is included by tpl_modules_opc_billing_address.php and tpl_modules_opc_shipping_address.php and
 // provides a common-formatting for those two address-blocks.
+//
+// Last updated: OPC v2.4.0.
 //
 ?>
 <!--bof address block -->
@@ -88,14 +90,13 @@ if (!$opc_disable_address_change) {
     }
 }
 
-
-if (ACCOUNT_GENDER == 'true') {
+if (ACCOUNT_GENDER === 'true') {
     $field_name = "gender[$which]";
     $male_id = "gender-male-$which";
     $female_id = "gender-female-$which";
-    echo '<span class="custom-control custom-radio custom-control-inline">' . zen_draw_radio_field ($field_name, 'm', ($address['gender'] == 'm'), "id=\"$male_id\"") . 
+    echo '<span class="custom-control custom-radio custom-control-inline">' . zen_draw_radio_field ($field_name, 'm', ($address['gender'] === 'm'), "id=\"$male_id\"") . 
     "<label class=\"custom-control-label radioButtonLabel\" for=\"$male_id\">" . MALE . '</label></span><span class="custom-control custom-radio custom-control-inline">' . 
-    zen_draw_radio_field ($field_name, 'f', ($address['gender'] == 'f'), "id=\"$female_id\"") . 
+    zen_draw_radio_field ($field_name, 'f', ($address['gender'] === 'f'), "id=\"$female_id\"") . 
     "<label class=\"custom-control-label radioButtonLabel\" for=\"$female_id\">" . FEMALE . '</label></span>' . 
     (zen_not_null(ENTRY_GENDER_TEXT) ? '<span class="alert">' . ENTRY_GENDER_TEXT . '</span>': ''); 
 
@@ -103,29 +104,29 @@ if (ACCOUNT_GENDER == 'true') {
 }
 
 echo $_SESSION['opc']->formatAddressElement($which, 'firstname', $address['firstname'], ENTRY_FIRST_NAME, TABLE_CUSTOMERS, 'customers_firstname', ENTRY_FIRST_NAME_MIN_LENGTH, ENTRY_FIRST_NAME_TEXT) . $clear_both;
-    
+
 echo $_SESSION['opc']->formatAddressElement($which, 'lastname', $address['lastname'], ENTRY_LAST_NAME, TABLE_CUSTOMERS, 'customers_lastname', ENTRY_LAST_NAME_MIN_LENGTH, ENTRY_LAST_NAME_TEXT) . $clear_both;
 
-if (ACCOUNT_COMPANY == 'true') {
+if (ACCOUNT_COMPANY === 'true') {
     echo $_SESSION['opc']->formatAddressElement($which, 'company', $address['company'], ENTRY_COMPANY, TABLE_ADDRESS_BOOK, 'entry_company', ENTRY_COMPANY_MIN_LENGTH, ENTRY_COMPANY_TEXT) . $clear_both;
 }
 
 echo $_SESSION['opc']->formatAddressElement($which, 'street_address', $address['street_address'], ENTRY_STREET_ADDRESS, TABLE_ADDRESS_BOOK, 'entry_street_address', ENTRY_STREET_ADDRESS_MIN_LENGTH, ENTRY_STREET_ADDRESS_TEXT) . $clear_both;
 
-if (ACCOUNT_SUBURB == 'true') {
+if (ACCOUNT_SUBURB === 'true') {
     echo $_SESSION['opc']->formatAddressElement($which, 'suburb', $address['suburb'], ENTRY_SUBURB, TABLE_ADDRESS_BOOK, 'entry_suburb', 0, ENTRY_SUBURB_TEXT) . $clear_both;
 }
 
 echo $_SESSION['opc']->formatAddressElement($which, 'city', $address['city'], ENTRY_CITY, TABLE_ADDRESS_BOOK, 'entry_city', ENTRY_CITY_MIN_LENGTH, ENTRY_CITY_TEXT) . $clear_both;
 
-if (ACCOUNT_STATE == 'true') {
+if (ACCOUNT_STATE === 'true') {
     $state_zone_id = "stateZone-$which";
     $zone_field_name = "zone_id[$which]";
 ?>
       <label class="inputLabel"><?php echo ENTRY_STATE; ?></label>
 <?php    
     if ($address['show_pulldown_states']) {
-        echo zen_draw_pull_down_menu($zone_field_name, zen_prepare_country_zones_pull_down($address['country'], $address['zone_id']), $address['zone_id'], "id=\"$state_zone_id\"");
+        echo zen_draw_pull_down_menu($zone_field_name, zen_prepare_country_zones_pull_down($address['country']), $address['zone_id'], "id=\"$state_zone_id\"");
         if (zen_not_null(ENTRY_STATE_TEXT)) {
             echo '<span class="alert">' . ENTRY_STATE_TEXT . '</span>';
         }
@@ -133,7 +134,7 @@ if (ACCOUNT_STATE == 'true') {
     } else {
         echo zen_draw_hidden_field($zone_field_name, $address['zone_name']);
     }
-    
+
     echo $_SESSION['opc']->formatAddressElement($which, 'state', $address['state'], '', TABLE_ADDRESS_BOOK, 'entry_state', ENTRY_STATE_MIN_LENGTH, ENTRY_STATE_TEXT) . $clear_both . '<br>';
 }
 
@@ -145,7 +146,7 @@ $field_id = "country-$which";
       <label class="inputLabel" for="<?php echo $field_id; ?>"><?php echo ENTRY_COUNTRY; ?></label>
       <?php echo zen_get_country_list($field_name, $address['country'], "id=\"$field_id\"") . 
       (zen_not_null(ENTRY_COUNTRY_TEXT) ? '<span class="alert">' . ENTRY_COUNTRY_TEXT . '</span>' : '') . $clear_both; ?>
-      
+
       <div id="messages-<?php echo $which; ?>"></div>
 </div>
 <!--eof address block -->
