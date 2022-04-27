@@ -6,6 +6,8 @@
 // This class, instantiated in the current customer session, keeps track of a customer's login and checkout
 // progression with the aid of the OPC's observer- and AJAX-classes.
 //
+// Last updated: OPC v2.4.0.
+//
 class OnePageCheckout extends base
 {
     // -----
@@ -1030,7 +1032,7 @@ class OnePageCheckout extends base
         global $db;
 
         $address_info_query = 
-            "SELECT ab.*, z.zone_name
+            "SELECT ab.*, z.zone_name, z.zone_code
                FROM " . TABLE_ADDRESS_BOOK . "  ab
                     LEFT JOIN " . TABLE_ZONES . " z
                         ON z.zone_id = ab.entry_zone_id
@@ -1066,7 +1068,7 @@ class OnePageCheckout extends base
 
         $this->notify('NOTIFY_OPC_INIT_ADDRESS_FROM_DB', $address_book_id, $address_info->fields);
 
-        $this->debugMessage("getAddressValuesFromDb($address_book_id), returning: " . var_export($address_info->fields, true)); 
+        $this->debugMessage("getAddressValuesFromDb($address_book_id), returning: " . json_encode($address_info->fields)); 
 
         return $address_info->fields;
     }
