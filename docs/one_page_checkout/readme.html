@@ -521,6 +521,7 @@ a[target=_blank] { text-decoration: underline; }
                   <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                   <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one_install.php</li>
                   <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one_upgrade.php</li>
+                  <li>/YOUR_ADMIN/includes/functions/extra_functions/zen_cfg_read_only.php</li>
                   <li>/YOUR_ADMIN/includes/languages/english/extra_definitions/checkout_one_name.php</li>
                 </ol></li>
                 <li>Click the &quot;Admin Home&quot; link in your Zen Cart's top admin menu.  This action will cause the plugin's installation script to run.</li>
@@ -685,6 +686,7 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one_install.php <span class="smaller">(Added in v2.3.0)</span></li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one_upgrade.php <span class="smaller">(Added in v2.3.0)</span></li>
+                <li>/YOUR_ADMIN/includes/functions/extra_functions/zen_cfg_read_only.php <span class="smaller">(Added in v2.4.0)</span></li>
                 <li>/YOUR_ADMIN/includes/languages/english/extra_definitions/checkout_one_name.php</li>
               </ol>
             </div>
@@ -702,6 +704,7 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                     <li>CHANGE: Include the &quot;zone_code&quot; in the data for the &quot;NOTIFY_OPC_INIT_ADDRESS_FROM_DB&quot; notification.</li>
                     <li>BUGFIX: Correct parameter count for &quot;zen_prepare_country_zones_pull_down&quot;.</li>
                     <li>CHANGE: Enable integration with &quot;square_webPay&quot; payment method.</li>
+                    <li>BUGFIX: Use <code class="no-pad">zen_cfg_read_only</code> as the plugin's version's configuration &quot;set_function&quot;.</li>
                     <li>The following files were changed:<ol>
                         <li>/includes/auto_loaders/config.checkout_one.php</li>
                         <li>/includes/classes/OnePageCheckout.php</li>
@@ -720,6 +723,7 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                         <li>/YOUR_ADMIN/includes/classes/observers/OnePageCheckoutAdminObserver.php</li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one_upgrade.php</li>
+                        <li><span class="added">/YOUR_ADMIN/includes/functions/extra_functions/zen_cfg_read_only.php</span></li>
                         <li><span class="removed">/zc155f/*.*</span></li>
                         <li><span class="removed">/zc156b/*.*</span></li>
                     </ol></li>

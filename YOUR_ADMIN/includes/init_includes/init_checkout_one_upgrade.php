@@ -333,6 +333,7 @@ switch (true) {
     // v2.4.0:
     //
     // - Adding a configuration setting to identify payment methods that auto-submit the form, e.g. square_webPay
+    // - Modify module-version setting to use 'zen_cfg_read_only` as its set_function so that the configuration value doesn't get wiped.
     //
     case version_compare(CHECKOUT_ONE_MODULE_VERSION, '2.4.0', '<'):    //-Fall-through processing from above
         $db->Execute(
@@ -340,6 +341,13 @@ switch (true) {
                 (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function) 
                 VALUES 
                 ('Payment Methods Handling Form Submittal', 'CHECKOUT_ONE_PAYMENT_METHODS_THAT_SUBMIT', 'square_webPay', 'Use a comma-separated list (intervening blanks are OK) to identify any payment methods that handle the checkout form\'s submittal themselves, e.g. <code>square_WebPay</code>, the default.<br>', $cgi, now(), 21, NULL, NULL)"
+        );
+        $db->Execute(
+            "UPDATE " . TABLE_CONFIGURATION . "
+                SET set_function = 'zen_cfg_read_only(',
+                    last_modified = now()
+              WHERE configuration_key = 'CHECKOUT_ONE_MODULE_VERSION'
+              LIMIT 1"
         );
 
     default:                                                            //-Fall-through processing from above
