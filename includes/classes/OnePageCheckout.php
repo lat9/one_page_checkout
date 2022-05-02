@@ -59,6 +59,7 @@ class OnePageCheckout extends base
               $tempAddressValues,
               $guestCustomerInfo,
               $guestCustomerId,
+              $reset_info,
               $tempBilltoAddressBookId,
               $tempSendtoAddressBookId,
               $dbStringType,
@@ -79,6 +80,7 @@ class OnePageCheckout extends base
         $this->guestIsActive = false;
         $this->isGuestCheckoutEnabled = false;
         $this->registeredAccounts = false;
+        $this->reset_info = [];
     }
 
     /* -----
@@ -474,7 +476,13 @@ class OnePageCheckout extends base
             $this->paypalTotalValueChanged,
             $this->paypalNoShipping
         ); 
-        
+
+        // -----
+        // Gather some information about 'who' requested the reset, included when it's
+        // detected that the tempAddressValues are missing.
+        //
+        $this->reset_info[] = debug_backtrace();
+
         $this->initializeGuestCheckout();
     }
 
@@ -1407,7 +1415,14 @@ class OnePageCheckout extends base
             exit();
         }
         if (!isset($this->tempAddressValues)) {
-            trigger_error("Invalid request, tempAddressValues not set.", E_USER_ERROR);
+            // -----
+            // Include the information identifying whether the values were reset (and via
+            // what processing path) as an aid in identifying the source of this occasional
+            // error.
+            //
+            $extra_info = (isset($_SESSION['payment'])) ? $_SESSION['payment'] : 'not set';
+            $extra_info .= ', ' . (isset($_SESSION['shipping'])) ? json_encode($_SESSION['shipping']) : 'not set';
+            trigger_error('Invalid request, tempAddressValues not set: ' . $extra_info . PHP_EOL . json_encode($this), E_USER_ERROR);
             exit();
         }
     }
