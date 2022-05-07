@@ -3,6 +3,8 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
 //
+// Last updated: OPC v2.4.1
+//
 
 // This should be first line of the script:
 $zco_notifier->notify('NOTIFY_HEADER_START_CHECKOUT_ONE_CONFIRMATION');
@@ -34,7 +36,7 @@ if ($_SESSION['cart']->count_contents() <= 0) {
 
 // if the customer is not logged on, redirect them to the login page
 if (!zen_is_logged_in()) {
-    $_SESSION['navigation']->set_snapshot(array('mode' => 'SSL', 'page' => FILENAME_CHECKOUT_ONE));
+    $_SESSION['navigation']->set_snapshot(['mode' => 'SSL', 'page' => FILENAME_CHECKOUT_ONE]);
     zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
 } else {
     // validate customer
@@ -243,6 +245,7 @@ if ($order_confirmed) {
     $payment_modules = new payment($_SESSION['payment']);
     $payment_modules->update_status();
     if ((empty($_SESSION['payment']) || !is_object(${$_SESSION['payment']})) && $credit_covers === false) {
+        $error = true;
         $messageStack->add_session('checkout_payment', ERROR_NO_PAYMENT_MODULE_SELECTED, 'error');
     }
 
@@ -273,24 +276,30 @@ $order_totals = $order_total_modules->process();
 //
 $confirmation_required = in_array($_SESSION['payment'], explode(',', str_replace(' ', '', CHECKOUT_ONE_CONFIRMATION_REQUIRED)));
 $session_end_hash = $checkout_one->hashSession($currencies->format ($order->info['total']));
-if (!$confirmation_required && $order_confirmed && $session_end_hash != $session_start_hash) {
+if ($confirmation_required === false && $order_confirmed === true && $session_end_hash !== $session_start_hash) {
     $error = true;
     $messageStack->add_session('checkout_payment', ERROR_NOJS_ORDER_CHANGED, 'error');
 }
 
-if ($error || $messageStack->size('checkout_payment') > 0 || !$order_confirmed) {
-    // -----
-    // Need to "redirect" any messages to 'checkout' (issued by ot_coupon and possibly others) so they display properly
-    // on the checkout_one page.
-    //
-    if ($messageStack->size('checkout') > 0) {
-        foreach ($messageStack->messages as $i => $current_message) {
-            if ($current_message['class'] == 'checkout') {
-                $messageStack->messages[$i]['class'] = 'checkout_payment';
-            }
+// -----
+// Check to see if any session-based messages exist for the 'checkout' (issued by credit-class order-totals) or the 'checkout_payment'
+// page; that will also result in a redirect back to the 'checkout_one' main page.
+//
+// Note: Don't want to use $messageStack->size, since that resets any session-based messages.
+//
+$session_messages = [];
+if ($error === false && !empty($_SESSION['messageToStack'])) {
+    $session_messages = $_SESSION['messageToStack'];
+    foreach ($session_messages as $next_message) {
+        if ($next_message['class'] === 'checkout' || $next_message['class'] === 'checkout_payment') {
+            $error = true;
+            break;
         }
     }
-    $checkout_one->debug_message("Something causing redirection back to checkout_one, error ($error), order_confirmed ($order_confirmed)" . json_encode($messageStack->messages) . json_encode($ot_total));
+}
+
+if ($error === true || $order_confirmed === false) {
+    $checkout_one->debug_message("Something causing redirection back to checkout_one, error ($error), order_confirmed ($order_confirmed)" . json_encode($messageStack->messages) . json_encode($session_messages) . json_encode($ot_total));
     zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));
 }
 
@@ -298,13 +307,13 @@ if ($error || $messageStack->size('checkout_payment') > 0 || !$order_confirmed) 
 $flagAnyOutOfStock = false;
 $stock_check = [];
 if (STOCK_CHECK === 'true') {
-    for ($i = 0, $n = count($order->products); $i<$n; $i++) {
+    for ($i = 0, $n = count($order->products); $i < $n; $i++) {
         if ($stock_check[$i] = zen_check_stock($order->products[$i]['id'], $order->products[$i]['qty'])) {
             $flagAnyOutOfStock = true;
         }
     }
     // Out of Stock
-    if (STOCK_ALLOW_CHECKOUT !== 'true' && $flagAnyOutOfStock) {
+    if (STOCK_ALLOW_CHECKOUT !== 'true' && $flagAnyOutOfStock === true) {
         zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
     }
 }
@@ -353,7 +362,7 @@ if (method_exists(${$_SESSION['payment']}, 'alterShippingEditButton')) {
 }
 // deal with billing address edit button
 $flagDisablePaymentAddressChange = false;
-if (isset (${$_SESSION['payment']}->flagDisablePaymentAddressChange)) {
+if (isset(${$_SESSION['payment']}->flagDisablePaymentAddressChange)) {
     $flagDisablePaymentAddressChange = ${$_SESSION['payment']}->flagDisablePaymentAddressChange;
 }
 
