@@ -1,7 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
-// Copyright (C) 2013-2019, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
+//
+// Last updated: OPC v2.4.1
 //
 // -----
 // This module is used by both the plugin's tpl_modules_opc_shipping_choices.php template and by the plugin's AJAX handler (zcAjaxOnePageCheckout.php) to render
@@ -13,8 +15,7 @@
                 if ($quotes[$i]['module'] != '') { // Standard
 ?>
         <fieldset>
-          <legend id="<?php echo $quotes[$i]['id']; ?>"><?php echo $quotes[$i]['module']; ?>&nbsp;<?php echo (!empty($quotes[$i]['icon'])) ? $quotes[$i]['icon'] : ''; ?></legend>
-
+          <legend><?php echo $quotes[$i]['module']; ?>&nbsp;<?php echo (!empty($quotes[$i]['icon'])) ? $quotes[$i]['icon'] : ''; ?></legend>
 <?php
                     if (isset($quotes[$i]['error'])) {
 ?>
