@@ -698,7 +698,9 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                     <li>BUGFIX: Correct session-based message-stack messages lost during checkout_one_confirmation.</li>
                     <li>BUGFIX: Correct PHP Warning when there's an error in the selected shipping module.</li>
                     <li>BUGFIX: Apply ship-to address selected via shipping-estimator when shipping=billing is configured.</li>
+                    <li>BUGFIX: Correcting PHP Warning due to circular references on initial entry to <code class="no-pad">checkout_one</code> when debug is enabled.</li>
                     <li>The following files were changed:<ol>
+                        <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/modules/pages/checkout_one/header_php.php</li>
                         <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_checkout_one_shipping.php</span></li>

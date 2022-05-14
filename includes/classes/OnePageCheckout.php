@@ -6,7 +6,7 @@
 // This class, instantiated in the current customer session, keeps track of a customer's login and checkout
 // progression with the aid of the OPC's observer- and AJAX-classes.
 //
-// Last updated: OPC v2.4.0.
+// Last updated: OPC v2.4.1.
 //
 class OnePageCheckout extends base
 {
@@ -564,7 +564,8 @@ class OnePageCheckout extends base
             unset($_SESSION['is_guest_checkout']);
         }
 
-        $this->debugMessage('startGuestOnePageCheckout, exit: sendto: ' . ((isset($_SESSION['sendto'])) ? $_SESSION['sendto'] : 'not set') . ', billto: ' . ((isset($_SESSION['billto'])) ? $_SESSION['billto'] : 'not set') . var_export($this, true));
+        $current_settings = var_export($this, true);
+        $this->debugMessage('startGuestOnePageCheckout, exit: sendto: ' . ((isset($_SESSION['sendto'])) ? $_SESSION['sendto'] : 'not set') . ', billto: ' . ((isset($_SESSION['billto'])) ? $_SESSION['billto'] : 'not set') . PHP_EOL . $current_settings);
 
         if ($redirect_required) {
             zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));
