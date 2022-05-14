@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated for OPC v2.3.12.
+// Last updated for OPC v2.4.1.
 //
 // -----
 // This should be first line of the script:
@@ -87,7 +87,7 @@ for ($i = 0, $n = count($products_array); $i < $n; $i++) {
 //unset($products_array);
 
 // get coupon code
-if (isset ($_SESSION['cc_id'])) {
+if (isset($_SESSION['cc_id'])) {
     $discount_coupon_query = "SELECT coupon_code FROM " . TABLE_COUPONS . " WHERE coupon_id = :couponID LIMIT 1";
     $discount_coupon_query = $db->bindVars($discount_coupon_query, ':couponID', $_SESSION['cc_id'], 'integer');
     $discount_coupon = $db->Execute($discount_coupon_query);
@@ -99,16 +99,24 @@ if (isset ($_SESSION['cc_id'])) {
 
 $shipping_billing = $_SESSION['opc']->getShippingBilling();
 
-// if no billing destination address was selected, use the customers own address as default
-if (!isset ($_SESSION['billto'])) {
-    $_SESSION['billto'] = $_SESSION['customer_default_address_id'];
+// -----
+// If the customer's 'billto' address has not yet been set, it's set based on the site's
+// 'Shipping=Billing' configuration.  If the site's set shipping=billing and the customer's
+// 'sendto' address is set via a shipping-estimator selection, 'billto' will be set to the
+// selected 'sendto'; otherwise, the 'billto' address is set to the customer's default address.
+//
+if (!isset($_SESSION['billto'])) {
+    $_SESSION['billto'] = ($shipping_billing === true && isset($_SESSION['sendto'])) ? $_SESSION['sendto'] : $_SESSION['customer_default_address_id'];
+// -----
+// ... otherwise, make sure the billto address is valid.
+//
 } else {
     $_SESSION['opc']->validateBilltoSendto('bill');
 }
 
 // if no shipping destination address was selected, use the customers own address as default
-if (!isset ($_SESSION['sendto'])) {
-    $_SESSION['sendto'] = (($shipping_billing) ? $_SESSION['billto'] : $_SESSION['customer_default_address_id']);
+if (!isset($_SESSION['sendto'])) {
+    $_SESSION['sendto'] = $_SESSION['customer_default_address_id'];
 } else {
     $_SESSION['opc']->validateBilltoSendto('ship');
 }

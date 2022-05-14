@@ -694,10 +694,12 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank" rel="noopener">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color and removals are indicated like <span class="removed">this</span>.</p>
               <ul>
-                <li>v2.4.1-beta1, 2022-05-07 (lat9):<ul>
+                <li>v2.4.1-beta2, 2022-05-14 (lat9):<ul>
                     <li>BUGFIX: Correct session-based message-stack messages lost during checkout_one_confirmation.</li>
                     <li>BUGFIX: Correct PHP Warning when there's an error in the selected shipping module.</li>
+                    <li>BUGFIX: Apply ship-to address selected via shipping-estimator when shipping=billing is configured.</li>
                     <li>The following files were changed:<ol>
+                        <li>/includes/modules/pages/checkout_one/header_php.php</li>
                         <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_checkout_one_shipping.php</span></li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
