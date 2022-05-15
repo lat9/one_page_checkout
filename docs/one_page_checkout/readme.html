@@ -701,12 +701,15 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                     <li>BUGFIX: Correcting PHP Warning due to circular references on initial entry to <code class="no-pad">checkout_one</code> when debug is enabled.</li>
                     <li>BUGFIX: Use 'zen_get_country_zones' to retrieve the country-specific zones.</li>
                     <li>BUGFIX: Correct use of deprecated jQuery.parseJSON and HTML validation errors in zone dropdowns' jQuery script.</li>
+                    <li>BUGFIX: Correcting login-page display when PayPal block is not first.</li>
                     <li>The following files were changed:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/modules/pages/checkout_one/header_php.php</li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one_addr.js</li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one_addr.min.js</li>
                         <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
+                        <li>/includes/modules/pages/login/header_php_login_guest.php</li>
+                        <li><span class="template-changed">/includes/templates/template_default/templates/tpl_login_guest.php</span></li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_checkout_one_shipping.php</span></li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                     </ol></li>

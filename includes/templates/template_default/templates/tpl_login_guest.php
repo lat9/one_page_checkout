@@ -1,7 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2017-2020, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2017-2022, Vinos de Frutas Tropicales.  All rights reserved.
+//
+// Last updated: OPC v2.4.1
 //
 ?>
 <div class="centerColumn" id="loginOpcDefault">
@@ -40,7 +42,6 @@ foreach ($column_blocks as $display_blocks) {
 <?php 
                     echo zen_draw_input_field('email_address', '', 'size="18" id="login-email-address" autofocus placeholder="' . ENTRY_EMAIL_ADDRESS_TEXT . '"' . ((int)ENTRY_EMAIL_ADDRESS_MIN_LENGTH > 0 ? ' required' : ''), 'email'); 
 ?>
-
         <div class="opc-label"><?php echo ENTRY_PASSWORD; ?></div>
 <?php 
                     echo zen_draw_password_field('password', '', 'size="18" id="login-password" autocomplete="off" placeholder="' . ENTRY_REQUIRED_SYMBOL . '"' . ((int)ENTRY_PASSWORD_MIN_LENGTH > 0 ? ' required' : '')); 
@@ -50,7 +51,7 @@ foreach ($column_blocks as $display_blocks) {
 <?php
                     echo '</form>';
                     break;
-                
+
                     // -----
                     // PayPal Express Checkout Shortcut Button
                     //
@@ -62,7 +63,7 @@ foreach ($column_blocks as $display_blocks) {
 <?php 
                     echo TEXT_NEW_CUSTOMER_POST_INTRODUCTION_DIVIDER;
                     break;
-                  
+
                 // -----
                 // Guest-checkout link
                 //
@@ -72,7 +73,7 @@ foreach ($column_blocks as $display_blocks) {
         <div class="information"><?php echo TEXT_GUEST_OPC; ?></div>
 <?php
                     if (!$guest_active) {
-                    echo zen_draw_form('guest', zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'), 'post') . zen_draw_hidden_field('guest_checkout', 1);
+                        echo zen_draw_form('guest', zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'), 'post') . zen_draw_hidden_field('guest_checkout', 1);
 ?>
         <div class="buttonRow"><?php echo zen_image_submit(BUTTON_IMAGE_CHECKOUT, BUTTON_CHECKOUT_ALT); ?></div>
         </form>
@@ -83,7 +84,7 @@ foreach ($column_blocks as $display_blocks) {
 <?php
                     }
                     break;
-                    
+
                 // -----
                 // Create/register account link.
                 //
@@ -99,7 +100,7 @@ foreach ($column_blocks as $display_blocks) {
 <?php
                     echo '</form>';
                     break;
-                    
+
                 // -----
                 // Account benefits display
                 //
@@ -111,7 +112,7 @@ foreach ($column_blocks as $display_blocks) {
                     for ($i = 1; $i < 5; $i++) {
                         $benefit_heading = "HEADING_BENEFIT_$i";
                         $benefit_text = "TEXT_BENEFIT_$i";
-                        if (defined($benefit_heading) && constant($benefit_heading) != '' && defined($benefit_text) && constant($benefit_text) != '') {
+                        if (defined($benefit_heading) && constant($benefit_heading) !== '' && defined($benefit_text) && constant($benefit_text) !== '') {
 ?>
         <div class="opc-head"><?php echo constant($benefit_heading); ?></div>
         <div class="opc-info"><?php echo constant($benefit_text); ?></div>
@@ -119,7 +120,7 @@ foreach ($column_blocks as $display_blocks) {
                         }
                     }
                     break;
-                    
+
                 // -----
                 // Anything else, nothing to do.
                 //
@@ -133,5 +134,5 @@ foreach ($column_blocks as $display_blocks) {
     }
 }
 ?>
-    <br class="clearBoth" />
+    <div class="clearBoth"></div>
 </div>
