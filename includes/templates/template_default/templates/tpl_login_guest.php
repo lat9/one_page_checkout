@@ -52,16 +52,25 @@ foreach ($column_blocks as $display_blocks) {
                     echo '</form>';
                     break;
 
-                    // -----
-                    // PayPal Express Checkout Shortcut Button
-                    //
-                    case 'P':
+                // -----
+                // PayPal Express Checkout Shortcut Button
+                //
+                case 'P':
+                    if ($ppec_divider_location === 'prev') {
+?>
+        <hr>
+<?php
+                        echo TEXT_NEW_CUSTOMER_POST_INTRODUCTION_DIVIDER;
+                    }
 ?>
         <div class="information"><?php echo TEXT_NEW_CUSTOMER_INTRODUCTION_SPLIT; ?></div>
         <div class="center"><?php require DIR_FS_CATALOG . DIR_WS_MODULES . 'payment/paypal/tpl_ec_button.php'; ?></div>
-        <hr />
-<?php 
-                    echo TEXT_NEW_CUSTOMER_POST_INTRODUCTION_DIVIDER;
+<?php
+                    if ($ppec_divider_location === 'next') {
+?>'     <hr>
+<?php
+                        echo TEXT_NEW_CUSTOMER_POST_INTRODUCTION_DIVIDER;
+                    }
                     break;
 
                 // -----
@@ -76,8 +85,8 @@ foreach ($column_blocks as $display_blocks) {
                         echo zen_draw_form('guest', zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'), 'post') . zen_draw_hidden_field('guest_checkout', 1);
 ?>
         <div class="buttonRow"><?php echo zen_image_submit(BUTTON_IMAGE_CHECKOUT, BUTTON_CHECKOUT_ALT); ?></div>
-        </form>
 <?php
+                        echo '</form>';
                     } else {
 ?>
         <div class="buttonRow"><a href="<?php echo zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'); ?>" rel="nofollow"><?php echo zen_image_button(BUTTON_IMAGE_CONTINUE, BUTTON_GUEST_CHECKOUT_CONTINUE); ?></a></div>

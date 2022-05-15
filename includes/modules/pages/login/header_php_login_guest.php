@@ -31,6 +31,21 @@ if (!empty($_SESSION['opc']) && is_object($_SESSION['opc']) && $_SESSION['opc']-
         'G' => true,
         'C' => true,
     ];
+
+    // -----
+    // Set the variable that lets tpl_login_guest.php 'know' whether to display the
+    // TEXT_NEW_CUSTOMER_POST_INTRODUCTION_DIVIDER language constant and, if so, whether it should
+    // be displayed before or after the PayPal Express Checkout button.
+    //
+    // Possible values:
+    //
+    // 'prev' ... Display the constant before the PPEC button; that button is displayed in a column
+    //            after another block.
+    // 'next' ... Display the constant after the PPEC button; that button is displayed as the first
+    //            block in the configured column.
+    //
+    $ppec_divider_location = 'prev';
+
     $column_blocks = [];
     $display_elements = explode(';', CHECKOUT_ONE_LOGIN_LAYOUT);
     $valid_blocks = explode(',', 'L,P,G,C,B');
@@ -38,6 +53,8 @@ if (!empty($_SESSION['opc']) && is_object($_SESSION['opc']) && $_SESSION['opc']-
     foreach ($display_elements as $current_element) {
         $current_block = [];
         $column_elements = explode(',', $current_element);
+        $column_elements_count = count($column_elements);
+        $found_nonppec_block = false;
         foreach ($column_elements as $block) {
             if (!in_array($block, $valid_blocks)) {
                 $block_error = true;
@@ -46,15 +63,20 @@ if (!empty($_SESSION['opc']) && is_object($_SESSION['opc']) && $_SESSION['opc']-
                     case 'G':
                         if ($_SESSION['cart']->count_contents() > 0 && $_SESSION['opc']->guestCheckoutEnabled()) {
                             $current_block[] = $block;
+                            $found_nonppec_block = true;
                         }
                         break;
                     case 'P':
                         if ($ec_button_enabled) {
                             $current_block[] = $block;
+                            if ($found_nonppec_block === false && $column_elements_count !== 1) {
+                                $ppec_divider_location = 'next';
+                            }
                         }
                         break;
                     default:
                         $current_block[] = $block;
+                        $found_nonppec_block = true;
                         break;
                 }
                 unset($required_blocks[$block]);
