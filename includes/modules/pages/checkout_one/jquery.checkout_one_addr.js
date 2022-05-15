@@ -1,6 +1,6 @@
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
-// Copyright (C) 2018-2020, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2018-2022, Vinos de Frutas Tropicales.  All rights reserved.
 //
 
 // -----
@@ -32,7 +32,7 @@ jQuery(document).ready(function() {
         }
     }
     initializeStateZones();
-    
+
     // -----
     // Monitor the billing- and shipping-address blocks for changes to the selected country.
     //
@@ -50,7 +50,7 @@ jQuery(document).ready(function() {
             updateCountryZones('ship', jQuery('#country-ship option:selected').val());
         }
     });
-    
+
     // -----
     // This function provides the processing needed when a country has been changed.  It makes
     // use of the c2z (countries-to-zones) array, built and provided by the jscript_main.php's
@@ -59,12 +59,12 @@ jQuery(document).ready(function() {
     function updateCountryZones(which, selected_country)
     {
         var countryHasZones = false;
-        var countryZones = '<option selected="selected" value="0">' + textPleaseSelect + '</option>';
-        jQuery.each(jQuery.parseJSON(c2z), function(country_id, country_zones) {
+        var countryZones = '<option selected="selected" value="0">' + textPleaseSelect + '<' + '/option>';
+        jQuery.each(JSON.parse(c2z), function(country_id, country_zones) {
             if (selected_country == country_id) {
                 countryHasZones = true;
                 jQuery.each(country_zones, function(zone_id, zone_name) {
-                    countryZones += "<option value='" + zone_id + "'>" + zone_name + "</option>";
+                    countryZones += '<option value="' + zone_id + '">' + zone_name + '<' + '/option>';
                 });
             }
         });
