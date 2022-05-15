@@ -1196,22 +1196,13 @@ class OnePageCheckout extends base
             $current_country_id = $country['zone_country_id'];
             $c2z[$current_country_id] = [];
 
-            $states = $db->Execute(
-                "SELECT zone_name, zone_id
-                   FROM " . TABLE_ZONES . "
-                  WHERE zone_country_id = $current_country_id
-               ORDER BY zone_name"
-            );
+            $states = zen_get_country_zones($current_country_id);
             foreach ($states as $state) {
-                $c2z[$current_country_id][$state['zone_id']] = $state['zone_name'];
+                $c2z[$current_country_id][$state['id']] = $state['text'];
             }
         }
 
-        if (count($c2z) == 0) {
-            $output_string = '';
-        } else {
-            $output_string = 'var c2z = \'' . addslashes(json_encode($c2z)) . '\';' . PHP_EOL;
-        }
+        $output_string = 'var c2z = \'' . addslashes(json_encode($c2z)) . '\';' . PHP_EOL;
         return $output_string;
     }
 
