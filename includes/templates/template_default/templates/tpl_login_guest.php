@@ -67,7 +67,8 @@ foreach ($column_blocks as $display_blocks) {
         <div class="center"><?php require DIR_FS_CATALOG . DIR_WS_MODULES . 'payment/paypal/tpl_ec_button.php'; ?></div>
 <?php
                     if ($ppec_divider_location === 'next') {
-?>'     <hr>
+?>
+        <hr>
 <?php
                         echo TEXT_NEW_CUSTOMER_POST_INTRODUCTION_DIVIDER;
                     }
