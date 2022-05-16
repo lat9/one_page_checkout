@@ -564,7 +564,7 @@ class OnePageCheckout extends base
             unset($_SESSION['is_guest_checkout']);
         }
 
-        $current_settings = var_export($this, true);
+        $current_settings = print_r($this, true);
         $this->debugMessage('startGuestOnePageCheckout, exit: sendto: ' . ((isset($_SESSION['sendto'])) ? $_SESSION['sendto'] : 'not set') . ', billto: ' . ((isset($_SESSION['billto'])) ? $_SESSION['billto'] : 'not set') . PHP_EOL . $current_settings);
 
         if ($redirect_required) {
@@ -742,7 +742,7 @@ class OnePageCheckout extends base
     */
     public function updateOrderAddresses($order, &$taxCountryId, &$taxZoneId)
     {
-        $current_settings = var_export($this, true);
+        $current_settings = print_r($this, true);
         $this->debugMessage("updateOrderAddresses, on entry:" . var_export($order, true) . PHP_EOL . $current_settings);
         $this->debugMessage("Current sendto: " . ((isset($_SESSION['sendto'])) ? $_SESSION['sendto'] : 'not set'));
         if (zen_in_guest_checkout()) {
