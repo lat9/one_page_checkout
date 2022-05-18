@@ -781,7 +781,7 @@ class checkout_one_observer extends base
             $this->debug_message("hashSession, observer override: " . PHP_EOL . json_encode($session_data) . PHP_EOL . json_encode($saved_session_data));
         }
 
-        $hash_values = var_export($session_data, true);
+        $hash_values = print_r($session_data, true);
         $this->debug_message("hashSession returning an md5 of $hash_values", false, 'checkout_one_observer');
         return md5($hash_values);
     }
