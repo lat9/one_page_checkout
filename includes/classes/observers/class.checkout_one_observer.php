@@ -3,6 +3,8 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
 //
+// Last updated: OPC v2.4.1.
+//
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
 }
@@ -687,7 +689,7 @@ class checkout_one_observer extends base
                         unset($the_request[$name]);
                     }
                 }
-                $extra_info = var_export($the_request, true) . "\n\n" . var_export($_SESSION, true);
+                $extra_info = print_r($the_request, true) . "\n\n" . print_r($_SESSION, true);
             }
 
             // -----
@@ -781,7 +783,7 @@ class checkout_one_observer extends base
             $this->debug_message("hashSession, observer override: " . PHP_EOL . json_encode($session_data) . PHP_EOL . json_encode($saved_session_data));
         }
 
-        $hash_values = var_export($session_data, true);
+        $hash_values = print_r($session_data, true);
         $this->debug_message("hashSession returning an md5 of $hash_values", false, 'checkout_one_observer');
         return md5($hash_values);
     }

@@ -86,7 +86,7 @@ a[target=_blank] { text-decoration: underline; }
 
 <body>
   <h1>One-Page Checkout &hellip; with Guest &hellip; <span class="smaller">for Zen Cart v1.5.7a (and later)</span></h1>
-  <h3>Version 2.4.0 by lat9/niccol</h3>
+  <h3>Version 2.4.1 by lat9/niccol</h3>
   <h3>Copyright &copy; 2013-2022 <a href="https://vinosdefrutastropicales.com" target="_blank" rel="noopener">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
   <p>Released under the General Public License (see the file named <code class="no-pad">license.txt</code> in the plugin's distribution for full details). This script is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</p>
   <hr />
@@ -694,16 +694,17 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank" rel="noopener">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color and removals are indicated like <span class="removed">this</span>.</p>
               <ul>
-                <li>v2.4.1-beta2, 2022-05-15 (lat9):<ul>
+                <li>v2.4.1, 2022-05-19 (lat9):<ul>
                     <li>BUGFIX: Correct session-based message-stack messages lost during checkout_one_confirmation.</li>
                     <li>BUGFIX: Correct PHP Warning when there's an error in the selected shipping module.</li>
                     <li>BUGFIX: Apply ship-to address selected via shipping-estimator when shipping=billing is configured.</li>
-                    <li>BUGFIX: Correcting PHP Warning due to circular references on initial entry to <code class="no-pad">checkout_one</code> when debug is enabled.</li>
+                    <li>BUGFIX: Replacing use of <code class="no-pad">var_export</code> with <code class="no-pad">print_r</code> to prevent 'circular references' PHP warnings.</li>
                     <li>BUGFIX: Use 'zen_get_country_zones' to retrieve the country-specific zones.</li>
                     <li>BUGFIX: Correct use of deprecated jQuery.parseJSON and HTML validation errors in zone dropdowns' jQuery script.</li>
                     <li>BUGFIX: Correcting login-page display when PayPal block is not first.</li>
                     <li>The following files were changed:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
+                        <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                         <li>/includes/modules/pages/checkout_one/header_php.php</li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one_addr.js</li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one_addr.min.js</li>
