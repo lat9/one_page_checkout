@@ -1662,6 +1662,8 @@ class OnePageCheckout extends base
                 if ($this->getShippingBilling()) {
                     $_SESSION['sendto'] = $this->tempBilltoAddressBookId;
                     $this->tempAddressValues['ship'] = $this->tempAddressValues['bill'];
+                } elseif ($this->isGuestCheckout() && $_SESSION['sendto'] === (int)$this->tempBilltoAddressBookId) {
+                    $_SESSION['sendto'] = $this->tempSendtoAddressBookId;
                 }
             }
             $this->debugMessage("Updated tempAddressValues[$which], billing=shipping(" . $_SESSION['shipping_billing'] . "), sendto(" . $_SESSION['sendto'] . "), billto(" . $_SESSION['billto'] . "):" . json_encode($this->tempAddressValues));
@@ -1712,17 +1714,17 @@ class OnePageCheckout extends base
                 $address_book_id = $existing_address_book_id;
             } else {
                 if (!$this->customerAccountNeedsPrimaryAddress()) {
-                    $sql_data_array[] = ['fieldName' => 'customers_id', 'value' => $_SESSION['customer_id'], 'type'=>'integer'];
+                    $sql_data_array[] = ['fieldName' => 'customers_id', 'value' => $_SESSION['customer_id'], 'type' => 'integer'];
                     $db->perform(TABLE_ADDRESS_BOOK, $sql_data_array);
                     $address_book_id = $db->Insert_ID();
-                    
+
                     $this->notify('NOTIFY_OPC_ADDED_ADDRESS_BOOK_RECORD', ['address_book_id' => $address_book_id], $sql_data_array);
                 } else {
                     $address_book_id = (int)$_SESSION['customer_default_address_id'];
                     $customer_id = (int)$_SESSION['customer_id'];
                     $where_string = "customers_id = $customer_id AND address_book_id = $address_book_id LIMIT 1";
                     $db->perform(TABLE_ADDRESS_BOOK, $sql_data_array, 'update', $where_string);
-                    
+
                     $this->notify('NOTIFY_OPC_ADDED_PRIMARY_ADDRESS', ['address_book_id' => $address_book_id], $sql_data_array);
                 }
             }
