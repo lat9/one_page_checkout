@@ -2,7 +2,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
 // Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last changed: OPC v2.4.0.
+// Last changed: OPC v2.4.2.
 //
 var selected;
 var submitter = null;
@@ -109,7 +109,7 @@ jQuery(document).ready(function(){
         elementsMissing = true;
         zcLog2Console( 'Missing #orderTotalDivs' );
     }
-    
+
     // -----
     // Hide the shipping and/or payment blocks if the associated address is either
     // not yet entered or not validated.
@@ -125,7 +125,7 @@ jQuery(document).ready(function(){
         checkMissingElements = false;
         jQuery('#checkoutPaymentMethod').hide();
     }
-    
+
     // -----
     // Account for the fact that some portions of the page aren't rendered if no
     // shipping is available and/or the temporary shipping/billing addresses have
@@ -182,14 +182,14 @@ jQuery(document).ready(function(){
             }
         }
     }
-    
+
     // -----
     // Perform some page-load type operations, initializing the "environment".  These functions
     // were performed by the on_load_main.js file from prior versions.
     //
     shippingIsBilling();
     setJavaScriptEnabled();
-  
+
     // -----
     // Disallow the Enter key (so that all form-submittal actions occur via "click"), except when that
     // key is pressed within a textarea section.
@@ -238,20 +238,35 @@ jQuery(document).ready(function(){
             jQuery( '#opc-order-review' ).show();
             zcLog2Console( 'Showing "review"' );
         }
+        if ((jQuery('#privacy').length != 0 && !jQuery('#privacy').is(':checked')) || (jQuery('#conditions').length != 0 && !jQuery('#conditions').is(':checked'))) {
+            zcLog2Console('setFormSubmitButton, disabling Review and Confirm buttons.');
+            jQuery('#checkoutOneSubmit').addClass('opc-disabled');
+        } else {
+            zcLog2Console('setFormSubmitButton, enabling Review and Confirm buttons.');
+            jQuery('#checkoutOneSubmit').removeClass('opc-disabled');
+        }
     }
     setFormSubmitButton();
-    
+
+    // -----
+    // When the checkbox associated with the site's privacy policy and/or conditions acceptance
+    // is changed, set the form's submit button accordingly.
+    //
+    jQuery('#privacy, #conditions').on('change', function(event) {
+        setFormSubmitButton();
+    });
+
     setOrderConfirmed(0);
     jQuery( '#checkoutOneShippingFlag' ).show();
-    
+
     zcLog2Console( 'jQuery version: '+jQuery().jquery );
-    
+
     function focusOnShipping ()
     {
         var scrollPos =  jQuery( "#checkoutShippingMethod" ).offset().top;
         jQuery(window).scrollTop( scrollPos );
     }
-    
+
     // -----
     // Used by the on-page processing and also by various "credit-class" order-totals (e.g. ot_coupon, ot_gv) to
     // initialize the checkout_payment form's submittal.  The (global) "submitter" value is set on return to either
@@ -394,7 +409,7 @@ jQuery(document).ready(function(){
             }
         });
     }
-    
+
     // -----
     // Two "helper" functions, used to indicate "progress" during the various AJAX calls.  The
     // cursor changes to "wait" when the AJAX call starts and back to "normal" upon return.
@@ -406,7 +421,7 @@ jQuery(document).ready(function(){
     jQuery(document).ajaxStop(function () {
         jQuery('*').css('cursor', '');
     });
-    
+
     // -----
     // A function, called after each AJAX request, to determine if the response indicates
     // that a redirect is required.
@@ -449,7 +464,6 @@ jQuery(document).ready(function(){
             var paymentSelected = jQuery('input[name=payment]');
             if (paymentSelected.is(':radio')) {
                 paymentSelected = jQuery('input[name=payment]:checked');
-
             }
             if (paymentSelected.length == 0) {
                 paymentSelected = '';
@@ -463,14 +477,14 @@ jQuery(document).ready(function(){
                 shipping_request: type,
                 payment: paymentSelected
             };
-            
+
             if (additionalShippingInputs.length != 0) {
                 jQuery.each(additionalShippingInputs, function(field_name, values) {
                     shippingInputs[field_name] = jQuery('input[name="'+values['input_name']+'"]'+values['parms']).val();
                 });
                 shippingData = jQuery.extend(shippingData, shippingInputs);
             }
-            
+
             zcLog2Console('Updating shipping method to '+shippingSelected+', processing type: '+type);
             zcJS.ajax({
                 url: "ajax.php?act=ajaxOnePageCheckout&method=updateShipping",
@@ -544,7 +558,7 @@ jQuery(document).ready(function(){
                     }
                 }  
                 zcLog2Console( 'Shipping method updated, error: '+shippingError ); 
-                
+
                 if (type == 'submit' || type == 'submit-cc') {
                     if (shippingError == true) {
                         zcLog2Console( 'Shipping error, correct to proceed.' );
@@ -554,14 +568,14 @@ jQuery(document).ready(function(){
                             jQuery('form[name="checkout_payment"]').submit();
                         } else if (orderConfirmed) {
                             jQuery('#confirm-the-order').attr('disabled', true);
-                            
+
                             // -----
                             // If there is at least one payment method available, submit the form.
                             //
                             if (flagOnSubmit) {
                                 var formPassed = check_form();
                                 zcLog2Console('Form checked, passed ('+formPassed+')');
-                                
+
                                 if (formPassed) {
                                     // -----
                                     // If we're submitting based on a "Confirm Order" button-click,
@@ -574,7 +588,7 @@ jQuery(document).ready(function(){
                                         jQuery('#opc-order-confirm').attr('disabled', true);
                                     }
                                     jQuery('#confirm-the-order').attr('disabled', false);
-                                    
+
                                     // -----
                                     // If the currently-selected payment method handles the submission of the
                                     // payment-form, defer the submission to its handling.
@@ -592,7 +606,7 @@ jQuery(document).ready(function(){
             });
         }
     }
-    
+
     // -----
     // When a shipping-choice is clicked, make the AJAX call to recalculate the order-totals based
     // on that shipping selection.
@@ -600,7 +614,7 @@ jQuery(document).ready(function(){
     jQuery('#checkoutShippingMethod input[name=shipping]').on('click', function( event ) {
         changeShippingSubmitForm('shipping-only', event);
     });
-    
+
     // -----
     // When the billing=shipping box is clicked, record the current selection and make the AJAX call to
     // recalculate the order-totals, now that the shipping address might be different.
@@ -622,7 +636,7 @@ jQuery(document).ready(function(){
         setOrderConfirmed(0);
         changeShippingSubmitForm('submit-cc');
     });
-    
+
     // -----
     // When a different payment method is chosen, determine whether the payment will require a confirmation-
     // page display, change the form's pseudo-submit button to reflect either "Review" or "Confirm".
@@ -632,11 +646,10 @@ jQuery(document).ready(function(){
     //
     jQuery('input[name=payment]').on('change', function() {
         setFormSubmitButton();
-        
+
         var paymentSelected = jQuery('input[name=payment]');
         if (paymentSelected.is(':radio')) {
             paymentSelected = jQuery('input[name=payment]:checked');
-
         }
         if (paymentSelected.length == 0) {
             paymentSelected = '';
@@ -647,7 +660,7 @@ jQuery(document).ready(function(){
         var paymentData = {
             payment: paymentSelected
         };
-            
+
         zcLog2Console('Updating payment method to '+paymentSelected);
         zcJS.ajax({
             url: "ajax.php?act=ajaxOnePageCheckout&method=updatePaymentMethod",
@@ -668,7 +681,7 @@ jQuery(document).ready(function(){
             jQuery('#orderTotalDivs').html(response.orderTotalHtml);
         });
     });
-    
+
     // -----
     // When the form's pseudo-submit "Review" button, the user is ready
     // to submit their order.  Set up the various "hidden" fields to reflect the order's current state,
@@ -681,7 +694,7 @@ jQuery(document).ready(function(){
         zcLog2Console('Submitting order-creating form (review)');
         changeShippingSubmitForm('submit', 'review');
     });
-    
+
     // -----
     // When the form's pseudo-submit "Confirm" button, is clicked, the user is ready
     // to submit their order.  Set up the various "hidden" fields to reflect the order's current state,
@@ -725,7 +738,7 @@ jQuery(document).ready(function(){
             location.reload();
         });
     }
-    
+
     function changeBillingFields(event)
     {
         jQuery(this).addClass('opc-changed');
@@ -758,7 +771,7 @@ jQuery(document).ready(function(){
         }
     }
     jQuery(document).on('click', '#opc-bill-save', saveBilling);
-    
+
     function editBilling()
     {
         jQuery('#address-bill').hide();
@@ -776,7 +789,7 @@ jQuery(document).ready(function(){
         jQuery('#opc-ship-save, #opc-add-ship, #opc-add-ship+label').hide();
     }
     jQuery(document).on('click', '#opc-ship-edit', editShipping);
-    
+
     function changeShippingFields(event)
     {
         jQuery(this).addClass('opc-changed');
@@ -795,13 +808,13 @@ jQuery(document).ready(function(){
         jQuery('#checkoutOneShipto .opc-buttons').hide();
     }
     jQuery(document).on('click', '#opc-ship-cancel', restoreShipping);
-    
+
     function saveShipping()
     {
         saveAddressValues('ship', '#checkoutOneShipto');
     }
     jQuery(document).on('click', '#opc-ship-save', saveShipping);
-    
+
     function restoreAddressValues(which, address_block)
     {
         zcLog2Console('restoreAddressValues('+which+', '+address_block+')');
@@ -838,7 +851,7 @@ jQuery(document).ready(function(){
             }
         });
     }
-    
+
     function saveAddressValues(which, address_block)
     {
         zcLog2Console('saveAddressValues('+which+', '+address_block+')');
@@ -886,7 +899,7 @@ jQuery(document).ready(function(){
             // Handle any redirects required, based on the AJAX response's status.
             //
             checkForRedirect(response.status);
-            
+
             // -----
             // If the response returns a non-empty array of messages, there were one or more
             // "issues" with the submitted information.  Highlight the errant fields and display
@@ -930,7 +943,7 @@ jQuery(document).ready(function(){
     //
     jQuery( '#checkoutPaymentNoJs' ).hide();
     jQuery( '#checkoutPayment' ).show();
-    
+
     // -----
     // If the checkout process is currently being performed in "guest" mode, make sure that any
     // required fields in the guest-login and billing-address blocks are currently filled-in 
@@ -948,7 +961,7 @@ jQuery(document).ready(function(){
             }
         });
     }
-    
+
     // -----
     // If the checkout process is currently being performed for a registered-account customer
     // who has not (yet) created their primary address, enable the "Save" button on the
@@ -964,7 +977,7 @@ jQuery(document).ready(function(){
         jQuery('#checkoutOneBillto .opc-buttons').show();
         jQuery('#opc-bill-cancel, #checkoutOneShippingFlag').hide();
     }
-    
+
     // -----
     // Methods to restore/save the guest-customer's information.
     //
@@ -990,7 +1003,7 @@ jQuery(document).ready(function(){
             restoreAddressValues('bill', '#checkoutOneBillto');
         });
     }
-    
+
     function saveCustomerInfo()
     {
         zcLog2Console('saveCustomerInfo, starts ...');
@@ -1009,7 +1022,7 @@ jQuery(document).ready(function(){
             // Handle any redirects required, based on the AJAX response's status.
             //
             checkForRedirect(response.status);
-            
+
             // -----
             // If the response returns a non-empty array of messages, there were one or more
             // "issues" with the submitted information.  Highlight the errant fields and display
