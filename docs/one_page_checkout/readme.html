@@ -698,8 +698,10 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                 <li>v2.4.2-beta2, 2022-06-01 (lat9):<ul>
                     <li>BUGFIX: Guest shipping address 'overwritten' if billing address is changed.</li>
                     <li>BUGFIX: Disable <em>Confirm</em> and <em>Review</em> buttons if privacy-policy and/or conditions haven't been accepted.</li>
+                    <li>BUGFIX: Correct PHP Warning issued during check for gift-certification restrictions on guest checkout.</li>
                     <li>The following files were changed:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
+                        <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
                         <li>/includes/templates/template_default/css/checkout_one.css</li>

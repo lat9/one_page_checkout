@@ -6,7 +6,7 @@
 // This class, instantiated in the current customer session, keeps track of a customer's login and checkout
 // progression with the aid of the OPC's observer- and AJAX-classes.
 //
-// Last updated: OPC v2.4.1.
+// Last updated: OPC v2.4.2.
 //
 class OnePageCheckout extends base
 {
@@ -347,6 +347,8 @@ class OnePageCheckout extends base
     //
     protected function initializeGuestCheckout()
     {
+        global $current_page_base;
+
         $this->checkEnabled();
 
         // -----
@@ -359,8 +361,10 @@ class OnePageCheckout extends base
         }
 
         $this->isGuestCheckoutEnabled = $allow_guest_checkout === true && !zen_is_spider_session() && (defined('CHECKOUT_ONE_ENABLE_GUEST') && CHECKOUT_ONE_ENABLE_GUEST === 'true');
-        if (isset($_SESSION['opc_error']) && ($_SESSION['opc_error'] == self::OPC_ERROR_NO_GC || $_SESSION['opc_error'] == self::OPC_ERROR_NO_JS)) {
-            $this->isGuestCheckoutEnabled = false;
+        if (isset($_SESSION['opc_error']) && ($_SESSION['opc_error'] === self::OPC_ERROR_NO_GC || $_SESSION['opc_error'] === self::OPC_ERROR_NO_JS)) {
+            if ($_SESSION['opc_error'] === self::OPC_ERROR_NO_JS || in_array($current_page_base, [FILENAME_LOGIN, FILENAME_CHECKOUT_ONE, FILENAME_CHECKOUT_ONE_CONFIRMATION])) {
+                $this->isGuestCheckoutEnabled = false;
+            }
         }
         $this->guestCustomerId = (defined('CHECKOUT_ONE_GUEST_CUSTOMER_ID')) ? (int)CHECKOUT_ONE_GUEST_CUSTOMER_ID : 0;
         $this->tempBilltoAddressBookId = (defined('CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID')) ? (int)CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID : 0;

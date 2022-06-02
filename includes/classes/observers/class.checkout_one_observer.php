@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.4.1.
+// Last updated: OPC v2.4.2.
 //
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
@@ -13,7 +13,6 @@ class checkout_one_observer extends base
 {
     private $enabled = false,
             $debug = false,
-            $needGiftCertMessage = false,
             $needUnsupportedPageMessage = false,
             $needGuestCheckoutUnavailableMessage = false;
             
@@ -87,48 +86,6 @@ class checkout_one_observer extends base
             }
         }
         $this->debug_logfile = $_SESSION['opc']->getDebugLogFileName();
-
-        // -----
-        // If no previous jQuery error was noted and an account-holder is not logged in,
-        // check the shopping-cart's current contents to see if one or more Gift Certificates
-        // are present (only account-holders can purchase GC's).
-        //
-        // If one or more GC is present in the customer's cart:
-        // - If the customer is not on the login or checkout_one page, let them know that they'll need
-        // to create an account (or sign in) to make that purchase.  If the customer is in the
-        // middle of a guest-checkout (e.g. they started without a GC in-cart and added one after
-        // the guest-checkout started), let them know that continuing with the checkout will
-        // result in a loss of the information that they previously entered.
-        //
-        // - If the customer has continued (via button- or link-click) to the login/checkout_one
-        // page, reset any guest-related information that was previously entered.  The guest-checkout
-        // will be disabled.
-        //
-        // NOTE: Using the session-based OPC class to determine logged-in/guest-checkout status, since
-        // the observers for the zen_is_logged_in/zen_in_guest_checkout functions haven't yet been
-        // attached!
-        //
-        if (!(isset($_SESSION['opc_error']) && $_SESSION['opc_error'] == OnePageCheckout::OPC_ERROR_NO_JS) && $_SESSION['opc']->guestCheckoutEnabled()) {
-            if (!$_SESSION['opc']->isLoggedIn() || $_SESSION['opc']->isGuestCheckout()) {
-                unset($_SESSION['opc_error']);
-                $cart_products = $_SESSION['cart']->get_products();
-                foreach ($cart_products as $current_product) {
-                    if (strpos($current_product['model'], 'GIFT') === 0) {
-                        $pages_to_reset_for_gc = [
-                            FILENAME_LOGIN,
-                            FILENAME_CHECKOUT_ONE
-                        ];
-                        if (!in_array($current_page_base, $pages_to_reset_for_gc)) {
-                            $this->needGiftCertMessage = true;
-                        } else {
-                            $_SESSION['opc']->resetGuestSessionValues();
-                            $_SESSION['opc_error'] = OnePageCheckout::OPC_ERROR_NO_GC;
-                        }
-                        break;
-                    }
-                }
-            }
-        }
 
         // -----
         // Perform a little "session-cleanup".  If a guest just placed an order and has navigated off
@@ -237,21 +194,60 @@ class checkout_one_observer extends base
             unset($_SESSION['email_is_os'], $_SESSION['email_address']);
         }
     }
-    
+
     // -----
     // This method performs some additional initialization checks which require the $messageStack to
-    // be instantiated.  It's run via OPC's auto_loader's 'call' via an 'objectMethod' record.
+    // be instantiated and for the session's language to be set (it's required by the call to the cart's
+    // get_products method.  The 'messageCheck' method is invoked via OPC's auto_loader's 'call' via an 'objectMethod' record.
     //
     public function messageCheck()
     {
-        global $messageStack;
+        global $messageStack, $current_page_base;
 
-        if ($this->needGiftCertMessage === true) {
-            $gift_certificate_message = WARNING_GUEST_NO_GCS;
-            if ($_SESSION['opc']->isGuestCheckout()) {
-                $gift_certificate_message .= ' ' . WARNING_GUEST_GCS_RESET . '<br /><br />' . WARNING_GUEST_REMOVE_GC;
+        // -----
+        // If no previous jQuery error was noted and an account-holder is not logged in,
+        // check the shopping-cart's current contents to see if one or more Gift Certificates
+        // are present (only account-holders can purchase GC's).
+        //
+        // If one or more GC is present in the customer's cart:
+        // - If the customer is not on the login or checkout_one page, let them know that they'll need
+        // to create an account (or sign in) to make that purchase.  If the customer is in the
+        // middle of a guest-checkout (e.g. they started without a GC in-cart and added one after
+        // the guest-checkout started), let them know that continuing with the checkout will
+        // result in a loss of the information that they previously entered.
+        //
+        // - If the customer has continued (via button- or link-click) to the login/checkout_one
+        // page, reset any guest-related information that was previously entered.  The guest-checkout
+        // will be disabled.
+        //
+        // NOTE: Using the session-based OPC class to determine logged-in/guest-checkout status, since
+        // the observers for the zen_is_logged_in/zen_in_guest_checkout functions haven't yet been
+        // attached!
+        //
+        if (!(isset($_SESSION['opc_error']) && $_SESSION['opc_error'] == OnePageCheckout::OPC_ERROR_NO_JS) && $_SESSION['opc']->guestCheckoutEnabled()) {
+            if (!$_SESSION['opc']->isLoggedIn() || $_SESSION['opc']->isGuestCheckout()) {
+                unset($_SESSION['opc_error']);
+                $cart_products = $_SESSION['cart']->get_products();
+                foreach ($cart_products as $current_product) {
+                    if (strpos($current_product['model'], 'GIFT') === 0) {
+                        $pages_to_reset_for_gc = [
+                            FILENAME_LOGIN,
+                            FILENAME_CHECKOUT_ONE
+                        ];
+                        if (!in_array($current_page_base, $pages_to_reset_for_gc)) {
+                            $gift_certificate_message = WARNING_GUEST_NO_GCS;
+                            if ($_SESSION['opc']->isGuestCheckout()) {
+                                $gift_certificate_message .= ' ' . WARNING_GUEST_GCS_RESET . '<br><br>' . WARNING_GUEST_REMOVE_GC;
+                            }
+                            $messageStack->add('header', $gift_certificate_message, 'caution');
+                        } else {
+                            $_SESSION['opc']->resetGuestSessionValues();
+                            $_SESSION['opc_error'] = OnePageCheckout::OPC_ERROR_NO_GC;
+                        }
+                        break;
+                    }
+                }
             }
-            $messageStack->add('header', $gift_certificate_message, 'caution');
         }
         if ($this->needUnsupportedPageMessage === true) {
             $messageStack->add_session('header', ERROR_GUEST_CHECKOUT_PAGE_DISALLOWED, 'error');
@@ -262,7 +258,7 @@ class checkout_one_observer extends base
             zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
         }
     }
-  
+
     public function update(&$class, $eventID, $p1, &$p2, &$p3, &$p4, &$p5, &$p6, &$p7) 
     {
         switch ($eventID) {
