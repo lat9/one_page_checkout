@@ -1,7 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2018, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2018-2022, Vinos de Frutas Tropicales.  All rights reserved.
+//
+// Last updated: OPC v2.4.2
 //
 // Adapted from the like-named page handling with the following history:
 // - Integrated COWAA v1.0 (@davewest)
@@ -26,7 +28,7 @@ if (isset($order)) {
 <?php 
     if (DISPLAY_PRODUCTS) { 
 ?>
-        <table border="0" width="100%" cellspacing="0" cellpadding="0" summary="Itemized listing of previous order, includes number ordered, items and prices">
+        <table id="orderHistoryHeading">
             <tr class="tableHeading">
                 <th scope="col" id="myAccountQuantity"><?php echo HEADING_QUANTITY; ?></th>
                 <th scope="col" id="myAccountProducts"><?php echo HEADING_PRODUCTS; ?></th>
@@ -54,7 +56,7 @@ if (isset($order)) {
 <?php
                 foreach ($current_product['attributes'] as $current_attribute) {
 ?>
-                        <li><?php echo $current_attribute['option'] . TEXT_OPTION_DIVIDER . nl2br($current_attribute['value']); ?></li>
+                        <li><?php echo $current_attribute['option'] . TEXT_OPTION_DIVIDER . nl2br(zen_output_string_protected($current_attribute['value'])); ?></li>
 <?php
                 }
 ?>
@@ -77,14 +79,14 @@ if (isset($order)) {
         }
 ?>
         </table>
-        <hr />
+        <hr>
         <div id="orderTotals">
 <?php
         foreach ($order->totals as $current_ot) {
 ?>
             <div class="amount larger forward"><?php echo $current_ot['text']; ?></div>
             <div class="lineTitle larger forward"><?php echo $current_ot['title']; ?></div>
-            <br class="clearBoth" />
+            <div class="clearBoth"></div>
 <?php
         }
 ?>
@@ -99,16 +101,16 @@ if (isset($order)) {
     // We'll set the order's email address into the session for that module's processing and then remove
     // that value, once finished.
     //
-    if (DOWNLOAD_ENABLED == 'true') {
-        require $template->get_template_dir('tpl_modules_downloads.php', DIR_WS_TEMPLATE, $current_page_base, 'templates'). '/tpl_modules_downloads.php';
+    if (DOWNLOAD_ENABLED === 'true') {
+        require $template->get_template_dir('tpl_modules_downloads.php', DIR_WS_TEMPLATE, $current_page_base, 'templates') . '/tpl_modules_downloads.php';
     }
     
     // -----
     // Display the order's status information.
     //
-    if (count($statusArray) > 0) {
+    if (!empty($statusArray)) {
 ?>
-        <table border="0" width="100%" cellspacing="0" cellpadding="0" id="myAccountOrdersStatus" summary="Table contains the date, order status and any comments regarding the order">
+        <table id="myAccountOrdersStatus">
             <caption><h2 id="orderHistoryStatus"><?php echo HEADING_ORDER_HISTORY; ?></h2></caption>
             <tr class="tableHeading">
                 <th scope="col" id="myAccountStatusDate"><?php echo TABLE_HEADING_STATUS_DATE; ?></th>
@@ -116,21 +118,28 @@ if (isset($order)) {
                 <th scope="col" id="myAccountStatusComments"><?php echo TABLE_HEADING_STATUS_COMMENTS; ?></th>
             </tr>
 <?php
+        // -----
+        // Only the **first** order comment -- the one provided by the customer -- is "protected", i.e. any HTML tags
+        // display as the tag itself without the HTML being formatted.  All others have been provided by an
+        // admin or a trusted 3rd-party (like a payment method) and are trusted not to have 'naughty' HTML.
+        //
+        $protected = true;
         foreach ($statusArray as $statuses) {
 ?>
             <tr>
                 <td><?php echo zen_date_short($statuses['date_added']); ?></td>
                 <td><?php echo $statuses['orders_status_name']; ?></td>
-                <td><?php echo (empty($statuses['comments']) ? '&nbsp;' : nl2br(zen_output_string_protected($statuses['comments']))); ?></td> 
+                <td><?php echo (empty($statuses['comments']) ? '&nbsp;' : nl2br(zen_output_string($statuses['comments'], false, $protected))); ?></td> 
             </tr>
 <?php
+            $protected = false;
         }
 ?>
         </table>
 <?php 
     } 
 ?>
-        <hr />
+        <hr>
 <?php 
     if (DISPLAY_SHIPPING) { 
 ?>
@@ -159,7 +168,7 @@ if (isset($order)) {
 <?php 
     } 
 ?>
-        <br class="clearBoth" />
+        <div class="clearBoth"></div>
     </fieldset>
 <?php 
 } 
@@ -172,11 +181,11 @@ echo zen_draw_form('order_status', zen_href_link(FILENAME_ORDER_STATUS, 'action=
 
         <label class="inputLabel"><?php echo ENTRY_ORDER_NUMBER; ?></label>
         <?php echo zen_draw_input_field('order_id', $orderID, 'size="10" id="order_id" required', 'number'); ?> 
-        <br />
+        <br>
         
         <label class="inputLabel"><?php echo ENTRY_EMAIL; ?></label>
         <?php echo zen_draw_input_field('query_email_address', $query_email_address, 'size="35" id="query_email_address" required', 'email'); ?> 
-        <br />
+        <br>
         
         <?php echo zen_draw_input_field($spam_input_name, '', ' size="40" id="CUAS" style="visibility:hidden; display:none;" autocomplete="off"'); ?>
         <?php echo $extra_validation_html; ?>

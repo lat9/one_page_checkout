@@ -695,16 +695,18 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank" rel="noopener">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color and removals are indicated like <span class="removed">this</span>.</p>
               <ul>
-                <li>v2.4.2-beta2, 2022-06-01 (lat9):<ul>
+                <li>v2.4.2-beta3, 2022-06-12 (lat9):<ul>
                     <li>BUGFIX: Guest shipping address 'overwritten' if billing address is changed.</li>
                     <li>BUGFIX: Disable <em>Confirm</em> and <em>Review</em> buttons if privacy-policy and/or conditions haven't been accepted.</li>
                     <li>BUGFIX: Correct PHP Warning issued during check for gift-certification restrictions on guest checkout.</li>
+                    <li>BUGFIX: Enable HTML to be rendered for admin-entered order comments on the &quot;order_status&quot; page.</li>
                     <li>The following files were changed:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
                         <li>/includes/templates/template_default/css/checkout_one.css</li>
+                        <li><span class="template-changed">/includes/template/template_default/tpl_order_status_default.php</span></li>
                         <li><span class="template-changed">/includes/templates/YOUR_TEMPLATE/css/checkout_one.css</span></li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                     </ol></li>
