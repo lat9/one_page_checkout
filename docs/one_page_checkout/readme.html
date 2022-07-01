@@ -701,12 +701,14 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                     <li>BUGFIX: Correct PHP Warning issued during check for gift-certification restrictions on guest checkout.</li>
                     <li>BUGFIX: Enable HTML to be rendered for admin-entered order comments on the &quot;order_status&quot; page.</li>
                     <li>BUGFIX: Remove &quot;ot_coupon&quot; language constants no longer used in zc157+.</li>
+                    <li>BUGFIX: Don't require 'conditions' or 'privacy' checkbox until order-confirmation (and no other errors).</li>
                     <li>The following files were changed:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                         <li><span class="template-changed">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_coupon.php</span></li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
+                        <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
                         <li>/includes/templates/template_default/css/checkout_one.css</li>
                         <li><span class="template-changed">/includes/template/template_default/tpl_order_status_default.php</span></li>
                         <li><span class="template-changed">/includes/templates/YOUR_TEMPLATE/css/checkout_one.css</span></li>

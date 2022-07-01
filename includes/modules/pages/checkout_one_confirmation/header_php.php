@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.4.1
+// Last updated: OPC v2.4.2
 //
 
 // This should be first line of the script:
@@ -100,19 +100,6 @@ if (isset($_POST['payment'])) {
 // Start order-entry validation ...
 //
 $error = false;
-if (DISPLAY_CONDITIONS_ON_CHECKOUT === 'true') {
-    if (!isset($_POST['conditions']) || $_POST['conditions'] !== '1') {
-        $error = true;
-        $messageStack->add_session('checkout_payment', ERROR_CONDITIONS_NOT_ACCEPTED, 'error');
-    }
-}
-
-if ($_SESSION['opc']->isGuestCheckout() && DISPLAY_PRIVACY_CONDITIONS === 'true') {
-    if (!isset($_POST['privacy_conditions']) || ($_POST['privacy_conditions'] !== '1')) {
-        $error = true;
-        $messageStack->add_session('checkout_payment', ERROR_PRIVACY_STATEMENT_NOT_ACCEPTED, 'error');
-    }
-}
 
 // -----
 // Check to ensure that any guest-customer information and/or temporary addresses (if used) have been
@@ -298,6 +285,30 @@ if ($error === false && !empty($_SESSION['messageToStack'])) {
     }
 }
 
+// -----
+// If no previous errors and the order has been confirmed, check to see if either the
+// terms-and-conditions or privacy-terms agreement need to be ticked.
+//
+if ($error === false && $order_confirmed === true) {
+    if (DISPLAY_CONDITIONS_ON_CHECKOUT === 'true') {
+        if (!isset($_POST['conditions']) || $_POST['conditions'] !== '1') {
+            $error = true;
+            $messageStack->add_session('checkout_payment', ERROR_CONDITIONS_NOT_ACCEPTED, 'error');
+        }
+    }
+
+    if ($_SESSION['opc']->isGuestCheckout() && DISPLAY_PRIVACY_CONDITIONS === 'true') {
+        if (!isset($_POST['privacy_conditions']) || ($_POST['privacy_conditions'] !== '1')) {
+            $error = true;
+            $messageStack->add_session('checkout_payment', ERROR_PRIVACY_STATEMENT_NOT_ACCEPTED, 'error');
+        }
+    }
+}
+
+// -----
+// If an error was detected or the order hasn't been confirmed, redirect back to the
+// main data-gathering page.
+//
 if ($error === true || $order_confirmed === false) {
     $checkout_one->debug_message("Something causing redirection back to checkout_one, error ($error), order_confirmed ($order_confirmed)" . json_encode($messageStack->messages) . json_encode($session_messages) . json_encode($ot_total));
     zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));
