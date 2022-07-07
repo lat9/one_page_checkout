@@ -77,7 +77,7 @@ $free_shipping_over = 0;
 if (defined('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER')) {
     $free_shipping_over = $currencies->value((float)MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER);
 }
-if (isset($_SESSION['shipping']['id']) && $_SESSION['shipping']['id'] == 'free_free' && $_SESSION['cart']->get_content_type() !== 'virtual' && $free_shipping_enabled &&  $_SESSION['cart']->show_total() < $free_shipping_over) {
+if (isset($_SESSION['shipping']['id']) && $_SESSION['shipping']['id'] === 'free_free' && $_SESSION['cart']->get_content_type() !== 'virtual' && $free_shipping_enabled &&  $_SESSION['cart']->show_total() < $free_shipping_over) {
     $checkout_one->debug_message('NOTIFY_CHECKOUT_ONE_CONFIRMATION_FREE_SHIPPING');
     unset($_SESSION['shipping']);
     $messageStack->add_session('checkout_shipping', ERROR_PLEASE_RESELECT_SHIPPING_METHOD, 'error');
@@ -92,8 +92,18 @@ if (!isset($_GET['redirect']) && (!isset($_POST['action']) || $_POST['action'] !
     zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));
 }
 
+// -----
+// If a payment-method has been posted, save that payment-method in the current session.
+//
 if (isset($_POST['payment'])) {
     $_SESSION['payment'] = $_POST['payment'];
+// -----
+// Otherwise, if the session's payment-method has not yet been set, save it as an empty value
+// since the order-totals' pre_confirmation_check method expects it to be set for the determination
+// of whether/not a GV/DC credit 'covers' the order's cost.
+//
+} elseif (!isset($_SESSION['payment'])) {
+    $_SESSION['payment'] = '';
 }
 
 // -----
@@ -106,12 +116,12 @@ $error = false;
 // entered and validated.  This should not occur unless "script kiddies" are messing with the CSS
 // overlay used to guide the customer through the information-entry process.
 //
-if (!$_SESSION['opc']->validateTemporaryEntries()) {
+if ($_SESSION['opc']->validateTemporaryEntries() === false) {
     $error = true;
     $messageStack->add_session('checkout_payment', ERROR_INVALID_TEMPORARY_ENTRIES, 'error');
 }
 
-if ($_SESSION['shipping_billing']) {
+if (!empty($_SESSION['shipping_billing'])) {
     $_SESSION['sendto'] = $_SESSION['billto'];
 }
 
@@ -176,7 +186,6 @@ if ($order->content_type !== 'virtual') {
                 if (isset($quote['error'])) {
                     $error = true;
                     $messageStack->add_session('checkout_shipping', $quote['error'], 'error');
-            
                 } else {
                     if (isset($quote[0]) && isset($quote[0]['error'])) {
                         $error = true;
@@ -210,34 +219,38 @@ if (!class_exists('order_total')) {
 $order_total_modules = new order_total;
 $order_total_modules->collect_posts();
 $order_total_modules->pre_confirmation_check();
+$checkout_one->debug_message('Returned from call to order-totals:' . json_encode($order_total_modules));
 
-// load the selected payment module
-require DIR_WS_CLASSES . 'payment.php';
 if (!isset($credit_covers)) {
     $credit_covers = false;
 }
-if ($credit_covers) {
-    unset($_SESSION['payment']);
-}
-
-$checkout_one->debug_message('Returned from call to order-totals:' . json_encode($order_total_modules));
 
 // -----
 // Process the payment modules **only if** the order has been confirmed.  Don't want/need this processing for coupon/GC actions.
 //
 // Note: The order is considered 'confirmed' if we've been redirected from the 'checkout_confirmation' page, too.
 //
+require DIR_WS_CLASSES . 'payment.php';
+
 $order_confirmed = (!empty($_GET['redirect']) || !empty($_POST['order_confirmed']));
 if ($order_confirmed) {
-    $payment_modules = new payment($_SESSION['payment']);
-    $payment_modules->update_status();
-    if ((empty($_SESSION['payment']) || !is_object(${$_SESSION['payment']})) && $credit_covers === false) {
-        $error = true;
-        $messageStack->add_session('checkout_payment', ERROR_NO_PAYMENT_MODULE_SELECTED, 'error');
-    }
-
-    if (is_array($payment_modules->modules)) {
-        $payment_modules->pre_confirmation_check();
+    if ($credit_covers === true) {
+        unset($_SESSION['payment']);
+        $_SESSION['payment'] = '';
+        $payment_title = PAYMENT_METHOD_GV;
+    } else {
+        if (!empty($_SESSION['payment'])) {
+            $payment_modules = new payment($_SESSION['payment']);
+            $payment_modules->update_status();
+            if (is_array($payment_modules->modules)) {
+                $payment_modules->pre_confirmation_check();
+            }
+        }
+        if (!empty($_SESSION['payment']) && is_object(${$_SESSION['payment']})) {
+            $payment_title = ${$_SESSION['payment']}->title;
+        } else {
+            $messageStack->add_session('checkout_payment', ERROR_NO_PAYMENT_MODULE_SELECTED, 'error');
+        }
     }
 }
 
@@ -261,8 +274,14 @@ $order_totals = $order_total_modules->process();
 // here by the OPC observer.  Bypass the hash-check if the current payment method is in the list of those requiring
 // confirmation.
 //
-$confirmation_required = in_array($_SESSION['payment'], explode(',', str_replace(' ', '', CHECKOUT_ONE_CONFIRMATION_REQUIRED)));
-$session_end_hash = $checkout_one->hashSession($currencies->format ($order->info['total']));
+$confirmation_required = false;
+if ($credit_covers === true && strpos(CHECKOUT_ONE_CONFIRMATION_REQUIRED, 'credit_covers') !== false) {
+    $confirmation_required = true;
+} elseif (!empty($_SESSION['payment']) && in_array($_SESSION['payment'], explode(',', str_replace(' ', '', CHECKOUT_ONE_CONFIRMATION_REQUIRED)))) {
+    $confirmation_required = true;
+}
+
+$session_end_hash = $checkout_one->hashSession($currencies->format($order->info['total']));
 if ($confirmation_required === false && $order_confirmed === true && $session_end_hash !== $session_start_hash) {
     $error = true;
     $messageStack->add_session('checkout_payment', ERROR_NOJS_ORDER_CHANGED, 'error');
@@ -331,50 +350,82 @@ if (STOCK_CHECK === 'true') {
 
 // update customers_referral with $_SESSION['gv_id']
 if (!empty($_SESSION['cc_id'])) {
-    $discount_coupon_query = "SELECT coupon_code
-                                FROM " . TABLE_COUPONS . "
-                               WHERE coupon_id = :couponID LIMIT 1";
-
+    $discount_coupon_query =
+        "SELECT coupon_code
+           FROM " . TABLE_COUPONS . "
+          WHERE coupon_id = :couponID LIMIT 1";
     $discount_coupon_query = $db->bindVars($discount_coupon_query, ':couponID', $_SESSION['cc_id'], 'integer');
     $discount_coupon = $db->Execute($discount_coupon_query);
 
-    $customers_referral_query = "SELECT customers_referral
-                                   FROM " . TABLE_CUSTOMERS . "
-                                  WHERE customers_id = :customersID LIMIT 1";
-
+    $customers_referral_query =
+        "SELECT customers_referral
+           FROM " . TABLE_CUSTOMERS . "
+          WHERE customers_id = :customersID LIMIT 1";
     $customers_referral_query = $db->bindVars($customers_referral_query, ':customersID', $_SESSION['customer_id'], 'integer');
     $customers_referral = $db->Execute($customers_referral_query);
 
     // only use discount coupon if set by coupon
     if ($customers_referral->fields['customers_referral'] === '' && CUSTOMERS_REFERRAL_STATUS === '1') {
-        $sql = "UPDATE " . TABLE_CUSTOMERS . "
+        $sql =
+            "UPDATE " . TABLE_CUSTOMERS . "
                 SET customers_referral = :customersReferral
-                WHERE customers_id = :customersID LIMIT 1";
-
+              WHERE customers_id = :customersID LIMIT 1";
         $sql = $db->bindVars($sql, ':customersID', $_SESSION['customer_id'], 'integer');
         $sql = $db->bindVars($sql, ':customersReferral', $discount_coupon->fields['coupon_code'], 'string');
         $db->Execute($sql);
     }
 }
 
-if (isset(${$_SESSION['payment']}->form_action_url)) {
-    $form_action_url = ${$_SESSION['payment']}->form_action_url;
-} else {
-    $form_action_url = zen_href_link(FILENAME_CHECKOUT_PROCESS, '', 'SSL');
+// -----
+// Some additional variables set for use during the template 'phase'; defaults
+// are set since there might not be a 'real' payment method ... as is the case when
+// a Gift Voucher or coupon fully 'covers' the cost of the order.
+//
+$form_action_url = zen_href_link(FILENAME_CHECKOUT_PROCESS, '', 'SSL');
+$editShippingButtonLink = zen_href_link(FILENAME_CHECKOUT_SHIPPING_ADDRESS, '', 'SSL');
+$flagDisablePaymentAddressChange = false;
+$payment_process_button = '';
+$confirmation = false;
+if (!empty($_SESSION['payment']) && is_object(${$_SESSION['payment']})) {
+    if (!empty(${$_SESSION['payment']}->form_action_url)) {
+        $form_action_url = ${$_SESSION['payment']}->form_action_url;
+    }
+    if (method_exists(${$_SESSION['payment']}, 'alterShippingEditButton')) {
+        $theLink = ${$_SESSION['payment']}->alterShippingEditButton();
+        if ($theLink) {
+            $editShippingButtonLink = $theLink;
+        }
+    }
+    if (isset(${$_SESSION['payment']}->flagDisablePaymentAddressChange)) {
+        $flagDisablePaymentAddressChange = ${$_SESSION['payment']}->flagDisablePaymentAddressChange;
+    }
+    $payment_process_button = $payment_modules->process_button();
+    $confirmation = $payment_modules->confirmation();
 }
 
-// if shipping-edit button should be overridden, do so
-$editShippingButtonLink = zen_href_link(FILENAME_CHECKOUT_SHIPPING_ADDRESS, '', 'SSL');
-if (method_exists(${$_SESSION['payment']}, 'alterShippingEditButton')) {
-    $theLink = ${$_SESSION['payment']}->alterShippingEditButton();
-    if ($theLink) {
-        $editShippingButtonLink = $theLink;
+// -----
+// Now, set the $confirmation information into a standard format.  The 'fully-formed' format
+// for that return from a payment-module's 'confirmation' method *should* be:
+//
+// $confirmation = [
+//     'title' => 'A string title',
+//     'fields' => [
+//         ['title' => 'A label for ...', 'field' => '... the associated field'],
+//     ],
+// ];
+//
+// Unfortunately, some payment methods return (bool)false, some return an empty array, some return
+// only the main 'title' and some return only the 'fields' array!
+//
+$confirmation_title = '';
+$confirmation_fields = [];
+if (is_array($confirmation)) {
+    if (isset($confirmation['title'])) {
+        $confirmation_title = $confirmation['title'];
     }
-}
-// deal with billing address edit button
-$flagDisablePaymentAddressChange = false;
-if (isset(${$_SESSION['payment']}->flagDisablePaymentAddressChange)) {
-    $flagDisablePaymentAddressChange = ${$_SESSION['payment']}->flagDisablePaymentAddressChange;
+    if (isset($confirmation['fields']) && is_array($confirmation['fields'])) {
+        $confirmation_fields = $confirmation['fields'];
+    }
 }
 
 // -----
@@ -382,10 +433,7 @@ if (isset(${$_SESSION['payment']}->flagDisablePaymentAddressChange)) {
 // header/footer are displayed too; otherwise, all elements of the display are hidden.
 //
 $flag_disable_left = $flag_disable_right = true;
-if (in_array($_SESSION['payment'], explode(',', str_replace(' ', '', CHECKOUT_ONE_CONFIRMATION_REQUIRED)))) {
-    $confirmation_required = true;
-} else {
-    $confirmation_required = false;
+if ($confirmation_required === false) {
     $flag_disable_header = $flag_disable_footer = true;
 }
 

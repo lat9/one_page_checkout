@@ -149,7 +149,7 @@ a[target=_blank] { text-decoration: underline; }
                   <li><a href="https://www.zen-cart.com/downloads.php?do=file&id=704" target="_blank" rel="noopener"><em>Reward Points Full Suite</em></a> v25.e and earlier, see <a href="https://www.zen-cart.com/showthread.php?220781-One-Page-Checkout-Support-Thread&p=1329034#post1329034" target="_blank" rel="noopener">this</a> posting on the <em>One-Page Checkout</em> support thread for details.</li>
                 </ol>
               </div>
-              <br />
+              <br>
               <div class="box-border">
                 <p>The plugin's design also utilizes jQuery as its AJAX interface to the various updates required.  There are some Zen Cart plugins that use the <em>MooTools</em> interface that will need a little extra &quot;care and feeding&quot; for compatibility with <em>One-Page Checkout</em>.  <em>OPC</em>'s v1.0.8 release provides the changes that enable interoperation with <em>MooTools</em>, but some plugin-specific changes might be needed in addition &mdash; specifically:</p>
                 <ol>
@@ -226,11 +226,11 @@ a[target=_blank] { text-decoration: underline; }
               <p>When a payment module requires a separate javascript/jQuery &quot;helper&quot; on the <code class="no-pad">checkout_payment</code> page, that separately-loaded script must be sensitive to the Zen Cart implementation of the <em>PayPal Express Checkout</em> &quot;shortcut button&quot;.  Specifically, when the customer is checking-out via that &quot;shortcut&quot;, <b>the only payment-method that is formatted</b> for the customer's use is that for <em>PayPal Express Checkout</em>. The Zen Cart payment-class method <code class="no-pad">in_special_checkout</code> can be used by a payment module's separately-loaded script to determine a case where that script should not be loaded.</p>
               <p>There are two known cases of this interoperability issue:</p>
               <ol>
-                <li><a href="https://www.zen-cart.com/downloads.php?do=file&id=156" target="_blank" rel="noopener">Square</a>, v0.90 and earlier, <code class="no-pad">/includes/modules/pages/checkout_payment/jscript_square.php</code>.  As reported in the payment-method's Zen Cart <a href="https://www.zen-cart.com/showthread.php?222449-Square-Payment-Module-for-Zen-Cart-Support-Thread&p=1339138#post1339138" target="_blank" rel="noopener">support thread</a>, the code fragment highlighted below must be incorporated to correct the interoperability issue:<br />
+                <li><a href="https://www.zen-cart.com/downloads.php?do=file&id=156" target="_blank" rel="noopener">Square</a>, v0.90 and earlier, <code class="no-pad">/includes/modules/pages/checkout_payment/jscript_square.php</code>.  As reported in the payment-method's Zen Cart <a href="https://www.zen-cart.com/showthread.php?222449-Square-Payment-Module-for-Zen-Cart-Support-Thread&p=1339138#post1339138" target="_blank" rel="noopener">support thread</a>, the code fragment highlighted below must be incorporated to correct the interoperability issue:<br>
                 <pre class="no-pad scroll">if (<span class="new-code">$payment_modules->in_special_checkout() || </span>!defined(MODULE_PAYMENT_SQUARE_STATUS) || MODULE_PAYMENT_SQUARE_STATUS != 'True' || (!defined('MODULE_PAYMENT_SQUARE_APPLICATION_ID') || MODULE_PAYMENT_SQUARE_ACCESS_TOKEN == '')) {
     return false;
 }</pre></li>
-                <li><a href="https://www.zen-cart.com/downloads.php?do=file&id=2050" target="_blank" rel="noopener">Payeezy JS</a>, v0.96 and earlier, <code class="no-pad">/includes/modules/pages/checkout_payment/jscript_payeezy.php</code>.  As reported in the payment-method's <a href="https://github.com/zencart/payeezyjs/issues/1" target="_blank" rel="noopener">GitHub repository</a>, the code fragment highlighted below must be incorporated to correct the interoperability issue:<br /><pre class="no-pad scroll">if (<span class="new-code">$payment_modules->in_special_checkout() || </span>!defined(MODULE_PAYMENT_PAYEEZYJSZC_STATUS) || MODULE_PAYMENT_PAYEEZYJSZC_STATUS != 'True' || (!defined('MODULE_PAYMENT_PAYEEZYJSZC_JSSECURITY_KEY') && !defined('MODULE_PAYMENT_PAYEEZYJSZC_JSSECURITY_KEY_SANDBOX') )) {
+                <li><a href="https://www.zen-cart.com/downloads.php?do=file&id=2050" target="_blank" rel="noopener">Payeezy JS</a>, v0.96 and earlier, <code class="no-pad">/includes/modules/pages/checkout_payment/jscript_payeezy.php</code>.  As reported in the payment-method's <a href="https://github.com/zencart/payeezyjs/issues/1" target="_blank" rel="noopener">GitHub repository</a>, the code fragment highlighted below must be incorporated to correct the interoperability issue:<br><pre class="no-pad scroll">if (<span class="new-code">$payment_modules->in_special_checkout() || </span>!defined(MODULE_PAYMENT_PAYEEZYJSZC_STATUS) || MODULE_PAYMENT_PAYEEZYJSZC_STATUS != 'True' || (!defined('MODULE_PAYMENT_PAYEEZYJSZC_JSSECURITY_KEY') && !defined('MODULE_PAYMENT_PAYEEZYJSZC_JSSECURITY_KEY_SANDBOX') )) {
     return false;
 }</pre></li>
               </ol>
@@ -277,7 +277,7 @@ a[target=_blank] { text-decoration: underline; }
                 </tr>
                 <tr>
                     <td>Enable: Customer List</td>
-                    <td>When you <em>conditionally</em> enable the plugin, use this setting to limit the customers for which the plugin is enabled. Leave the setting blank (the default) to <em>disable</em> the plugin for all customers or identify a comma-separated list of customer_id values for whom the plugin is to be <em>enabled</em>.<br /><br /><b>Note:</b> Starting with <em>OPC</em> v2.1.0, intervening blanks are allowed.</td>
+                    <td>When you <em>conditionally</em> enable the plugin, use this setting to limit the customers for which the plugin is enabled. Leave the setting blank (the default) to <em>disable</em> the plugin for all customers or identify a comma-separated list of customer_id values for whom the plugin is to be <em>enabled</em>.<br><br><b>Note:</b> Starting with <em>OPC</em> v2.1.0, intervening blanks are allowed.</td>
                     <td>1.1.0</td>
                 </tr>
                 <tr>
@@ -308,7 +308,7 @@ a[target=_blank] { text-decoration: underline; }
                 </tr>
                 <tr>
                     <td>Payment Methods Requiring Confirmation</td>
-                    <td>There are some payment methods that <strong>require</strong> the confirmation page to be displayed for their proper operation.  You can add to that comma-separated list any of the payment methods used on your store for which you'd like the customer to confirm.<br /><br /><b>Note:</b> Starting with <em>OPC</em> v2.1.0, intervening blanks are allowed.</td>
+                    <td>There are some payment methods that <strong>require</strong> the confirmation page to be displayed for their proper operation.  You can add to that comma-separated list any of the payment methods used on your store for which you'd like the customer to confirm.<br><b>Notes:</b><ol><li>Starting with <em>OPC</em> v2.1.0, intervening blanks are allowed.</li><li>Starting with <em>OPC</em> v2.4.2, you can add <code class="no-pad">credit_covers</code> to this list to ensure that orders that are fully paid using a Gift Certificate or coupon also require confirmation.</li></ol></td>
                     <td>1.3.0</td>
                 </tr>
                 <tr>
@@ -338,22 +338,22 @@ a[target=_blank] { text-decoration: underline; }
                 </tr>
                 <tr>
                     <td>Guest Checkout: Pages Allowed Post-Checkout</td>
-                    <td>Identify (using a comma-separated list, intervening blanks are OK) the pages that are <em>allowed</em> once a guest has completed their checkout.  When the guest navigates from the <code class="no-pad">checkout_success</code> page to any page <em><b>not in this list</b></em>, their guest-customer session is reset.<br /><br />For example, if your store provides a pop-up print invoice, you would include the name of that page in this list.  Default: <em>download</em>.<br /><br /><strong>Note:</strong> The default for this setting was blank (i.e. '') for <em>OPC</em> versions prior to v2.0.4.</td>
+                    <td>Identify (using a comma-separated list, intervening blanks are OK) the pages that are <em>allowed</em> once a guest has completed their checkout.  When the guest navigates from the <code class="no-pad">checkout_success</code> page to any page <em><b>not in this list</b></em>, their guest-customer session is reset.<br><br>For example, if your store provides a pop-up print invoice, you would include the name of that page in this list.  Default: <em>download</em>.<br><br><strong>Note:</strong> The default for this setting was blank (i.e. '') for <em>OPC</em> versions prior to v2.0.4.</td>
                     <td>2.0.0</td>
                 </tr>
                 <tr>
                     <td>Guest Checkout: Disallowed Pages</td>
-                    <td>Identify (using a comma-separated list, intervening blanks are OK) the pages that are <em>disallowed</em> during guest-checkout. These pages <em>normally</em> require a logged-in customer prior to display, e.g. <code class="no-pad">account</code>.  <b>Do not</b> include the <code class="no-pad">login</code>, <code class="no-pad">create_account</code> or <code class="no-pad">logoff</code> pages in this list!<br /><br />Default: <b>account, account_edit, account_history, account_history_info, account_newsletters, account_notifications, account_password, address_book, address_book_process, create_account_success, gv_redeem, gv_send, password_forgotten, product_reviews_write, unsubscribe</b>.</td>
+                    <td>Identify (using a comma-separated list, intervening blanks are OK) the pages that are <em>disallowed</em> during guest-checkout. These pages <em>normally</em> require a logged-in customer prior to display, e.g. <code class="no-pad">account</code>.  <b>Do not</b> include the <code class="no-pad">login</code>, <code class="no-pad">create_account</code> or <code class="no-pad">logoff</code> pages in this list!<br><br>Default: <b>account, account_edit, account_history, account_history_info, account_newsletters, account_notifications, account_password, address_book, address_book_process, create_account_success, gv_redeem, gv_send, password_forgotten, product_reviews_write, unsubscribe</b>.</td>
                     <td>2.0.0</td>
                 </tr>
                 <tr>
                     <td>Guest Checkout: Disallowed <em>Credit Class</em> Order-Totals</td>
-                    <td>Identify (using a comma-separated list, intervening blanks are OK) any <em>credit-class</em> order-totals that are <em>disallowed</em> during guest-checkout.  These order-totals <em>normally</em> require a customer-account for their processing, e.g. <code class="no-pad">ot_gv</code>, the default value.<br /><br /><b>Note:</b> Starting with <em>OPC</em> v2.1.0, intervening blanks are allowed.</td>
+                    <td>Identify (using a comma-separated list, intervening blanks are OK) any <em>credit-class</em> order-totals that are <em>disallowed</em> during guest-checkout.  These order-totals <em>normally</em> require a customer-account for their processing, e.g. <code class="no-pad">ot_gv</code>, the default value.<br><br><b>Note:</b> Starting with <em>OPC</em> v2.1.0, intervening blanks are allowed.</td>
                     <td>2.0.0</td>
                 </tr>
                 <tr>
                     <td>Guest Checkout: Disallowed Payment Methods</td>
-                    <td>Identify (using a comma-separated list, intervening blanks are OK) any payment methods that are <em>disallowed</em> during guest-checkout.  These payment methods <em>normally</em> have no validation of purchase &mdash; e.g. <code class="no-pad">moneyorder</code> and <code class="no-pad">cod</code> &mdash; and can, if left enabled, result in unwanted <em>spam purchases</em>.  Default: <b>moneyorder, cod</b>.<br /><br /><b>Note:</b> Starting with <em>OPC</em> v2.1.0, intervening blanks are allowed.</td>
+                    <td>Identify (using a comma-separated list, intervening blanks are OK) any payment methods that are <em>disallowed</em> during guest-checkout.  These payment methods <em>normally</em> have no validation of purchase &mdash; e.g. <code class="no-pad">moneyorder</code> and <code class="no-pad">cod</code> &mdash; and can, if left enabled, result in unwanted <em>spam purchases</em>.  Default: <b>moneyorder, cod</b>.<br><br><b>Note:</b> Starting with <em>OPC</em> v2.1.0, intervening blanks are allowed.</td>
                     <td>2.0.0</td>
                 </tr>
                 <tr>
@@ -363,7 +363,7 @@ a[target=_blank] { text-decoration: underline; }
                 </tr>
                 <tr>
                     <td>Login-Page Layout</td>
-                    <td>When you enable the plugin's <em>Guest Checkout</em> and/or <em>Account Registration</em>, an alternate formatting of the storefront <code class="no-pad">login</code> page is displayed.  Use this setting to control the 3-column layout of that modified page.  The value is an encoded string, identifying which block(s) should be displayed in which column.  Columns are delimited by a semi-colon (;) and the top-to-bottom column layout is in the order specified by the block-elements' left-to-right order.<br /><br />The block elements are:<ul><li><b>L</b> ... (required) The email/password login block.</li><li><b>P</b> ... (optional) The PayPal Express Checkout shortcut-button block.</li><li><b>G</b> ... (required) The guest-checkout block.</li><li><b>C</b> ... (required) The create-account block.</li><li><b>B</b> ... (optional) The &quot;Account Benefits&quot; block.</li></ul>Default: <b>L;P,G,C;B</b>.  See <a href="https://github.com/lat9/one_page_checkout/blob/master/pages/login_page.md" target="_blank" rel="noopener">this</a> additional-documentation page for details.</td>
+                    <td>When you enable the plugin's <em>Guest Checkout</em> and/or <em>Account Registration</em>, an alternate formatting of the storefront <code class="no-pad">login</code> page is displayed.  Use this setting to control the 3-column layout of that modified page.  The value is an encoded string, identifying which block(s) should be displayed in which column.  Columns are delimited by a semi-colon (;) and the top-to-bottom column layout is in the order specified by the block-elements' left-to-right order.<br><br>The block elements are:<ul><li><b>L</b> ... (required) The email/password login block.</li><li><b>P</b> ... (optional) The PayPal Express Checkout shortcut-button block.</li><li><b>G</b> ... (required) The guest-checkout block.</li><li><b>C</b> ... (required) The create-account block.</li><li><b>B</b> ... (optional) The &quot;Account Benefits&quot; block.</li></ul>Default: <b>L;P,G,C;B</b>.  See <a href="https://github.com/lat9/one_page_checkout/blob/master/pages/login_page.md" target="_blank" rel="noopener">this</a> additional-documentation page for details.</td>
                     <td>2.0.0</td>
                 </tr>
                 <tr>
@@ -695,13 +695,14 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank" rel="noopener">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color and removals are indicated like <span class="removed">this</span>.</p>
               <ul>
-                <li>v2.4.2-beta3, 2022-06-12 (lat9):<ul>
+                <li>v2.4.2-beta4, 2022-07-07 (lat9):<ul>
                     <li>BUGFIX: Guest shipping address 'overwritten' if billing address is changed.</li>
                     <li>BUGFIX: Disable <em>Confirm</em> and <em>Review</em> buttons if privacy-policy and/or conditions haven't been accepted.</li>
                     <li>BUGFIX: Correct PHP Warning issued during check for gift-certification restrictions on guest checkout.</li>
                     <li>BUGFIX: Enable HTML to be rendered for admin-entered order comments on the &quot;order_status&quot; page.</li>
                     <li>BUGFIX: Remove &quot;ot_coupon&quot; language constants no longer used in zc157+.</li>
                     <li>BUGFIX: Don't require 'conditions' or 'privacy' checkbox until order-confirmation (and no other errors).</li>
+                    <li>BUGFIX: Correcting PHP warnings/errors when a GV/DC fully covers the cost of an order.</li>
                     <li>The following files were changed:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/classes/observers/class.checkout_one_observer.php</li>
@@ -710,9 +711,11 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
                         <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
                         <li>/includes/templates/template_default/css/checkout_one.css</li>
+                        <li><span class="template-changed">/includes/template/template_default/tpl_checkout_one_confirmation_default.php</span></li>
                         <li><span class="template-changed">/includes/template/template_default/tpl_order_status_default.php</span></li>
                         <li><span class="template-changed">/includes/templates/YOUR_TEMPLATE/css/checkout_one.css</span></li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
+                        <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one_upgrade.php</li>
                     </ol></li>
                 </ul></li>
                 <li>v2.4.1, 2022-05-19 (lat9):<ul>
