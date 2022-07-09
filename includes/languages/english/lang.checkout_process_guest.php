@@ -5,8 +5,8 @@
 //
 // Last updated for OPC v2.4.2.
 //
-
-// -----
-// "Convert" the zc158-formatted language array into their pre-zc158 PHP defines.
-//
-opc_load_legacy_language_definitions('checkout_process_guest');
+$define = [
+    'EMAIL_TEXT_INVOICE_URL_GUEST' => 'Check order status:',
+    'EMAIL_TEXT_INVOICE_URL_CLICK_GUEST' => 'Click here to check your order\'s status',
+];
+return $define;
