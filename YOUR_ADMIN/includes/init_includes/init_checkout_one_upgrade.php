@@ -350,6 +350,21 @@ switch (true) {
               LIMIT 1"
         );
 
+    // -----
+    // v2.4.2:
+    //
+    // - Modify the description of "Payment Methods Requiring Confirmation" to indicate that a
+    //   'credit_covers' method indicates that the confirmation page is required for orders where
+    //   a Gift Certificate or coupon that 'covers' the charge for the order is present.
+    //
+    case version_compare(CHECKOUT_ONE_MODULE_VERSION, '2.4.2', '<'):    //-Fall-through processing from above
+        $db->Execute(
+            "UPDATE " . TABLE_CONFIGURATION . "
+                SET configuration_description = 'Identify (using a comma-separated list) the payment modules on your store that require confirmation.  If your store requires confirmation on all orders, simply list all payment modules used by your store.<br><br>Use the <code>credit_covers</code> &quot;method&quot; if orders that are fully paid using a Gift Certificate or coupon should also require confirmation.<br><br>Default: <code>eway_rapid,stripepay,gps</code><br>',
+                    last_modified = now()
+              WHERE configuration_key = 'CHECKOUT_ONE_CONFIRMATION_REQUIRED'
+              LIMIT 1"
+        );
     default:                                                            //-Fall-through processing from above
         break;
 }
