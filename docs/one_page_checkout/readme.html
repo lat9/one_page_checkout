@@ -419,10 +419,9 @@ a[target=_blank] { text-decoration: underline; }
                 <li>Please make sure that you've read the full instructions <b>before</b> beginning your installation or upgrade.</li>
               </ol>
               <hr />
-              <p>There are <span class="template">template-override</span> and, depending on your store's base Zen Cart version, <span class="corefile">core-file</span> changes required by this plugin; you should <strong>always</strong> backup your cart's database and files prior to making any changes.  Unzip the plugin's package file and then:</p>
+              <p>There are <span class="template">template-override</span> changes required by this plugin; you should <strong>always</strong> backup your cart's database and files prior to making any changes.  Unzip the plugin's package file and then:</p>
               <ol type="A"> 
-                <li>Rename the YOUR_TEMPLATE sub-directories <b>(5 of them)</b> to match your store's template name:<ol type="a">
-                  <li>/includes/languages/english/YOUR_TEMPLATE</li>
+                <li>Rename the YOUR_TEMPLATE sub-directories <b>(4 of them)</b> to match your store's template name:<ol type="a">
                   <li>/includes/languages/english/html_includes/YOUR_TEMPLATE</li>
                   <li>/includes/languages/english/modules/order_total/YOUR_TEMPLATE</li>
                   <li>/includes/modules/sideboxes/YOUR_TEMPLATE</li>
@@ -430,9 +429,10 @@ a[target=_blank] { text-decoration: underline; }
                 </ol></li>
                 <li>Rename the YOUR_ADMIN sub-directory to match your store's admin-sub-directory name.</li>
                 <li>Merge the <span class="template">template-override</span> modifications required by this plugin with your store's existing copy of each file, using the plugin's version of the file if not currently present in your store's file-system.<ol>
+                  <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/lang.ot_coupon.php</span> <span class="smaller">(Added in v2.4.2)</span></li>
+                  <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/lang.ot_gv.php</span> <span class="smaller">(Added in v2.4.2)</span></li>
                   <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_coupon.php</span></li>
                   <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_gv.php</span></li>
-                  <li><span class="template">/includes/languages/english/YOUR_TEMPLATE/checkout_confirmation.php</span></li>
                   <li><span class="template">/includes/modules/sideboxes/YOUR_TEMPLATE/information.php</span> <span class="smaller">(Added in v2.1.3)</span></li>
                 </ol></li>
                 <li>Sign into your Zen Cart's admin panel.  Due the the number of files that require uploading, I suggest that you place the site into <em>Maintenance Mode</em> by setting <b><i>Configuration-&gt;Website Maintenance-&gt;Down for Maintenance: ON/OFF</i></b> to <em>true</em>.</li>
@@ -454,14 +454,23 @@ a[target=_blank] { text-decoration: underline; }
                   <li>/includes/languages/english/checkout_success_guest.php</li>
                   <li>/includes/languages/english/create_account_register.php</li>
                   <li>/includes/langauges/english/create_account_success_register.php</li>
+                  <li>/includes/languages/english/lang.checkout_one.php</li>
+                  <li>/includes/languages/english/lang.checkout_one_confirmation.php</li>
+                  <li>/includes/languages/english/lang.checkout_process_guest.php</li>
+                  <li>/includes/languages/english/lang.checkout_success_guest.php</li>
+                  <li>/includes/languages/english/lang.create_account_register.php</li>
+                  <li>/includes/languages/english/lang.create_account_success_register.php</li>
+                  <li>/includes/languages/english/lang.login_guest.php</li>
                   <li>/includes/languages/english/login_guest.php</li>
                   <li>/includes/languages/english/order_status.php</li>
                   <li>/includes/languages/english/extra_definitions/checkout_one_extra_definitions.php</li>
+                  <li>/includes/languages/english/extra_definitions/lang.checkout_one_extra_definitions.php</li>
                   <li>/includes/languages/english/html_includes/define_checkout_success_guest.php</li>
                   <li>/includes/languages/english/html_includes/YOUR_TEMPLATE/define_checkout_success_guest.php</li>
+                  <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/lang.ot_coupon.php</span></li>
+                  <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/lang.ot_gv.php</span></li>
                   <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_coupon.php</span></li>
                   <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_gv.php</span></li>
-                  <li><span class="template">/includes/languages/english/YOUR_TEMPLATE/checkout_confirmation.php</span></li>
                   <li>/includes/modules/pages/address_book/header_php_address_book_register.php</li>
                   <li>/includes/modules/pages/address_book/main_template_vars.php</li>
                   <li>/includes/modules/pages/checkout_one/header_php.php</li>
@@ -540,7 +549,7 @@ a[target=_blank] { text-decoration: underline; }
                 <li>These instructions have changed <b>significantly</b> for v2.1.0 of the <em>One-Page Checkout</em> plugin!  Please make sure that you've read the full instructions <b>before</b> beginning your installation or upgrade.</li>
               </ol>
               <hr />
-              <p>There are <span class="template">template-override</span> and, depending on your store's current Zen Cart version, <span class="corefile">core-file</span> changes required by this plugin; you should <strong>always</strong> backup your cart's database and files prior to making any changes.  Unzip the plugin's package file and then:</p>
+              <p>There are <span class="template">template-override</span> changes required by this plugin; you should <strong>always</strong> backup your cart's database and files prior to making any changes.  Unzip the plugin's package file and then:</p>
               <ol type="A">
                 <li>Sign into your Zen Cart's admin panel.  Since there might be a number of files that require uploading, I suggest that you place the site into <em>Maintenance Mode</em> by setting <b><i>Configuration-&gt;Website Maintenance-&gt;Down for Maintenance: ON/OFF</i></b> to <em>true</em>.</li>
                 <li>Make note of the version-number of your current <em>One-Page Checkout</em> installation; see your admin's <b><em>Configuration-&gt;One-Page Checkout Settings-&gt;Version/Release Date</em></b>.</li>
@@ -549,6 +558,7 @@ a[target=_blank] { text-decoration: underline; }
                 <li>Click the &quot;Admin Home&quot; link in your Zen Cart's top admin menu.  This action will cause the plugin's upgrade script to run.</li>
                 <li>If you placed your store into <em>Maintenance Mode</em>, as suggested at step <b>A</b>, you can now safely take your site out of <em>Maintenance Mode</em>.</li>
               </ol>
+              <p><b>Note:</b> The file <em>/includes/languages/english/YOUR_TEMPLATE/checkout_confirmation.php</em> was distributed by <em>OPC</em> versions <em>prior to</em> v2.4.2.  If you've made no changes over-and-above the one marked section provided by <em>OPC</em>, you can safely remove this file from your template's language directory.</p>
             </div>
 
             <div id="remove">
@@ -619,14 +629,24 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                 <li>/includes/languages/english/checkout_success_guest.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/languages/english/create_account_register.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/languages/english/create_account_success_register.php <span class="smaller">(Added in v2.0.0)</span></li>
+                <li>/includes/languages/english/lang.checkout_one.php <span class="smaller">(Added in v2.4.2)</span></li>
+                <li>/includes/languages/english/lang.checkout_one_confirmation.php <span class="smaller">(Added in v2.4.2)</span></li>
+                <li>/includes/languages/english/lang.checkout_process_guest.php <span class="smaller">(Added in v2.4.2)</span></li>
+                <li>/includes/languages/english/lang.checkout_success_guest.php <span class="smaller">(Added in v2.4.2)</span></li>
+                <li>/includes/languages/english/lang.create_account_register.php <span class="smaller">(Added in v2.4.2)</span></li>
+                <li>/includes/languages/english/lang.create_account_success_register.php <span class="smaller">(Added in v2.4.2)</span></li>
+                <li>/includes/languages/english/lang.login_guest.php <span class="smaller">(Added in v2.4.2)</span></li>
                 <li>/includes/languages/english/login_guest.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/languages/english/order_status.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/languages/english/extra_definitions/checkout_one_extra_definitions.php <span class="smaller">(Added in v1.0.8)</span></li>
-                <li>/includes/languages/english/html_includes/define_checkout_success_guest.php <span class="smaller">(Added in v2.0.0)</span></li>
+                <li>/includes/languages/english/extra_definitions/lang.checkout_one_extra_definitions.php</li>
+                <li>/includes/languages/english/html_includes/define_checkout_success_guest.php <span class="smaller">(Added in v2.4.2)</span></li>
                 <li>/includes/languages/english/html_includes/YOUR_TEMPLATE/define_checkout_success_guest.php <span class="smaller">(Added in v2.0.0)</span></li>
+                <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/lang.ot_coupon.php</span> <span class="smaller">(Added in v2.4.2)</span></li>
+                <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/lang.ot_gv.php</span> <span class="smaller">(Added in v2.4.2)</span></li>
                 <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_coupon.php</span></li>
                 <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_gv.php</span></li>
-                <li><span class="template">/includes/languages/english/YOUR_TEMPLATE/checkout_confirmation.php</span></li>
+                <li><span class="template removed">/includes/languages/english/YOUR_TEMPLATE/checkout_confirmation.php</span> <span class="smaller">(Removed in v2.4.2, from this distribution <em>only</em>)</span></li>
                 <li>/includes/modules/pages/address_book/header_php_address_book_register.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/modules/pages/address_book/main_template_vars.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/modules/pages/checkout_one/header_php.php</li>
@@ -703,10 +723,33 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                     <li>BUGFIX: Remove &quot;ot_coupon&quot; language constants no longer used in zc157+.</li>
                     <li>BUGFIX: Don't require 'conditions' or 'privacy' checkbox until order-confirmation (and no other errors).</li>
                     <li>BUGFIX: Correcting PHP warnings/errors when a GV/DC fully covers the cost of an order.</li>
-                    <li>The following files were changed:<ol>
+                    <li>BUGFIX: Correcting duplicate-constant warnings, using the zc158 method of delivering language-related files.</li>
+                    <li>BUGFIX: No longer distribute unneeded changes to <code class="no-pad">/includes/languages/english/YOUR_TEMPLATE/checkout_confirmation.php</code>.</li>
+                    <li>The following files were changed/<span class="added">added</span>:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/classes/observers/class.checkout_one_observer.php</li>
+                        <li>/includes/functions/extra_functions/one_page_checkout_functions.php</li>
+                        <li>/includes/languages/english/checkout_one.php</li>
+                        <li>/includes/languages/english/checkout_one_confirmation.php</li>
+                        <li>/includes/languages/english/checkout_process_guest.php</li>
+                        <li>/includes/languages/english/checkout_success_guest.php</li>
+                        <li>/includes/languages/english/create_account_register.php</li>
+                        <li>/includes/languages/english/create_account_success_register.php</li>
+                        <li><span class="added">/includes/languages/english/lang.checkout_one.php</span></li>
+                        <li><span class="added">/includes/languages/english/lang.checkout_one_confirmation.php</span></li>
+                        <li><span class="added">/includes/languages/english/lang.checkout_process_guest.php</span></li>
+                        <li><span class="added">/includes/languages/english/lang.checkout_success_guest.php</span></li>
+                        <li><span class="added">/includes/languages/english/lang.create_account_register.php</span></li>
+                        <li><span class="added">/includes/languages/english/lang.create_account_success_register.php</span></li>
+                        <li><span class="added">/includes/languages/english/lang.login_guest.php</span></li>
+                        <li>/includes/languages/english/login_guest.php</li>
+                        <li>/includes/languages/english/extra_definitions/checkout_one_extra_definitions.php</li>
+                        <li><span class="added">/includes/languages/english/extra_definitions/lang.checkout_one_extra_definitions.php</span></li>
+                        <li><span class="added">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/lang.ot_coupon.php</span></li>
+                        <li><span class="added">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/lang.ot_gv.php</span></li>
                         <li><span class="template-changed">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_coupon.php</span></li>
+                        <li><span class="template-changed">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_gv.php</span></li>
+                        <li><span class="template-changed removed">/includes/languages/english/YOUR_TEMPLATE/checkout_confirmation.php</span></li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
                         <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
