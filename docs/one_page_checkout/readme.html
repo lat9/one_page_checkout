@@ -725,6 +725,7 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                     <li>BUGFIX: Correcting PHP warnings/errors when a GV/DC fully covers the cost of an order.</li>
                     <li>BUGFIX: Correcting duplicate-constant warnings, using the zc158 method of delivering language-related files.</li>
                     <li>BUGFIX: No longer distribute unneeded changes to <code class="no-pad">/includes/languages/english/YOUR_TEMPLATE/checkout_confirmation.php</code>.</li>
+                    <li>BUGFIX: Require state-selection from dropdown for guest-checkout when the store's country uses zones, e.g. &quot;United States&quot;.</li>
                     <li>The following files were changed/<span class="added">added</span>:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/classes/observers/class.checkout_one_observer.php</li>
@@ -752,6 +753,8 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                         <li><span class="template-changed removed">/includes/languages/english/YOUR_TEMPLATE/checkout_confirmation.php</span></li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
+                        <li>/includes/modules/pages/checkout_one/jquery.checkout_one_addr.js</li>
+                        <li>/includes/modules/pages/checkout_one/jquery.checkout_one_addr.min.js</li>
                         <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
                         <li>/includes/templates/template_default/css/checkout_one.css</li>
                         <li><span class="template-changed">/includes/template/template_default/tpl_checkout_one_confirmation_default.php</span></li>

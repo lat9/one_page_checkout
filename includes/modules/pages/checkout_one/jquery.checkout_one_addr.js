@@ -59,7 +59,7 @@ jQuery(document).ready(function() {
     function updateCountryZones(which, selected_country)
     {
         var countryHasZones = false;
-        var countryZones = '<option selected="selected" value="0">' + textPleaseSelect + '<' + '/option>';
+        var countryZones = '<option selected="selected" value="">' + textPleaseSelect + '<' + '/option>';
         jQuery.each(JSON.parse(c2z), function(country_id, country_zones) {
             if (selected_country == country_id) {
                 countryHasZones = true;
