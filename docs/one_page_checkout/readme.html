@@ -726,6 +726,7 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                     <li>BUGFIX: Correcting duplicate-constant warnings, using the zc158 method of delivering language-related files.</li>
                     <li>BUGFIX: No longer distribute unneeded changes to <code class="no-pad">/includes/languages/english/YOUR_TEMPLATE/checkout_confirmation.php</code>.</li>
                     <li>BUGFIX: Require state-selection from dropdown for guest-checkout when the store's country uses zones, e.g. &quot;United States&quot;.</li>
+                    <li>BUGFIX: Correct interaction with payment methods (like square_webPay) that dynamically add elements to their payment selections' inputs.</li>
                     <li>The following files were changed/<span class="added">added</span>:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/classes/observers/class.checkout_one_observer.php</li>
