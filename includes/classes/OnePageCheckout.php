@@ -149,7 +149,7 @@ class OnePageCheckout extends base
         global $current_page_base;
         $is_paypal_express_checkout = false;
         if ($current_page_base !== FILENAME_CHECKOUT_PROCESS && defined('MODULE_PAYMENT_PAYPALWPP_STATUS') && MODULE_PAYMENT_PAYPALWPP_STATUS === 'True') {
-            if (!empty($_SESSION['paypal_ec_token']) && !empty($_SESSION['paypal_ec_payer_id']) && !empty($_SESSION['paypal_ec_payer_info'])) {
+            if (isset($_SESSION['customer_guest_id']) || (!empty($_SESSION['paypal_ec_token']) && !empty($_SESSION['paypal_ec_payer_id']) && !empty($_SESSION['paypal_ec_payer_info']))) {
                 $this->debugMessage("PayPal Express Checkout, in special checkout.  One Page Checkout is disabled.");
                 $is_paypal_express_checkout = true;
             }
