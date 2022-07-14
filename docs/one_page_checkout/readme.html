@@ -729,6 +729,7 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                     <li>BUGFIX: Require state-selection from dropdown for guest-checkout when the store's country uses zones, e.g. &quot;United States&quot;.</li>
                     <li>BUGFIX: Correct interaction with payment methods (like square_webPay) that dynamically add elements to their payment selections' inputs.  Thanks to @proseLA for the correction!</li>
                     <li>BUGFIX: Correctly force checkout to the '3-page' process when <em>PayPal Express Checkout</em> is in effect.</li>
+                    <li>BUGFIX: Correct session-timeout on <em>order_status</em> page when &quot;Force Cookie Use&quot; is set to 'True'.</li>
                     <li>The following files were changed/<span class="added">added</span>:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/classes/observers/class.checkout_one_observer.php</li>
@@ -759,6 +760,7 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one_addr.js</li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one_addr.min.js</li>
                         <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
+                        <li>/includes/modules/pages/order_status/header_php.php</li>
                         <li>/includes/templates/template_default/css/checkout_one.css</li>
                         <li><span class="template-changed">/includes/template/template_default/tpl_checkout_one_confirmation_default.php</span></li>
                         <li><span class="template-changed">/includes/template/template_default/tpl_order_status_default.php</span></li>

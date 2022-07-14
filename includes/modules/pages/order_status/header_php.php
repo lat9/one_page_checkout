@@ -3,6 +3,8 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
 // Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
 //
+// Last updated: OPC v2.4.2
+//
 // Adapted from the like-named page handling with the following history:
 // - J_Schilz for Integrated COWOA - 2007
 // - JT of GTI Custom Modified for Integrated COWOA 02-July-2010
@@ -18,6 +20,22 @@ $zco_notifier->notify('NOTIFY_HEADER_START_ORDER_STATUS');
 //
 if (zen_is_logged_in() && !zen_in_guest_checkout()) {
     zen_redirect(zen_href_link(FILENAME_ACCOUNT_HISTORY, '', 'SSL'));
+}
+
+// -----
+// If the site has configured "Sessions :: Force Cookie Use" to 'True' and this
+// is the first time the customer has 'hit' the site, the 'cookie_test' cookie has
+// not yet been set.  We'll redirect back to the 'order_status' page to get that
+// set; otherwise, a guest-customer coming back to the site to check an order's
+// status will be met with a "Session Timeout" message ... not customer-friendly.
+//
+// Note: Adding a session-based value to prevent multiple redirects in case that cookie
+// (for whatever reason) can never be set!  The customer, in this case, **will** receive
+// that "Session Timeout" message.
+//
+if (SESSION_FORCE_COOKIE_USE === 'True' && !isset($_COOKIE['cookie_test']) && !isset($_SESSION['order_status_redirected'])) {
+    $_SESSION['order_status_redirected'] = true;
+    zen_redirect(zen_href_link(FILENAME_ORDER_STATUS, '', 'SSL'));
 }
 
 require DIR_WS_MODULES . zen_get_module_directory('require_languages.php');
@@ -51,7 +69,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'status') {
 
     if (!$error) {
         $customeremail = $db->Execute(
-            "SELECT orders_id FROM " . TABLE_ORDERS . " 
+            "SELECT orders_id FROM " . TABLE_ORDERS . "
               WHERE customers_email_address = '" . zen_db_input($query_email_address) . "'
                 AND orders_id = $orderID
               LIMIT 1"
@@ -88,9 +106,9 @@ if (isset($_GET['action']) && $_GET['action'] === 'status') {
             zen_redirect(zen_href_link(FILENAME_TIME_OUT, '', 'SSL'));
         }
     } else {
-        $statuses_query = 
+        $statuses_query =
             "SELECT os.orders_status_name, osh.date_added, osh.comments
-               FROM " . TABLE_ORDERS_STATUS . " os 
+               FROM " . TABLE_ORDERS_STATUS . " os
                     INNER JOIN " . TABLE_ORDERS_STATUS_HISTORY . " osh
                         ON osh.orders_status_id = os.orders_status_id
                        AND osh.orders_id = :ordersID
