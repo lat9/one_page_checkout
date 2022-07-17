@@ -6,7 +6,7 @@
 // This class, instantiated in the current customer session, keeps track of a customer's login and checkout
 // progression with the aid of the OPC's observer- and AJAX-classes.
 //
-// Last updated: OPC v2.4.2.
+// Last updated: OPC v2.4.3.
 //
 class OnePageCheckout extends base
 {
@@ -630,7 +630,7 @@ class OnePageCheckout extends base
             trigger_error("Guest customer-info not set during guest checkout.", E_USER_ERROR);
             exit();
         }
-        return (isset($this->guestCustomerInfo['dob'])) ? $this->guestCustomerInfo['dob'] : '';
+        return (isset($this->guestCustomerInfo['dob_display'])) ? $this->guestCustomerInfo['dob_display'] : '';
     }
 
     /* -----
@@ -1321,9 +1321,18 @@ class OnePageCheckout extends base
             $messages['telephone'] = ENTRY_TELEPHONE_NUMBER_ERROR;
         }
 
+        // -----
+        // For the date-of-birth, some mobile browsers use a popup calendar that might
+        // require the date's display to be in a format other than that used in the database.
+        //
+        // Remember the format returned by the browser and, if found to be valid, use that to
+        // re-display the date value.
+        //
         $dob = '';
+        $dob_display = '';
         if (ACCOUNT_DOB === 'true') {
             $dob = zen_db_prepare_input($_POST['dob']);
+            $dob_display = $dob;
             if (ENTRY_DOB_MIN_LENGTH > 0 || !empty($_POST['dob'])) {
                 // Support ISO-8601 style date
                 if (preg_match('/^([0-9]{4})(|-|\/)([0-9]{2})\2([0-9]{2})$/', $dob)) {
@@ -1355,6 +1364,7 @@ class OnePageCheckout extends base
             $this->guestCustomerInfo['email_address'] = $email_address;
             $this->guestCustomerInfo['telephone'] = $telephone;
             $this->guestCustomerInfo['dob'] = $dob;
+            $this->guestCustomerInfo['dob_display'] = $dob_display;
             if (is_array($additional_fields)) {
                 $this->guestCustomerInfo = array_merge($this->guestCustomerInfo, $additional_fields);
             }
