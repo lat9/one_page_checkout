@@ -1658,6 +1658,10 @@ class OnePageCheckout extends base
                     $_SESSION['customer_last_name'] = $address['lastname'];
                 }
                 $_SESSION['billto'] = $this->tempBilltoAddressBookId;
+                if ($this->isGuestCheckout() && $this->sendtoTempAddrOk === false) {
+                    $this->tempAddressValues['ship'] = $this->tempAddressValues['bill'];
+                    $this->sendtoTempAddrOk = true;
+                }
                 if ($this->getShippingBilling()) {
                     $_SESSION['sendto'] = $this->tempBilltoAddressBookId;
                     $this->tempAddressValues['ship'] = $this->tempAddressValues['bill'];
