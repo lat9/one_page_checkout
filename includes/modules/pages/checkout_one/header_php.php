@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated for OPC v2.4.1.
+// Last updated for OPC v2.4.4.
 //
 // -----
 // This should be first line of the script:
@@ -228,7 +228,7 @@ if (!$is_virtual_order && $customer_info_ok && $temp_shipto_addr_ok) {
     // price for the display.
     //
     $shipping_selection_changed = false;
-    if (isset($_SESSION['shipping'])) {
+    if (!empty($_SESSION['shipping'])) {
         $selected_shipping_cost = 0;
         $checklist = [];
         foreach ($quotes as $quote) {
@@ -262,7 +262,7 @@ if (!$is_virtual_order && $customer_info_ok && $temp_shipto_addr_ok) {
     // if the modules status was changed when none were available, to save on implementing
     // a javascript force-selection method, also automatically select the cheapest shipping
     // method if more than one module is now enabled
-    if (!isset($_SESSION['shipping']) || !isset($_SESSION['shipping']['id']) || $_SESSION['shipping']['id'] === '') {
+    if (empty($_SESSION['shipping']) || !isset($_SESSION['shipping']['id']) || $_SESSION['shipping']['id'] === '') {
         if (zen_count_shipping_modules() >= 1) {
             $_SESSION['shipping'] = $shipping_modules->cheapest();
         } elseif (count($quotes) > 0 && count($quotes[0]['methods']) > 0 && !$shipping_selection_changed) {
@@ -280,7 +280,7 @@ if (!$is_virtual_order && $customer_info_ok && $temp_shipto_addr_ok) {
 // the guest customer-information or temporary shipping address hasn't been set.
 //
 $display_shipping_block = ($customer_info_ok && $temp_shipto_addr_ok);
-$shipping_module_available = $is_virtual_order || ($display_shipping_block && ($free_shipping || zen_count_shipping_modules() > 0));
+$shipping_module_available = $is_virtual_order || ($display_shipping_block && !empty($_SESSION['shipping']) && ($free_shipping || zen_count_shipping_modules() > 0));
 
 // -----
 // If the session-based shipping information is set, sync that information up with the order.

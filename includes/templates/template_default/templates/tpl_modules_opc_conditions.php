@@ -1,9 +1,12 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2018, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
 //
-if ($_SESSION['opc']->isGuestCheckout() && DISPLAY_PRIVACY_CONDITIONS == 'true') {
+// Last updated: OPC v2.4.4
+//
+if ($shipping_module_available === true && $display_payment_block === true) {
+    if ($_SESSION['opc']->isGuestCheckout() && DISPLAY_PRIVACY_CONDITIONS === 'true') {
 ?>
     <div id="privacy-div">
         <fieldset>
@@ -16,9 +19,9 @@ if ($_SESSION['opc']->isGuestCheckout() && DISPLAY_PRIVACY_CONDITIONS == 'true')
         </fieldset>
     </div>
 <?php
-}
+    }
 
-if (DISPLAY_CONDITIONS_ON_CHECKOUT == 'true') {
+    if (DISPLAY_CONDITIONS_ON_CHECKOUT === 'true') {
 ?>
 <!--bof conditions block -->
   <div id="conditions-div">
@@ -32,4 +35,5 @@ if (DISPLAY_CONDITIONS_ON_CHECKOUT == 'true') {
   </div>
 <!--eof conditions block -->
 <?php
+    }
 }
