@@ -718,7 +718,10 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
               <ul>
                 <li>v2.4.4-beta1, 2022-07-30 (lat9):<ul>
                     <li>BUGFIX: Indicate that no shipping-module is available if no quotes are returned.</li>
+                    <li>BUFFIX: Correct PHP Warnings from 'zen_address_label' when temporary addresses are in use.</li>
                     <li>The following files were changed:<ol>
+                        <li>/includes/classes/OnePageCheckout.php</li>
+                        <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                         <li>/includes/modules/pages/checkout_one/header_php.php</li>
                         <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_conditions.php</span></li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>

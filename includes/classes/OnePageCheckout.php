@@ -6,7 +6,7 @@
 // This class, instantiated in the current customer session, keeps track of a customer's login and checkout
 // progression with the aid of the OPC's observer- and AJAX-classes.
 //
-// Last updated: OPC v2.4.3.
+// Last updated: OPC v2.4.4.
 //
 class OnePageCheckout extends base
 {
@@ -908,15 +908,31 @@ class OnePageCheckout extends base
     }
 
     /* -----
-    ** This function returns the Zen-Cart formatted address for the specified temporary address.
+    ** This function returns a temporary address' information for use by the
+    ** 'zen_address_format' function; called from OPC's observer class when
+    ** notified of a request to 'zen_address_label'.
     */
-    public function formatAddress($which, $use_html = false, $eoln = ', ')
+    public function getAddressLabelFields($address_book_id)
     {
-        $this->inputPreCheck($which);
-        
-        $address = $this->createOrderAddressFromTemporary($which);
-        
-        return zen_address_format($address['format_id'], $address, ($use_html === true), '', $eoln);
+        // -----
+        // If the requested address_book_id isn't one of OPC's temporary addresses,
+        // nothing to do here.  Quick return to let the observer know
+        // that the address information isn't to be overridden.
+        //
+        if ($address_book_id !== $this->tempBilltoAddressBookId && $address_book_id !== $this->tempSendtoAddressBookId) {
+            return false;
+        }
+
+        // -----
+        // Determine which of the temporary addresses should be returned, gather the
+        // information and return it.
+        //
+        if ($_SESSION['cart']->get_content_type() !== 'virtual' && $address_book_id === $this->tempSendtoAddressBookId) {
+            $which = 'ship';
+        } else {
+            $which = 'bill';
+        }
+        return $this->createOrderAddressFromTemporary($which);
     }
 
     /* -----

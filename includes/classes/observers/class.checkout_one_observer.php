@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.4.2.
+// Last updated: OPC v2.4.4.
 //
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
@@ -142,6 +142,7 @@ class checkout_one_observer extends base
                     'NOTIFY_CHECKOUT_PROCESS_BEFORE_CART_RESET',
                     'NOTIFY_ZEN_IN_GUEST_CHECKOUT',
                     'NOTIFY_ZEN_IS_LOGGED_IN',
+                    'NOTIFY_ZEN_ADDRESS_LABEL',
                 ]
             );
         }
@@ -381,6 +382,32 @@ class checkout_one_observer extends base
                 break;
 
             // -----
+            // Issued by the zen_address_label function to format a customer's address.
+            // Since this is called both by and outside of the OPC processing, the
+            // shipping-address details will be replaced to correct various PHP Warnings
+            // issued.
+            //
+            // OPC's getAddressLabelFields will return either (bool)false, if the supplied
+            // address_book_id isn't one of its temporary addresses, or an array of address-related
+            // fields to replace the information that zen_address_label has previously gathered.
+            //
+            // NOTE: Using array_merge to overwrite any base address_book fields gathered, but
+            // preserving any additional fields potentially added by another observer.
+            //
+            // On entry:
+            //
+            // $p2 ... (r/w) The customers_id for which the address is being formatted.
+            // $p3 ... (r/w) The address_book_id identifying the address to format
+            // $p4 ... (r/w) An array of 'address_book' fields associated with the above customer's address.
+            //
+            case 'NOTIFY_ZEN_ADDRESS_LABEL':
+                $address_fields = $_SESSION['opc']->getAddressLabelFields((int)$p3);
+                if ($address_fields !== false) {
+                    $p4 = array_merge($p4, $address_fields);
+                }
+                break;
+
+            // -----
             // If the customer has just added an address, force that address to be the
             // primary if the customer currently has no permanent addresses.
             //
@@ -528,39 +555,6 @@ class checkout_one_observer extends base
                         
                         $html_msg['INTRO_URL_TEXT'] = EMAIL_TEXT_INVOICE_URL_CLICK_GUEST;
                         $html_msg['INTRO_URL_VALUE'] = $order_status_link;
-                    }
-
-                    if ($class->content_type !== 'virtual' && in_array($_SESSION['sendto'], $temp_addresses)) {
-                        $which = ($_SESSION['sendto'] == CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID) ? 'ship' : 'bill';
-                        $shipping_address = $_SESSION['opc']->formatAddress($which, false, "\n");
-                        
-                        $new_shipping_address = 
-                            EMAIL_TEXT_DELIVERY_ADDRESS . "\n" . 
-                            EMAIL_SEPARATOR . "\n" . 
-                            $shipping_address;
-                        $old_shipping_address = 
-                            EMAIL_TEXT_DELIVERY_ADDRESS . "\n" . 
-                            EMAIL_SEPARATOR . "\n" . 
-                            zen_address_label($_SESSION['customer_id'], $_SESSION['sendto'], false, '', "\n");
-                        $email_text = str_replace($old_shipping_address, $new_shipping_address, $email_text);
-                        
-                        $html_msg['ADDRESS_DELIVERY_DETAIL'] = nl2br($shipping_address);
-                    }
-
-                    if ($_SESSION['billto'] == CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID) {
-                        $billing_address = $_SESSION['opc']->formatAddress('bill', false, "\n");
-                        
-                        $new_billing_address =
-                            EMAIL_TEXT_BILLING_ADDRESS . "\n" .
-                            EMAIL_SEPARATOR . "\n" .
-                            $billing_address;
-                        $old_billing_address =
-                            EMAIL_TEXT_BILLING_ADDRESS . "\n" .
-                            EMAIL_SEPARATOR . "\n" .
-                            zen_address_label($_SESSION['customer_id'], $_SESSION['billto'], false, '', "\n");
-                        $email_text = str_replace($old_billing_address, $new_billing_address, $email_text);
-                        
-                        $html_msg['ADDRESS_BILLING_DETAIL'] = nl2br($billing_address);
                     }
 
                     $p2 = $email_text;
