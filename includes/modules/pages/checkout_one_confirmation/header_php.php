@@ -305,6 +305,11 @@ if ($error === false && !empty($_SESSION['messageToStack'])) {
 }
 
 // -----
+// Issue a notification to enable an observer to perform additional checks and indicate an error.
+//
+$zco_notifier->notify('NOTIFY_CHECKOUT_ONE_CONFIRMATION_PRE_ORDER_CHECK', '', $error);
+
+// -----
 // If no previous errors and the order has been confirmed, check to see if either the
 // terms-and-conditions or privacy-terms agreement need to be ticked.
 //
