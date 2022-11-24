@@ -720,9 +720,13 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                     <li>BUGFIX: Indicate that no shipping-module is available if no quotes are returned.</li>
                     <li>BUGFIX: Correct PHP Warnings from 'zen_address_label' when temporary addresses are in use.</li>
                     <li>BUGFIX: Some countries' states/provinces aren't in alphabetical order after changing the country; thanks to marco-pm for the correction!</li>
-                    <li>The following files were changed:<ol>
+                    <li>INTROP: Correct 'missing constants' issues for the 'order_status' page in zc158.</li>
+                    <li>The following files were changed, <span class="added">added</span> or <span class="removed">removed</span>:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/classes/observers/class.checkout_one_observer.php</li>
+                        <li><span class="removed">/includes/languages/english/order_status.php</span></li>
+                        <li><span class="added">/includes/languages/english/YOUR_TEMPLATE/order_status.php</span></li>
+                        <li><span class="added">/includes/languages/english/YOUR_TEMPLATE/lang.order_status.php</span></li>
                         <li>/includes/modules/pages/checkout_one/header_php.php</li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one_addr.js</li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one_addr.min.js</li>
