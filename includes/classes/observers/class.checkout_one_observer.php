@@ -15,7 +15,7 @@ class checkout_one_observer extends base
         $browser,
         $enabled = false,
         $debug = false,
-        $debug_log_file,
+        $debug_logfile,
         $current_page_base,
         $needUnsupportedPageMessage = false,
         $needGuestCheckoutUnavailableMessage = false;
