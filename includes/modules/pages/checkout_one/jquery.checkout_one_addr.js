@@ -2,6 +2,8 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
 // Copyright (C) 2018-2022, Vinos de Frutas Tropicales.  All rights reserved.
 //
+// Last updated: OPC v2.4.4
+//
 
 // -----
 // Main processing section, starts when the browser has finished and the page is "ready" ...
@@ -63,8 +65,12 @@ jQuery(document).ready(function() {
         jQuery.each(JSON.parse(c2z), function(country_id, country_zones) {
             if (selected_country == country_id) {
                 countryHasZones = true;
+                var countryZonesArray = [];
                 jQuery.each(country_zones, function(zone_id, zone_name) {
-                    countryZones += '<option value="' + zone_id + '">' + zone_name + '<' + '/option>';
+                    countryZonesArray[zone_name] = zone_id;
+                });
+                Object.keys(countryZonesArray).sort().forEach(function(zone_name) {
+                    countryZones += '<option value="' + countryZonesArray[zone_name] + '">' + zone_name + '<' + '/option>';
                 });
             }
         });
