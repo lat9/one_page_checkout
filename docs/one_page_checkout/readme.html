@@ -422,9 +422,10 @@ a[target=_blank] { text-decoration: underline; }
               <hr />
               <p>There are <span class="template">template-override</span> changes required by this plugin; you should <strong>always</strong> backup your cart's database and files prior to making any changes.  Unzip the plugin's package file and then:</p>
               <ol type="A"> 
-                <li>Rename the YOUR_TEMPLATE sub-directories <b>(4 of them)</b> to match your store's template name:<ol type="a">
+                <li>Rename the YOUR_TEMPLATE sub-directories <b>(5 of them)</b> to match your store's template name:<ol type="a">
                   <li>/includes/languages/english/html_includes/YOUR_TEMPLATE</li>
                   <li>/includes/languages/english/modules/order_total/YOUR_TEMPLATE</li>
+                  <li>/includes/languages/english/YOUR_TEMPLATE</li>
                   <li>/includes/modules/sideboxes/YOUR_TEMPLATE</li>
                   <li>/includes/templates/YOUR_TEMPLATE</li>
                 </ol></li>
@@ -435,6 +436,8 @@ a[target=_blank] { text-decoration: underline; }
                   <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_coupon.php</span></li>
                   <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_gv.php</span></li>
                   <li><span class="template">/includes/modules/sideboxes/YOUR_TEMPLATE/information.php</span> <span class="smaller">(Added in v2.1.3)</span></li>
+                  <li><span class="template">/includes/languages/english/YOUR_TEMPLATE/lang.order_status.php</span> <span class="smaller">(Added in v2.4.4)</span></li>
+                  <li><span class="template">/includes/languages/english/YOUR_TEMPLATE/order_status.php</span> <span class="smaller">(Added in v2.4.4)</span></li>
                 </ol></li>
                 <li>Sign into your Zen Cart's admin panel.  Due the the number of files that require uploading, I suggest that you place the site into <em>Maintenance Mode</em> by setting <b><i>Configuration-&gt;Website Maintenance-&gt;Down for Maintenance: ON/OFF</i></b> to <em>true</em>.</li>
                 <li>Copy the plugin's <em>new</em> files &mdash; with the sub-directories renamed as identified in steps <b>A</b> and <b>B</b> and the file-merges performed as identified in step <b>C</b> &mdash; to your store's directory structure.  You'll use either your webhost's cPanel File Manager or an FTP program (like WinSCP or FileZilla) to perform this copy.<ol>
@@ -463,7 +466,6 @@ a[target=_blank] { text-decoration: underline; }
                   <li>/includes/languages/english/lang.create_account_success_register.php</li>
                   <li>/includes/languages/english/lang.login_guest.php</li>
                   <li>/includes/languages/english/login_guest.php</li>
-                  <li>/includes/languages/english/order_status.php</li>
                   <li>/includes/languages/english/extra_definitions/checkout_one_extra_definitions.php</li>
                   <li>/includes/languages/english/extra_definitions/lang.checkout_one_extra_definitions.php</li>
                   <li>/includes/languages/english/html_includes/define_checkout_success_guest.php</li>
@@ -472,6 +474,8 @@ a[target=_blank] { text-decoration: underline; }
                   <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/lang.ot_gv.php</span></li>
                   <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_coupon.php</span></li>
                   <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_gv.php</span></li>
+                  <li><span class="template">/includes/languages/english/YOUR_TEMPLATE/lang.order_status.php</span></li>
+                  <li><span class="template">/includes/languages/english/YOUR_TEMPLATE/order_status.php</span></li>
                   <li>/includes/modules/pages/address_book/header_php_address_book_register.php</li>
                   <li>/includes/modules/pages/address_book/main_template_vars.php</li>
                   <li>/includes/modules/pages/checkout_one/header_php.php</li>
@@ -638,9 +642,11 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                 <li>/includes/languages/english/lang.create_account_success_register.php <span class="smaller">(Added in v2.4.2)</span></li>
                 <li>/includes/languages/english/lang.login_guest.php <span class="smaller">(Added in v2.4.2)</span></li>
                 <li>/includes/languages/english/login_guest.php <span class="smaller">(Added in v2.0.0)</span></li>
-                <li>/includes/languages/english/order_status.php <span class="smaller">(Added in v2.0.0)</span></li>
+                <li><span class="removed">/includes/languages/english/order_status.php</span> <span class="smaller">(Added in v2.0.0, removed in v2.4.4, <b>from this distribution only</b>.)</span></li>
                 <li>/includes/languages/english/extra_definitions/checkout_one_extra_definitions.php <span class="smaller">(Added in v1.0.8)</span></li>
                 <li>/includes/languages/english/extra_definitions/lang.checkout_one_extra_definitions.php</li>
+                <li><span class="added">/includes/languages/english/YOUR_TEMPLATE/lang.order_status.php</span> <span class="smaller">(Added in v2.4.4)</span></li>
+                <li><span class="added">/includes/languages/english/YOUR_TEMPLATE/order_status.php</span> <span class="smaller">(Added in v2.4.4)</span></li>
                 <li>/includes/languages/english/html_includes/define_checkout_success_guest.php <span class="smaller">(Added in v2.4.2)</span></li>
                 <li>/includes/languages/english/html_includes/YOUR_TEMPLATE/define_checkout_success_guest.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/lang.ot_coupon.php</span> <span class="smaller">(Added in v2.4.2)</span></li>
@@ -724,7 +730,7 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                     <li>The following files were changed, <span class="added">added</span> or <span class="removed">removed</span>:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/classes/observers/class.checkout_one_observer.php</li>
-                        <li><span class="removed">/includes/languages/english/order_status.php</span></li>
+                        <li><span class="removed">/includes/languages/english/order_status.php</span> <span class="smaller">(If the file is present in your site's file-system, I suggest keeping it as it will do no harm.)</li>
                         <li><span class="added">/includes/languages/english/YOUR_TEMPLATE/order_status.php</span></li>
                         <li><span class="added">/includes/languages/english/YOUR_TEMPLATE/lang.order_status.php</span></li>
                         <li>/includes/modules/pages/checkout_one/header_php.php</li>
