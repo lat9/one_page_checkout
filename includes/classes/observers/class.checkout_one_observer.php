@@ -11,10 +11,14 @@ if (!defined('IS_ADMIN_FLAG')) {
 
 class checkout_one_observer extends base
 {
-    private $enabled = false,
-            $debug = false,
-            $needUnsupportedPageMessage = false,
-            $needGuestCheckoutUnavailableMessage = false;
+    private
+        $browser,
+        $enabled = false,
+        $debug = false,
+        $debug_log_file,
+        $current_page_base,
+        $needUnsupportedPageMessage = false,
+        $needGuestCheckoutUnavailableMessage = false;
             
     public function __construct() 
     {

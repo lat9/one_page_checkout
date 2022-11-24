@@ -728,8 +728,10 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                     <li>BUGFIX: Some countries' states/provinces aren't in alphabetical order after changing the country; thanks to marco-pm for the correction!</li>
                     <li>INTROP: Correct 'missing constants' issues for the 'order_status' page in zc158.</li>
                     <li>BUGFIX: Provide a notification just prior to recording the order, enabling customizations to disallow the order.</li>
+                    <li>INTROP: Ensure that all class variables are defined, a requirement for PHP 8.2+.</li>
                     <li>The following files were changed, <span class="added">added</span> or <span class="removed">removed</span>:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
+                        <li>/includes/classes/observers/CheckoutOneEmailObserver.php</li>
                         <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                         <li><span class="removed">/includes/languages/english/order_status.php</span> <span class="smaller">(If the file is present in your site's file-system, I suggest keeping it as it will do no harm.)</li>
                         <li><span class="added">/includes/languages/english/YOUR_TEMPLATE/order_status.php</span></li>

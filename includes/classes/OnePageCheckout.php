@@ -27,9 +27,13 @@ class OnePageCheckout extends base
     // tempAddressValues ........ Array, if set, contains any temporary addresses used within the checkout process.
     // guestCustomerInfo ........ Array, if set, contains the customer-specific (i.e. email, phone, etc.) information for a guest customer.
     // guestCustomerId .......... Contains a sanitized/int version of the configured "guest" customer ID.
+    // reset_info ............... A backtrace array to be used in debug, not currently used.
     // tempBilltoAddressBookId .. Contains a sanitized/int version of the configured "temporary" bill-to address-book ID.
     // tempSendtoAddressBookId .. Contains a sanitized/int version of the configured "temporary" ship-to address-book ID.
     // dbStringType ............. Identifies the form of string data "binding" to use on $db requests; 'string' for ZC < 1.5.5b, 'stringIgnoreNull', otherwise.
+    // label_params ............. Contains, if set, an override for the label parameters used by the 'formatAddressElement' method.
+    // sendtoSaved .............. If set, a 'sendto' address saved during the shipping-estimator's processing so that guests don't have to re-enter everything!
+    //
     // paypalAddressOverride .... Contains, if set, the formatted version of any temporary shipping address, as entered.  Used when
     //                            paypalwpp's processing returns a shipping address different from that entered.
     // paypalTotalValue ......... Contains, for a paypalwpp-placed order, the order's total value initially sent to PayPal.  Used to
@@ -52,27 +56,33 @@ class OnePageCheckout extends base
     // billtoAddressChangeable .. Identifies whether (true) or not (false) the payment address can be changed.
     // sendtoAddressChangeable .. Identifies whether (true) or not (false) the shipping address can be changed.
     //
-    protected $isGuestCheckoutEnabled,
-              $registeredAccounts,
-              $guestIsActive,
-              $isEnabled,
-              $tempAddressValues,
-              $guestCustomerInfo,
-              $guestCustomerId,
-              $reset_info,
-              $tempBilltoAddressBookId,
-              $tempSendtoAddressBookId,
-              $dbStringType,
-              $paypalAddressOverride,
-              $paypalTotalValue,
-              $paypalTotalValueChanged,
-              $paypalNoShipping,
-              $customerInfoOk,
-              $billtoTempAddrOk,
-              $sendtoTempAddrOk,
-              $isVirtualOrder,
-              $billtoAddressChangeable,
-              $sendtoAddressChangeable;
+    protected
+        $isGuestCheckoutEnabled,
+        $registeredAccounts,
+        $isEnabled,
+        $guestIsActive,
+        $tempAddressValues,
+        $guestCustomerInfo,
+        $guestCustomerId,
+        $reset_info,
+        $tempBilltoAddressBookId,
+        $tempSendtoAddressBookId,
+        $dbStringType,
+        $label_params,
+        $sendtoSaved,
+
+        $paypalAddressOverride,
+        $paypalTotalValue,
+        $paypalTotalValueChanged,
+        $paypalNoShipping,
+
+        $customerInfoOk,
+        $billtoTempAddrOk,
+        $sendtoTempAddrOk,
+
+        $isVirtualOrder,
+        $billtoAddressChangeable,
+        $sendtoAddressChangeable;
 
     public function __construct()
     {
