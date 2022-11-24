@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.4.2
+// Last updated: OPC v2.4.4
 //
 
 // This should be first line of the script:
