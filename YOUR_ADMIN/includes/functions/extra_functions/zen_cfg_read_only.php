@@ -18,7 +18,7 @@ if (!function_exists('zen_cfg_read_only')) {
     function zen_cfg_read_only($text, $key = '')
     {
         $name = (!empty($key)) ? 'configuration[' . $key . ']' : 'configuration_value';
-        $text = htmlspecialchars_decode($text);
+        $text = htmlspecialchars_decode($text, ENT_COMPAT);
 
         return $text . zen_draw_hidden_field($name, $text);
     }
