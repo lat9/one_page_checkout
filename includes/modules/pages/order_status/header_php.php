@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
 // Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.4.2
+// Last updated: OPC v2.4.4
 //
 // Adapted from the like-named page handling with the following history:
 // - J_Schilz for Integrated COWOA - 2007
@@ -55,19 +55,19 @@ if (isset($_GET['action']) && $_GET['action'] === 'status') {
     $error = false;
     unset($_SESSION['email_address'], $_SESSION['email_is_os']);
 
-    $orderID = (int)$_POST['order_id'];
+    $orderID = isset($_POST['order_id']) ? (int)$_POST['order_id'] : 0;
     if ($orderID < 1) {
         $error = true;
         $messageStack->add('order_status', ERROR_INVALID_ORDER);
     }
 
-    $query_email_address = zen_db_prepare_input($_POST['query_email_address']); 
-    if (!zen_validate_email($query_email_address)) {
+    $query_email_address = isset($_POST['query_email_address']) ? zen_db_prepare_input($_POST['query_email_address']) : '';
+    if ($query_email_address === '' || !zen_validate_email($query_email_address)) {
         $error = true;
         $messageStack->add('order_status', ERROR_INVALID_EMAIL);
     }
 
-    if (!$error) {
+    if ($error === false) {
         $customeremail = $db->Execute(
             "SELECT orders_id FROM " . TABLE_ORDERS . "
               WHERE customers_email_address = '" . zen_db_input($query_email_address) . "'
@@ -87,12 +87,11 @@ if (isset($_GET['action']) && $_GET['action'] === 'status') {
 
     // -----
     // Give a "listener" (like a captcha) the opportunity to disallow the display.  If
-    // disallowed (i.e. the supplied value is set to boolean 'true', the observer has set
+    // disallowed (i.e. the supplied value is set to boolean 'true') the observer has set
     // its message into the stack for the 'order_status' display.
     //
     $zco_notifier->notify('NOTIFY_ORDER_STATUS_VALIDATION_CHECK', '', $error);
-
-    if ($error) {
+    if ($error === true) {
         if (!isset($_SESSION['os_errors'])) {
             $_SESSION['os_errors'] = 0;
         }
