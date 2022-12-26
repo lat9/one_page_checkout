@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
 // Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.4.2
+// Last updated: OPC v2.4.5
 //
 
 // -----
@@ -125,7 +125,7 @@ function opc_load_legacy_language_definitions($legacy_filename, $legacy_dir = ''
     //
     global $template_dir;
 
-    $base_language_dir = DIR_WS_LANGUAGES . '/' . $_SESSION['language'] . '/' . $legacy_dir;
+    $base_language_dir = DIR_WS_LANGUAGES . $_SESSION['language'] . '/' . $legacy_dir;
     $template_language_dir = $base_language_dir . $template_dir . '/';
     $lang_array_name = 'lang.' . $legacy_filename . '.php';
 
@@ -137,7 +137,15 @@ function opc_load_legacy_language_definitions($legacy_filename, $legacy_dir = ''
     if (is_file($template_language_dir . $lang_array_name)) {
         $override_language_defines = require $template_language_dir . $lang_array_name;
     }
-    $language_defines = require $base_language_dir . $lang_array_name;
+
+    // -----
+    // Need to account for files (like the order_status page's) that don't pre-exist in the
+    // base language directory.  That's true for installations _prior to_ zc158.
+    //
+    $language_defines = [];
+    if (is_file($base_language_dir . $lang_array_name)) {
+        $language_defines = require $base_language_dir . $lang_array_name;
+    }
     $language_defines = array_merge($language_defines, $override_language_defines);
 
     // -----

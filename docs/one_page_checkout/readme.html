@@ -726,10 +726,12 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank" rel="noopener">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color and removals are indicated like <span class="removed">this</span>.</p>
               <ul>
-                <li>v2.4.5-beta2, 2022-12-18 (lat9, swguy and simon1066):<ul>
+                <li>v2.4.5-beta3, 2022-12-26 (lat9, swguy and simon1066):<ul>
                     <li>BUGFIX: Correct missing language constant &quot;ERROR_GUEST_CHECKOUT_PAGE_DISALLOWED&quot;.</li>
                     <li>BUGFIX: Script files are now HTML-5 validated.</li>
+                    <li>BUGFIX: Correct PHP fatal error when viewing the 'order_status' page on zc157 installations.</li>
                     <li>The following files were changed:<ol>
+                        <li>/includes/functions/extra_functions/one_page_checkout_functions.php</li>
                         <li>/includes/languages/english/extra_definitions/lang.checkout_one_extra_definitions.php</li>
                         <li>/includes/modules/pages/create_account/jscript_form_check_register.php</li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
