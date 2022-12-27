@@ -6,7 +6,7 @@
 // This class, instantiated in the current customer session, keeps track of a customer's login and checkout
 // progression with the aid of the OPC's observer- and AJAX-classes.
 //
-// Last updated: OPC v2.4.4.
+// Last updated: OPC v2.4.5.
 //
 class OnePageCheckout extends base
 {
