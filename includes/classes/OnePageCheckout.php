@@ -1875,6 +1875,7 @@ class OnePageCheckout extends base
         $_SESSION['customer_first_name'] = $this->guestCustomerInfo['firstname'];
         $_SESSION['customer_last_name'] = $this->guestCustomerInfo['lastname'];
         $_SESSION['customer_default_address_id'] = $default_address_id;
+        $_SESSION['customers_email_address'] = $this->guestCustomerInfo['email_address'];
         $_SESSION['customer_country_id'] = $this->tempAddressValues['bill']['country'];
         $_SESSION['customer_zone_id'] = $this->tempAddressValues['bill']['zone_id'];
         $_SESSION['customers_authorization'] = 0;

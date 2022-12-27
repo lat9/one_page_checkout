@@ -316,6 +316,7 @@ if (isset($_POST['action']) && ($_POST['action'] == 'register')) {
             zen_session_recreate();
         }
 
+        $_SESSION['customers_email_address'] = $email_address;
         $_SESSION['customer_first_name'] = $firstname;
         $_SESSION['customer_last_name'] = $lastname;
         $_SESSION['customer_default_address_id'] = $address_id;
