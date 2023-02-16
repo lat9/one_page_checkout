@@ -1,9 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
-// Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2023, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.4.4.
+// Last updated: OPC v2.4.6.
 //
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
@@ -752,9 +752,13 @@ class checkout_one_observer extends base
         // javascript that captures the character representation of any symbols.
         //
         // Note: Some templates also include carriage-returns within the total's display, so remove them from
-        // the mix, too!
+        // the mix, too! Updated to remove "all" whitespace characters, as found in this stackoverflow posting:
+        // (https://stackoverflow.com/questions/40724543/how-to-replace-decoded-non-breakable-space-nbsp)
         //
-        $current_order_total = str_replace(["\n", "\r"], '', $current_order_total);
+        // That also eliminates any unwanted alternate decodes of &nbsp; as well as regular spaces so the
+        // session-data matching is not dependent on whitespace characters at all.
+        //
+        $current_order_total = preg_replace("/\s+/u", '', $current_order_total);
         $session_data['order_current_total'] = html_entity_decode($current_order_total, ENT_COMPAT, CHARSET);
 
         // -----
