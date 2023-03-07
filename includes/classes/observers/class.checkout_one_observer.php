@@ -758,8 +758,7 @@ class checkout_one_observer extends base
         // That also eliminates any unwanted alternate decodes of &nbsp; as well as regular spaces so the
         // session-data matching is not dependent on whitespace characters at all.
         //
-        $current_order_total = preg_replace("/\s+/u", '', $current_order_total);
-        $session_data['order_current_total'] = html_entity_decode($current_order_total, ENT_COMPAT, CHARSET);
+        $session_data['order_current_total'] = preg_replace("/\s+/u", '', html_entity_decode($current_order_total, ENT_COMPAT, CHARSET));
 
         // -----
         // The order's payment-method (e.g. moneyorder) might not be present in the session after the
