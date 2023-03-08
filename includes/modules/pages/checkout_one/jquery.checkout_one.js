@@ -1,8 +1,8 @@
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
-// Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2023, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last changed: OPC v2.4.2.
+// Last changed: OPC v2.4.6
 //
 var selected;
 var submitter = null;
@@ -414,11 +414,11 @@ jQuery(document).ready(function(){
     // Two "helper" functions, used to indicate "progress" during the various AJAX calls.  The
     // cursor changes to "wait" when the AJAX call starts and back to "normal" upon return.
     //   
-    jQuery(document).ajaxStart(function () {
+    jQuery(document).ajaxStart(function() {
         jQuery('*').css('cursor', 'wait');
     });
 
-    jQuery(document).ajaxStop(function () {
+    jQuery(document).ajaxStop(function() {
         jQuery('*').css('cursor', '');
     });
 
@@ -434,7 +434,7 @@ jQuery(document).ready(function(){
         //
         if (status_code == 'timeout') {
             alert(sessionTimeoutErrorMessage);
-            jQuery(location).attr( 'href', timeoutUrl );
+            window.location.replace(timeoutUrl);
         }
         // -----
         // If the AJAX handler has detected that OPC is no longer enabled, display a message to the customer
@@ -442,13 +442,13 @@ jQuery(document).ready(function(){
         //
         if (status_code == 'unavailable') {
             alert(ajaxNotAvailableMessage);
-            jQuery(location).attr( 'href', checkoutShippingUrl );
+            window.location.replace(checkoutShippingUrl);
         }
     }
 
     function changeShippingSubmitForm(type, submit_type)
     {
-        if (typeof submit_type === "undefined" || submit_type === null) { 
+        if (typeof submit_type === "undefined" || submit_type === null) {
             submit_type = ''; 
         }
         var shippingSelected = jQuery('input[name=shipping]');
@@ -677,7 +677,7 @@ jQuery(document).ready(function(){
             // Handle any redirects required, based on the AJAX response's status.
             //
             checkForRedirect(response.status);
-            
+
             jQuery('#orderTotalDivs').html(response.orderTotalHtml);
         });
     });
@@ -799,7 +799,7 @@ jQuery(document).ready(function(){
         jQuery('#checkoutOneShipto').addClass('opc-view');
     }
     jQuery(document).on('focus', '#checkoutOneShipto input, #checkoutOneShipto select:not(#select-address-ship)', changeShippingFields);
-    
+
     function restoreShipping()
     {
         restoreAddressValues('ship', '#checkoutOneShipto');

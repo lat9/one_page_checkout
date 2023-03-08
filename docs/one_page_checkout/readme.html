@@ -2,13 +2,12 @@
 <html>
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="icon" href="../vinos_favicon.ico" type="image/x-icon" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="../vinos_favicon.ico" type="image/x-icon">
 <link href="http://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
 <title>One-Page Checkout</title>
 
 <style>
-<!--
 a, a:active, a:visited { color: #006666; text-decoration: none; }
 a:hover { color:#00CC99; text-decoration: underline; }
 BODY, P, H1, H2, H3, H4, H5, H6, LI, TD, DD, DT, pre, code, img, table, #outer-container {
@@ -72,7 +71,6 @@ a[target=_blank] { text-decoration: underline; }
 @media (max-width: 979px) {
   .multi-list, #storefront .wrap { width: 95%; float: none; margin: 0 auto; }
 }
--->
 </style>
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <script src="../jquery-3.5.1.min.js"></script> 
@@ -726,10 +724,13 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank" rel="noopener">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color and removals are indicated like <span class="removed">this</span>.</p>
               <ul>
-                <li>v2.4.6-beta1, 2023-02-15 (lat9 and marco-pm):<ul>
+                <li>v2.4.6-beta2, 2023-03-08 (lat9 and marco-pm):<ul>
                     <li>BUGFIX: Correct unwanted redirect when pricing includes an &amp;nbsp;.</li>
+                    <li>BUGFIX: Redirect page correctly on AJAX return.</li>
                     <li>The following files were changed:<ol>
                         <li>/includes/classes/observers/class.checkout_one_observer.php</li>
+                        <li>/includes/modules/pages/checkout_one/jquery_checkout_one.js</li>
+                        <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                     </ol></li>
                 </ul></li>
