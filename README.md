@@ -27,6 +27,10 @@ Refer to the links below for additional information.
 
 ## Additional Information ###
 
+Refer to the [readme.html](https://htmlpreview.github.io/?https://github.com/lat9/one_page_checkout/blob/master/docs/one_page_checkout/readme.html) in this GitHub repository for additional details.
+
+See also:
+
 [Storefront Considerations](pages/storefront.md)
 
 [HTML/jQuery Selectors](pages/jquery_selectors.md)
