@@ -34,7 +34,7 @@ class zcAjaxOnePageCheckout extends base
         // -----
         // Load the One-Page Checkout page's language files.
         //
-        $this->loadLanguageFiles();       
+        $this->loadLanguageFiles();
 
         $error_message = $order_total_html = $shipping_html = $payment_html = '';
         $shipping_choose_message = '';
@@ -61,8 +61,15 @@ class zcAjaxOnePageCheckout extends base
             // -----
             // Manage the shipping-address, based on the "Shipping Address, Same as Billing?" checkbox value submitted.
             //
-            $checkout_one->debug_message("Billing/shipping, entry (" . json_encode($_POST['shipping_is_billing']) . "), " . $_SESSION['sendto'] . ", " . $_SESSION['billto'] . ", (" . $_SESSION['shipping_billing'] . ")", 'zcAjaxOnePageCheckout::updateShipping');
-            if ($_POST['shipping_is_billing'] == 'true') {
+            $checkout_one->debug_message(
+                'Billing/shipping, entry (' . json_encode($_POST['shipping_is_billing']) . '), ' .
+                $_SESSION['sendto'] . ', ' .
+                $_SESSION['billto'] . ', (' .
+                $_SESSION['shipping_billing'] . ')',
+                false,
+                'zcAjaxOnePageCheckout::updateShipping'
+            );
+            if ($_POST['shipping_is_billing'] === 'true') {
                 $_SESSION['sendto'] = $_SESSION['billto'];
                 $_SESSION['shipping_billing'] = true;
                 $ship_to = 'billing';
@@ -102,10 +109,12 @@ class zcAjaxOnePageCheckout extends base
                 "Shipping method change to $module ($method), sendto ($ship_to), free_shipping ($free_shipping), virtual order ($is_virtual_order). Current values: " .
                 $current_shipping . PHP_EOL . 
                 json_encode($order->info) . PHP_EOL .
-                json_encode($_POST), true, 'zcAjaxOnePageCheckout'
+                json_encode($_POST),
+                true,
+                'zcAjaxOnePageCheckout'
             );
 
-            if ($free_shipping || $is_virtual_order) {
+            if ($free_shipping === true || $is_virtual_order === true) {
                 $shipping_module_available = true;
                 $_SESSION['shipping'] = [
                     'id' => 'free_free', 
@@ -113,9 +122,9 @@ class zcAjaxOnePageCheckout extends base
                     'cost' => 0 
                 ];
                 $order->info['shipping_method'] = 'free_free';
-                if ($is_virtual_order) {
+                if ($is_virtual_order === true) {
                     $_SESSION['sendto'] = false;
-                } elseif ($_POST['shipping'] != 'free_free') {
+                } elseif ($_POST['shipping'] !== 'free_free') {
                     $_POST['shipping'] = 'free_free';
                     $checkout_one->debug_message('Modifying shipping method, (' . $_POST['shipping'] . ') submitted; free-shipping and virtual orders should be free_free.', false, 'zcAjaxOnePageCheckout');
 
@@ -137,7 +146,7 @@ class zcAjaxOnePageCheckout extends base
                 // a change has now invalidated that shipping method.  Perform some 'clean-up' so that a non-free
                 // shipping method will be used.
                 //
-                if (isset($_SESSION['shipping']) && $_SESSION['shipping'] == 'free_free') {
+                if (isset($_SESSION['shipping']) && $_SESSION['shipping'] === 'free_free') {
                     unset($_SESSION['shipping']);
                     $method = '';
                     $module = '';
@@ -163,11 +172,11 @@ class zcAjaxOnePageCheckout extends base
                     $check_delivery_postcode = zen_get_UKPostcodeFirstPart($check_delivery_postcode);
 
                     // now check db for allowed postcodes and enable / disable relevant shipping modules
-                    if (!in_array($check_delivery_postcode, explode(",", MODULE_SHIPPING_LOCALDELIVERY_POSTCODE))) {
+                    if (!in_array($check_delivery_postcode, explode(',', MODULE_SHIPPING_LOCALDELIVERY_POSTCODE))) {
                          $localdelivery = false;
                     }
 
-                    if (!in_array($check_delivery_postcode, explode(",", MODULE_SHIPPING_STOREPICKUP_POSTCODE))) {
+                    if (!in_array($check_delivery_postcode, explode(',', MODULE_SHIPPING_STOREPICKUP_POSTCODE))) {
                         $storepickup = false;
                     }
                 }
@@ -182,7 +191,7 @@ class zcAjaxOnePageCheckout extends base
                 } else {
                     $shipping_cost = $quote[0]['methods'][0]['cost'];
                     $shipping_title = $quote[0]['module'] . ' (' . $quote[0]['methods'][0]['title'] . ')';
-                    if (isset($_SESSION['shipping']) && $_SESSION['shipping']['id'] == $_POST['shipping'] && ($_SESSION['shipping']['title'] != $shipping_title || $_SESSION['shipping']['cost'] != $shipping_cost)) {
+                    if (isset($_SESSION['shipping']) && $_SESSION['shipping']['id'] === $_POST['shipping'] && ($_SESSION['shipping']['title'] !== $shipping_title || $_SESSION['shipping']['cost'] != $shipping_cost)) {
                         $shipping_invalid = true;
                     } else {
                         $shipping_invalid = false;
@@ -197,7 +206,7 @@ class zcAjaxOnePageCheckout extends base
                     }
                 }
 
-                if ($shipping_invalid) {
+                if ($shipping_invalid === true) {
                     $checkout_one->debug_message('Shipping method returned empty result; no longer valid.');
                     $error_message = ERROR_PLEASE_RESELECT_SHIPPING_METHOD;
                     $status = 'invalid';
@@ -207,7 +216,7 @@ class zcAjaxOnePageCheckout extends base
                 $shipping_modules = new shipping(isset($_SESSION['shipping']) ? $_SESSION['shipping'] : '');
 
 //-bof-product_delivery_by_postcode (PDP) integration
-                if ($is_localdelivery_enabled) {
+                if ($is_localdelivery_enabled === true) {
                     global $localdelivery, $storepickup;
 
                     $check_delivery_postcode = $order->delivery['postcode'];
@@ -238,13 +247,13 @@ class zcAjaxOnePageCheckout extends base
                         $shipping_choose_message = TEXT_ENTER_SHIPPING_INFORMATION;
                     }
                     $checkout_one->debug_message("Updating shipping section, message ($shipping_choose_message), quotes:" . json_encode($quotes), false, 'zcAjaxOnePageCheckout');
-                    
+
                     if ((!isset($_SESSION['shipping']) || (!isset($_SESSION['shipping']['id']) || $_SESSION['shipping']['id'] === '') && zen_count_shipping_modules() >= 1)) {
                         $_SESSION['shipping'] = $shipping_modules->cheapest();
                     }
 
                     ob_start ();
-                    require $template->get_template_dir('tpl_modules_checkout_one_shipping.php', DIR_WS_TEMPLATE, $current_page_base, 'templates'). '/tpl_modules_checkout_one_shipping.php';
+                    require $template->get_template_dir('tpl_modules_checkout_one_shipping.php', DIR_WS_TEMPLATE, $current_page_base, 'templates') . '/tpl_modules_checkout_one_shipping.php';
                     $shipping_html = ob_get_clean();
                 }
 
@@ -265,12 +274,19 @@ class zcAjaxOnePageCheckout extends base
                 // -----
                 // Pull in, also, any changes to the shipping-methods available, given the change to shipping.
                 //
-                $shipping_module_available = ($free_shipping || $is_virtual_order || zen_count_shipping_modules() > 0);
+                $shipping_module_available = ($free_shipping === true || $is_virtual_order === true || zen_count_shipping_modules() > 0);
                 $session_shipping = (isset($_SESSION['shipping'])) ? json_encode($_SESSION['shipping']) : 'Shipping not set';
                 $checkout_one->debug_message("Shipping method changed: " . json_encode($quote) . PHP_EOL . $session_shipping, false, 'zcAjaxOnePageCheckout');
             }
 
-            $checkout_one->debug_message("Billing/shipping, exit (" . json_encode($_POST['shipping_is_billing']) . "), " . $_SESSION['sendto'] . ", " . $_SESSION['billto']  . ", (" . $_SESSION['shipping_billing'] . ")", 'zcAjaxOnePageCheckout::updateShipping');
+            $checkout_one->debug_message(
+                'Billing/shipping, exit (' . json_encode($_POST['shipping_is_billing']) . '), ' .
+                $_SESSION['sendto'] . ', ' .
+                $_SESSION['billto']  . ', (' .
+                $_SESSION['shipping_billing'] . ')',
+                false,
+                'zcAjaxOnePageCheckout::updateShipping'
+            );
 
             // -----
             // Pull in the payment-class processing at this point (was previously after the order-totals) to ensure
@@ -281,9 +297,9 @@ class zcAjaxOnePageCheckout extends base
             }
             $payment_modules = new payment();
             $enabled_payment_modules = $_SESSION['opc']->validateGuestPaymentMethods($payment_modules->selection());
-            $display_payment_block = ($_SESSION['opc']->validateCustomerInfo() && $_SESSION['opc']->validateTempBilltoAddress());
+            $display_payment_block = ($_SESSION['opc']->validateCustomerInfo() === true && $_SESSION['opc']->validateTempBilltoAddress() === true);
             ob_start ();
-            require $template->get_template_dir('tpl_modules_opc_payment_choices.php', DIR_WS_TEMPLATE, $current_page_base, 'templates'). '/tpl_modules_opc_payment_choices.php';
+            require $template->get_template_dir('tpl_modules_opc_payment_choices.php', DIR_WS_TEMPLATE, $current_page_base, 'templates') . '/tpl_modules_opc_payment_choices.php';
             $payment_html = ob_get_clean();
 
             // -----
@@ -337,12 +353,11 @@ class zcAjaxOnePageCheckout extends base
         // Initialize the response's status code, continuing only if all is 'ok'.
         //
         $status = $this->initializeResponseStatus('restoreAddressValues');
-        if ($status == 'ok') {
+        if ($status === 'ok') {
             $this->loadLanguageFiles();
             if (!isset($_POST['which']) || ($_POST['which'] !== 'bill' && $_POST['which'] !== 'ship')) {
                 $status = 'error';
                 $error_message = ERROR_INVALID_REQUEST;
-                trigger_error('$_POST[\'which\'] not set or invalid, nothing to do.', E_USER_WARNING);
             } else {
                 $address_html = $this->renderAddressBlock($_POST['which']);
             }
@@ -379,7 +394,6 @@ class zcAjaxOnePageCheckout extends base
             if (!isset($_POST['which']) || ($_POST['which'] !== 'bill' && $_POST['which'] !== 'ship')) {
                 $status = 'error';
                 $error_message = ERROR_INVALID_REQUEST;
-                trigger_error('$_POST[\'which\'] not set or invalid, nothing to do.', E_USER_WARNING);
             } else {
                 $_SESSION['opc']->validateAndSaveAjaxPostedAddress($_POST['which'], $messages);
             }
@@ -439,13 +453,15 @@ class zcAjaxOnePageCheckout extends base
         $status = $this->initializeResponseStatus('restoreCustomerInfo');
         if ($status === 'ok') {
             $this->loadLanguageFiles();
+
             global $current_page_base, $template;
+
             $template_file = 'tpl_modules_opc_customer_info.php';
 
             $this->disableGzip();
 
             ob_start();
-            require $template->get_template_dir($template_file, DIR_WS_TEMPLATE, $current_page_base, 'templates'). "/$template_file";
+            require $template->get_template_dir($template_file, DIR_WS_TEMPLATE, $current_page_base, 'templates') . "/$template_file";
             $info_html = ob_get_clean();
         }
 
@@ -479,7 +495,6 @@ class zcAjaxOnePageCheckout extends base
             if (!isset($_POST['which']) || ($_POST['which'] !== 'bill' && $_POST['which'] !== 'ship')) {
                 $status = 'error';
                 $error_message = ERROR_INVALID_REQUEST;
-                trigger_error('$_POST[\'which\'] not set or invalid, nothing to do.', E_USER_WARNING);
             } else {
                 $_SESSION['opc']->setAddressFromSavedSelections($_POST['which'], $_POST['address_id']);
             }
@@ -561,7 +576,8 @@ class zcAjaxOnePageCheckout extends base
     protected function renderAddressBlock($which)
     {
         global $current_page_base, $template;
-        $template_file = ($which == 'bill') ? 'tpl_modules_opc_billing_address.php' : 'tpl_modules_opc_shipping_address.php';
+
+        $template_file = ($which === 'bill') ? 'tpl_modules_opc_billing_address.php' : 'tpl_modules_opc_shipping_address.php';
         $flagDisablePaymentAddressChange = !$_SESSION['opc']->isBilltoAddressChangeable();
         $editShippingButtonLink = $_SESSION['opc']->isSendtoAddressChangeable();
         $is_virtual_order = $_SESSION['opc']->isVirtualOrder();
@@ -570,7 +586,7 @@ class zcAjaxOnePageCheckout extends base
         $this->disableGzip();
 
         ob_start();
-        require $template->get_template_dir($template_file, DIR_WS_TEMPLATE, $current_page_base, 'templates'). "/$template_file";
+        require $template->get_template_dir($template_file, DIR_WS_TEMPLATE, $current_page_base, 'templates') . "/$template_file";
         $address_html = ob_get_clean();
 
         return $address_html;
@@ -597,6 +613,7 @@ class zcAjaxOnePageCheckout extends base
         // Set up some globals for use by 'require_languages.php'.
         //
         global $current_page, $current_page_base, $template, $language_page_directory, $template_dir, $languageLoader;
+
         $_GET['main_page'] = $current_page_base = $current_page = FILENAME_CHECKOUT_ONE;
         
         require DIR_WS_MODULES . zen_get_module_directory('require_languages.php');
@@ -615,7 +632,7 @@ class zcAjaxOnePageCheckout extends base
         // If One-Page Checkout is no longer available, return a status code to the jQuery handler which, in turn,
         // will result in the customer being redirected to the checkout_shipping page.
         //
-        if (!$_SESSION['opc']->checkEnabled()) {
+        if (!isset($_SESSION['opc']) || !is_object($_SESSION['opc']) || $_SESSION['opc']->checkEnabled() === false) {
             $status = 'unavailable';
             $checkout_one->debug_message('OPC is no longer available.', "zcAjaxOnePageCheckout::$method_name");
         // -----
