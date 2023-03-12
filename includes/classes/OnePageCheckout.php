@@ -90,6 +90,9 @@ class OnePageCheckout extends base
         $this->guestIsActive = false;
         $this->isGuestCheckoutEnabled = false;
         $this->registeredAccounts = false;
+        $this->customerInfoOk = false;
+        $this->billtoTempAddrOk = false;
+        $this->sendtoTempAddrOk = false;
         $this->reset_info = [];
     }
 
@@ -345,7 +348,7 @@ class OnePageCheckout extends base
     ** This function returns a boolean indication as to whether (true) or not (false) OPC's
     ** "temporary addresses" (used for guest-checkout and registered-accounts) is currently
     ** enabled.
-    */       
+    */
     public function temporaryAddressesEnabled()
     {
         $this->initializeGuestCheckout();
@@ -408,7 +411,7 @@ class OnePageCheckout extends base
     **
     ** OPC's observer-class causes this function's return value to be returned by call to the
     ** zen_in_guest_checkout() function.
-    */      
+    */
     public function isGuestCheckout()
     {
         return (isset($_SESSION['is_guest_checkout']));
@@ -420,7 +423,7 @@ class OnePageCheckout extends base
     **
     ** OPC's observer-class causes this function's return value to be returned by call to the
     ** zen_is_logged_in() function.
-    */       
+    */
     public function isLoggedIn()
     {
         return (!empty($_SESSION['customer_id']));
@@ -429,7 +432,7 @@ class OnePageCheckout extends base
     /* -----
     ** This function resets the guest-related information stored in the current session,
     ** essentially restoring the session to a non-guest-checkout scenario.
-    */           
+    */
     public function resetGuestSessionValues()
     {
         if (zen_in_guest_checkout() || (!empty($_SESSION['customer_id']) && $_SESSION['customer_id'] == $this->guestCustomerId)) {
