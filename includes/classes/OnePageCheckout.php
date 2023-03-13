@@ -210,7 +210,7 @@ class OnePageCheckout extends base
         $free_shipping = false;
         $address_book_id = -1;
         $order_country = -1;
-        $pass = $this->isVirtualOrder();
+        $pass = $this->isVirtualOrder;
         if ($pass === false && defined('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING') && MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING === 'true') {
             if ($country_override === false) {
                 $order_country = $order->delivery['country_id'];
@@ -352,9 +352,7 @@ class OnePageCheckout extends base
     */
     public function temporaryAddressesEnabled()
     {
-        $this->initializeGuestCheckout();
-
-        return ($this->isEnabled === true && ($this->isGuestCheckoutEnabled === true || $this->registeredAccounts === true));
+         return ($this->guestCheckoutEnabled() === true || $this->accountRegistrationEnabled() === true);
     }
 
     // -----
@@ -375,12 +373,15 @@ class OnePageCheckout extends base
             $this->debugMessage("Guest checkout disabled via observer.");
         }
 
-        $this->isGuestCheckoutEnabled = $allow_guest_checkout === true && !zen_is_spider_session() && (defined('CHECKOUT_ONE_ENABLE_GUEST') && CHECKOUT_ONE_ENABLE_GUEST === 'true');
-        if (isset($_SESSION['opc_error']) && ($_SESSION['opc_error'] === self::OPC_ERROR_NO_GC || $_SESSION['opc_error'] === self::OPC_ERROR_NO_JS)) {
-            if ($_SESSION['opc_error'] === self::OPC_ERROR_NO_JS || in_array($current_page_base, [FILENAME_LOGIN, FILENAME_CHECKOUT_ONE, FILENAME_CHECKOUT_ONE_CONFIRMATION])) {
-                $this->isGuestCheckoutEnabled = false;
+        $this->isGuestCheckoutEnabled = ($allow_guest_checkout === true && !zen_is_spider_session() && (defined('CHECKOUT_ONE_ENABLE_GUEST') && CHECKOUT_ONE_ENABLE_GUEST === 'true'));
+        if ($this->isGuestCheckoutEnabled === true) {
+            if (isset($_SESSION['opc_error']) && ($_SESSION['opc_error'] === self::OPC_ERROR_NO_GC || $_SESSION['opc_error'] === self::OPC_ERROR_NO_JS)) {
+                if ($_SESSION['opc_error'] === self::OPC_ERROR_NO_JS || in_array($current_page_base, [FILENAME_LOGIN, FILENAME_CHECKOUT_ONE, FILENAME_CHECKOUT_ONE_CONFIRMATION])) {
+                    $this->isGuestCheckoutEnabled = false;
+                }
             }
         }
+
         $this->guestCustomerId = (defined('CHECKOUT_ONE_GUEST_CUSTOMER_ID')) ? (int)CHECKOUT_ONE_GUEST_CUSTOMER_ID : 0;
         $this->tempBilltoAddressBookId = (defined('CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID')) ? (int)CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID : 0;
         $this->tempSendtoAddressBookId = (defined('CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID')) ? (int)CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID : 0;
@@ -413,7 +414,7 @@ class OnePageCheckout extends base
     */
     public function isGuestCheckout()
     {
-        return (isset($_SESSION['is_guest_checkout']));
+        return $this->guestIsActive;
     }
 
     /* -----
@@ -434,7 +435,7 @@ class OnePageCheckout extends base
     */
     public function resetGuestSessionValues()
     {
-        if (zen_in_guest_checkout() || (!empty($_SESSION['customer_id']) && (int)$_SESSION['customer_id'] === $this->guestCustomerId)) {
+        if ($this->guestIsActive === true || (!empty($_SESSION['customer_id']) && (int)$_SESSION['customer_id'] === $this->guestCustomerId)) {
             unset(
                 $_SESSION['customer_id'], 
                 $_SESSION['customers_email_address'],
@@ -453,7 +454,6 @@ class OnePageCheckout extends base
             );
         }
         unset(
-            $_SESSION['is_guest_checkout'],
             $_SESSION['order_placed_by_guest']
         );
         $this->resetSessionVariables();
@@ -462,7 +462,8 @@ class OnePageCheckout extends base
 
     /* -----
     ** This function resets the common (guest and account) session variables added to
-    ** the session for the One Page Checkout's processing.
+    ** the session for the One Page Checkout's processing.  Called from above and by
+    ** OPC's observer-class.
     */
     public function resetSessionVariables()
     {
@@ -483,9 +484,13 @@ class OnePageCheckout extends base
         $this->guestIsActive = false;
         $this->isGuestCheckoutEnabled = false;
         $this->registeredAccounts = false;
+        $this->customerInfoOk = false;
+        $this->billtoTempAddrOk = false;
+        $this->sendtoTempAddrOk = false;
+
         unset(
-            $this->tempAddressValues, 
-            $this->guestCustomerInfo, 
+            $this->tempAddressValues,
+            $this->guestCustomerInfo,
             $this->sendtoSaved,
             $this->paypalAddressOverride,
             $this->paypalTotalValue,
@@ -528,7 +533,6 @@ class OnePageCheckout extends base
     {
         global $current_page_base;
 
-        $this->guestIsActive = false;
         $redirect_required = false;
 
         // -----
@@ -541,7 +545,7 @@ class OnePageCheckout extends base
 
         if ($this->guestCheckoutEnabled() === true) {
             $redirect_required = ($current_page_base === FILENAME_CHECKOUT_ONE && isset($_POST['guest_checkout']));
-            if ($this->isGuestCheckout() === true || $redirect_required === true) {
+            if ($this->guestIsActive === true || $redirect_required === true) {
                 $this->guestIsActive = true;
                 if (!isset($this->guestCustomerInfo)) {
                     $this->customerInfoOk = false;
@@ -570,14 +574,11 @@ class OnePageCheckout extends base
         }
         $this->initializeTempAddressValues();
         if ($this->guestIsActive === true) {
-            $_SESSION['is_guest_checkout'] = true;
             $_SESSION['customer_id'] = $this->guestCustomerId;
             $_SESSION['customer_default_address_id'] = $this->tempBilltoAddressBookId;
             $_SESSION['customer_country_id'] = $this->tempAddressValues['bill']['country'];
             $_SESSION['customer_zone_id'] = $this->tempAddressValues['bill']['zone_id'];
             $_SESSION['customers_authorization'] = 0;
-        } else {
-            unset($_SESSION['is_guest_checkout']);
         }
 
         $current_settings = print_r($this, true);
@@ -586,7 +587,7 @@ class OnePageCheckout extends base
         if ($redirect_required === true) {
             zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));
         }
-        return $this->isGuestCheckout();
+        return $this->guestIsActive;
     }
 
     /* -----
@@ -597,7 +598,6 @@ class OnePageCheckout extends base
     {
         if ($this->guestIsActive === true) {
             unset(
-                $_SESSION['is_guest_checkout'],
                 $_SESSION['shipping_billing'], 
                 $_SESSION['billto'],
                 $_SESSION['sendto']
@@ -655,7 +655,7 @@ class OnePageCheckout extends base
     */
     public function enableCreditSelection($ot_name)
     {
-        return !($this->isGuestCheckout() === true && in_array($ot_name, explode(',', str_replace(' ', '', CHECKOUT_ONE_ORDER_TOTALS_DISALLOWED_FOR_GUEST))));
+        return !($this->guestIsActive === true && in_array($ot_name, explode(',', str_replace(' ', '', CHECKOUT_ONE_ORDER_TOTALS_DISALLOWED_FOR_GUEST))));
     }
 
     /* -----
@@ -670,7 +670,7 @@ class OnePageCheckout extends base
 
         $uses_per_user = (int)$coupon_info['uses_per_user'];
         if ($uses_per_user > 0) {
-            if ($this->isGuestCheckout() === true && isset($this->guestCustomerInfo) && !empty($this->guestCustomerInfo['email_address'])) {
+            if ($this->guestIsActive === true && isset($this->guestCustomerInfo) && !empty($this->guestCustomerInfo['email_address'])) {
                 $coupon_id = (int)$coupon_info['coupon_id'];
                 $email_address = zen_db_input($this->guestCustomerInfo['email_address']);
                 $uses_per_user++;  //- This value now contains one more than the allowed number of uses!
@@ -708,7 +708,7 @@ class OnePageCheckout extends base
             $enabled_payment_modules = [];
         }
 
-        if ($this->isGuestCheckout() === true) {
+        if ($this->guestIsActive === true) {
             $disallowed_payment_methods = explode(',', str_replace(' ', '', CHECKOUT_ONE_PAYMENTS_DISALLOWED_FOR_GUEST));
             if (count($disallowed_payment_methods) > 0) {
                 for ($i = 0, $n = count($enabled_payment_modules); $i < $n; $i++) {
@@ -1152,7 +1152,7 @@ class OnePageCheckout extends base
         global $db;
 
         $select_array = [];
-        if (isset($_SESSION['customer_id']) && $this->isGuestCheckout() === false && $this->customerAccountNeedsPrimaryAddress() === false) {
+        if (isset($_SESSION['customer_id']) && $this->guestIsActive === false && $this->customerAccountNeedsPrimaryAddress() === false) {
             // -----
             // Build up address list input to create a customer-specific selection list of 
             // pre-existing addresses from which to choose.
@@ -1672,12 +1672,12 @@ class OnePageCheckout extends base
         // guest-checkout is currently active, the updated address is stored in
         // a temporary address-book record.
         //
-        if (!$add_address === true || $this->isGuestCheckout() === true) {
+        if (!$add_address === true || $this->guestIsActive === true) {
             $this->tempAddressValues[$which] = $address;
             if ($which === 'ship') {
                 $_SESSION['sendto'] = $this->tempSendtoAddressBookId;
             } else {
-                if ($this->isGuestCheckout() === true) {
+                if ($this->guestIsActive === true) {
                     $this->guestCustomerInfo['firstname'] = $address['firstname'];
                     $this->guestCustomerInfo['lastname'] = $address['lastname'];
                     $this->guestCustomerInfo['gender'] = $address['gender'];
@@ -1686,14 +1686,14 @@ class OnePageCheckout extends base
                     $_SESSION['customer_last_name'] = $address['lastname'];
                 }
                 $_SESSION['billto'] = $this->tempBilltoAddressBookId;
-                if ($this->isGuestCheckout() === true && $this->sendtoTempAddrOk === false) {
+                if ($this->guestIsActive === true && $this->sendtoTempAddrOk === false) {
                     $this->tempAddressValues['ship'] = $this->tempAddressValues['bill'];
                     $this->sendtoTempAddrOk = true;
                 }
                 if ($this->getShippingBilling() === true) {
                     $_SESSION['sendto'] = $this->tempBilltoAddressBookId;
                     $this->tempAddressValues['ship'] = $this->tempAddressValues['bill'];
-                } elseif ($this->isGuestCheckout() === true && (int)$_SESSION['sendto'] === $this->tempBilltoAddressBookId) {
+                } elseif ($this->guestIsActive === true && (int)$_SESSION['sendto'] === $this->tempBilltoAddressBookId) {
                     $_SESSION['sendto'] = $this->tempSendtoAddressBookId;
                 }
             }
@@ -1798,11 +1798,11 @@ class OnePageCheckout extends base
     */
     public function validateCustomerInfo()
     {
-        return ($this->isGuestCheckout() === false || $this->customerInfoOk === true);
+        return ($this->guestIsActive === false || $this->customerInfoOk === true);
     }
     public function validateTempBilltoAddress()
     {
-        if ($this->isGuestCheckout() === false) {
+        if ($this->guestIsActive === false) {
             $address_ok = !$this->customerAccountNeedsPrimaryAddress();
         } else {
             $address_ok = (!empty($_SESSION['billto']) && ((int)$_SESSION['billto'] !== $this->tempBilltoAddressBookId || $this->billtoTempAddrOk === true));
@@ -1813,7 +1813,7 @@ class OnePageCheckout extends base
     {
         if ($this->isVirtualOrder === true) {
             $address_ok = true;
-        } elseif ($this->isGuestCheckout() === false) {
+        } elseif ($this->guestIsActive === false) {
             $address_ok = !$this->customerAccountNeedsPrimaryAddress();
         } else {
             $address_ok = (!empty($_SESSION['sendto']) && ((int)$_SESSION['sendto'] === $this->tempSendtoAddressBookId || $this->sendtoTempAddrOk === true));
@@ -1867,7 +1867,6 @@ class OnePageCheckout extends base
         unset(
             $_SESSION['sendto'], 
             $_SESSION['billto'],
-            $_SESSION['is_guest_checkout'],
             $_SESSION['shipping_billing'], 
             $_SESSION['order_placed_by_guest']
         );
@@ -2081,7 +2080,7 @@ class OnePageCheckout extends base
                 'PAYMENTREQUEST_0_SHIPTOCOUNTRYCODE' => $temp_address['country']['iso_code_2']
             ];
  
-            if ($this->isGuestCheckout() === true) {
+            if ($this->guestIsActive === true) {
                 $paypal_temp['EMAIL'] = $this->guestCustomerInfo['email_address'];
                 if (!empty($this->guestCustomerInfo['telephone'])) {
                     $paypal_temp['PAYMENTREQUEST_0_SHIPTOPHONENUM'] = $this->guestCustomerInfo['telephone'];
@@ -2251,7 +2250,7 @@ class OnePageCheckout extends base
     protected function determineTempShippingAddress()
     {
         $which = false;
-        if ($this->isVirtualOrder() === false) {
+        if ($this->isVirtualOrder === false) {
             if (isset($_SESSION['sendto'])) {
                 if ((int)$_SESSION['sendto'] === $this->tempSendtoAddressBookId) {
                     $which = 'ship';
@@ -2268,7 +2267,7 @@ class OnePageCheckout extends base
         // be one of the temporary ship/bill entries -- if not, bail out with an error since
         // someone's mucked with the session-based values and it's not a recoverable case.
         //
-        if ($which === false && $this->isGuestCheckout() === true) {
+        if ($which === false && $this->guestIsActive === true) {
             trigger_error('Cannot determine guest shipping address, $_SESSION:' . PHP_EOL . var_export($_SESSION, true), E_USER_ERROR);
             exit;
         }
