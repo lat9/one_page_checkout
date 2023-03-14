@@ -738,7 +738,7 @@ class OnePageCheckout extends base
         global $db;
 
         $show_add_address = false;
-        if (zen_in_guest_checkout() === false && !empty($_SESSION['customer_id']) && $this->customerAccountNeedsPrimaryAddress() === false) {
+        if ($this->guestIsActive === false && !empty($_SESSION['customer_id']) && $this->customerAccountNeedsPrimaryAddress() === false) {
             $check = $db->Execute(
                 "SELECT COUNT(*) as count
                    FROM " . TABLE_ADDRESS_BOOK . "
@@ -761,7 +761,7 @@ class OnePageCheckout extends base
         $current_settings = print_r($this, true);
         $this->debugMessage("updateOrderAddresses, on entry:" . var_export($order, true) . PHP_EOL . $current_settings);
         $this->debugMessage("Current sendto: " . ((isset($_SESSION['sendto'])) ? $_SESSION['sendto'] : 'not set'));
-        if (zen_in_guest_checkout() === true) {
+        if ($this->guestIsActive === true) {
             $address = (array)$order->customer;
             $order->customer = array_merge($address, $this->createOrderAddressFromTemporary('bill'), $this->getGuestCustomerInfo());
         }
@@ -980,7 +980,7 @@ class OnePageCheckout extends base
         // Next, determine if a temporary address is valid for the current customer session.
         //
         $is_valid = true;
-        if (zen_in_guest_checkout() === true) {
+        if ($this->guestIsActive === true) {
             if ($is_temp_address === false) {
                 $is_valid = false;
             }
@@ -1324,20 +1324,22 @@ class OnePageCheckout extends base
 
     public function validateAndSaveAjaxCustomerInfo()
     {
-        if (!isset($_POST['email_address'])) {
-            trigger_error('validateAndSaveAjaxCustomerInfo, invalid POST: ' . var_export($_POST, true), E_USER_ERROR);
-            exit();
-        }
-
         $messages = [];
         $this->customerInfoOk = false;
+
+        if (!isset($_POST['email_address']) || !isset($_POST['telephone'])) {
+            $this->debugMessage('validateAndSaveAjaxCustomerInfo, invalid POST: ' . json_encode($_POST));
+
+            $messages['email_address'] = ENTRY_EMAIL_ADDRESS_ERROR;
+            return $messages;
+        }
 
         $email_address = zen_db_prepare_input(zen_sanitize_string($_POST['email_address']));
         if (strlen($email_address) < ENTRY_EMAIL_ADDRESS_MIN_LENGTH) {
             $messages['email_address'] = ENTRY_EMAIL_ADDRESS_ERROR;
-        } elseif (!zen_validate_email($email_address) || $this->isEmailBanned($email_address)) {
+        } elseif (!zen_validate_email($email_address) || $this->isEmailBanned($email_address) === true) {
             $messages['email_address'] = ENTRY_EMAIL_ADDRESS_CHECK_ERROR;
-        } elseif (CHECKOUT_ONE_GUEST_EMAIL_CONFIRMATION == 'true') {
+        } elseif (CHECKOUT_ONE_GUEST_EMAIL_CONFIRMATION === 'true') {
             $email_confirm = zen_db_prepare_input(zen_sanitize_string($_POST['email_address_conf']));
             if ($email_confirm !== $email_address) {
                 $messages['email_address_conf'] = ERROR_EMAIL_MUST_MATCH_CONFIRMATION;
