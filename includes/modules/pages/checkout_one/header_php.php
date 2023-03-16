@@ -1,9 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
-// Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2023, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated for OPC v2.4.4.
+// Last updated for OPC v2.4.6
 //
 // -----
 // This should be first line of the script:
@@ -84,7 +84,16 @@ for ($i = 0, $n = count($products_array); $i < $n; $i++) {
         zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
     }
 }
-//unset($products_array);
+
+// register a random ID in the session to check throughout the checkout procedure
+// against alterations in the shopping cart contents
+if (isset($_SESSION['cart']->cartID)) {
+    if (!isset($_SESSION['cartID']) || $_SESSION['cart']->cartID != $_SESSION['cartID']) {
+        $_SESSION['cartID'] = $_SESSION['cart']->cartID;
+    }
+} else {
+    zen_redirect(zen_href_link(FILENAME_TIME_OUT, '', 'SSL'));
+}
 
 // get coupon code
 if (isset($_SESSION['cc_id'])) {
@@ -97,6 +106,20 @@ if (isset($_SESSION['cc_id'])) {
     }
 }
 
+// -----
+// Check to see if the current cart contains only virtual products and, if so, pre-set the order's shipping method
+// to indicate free shipping.  This processing is moved before the order-object's creation to also cover the
+// case where the order started out as a mixed/physical one (with a "real" shipping method set) and was converted
+// to a virtual order after a prior entry to the checkout_one processing.
+//
+$is_virtual_order = ($_SESSION['cart']->get_content_type() === 'virtual');
+$_SESSION['opc']->setVirtualOrderStatus($is_virtual_order);
+
+// -----
+// Determine whether the order's been set so that the billing address is to be used
+// as the shipping address.  If the order's virtual, the return value will always
+// be true.
+//
 $shipping_billing = $_SESSION['opc']->getShippingBilling();
 
 // -----
@@ -106,55 +129,30 @@ $shipping_billing = $_SESSION['opc']->getShippingBilling();
 // selected 'sendto'; otherwise, the 'billto' address is set to the customer's default address.
 //
 if (!isset($_SESSION['billto'])) {
-    $_SESSION['billto'] = ($shipping_billing === true && isset($_SESSION['sendto'])) ? $_SESSION['sendto'] : $_SESSION['customer_default_address_id'];
+    $_SESSION['billto'] = ($shipping_billing === true && !empty($_SESSION['sendto'])) ? $_SESSION['sendto'] : $_SESSION['customer_default_address_id'];
 // -----
-// ... otherwise, make sure the billto address is valid.
+// Otherwise, make sure the billto address is valid.
 //
 } else {
     $_SESSION['opc']->validateBilltoSendto('bill');
 }
 
-// if no shipping destination address was selected, use the customers own address as default
+// -----
+// If no shipping destination address was selected, use the customers own address as default.
+// Note, using !isset rather than empty since the value is set to (bool)false when a virtual
+// order is being processed.
+//
 if (!isset($_SESSION['sendto'])) {
     $_SESSION['sendto'] = $_SESSION['customer_default_address_id'];
 } else {
     $_SESSION['opc']->validateBilltoSendto('ship');
 }
 
-// register a random ID in the session to check throughout the checkout procedure
-// against alterations in the shopping cart contents
-if (isset($_SESSION['cart']->cartID)) {
-    if (!isset($_SESSION['cartID']) || $_SESSION['cart']->cartID != $_SESSION['cartID']) {
-        $_SESSION['cartID'] = $_SESSION['cart']->cartID;
-    }
-} else {
-    zen_redirect(zen_href_link(FILENAME_TIME_OUT, '', 'SSL'));
-}
-
-// -----
-// Check to see if the current cart contains only virtual products and, if so, pre-set the order's shipping method
-// to indicate free shipping.  This processing is moved before the order-object's creation to also cover the
-// case where the order started out as a mixed/physical one (with a "real" shipping method set) and was converted
-// to a virtual order after a prior entry to the checkout_one processing.
-//
-$is_virtual_order = false;
-if ($_SESSION['cart']->get_content_type() === 'virtual') {
-    $is_virtual_order = true;
-    $shipping_billing = false;
-
-    $_SESSION['shipping'] = [
-        'id' => 'free_free', 
-        'title' => FREE_SHIPPING_TITLE, 
-        'cost' => 0
-    ];
-    $_SESSION['sendto'] = false;
-}
-
 // -----
 // Check to see if the order qualifies for free-shipping and, if so, set that shipping method into the customer's session.
 //
-$free_shipping = $_SESSION['opc']->isOrderFreeShipping($_SESSION['sendto']);
-if ($free_shipping) {
+$free_shipping = $_SESSION['opc']->isOrderFreeShipping();
+if ($free_shipping === true) {
     $_SESSION['shipping'] = [
         'id' => 'free_free', 
         'title' => FREE_SHIPPING_TITLE, 
@@ -178,7 +176,7 @@ $quotes = [];
 //
 $customer_info_ok = $_SESSION['opc']->validateCustomerInfo();
 $temp_shipto_addr_ok = $_SESSION['opc']->validateTempShiptoAddress();
-if (!$is_virtual_order && $customer_info_ok && $temp_shipto_addr_ok) {
+if (!$is_virtual_order === true && $customer_info_ok === true && $temp_shipto_addr_ok === true) {
     // load all enabled shipping modules
     require DIR_WS_CLASSES . 'shipping.php';
     $shipping_modules = new shipping;
@@ -247,7 +245,7 @@ if (!$is_virtual_order && $customer_info_ok && $temp_shipto_addr_ok) {
 
         $checkval = $_SESSION['shipping']['id'];
         $checkout_one->debug_message("CHECKOUT_ONE_SHIPPING_CHECK ($checkval)\n" . json_encode($quotes) . "\n" . json_encode($checklist));
-        if (!in_array($checkval, $checklist) && !($_SESSION['shipping']['id'] === 'free_free' && ($is_virtual_order || $free_shipping))) {
+        if (!in_array($checkval, $checklist) && !($_SESSION['shipping']['id'] === 'free_free' && ($is_virtual_order === true || $free_shipping === true))) {
             // -----
             // Since the available shipping methods have changed, need to kill the current shipping method and display a
             // message to the customer to let them know what's up.
@@ -265,7 +263,7 @@ if (!$is_virtual_order && $customer_info_ok && $temp_shipto_addr_ok) {
     if (empty($_SESSION['shipping']) || !isset($_SESSION['shipping']['id']) || $_SESSION['shipping']['id'] === '') {
         if (zen_count_shipping_modules() >= 1) {
             $_SESSION['shipping'] = $shipping_modules->cheapest();
-        } elseif (count($quotes) > 0 && count($quotes[0]['methods']) > 0 && !$shipping_selection_changed) {
+        } elseif (count($quotes) !== 0 && count($quotes[0]['methods']) !== 0 && $shipping_selection_changed === false) {
             $_SESSION['shipping'] = [
                 'id' => $quotes[0]['id'] . '_' . $quotes[0]['methods'][0]['id'], 
                 'title' => $quotes[0]['title'] . ' (' . $quotes[0]['methods'][0]['title'] . ')', 
@@ -279,15 +277,15 @@ if (!$is_virtual_order && $customer_info_ok && $temp_shipto_addr_ok) {
 // Determine whether shipping-modules are available, noting that they're not available if either
 // the guest customer-information or temporary shipping address hasn't been set.
 //
-$display_shipping_block = ($customer_info_ok && $temp_shipto_addr_ok);
-$shipping_module_available = $is_virtual_order || ($display_shipping_block && !empty($_SESSION['shipping']) && ($free_shipping || zen_count_shipping_modules() > 0));
+$display_shipping_block = ($customer_info_ok === true && $temp_shipto_addr_ok === true);
+$shipping_module_available = $is_virtual_order === true || ($display_shipping_block === true && !empty($_SESSION['shipping']) && ($free_shipping === true || zen_count_shipping_modules() > 0));
 
 // -----
 // If the session-based shipping information is set, sync that information up with the order.
 //
 $shipping_debug = '';
 if (isset($_SESSION['shipping']) && is_array($_SESSION['shipping'])) {
-    $shipping_debug = var_export($_SESSION['shipping'], true);
+    $shipping_debug = json_encode($_SESSION['shipping']);
     $order->info['shipping_method'] = $_SESSION['shipping']['title'];
     $order->info['shipping_module_code'] = $_SESSION['shipping']['id'];
     $order->info['shipping_cost'] = $_SESSION['shipping']['cost'];
@@ -331,9 +329,9 @@ $temp_billto_addr_ok = $_SESSION['opc']->validateTempBilltoAddress();
 $payment_module_available = false;
 $enabled_payment_modules = [];
 $payment_modules = false;
-$display_payment_block = ($customer_info_ok && $temp_billto_addr_ok);
+$display_payment_block = ($customer_info_ok === true && $temp_billto_addr_ok === true);
 $flagOnSubmit = 0;
-if (!($display_payment_block && $shipping_module_available)) {
+if ($display_payment_block === false || $shipping_module_available === false) {
     require DIR_WS_CLASSES . 'OnePageCheckoutNoPayment.php';
     $payment_modules = new OnePageCheckoutNoPayment;
 } else {
@@ -351,7 +349,7 @@ if (!($display_payment_block && $shipping_module_available)) {
     }
     $enabled_payment_modules = $_SESSION['opc']->validateGuestPaymentMethods($payment_modules->selection());
     $flagOnSubmit = count($enabled_payment_modules);
-    $payment_module_available = ($payment_modules->in_special_checkout() || count($enabled_payment_modules) > 0);
+    $payment_module_available = ($payment_modules->in_special_checkout() || count($enabled_payment_modules) !== 0);
 }
 
 // -----
@@ -370,7 +368,7 @@ if (isset($_GET['payment_error']) && is_object(${$_GET['payment_error']}) && ($e
     $messageStack->add('checkout_payment', $error['error'], 'error');
 }
 
-$extra_message = (isset($_SESSION['shipping'])) ? var_export($_SESSION['shipping'], true) : ' (not set)';
+$extra_message = (isset($_SESSION['shipping'])) ? json_encode($_SESSION['shipping']) : ' (not set)';
 $checkout_one->debug_message("CHECKOUT_ONE_AFTER_PAYMENT_MODULES_SELECTION\n" . var_export($payment_modules, true) . $extra_message);
 
 // -----
@@ -397,7 +395,7 @@ if (isset($_SESSION['payment'])) {
         // if shipping-edit button should be overridden, do so
         if (isset($_SESSION['payment']) && method_exists(${$_SESSION['payment']}, 'alterShippingEditButton')) {
             $theLink = ${$_SESSION['payment']}->alterShippingEditButton();
-            if ($theLink) {
+            if (!empty($theLink)) {
                 $editShippingButtonLink = $theLink;
             }
         }
@@ -413,7 +411,7 @@ if (isset($_SESSION['payment'])) {
 // Record various processing flags with the OPC's session-handler, for possible use by intra-page AJAX
 // calls.
 //
-$_SESSION['opc']->saveCheckoutProcessingFlags($is_virtual_order, $flagDisablePaymentAddressChange, $editShippingButtonLink);
+$_SESSION['opc']->saveCheckoutProcessingFlags($flagDisablePaymentAddressChange, $editShippingButtonLink);
 
 // -----
 // Disable the right- and left-sideboxes for the one-page checkout; the space is needed to get the 2-column display.

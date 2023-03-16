@@ -1,9 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
-// Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2023, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated for OPC v2.4.2.
+// Last updated for OPC v2.4.6
 //
 $define = [
     'NAVBAR_TITLE_1' => 'Checkout',
@@ -49,6 +49,16 @@ $define = [
 //
     'ERROR_IN_BILLING' => '[Billing]: ',
     'ERROR_IN_SHIPPING' => '[Shipping]: ',
+
+// -----
+// This message is used by OPC's AJAX class when the base OPC class indicates an error that requires
+// a full page-reload, implying that something got "out of sync" in the OPC class' records.  Unlike
+// the JS_ type messages, single quotes don't need (or want) to be double-escaped!
+//
+// If a customer receives this message during checkout, there's a PHP Warning logged to indicate
+// the underlying issue.
+//
+    'ERROR_AJAX_PAGE_RELOAD_REQUIRED' => 'A page reload\'s required.',
 
 // -----
 // NOTE: The following constants are used in the page's jscript_main.php file as javascript text literals.  If you want to include single-quotes in a value,

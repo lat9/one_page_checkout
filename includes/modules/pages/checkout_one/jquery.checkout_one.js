@@ -426,23 +426,33 @@ jQuery(document).ready(function(){
     // A function, called after each AJAX request, to determine if the response indicates
     // that a redirect is required.
     //
-    function checkForRedirect(status_code)
+    function checkForRedirect(response)
     {
         // -----
         // If a session timeout was detected by the AJAX handler, display a message to the customer
         // and redirect to the login page.
         //
-        if (status_code == 'timeout') {
+        if (response.status === 'timeout') {
             alert(sessionTimeoutErrorMessage);
             window.location.replace(timeoutUrl);
         }
+
         // -----
         // If the AJAX handler has detected that OPC is no longer enabled, display a message to the customer
         // and redirect to the checkout_shipping page.
         //
-        if (status_code == 'unavailable') {
+        if (response.status === 'unavailable') {
             alert(ajaxNotAvailableMessage);
             window.location.replace(checkoutShippingUrl);
+        }
+
+        // -----
+        // If the AJAX handler has detected that OPC detected an internal 'state' mismatch,
+        // display the specified message to the customer and reload the checkout_one page.
+        //
+        if (response.status === 'reload') {
+            alert(response.errorMessage);
+            window.location.reload();
         }
     }
 
@@ -497,11 +507,11 @@ jQuery(document).ready(function(){
                     }
                     shippingError = true;
                 },
-            }).done(function( response ) {
+            }).done(function(response) {
                 // -----
                 // Handle any redirects required, based on the AJAX response's status.
                 //
-                checkForRedirect(response.status);
+                checkForRedirect(response);
 
                 jQuery('#orderTotalDivs').html(response.orderTotalHtml);
 
@@ -536,7 +546,7 @@ jQuery(document).ready(function(){
                             changeShippingSubmitForm('shipping-only');
                         });
                     }
-                } else {
+                } else if (response.status !== 'reload') {
                     shippingError = true;
                     if (response.status == 'invalid') {
                         if (type == 'shipping-billing') {
@@ -559,7 +569,7 @@ jQuery(document).ready(function(){
                 }  
                 zcLog2Console('Shipping method updated, error: '+shippingError); 
 
-                if (type == 'submit' || type == 'submit-cc') {
+                if (response.status !== 'reload' && (type === 'submit' || type === 'submit-cc')) {
                     if (shippingError == true) {
                         zcLog2Console('Shipping error, correct to proceed.');
                     } else {
@@ -676,7 +686,7 @@ jQuery(document).ready(function(){
             // -----
             // Handle any redirects required, based on the AJAX response's status.
             //
-            checkForRedirect(response.status);
+            checkForRedirect(response);
 
             jQuery('#orderTotalDivs').html(response.orderTotalHtml);
         });
@@ -834,7 +844,7 @@ jQuery(document).ready(function(){
             // -----
             // Handle any redirects required, based on the AJAX response's status.
             //
-            checkForRedirect(response.status);
+            checkForRedirect(response);
             
             jQuery(address_block).replaceWith(response.addressHtml);
             if (typeof initializeStateZones != 'undefined') {
@@ -898,7 +908,7 @@ jQuery(document).ready(function(){
             // -----
             // Handle any redirects required, based on the AJAX response's status.
             //
-            checkForRedirect(response.status);
+            checkForRedirect(response);
 
             // -----
             // If the response returns a non-empty array of messages, there were one or more
@@ -997,7 +1007,7 @@ jQuery(document).ready(function(){
             // -----
             // Handle any redirects required, based on the AJAX response's status.
             //
-            checkForRedirect(response.status);
+            checkForRedirect(response);
 
             jQuery('#checkoutOneGuestInfo').html(response.infoHtml);
             restoreAddressValues('bill', '#checkoutOneBillto');
@@ -1021,7 +1031,7 @@ jQuery(document).ready(function(){
             // -----
             // Handle any redirects required, based on the AJAX response's status.
             //
-            checkForRedirect(response.status);
+            checkForRedirect(response);
 
             // -----
             // If the response returns a non-empty array of messages, there were one or more
