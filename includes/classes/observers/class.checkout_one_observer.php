@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2023, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.4.6.
+// Last updated: OPC v2.4.6
 //
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
@@ -353,8 +353,14 @@ class checkout_one_observer extends base
             // registered account-holders, since a pseudo-address-book entry is available,
             // but incomplete.
             //
-            // Any requests for logged-in status on either of those two pages will indicate
-            // a not-logged-in status for the above conditions.
+            // If configured, the PayPal Express Checkout button (present on the shopping_cart
+            // and login pages) checks for the payment-method's zone restriction within the
+            // logged-in customer's address.  When an OPC guest-checkout is in progress, don't
+            // want that module to be using any temporary guest-related addresses present, so
+            // we'll indicate that nobody is logged in for that module's check.
+            //
+            // Any requests for logged-in status on either of those pages/conditions will indicate
+            // a not-logged-in status.
             //
             // On entry:
             //
@@ -365,9 +371,9 @@ class checkout_one_observer extends base
                 global $current_page_base;
 
                 $is_logged_in = $_SESSION['opc']->isLoggedIn();
-                if ($is_logged_in && isset($current_page_base)) {
+                if ($is_logged_in === true && isset($current_page_base)) {
                     if ($current_page_base === FILENAME_POPUP_SHIPPING_ESTIMATOR) {
-                        $is_logged_in = !$_SESSION['opc']->isGuestCheckout() && !$_SESSION['opc']->customerAccountNeedsPrimaryAddress();
+                        $is_logged_in = ($_SESSION['opc']->isGuestCheckout() === false && $_SESSION['opc']->customerAccountNeedsPrimaryAddress() === false);
                     } elseif ($current_page_base === FILENAME_SHOPPING_CART && SHOW_SHIPPING_ESTIMATOR_BUTTON === '2') {
                         $calling_list = debug_backtrace();
                         $is_shipping_estimator = false;
@@ -377,8 +383,16 @@ class checkout_one_observer extends base
                                 break;
                             }
                         }
-                        if ($is_shipping_estimator) {
-                            $is_logged_in = !$_SESSION['opc']->isGuestCheckout() && !$_SESSION['opc']->customerAccountNeedsPrimaryAddress();
+                        if ($is_shipping_estimator === true) {
+                            $is_logged_in = ($_SESSION['opc']->isGuestCheckout() === false && $_SESSION['opc']->customerAccountNeedsPrimaryAddress() === false);
+                        }
+                    } elseif ($_SESSION['opc']->isGuestCheckout() === true && ($current_page_base === FILENAME_LOGIN || $current_page_base === FILENAME_SHOPPING_CART)) {
+                        $calling_list = debug_backtrace();
+                        foreach ($calling_list as $next_caller) {
+                            if (strpos($next_caller['file'], 'tpl_ec_button.php') !== false) {
+                                $is_logged_in = false;
+                                break;
+                            }
                         }
                     }
                 }

@@ -1,10 +1,23 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
-// Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2023, Vinos de Frutas Tropicales.  All rights reserved.
+//
+// Last updated: OPC v2.4.6
 //
 class zcAjaxOnePageCheckout extends base
 {
+    // -----
+    // If OPC's guest checkout is active and the customer has requested to use PayPal Express
+    // Checkout instead, reset OPC to indicate that its guest checkout is no longer active.
+    //
+    public function resetGuestCheckout()
+    {
+        if (isset($_SESSION['opc'])) {
+            $_SESSION['opc']->resetGuestSessionValues();
+        }
+    }
+
     // -----
     // Update the order's shipping method when the selection has changed on the checkout_one page.
     //

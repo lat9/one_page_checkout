@@ -647,8 +647,8 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                 <li><span class="removed">/includes/languages/english/order_status.php</span> <span class="smaller">(Added in v2.0.0, removed in v2.4.4, <b>from this distribution only</b>.)</span></li>
                 <li>/includes/languages/english/extra_definitions/checkout_one_extra_definitions.php <span class="smaller">(Added in v1.0.8)</span></li>
                 <li>/includes/languages/english/extra_definitions/lang.checkout_one_extra_definitions.php</li>
-                <li><span class="added">/includes/languages/english/YOUR_TEMPLATE/lang.order_status.php</span> <span class="smaller">(Added in v2.4.4)</span></li>
-                <li><span class="added">/includes/languages/english/YOUR_TEMPLATE/order_status.php</span> <span class="smaller">(Added in v2.4.4)</span></li>
+                <li>/includes/languages/english/YOUR_TEMPLATE/lang.order_status.php <span class="smaller">(Added in v2.4.4)</span></li>
+                <li>/includes/languages/english/YOUR_TEMPLATE/order_status.php <span class="smaller">(Added in v2.4.4)</span></li>
                 <li>/includes/languages/english/html_includes/define_checkout_success_guest.php <span class="smaller">(Added in v2.4.2)</span></li>
                 <li>/includes/languages/english/html_includes/YOUR_TEMPLATE/define_checkout_success_guest.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li><span class="template">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/lang.ot_coupon.php</span> <span class="smaller">(Added in v2.4.2)</span></li>
@@ -674,8 +674,10 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                 <li>/includes/modules/pages/create_account_success/header_php_create_account_success_register.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/modules/pages/create_account_success/main_template_vars.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/modules/pages/login/header_php_login_guest.php <span class="smaller">(Added in v2.0.0)</span></li>
+                <li>/includes/modules/pages/login/jscript_opc_reset_guest_for_ppec <span class="smaller">(Added in v2.4.6)</span></li>
                 <li>/includes/modules/pages/login/main_template_vars.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li><span class="corefile">/includes/modules/pages/order_status/header_php.php</span> <span class="smaller">(Added in v2.0.0, became a core-file in zc158)</span></li>
+                <li>/includes/modules/pages/shopping_cart/jscript_opc_reset_guest_for_ppec <span class="smaller">(Added in v2.4.6)</span></li>
                 <li><span class="template">/includes/modules/sideboxes/YOUR_TEMPLATE/information.php</span> <span class="smaller">(Added in v2.1.3)</li>
                 <li>/includes/templates/template_default/css/checkout_one.css</li>
                 <li>/includes/templates/template_default/css/checkout_one_confirmation.css</li>
@@ -724,13 +726,17 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank" rel="noopener">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color and removals are indicated like <span class="removed">this</span>.</p>
               <ul>
-                <li>v2.4.6-beta2, 2023-03-08 (lat9 and marco-pm):<ul>
+                <li>v2.4.6-beta3, 2023-03-28 (lat9 and marco-pm):<ul>
                     <li>BUGFIX: Correct unwanted redirect when pricing includes an &amp;nbsp;.</li>
                     <li>BUGFIX: Redirect page correctly on AJAX return.</li>
-                    <li>The following files were changed:<ol>
+                    <li>BUGFIX: Reset guest session values on 'conversion' to PayPal Express Checkout.</li>
+                    <li>The following files were changed or <span class="added">added</span>:<ol>
+                        <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
                         <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                         <li>/includes/modules/pages/checkout_one/jquery_checkout_one.js</li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
+                        <li><span class="added">/includes/modules/pages/login/jscript_opc_reset_guest_for_ppec</span></li>
+                        <li><span class="added">/includes/modules/pages/shopping_cart/jscript_opc_reset_guest_for_ppec</span></li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                     </ol></li>
                 </ul></li>
