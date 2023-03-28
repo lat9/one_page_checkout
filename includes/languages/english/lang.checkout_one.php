@@ -51,14 +51,14 @@ $define = [
     'ERROR_IN_SHIPPING' => '[Shipping]: ',
 
 // -----
-// This message is used by OPC's AJAX class when the base OPC class indicates an error that requires
+// This message is used by OPC's observer and AJAX classes when the base OPC class indicates an error that requires
 // a full page-reload, implying that something got "out of sync" in the OPC class' records.  Unlike
 // the JS_ type messages, single quotes don't need (or want) to be double-escaped!
 //
 // If a customer receives this message during checkout, there's a PHP Warning logged to indicate
 // the underlying issue.
 //
-    'ERROR_AJAX_PAGE_RELOAD_REQUIRED' => 'A page reload\'s required.',
+    'ERROR_OPC_ADDRESS_INVALID' => 'Sorry, we could not validate one or more of this order\'s addresses; please review and re-enter if necessary.',
 
 // -----
 // NOTE: The following constants are used in the page's jscript_main.php file as javascript text literals.  If you want to include single-quotes in a value,

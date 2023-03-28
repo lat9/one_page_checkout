@@ -191,9 +191,11 @@ class OnePageCheckout extends base
     public function getShippingBilling()
     {
         if (!isset($_SESSION['shipping_billing'])) {
-            $_SESSION['shipping_billing'] = (CHECKOUT_ONE_ENABLE_SHIPPING_BILLING === 'true');
+            $_SESSION['shipping_billing'] = (CHECKOUT_ONE_ENABLE_SHIPPING_BILLING === 'true' || $this->isVirtualOrder === true);
+        } elseif ($this->isVirtualOrder === true) {
+            $_SESSION['shipping_billing'] = true;
         }
-        return ($this->isVirtualOrder === true) ? true : $_SESSION['shipping_billing'];
+        return $_SESSION['shipping_billing'];
     }
 
     /* -----
@@ -296,11 +298,10 @@ class OnePageCheckout extends base
     **
     ** Side-effects:
     ** - If the order *is not* virtual, but the session's sendto address still indicates
-    **   as such, i.e. it's (bool)false, unset the address.  The checkout_one page's
-    **   header will set the value to the customer's default address.
+    **   as such, i.e. it's (bool)false, set the value to the customer's default address.
     ** - If the order *is* virtual, indicate as such in the session's 'sendto'
-    ** address, set the current shipping method to indicate free shipping and indicate that
-    ** the billing address is not the same as shipping.
+    **   address, set the current shipping method to indicate free shipping and indicate that
+    **   the billing address is not the same as shipping.
     */
     public function setVirtualOrderStatus($is_virtual_order)
     {
@@ -980,14 +981,12 @@ class OnePageCheckout extends base
                         $tax_country_id = $order->billing['country_id'];
                         $tax_zone_id = $order->billing['zone_id'];
                     }
+                } elseif ($use_temp_shipping === true) {
+                    $tax_country_id = $this->tempAddressValues['ship']['country'];
+                    $tax_zone_id = $this->tempAddressValues['ship']['zone_id'];
                 } else {
-                    if ($use_temp_shipping === true) {
-                        $tax_country_id = $this->tempAddressValues['ship']['country'];
-                        $tax_zone_id = $this->tempAddressValues['ship']['zone_id'];
-                    } else {
-                        $tax_country_id = $order->delivery['country_id'];
-                        $tax_zone_id = $order->delivery['zone_id'];
-                    }
+                    $tax_country_id = $order->delivery['country_id'] ?? $order->billing['country_id'];
+                    $tax_zone_id = $order->delivery['zone_id'] ?? $order->billing['zone_id'];
                 }
                 break;
 
@@ -1119,23 +1118,17 @@ class OnePageCheckout extends base
 
     /* -----
     ** This function, called from OPC's AJAX handler, requests that the temporary shipping
-    ** and billing addresses are to be set to be the same.
+    ** address' contents be set to the current billing address.
     **
     ** If the session's current bill-to address is set, that address id is used
     */
     public function setTempShippingToBilling()
     {
-        if (empty($_SESSION['billto'])) {
-            trigger_error('setTempShippingToBilling: Invalid access; $_SESSION[\'billto\'] is not set.', E_USER_WARNING);
-            $this->rebuildRequired = true;
-            return false;
-        }
-
         $address_book_id = (int)$_SESSION['billto'];
         if ($address_book_id === $this->tempBilltoAddressBookId) {
             $address_values = $this->tempAddressValues['bill'];
         } else {
-            $address_values = $this->getAddressValuesFromDb($address_book_id);
+            $address_values = $this->getAddressValuesFromDb($address_book_id, 'bill');
         }
         $this->tempAddressValues['ship'] = $address_values;
     }
@@ -1166,7 +1159,7 @@ class OnePageCheckout extends base
         if ($address_book_id === $this->tempBilltoAddressBookId || $address_book_id === $this->tempSendtoAddressBookId) {
             $address_values = $this->tempAddressValues[$which];
         } else {
-            $address_values = $this->getAddressValuesFromDb($address_book_id);
+            $address_values = $this->getAddressValuesFromDb($address_book_id, $which);
         }
         if (!isset($address_values['country_id'])) {
             $address_values['country_id'] = $address_values['country'];
@@ -1175,7 +1168,7 @@ class OnePageCheckout extends base
         return $this->updateStateDropdownSettings($address_values);
     }
 
-    protected function getAddressValuesFromDb($address_book_id)
+    protected function getAddressValuesFromDb($address_book_id, $which)
     {
         global $db;
 
@@ -1193,8 +1186,13 @@ class OnePageCheckout extends base
 
         $address_info = $db->Execute($address_info_query);
         if ($address_info->EOF) {
-            trigger_error("unknown address_book_id (" . $address_book_id . ') for customer_id (' . $_SESSION['customer_id'] . ')', E_USER_ERROR);
-            exit();
+            trigger_error("unknown '$which' address_book_id ($address_book_id) for customer_id (" . $_SESSION['customer_id'] . ')', E_USER_NOTICE);
+            $address_info = $this->tempAddressValues[$which];
+            if ($which === 'bill') {
+                $_SESSION['billto'] = $_SESSION['customer_default_address_id'];;
+            } else {
+                $_SESSION['sendto'] = $_SESSION['customer_default_address_id'];;
+            }
         }
 
         foreach ($address_info->fields as $key => $value) {
@@ -1217,7 +1215,7 @@ class OnePageCheckout extends base
 
         $this->notify('NOTIFY_OPC_INIT_ADDRESS_FROM_DB', $address_book_id, $address_info->fields);
 
-        $this->debugMessage("getAddressValuesFromDb($address_book_id), returning: " . json_encode($address_info->fields)); 
+        $this->debugMessage("getAddressValuesFromDb($address_book_id, $which), returning: " . json_encode($address_info->fields)); 
 
         return $address_info->fields;
     }
@@ -1540,7 +1538,7 @@ class OnePageCheckout extends base
     {
         if ($which !== 'bill' && $which !== 'ship') {
             trigger_error("Unknown address selection ($which) received.", E_USER_ERROR);
-            exit();
+            zen_exit();
         }
         if (!isset($this->tempAddressValues)) {
             // -----
@@ -1551,7 +1549,7 @@ class OnePageCheckout extends base
             $extra_info = (isset($_SESSION['payment'])) ? $_SESSION['payment'] : 'not set';
             $extra_info .= ', ' . (isset($_SESSION['shipping'])) ? json_encode($_SESSION['shipping']) : 'not set';
             trigger_error('Invalid request, tempAddressValues not set: ' . $extra_info . PHP_EOL . json_encode($this), E_USER_ERROR);
-            exit();
+            zen_exit();
         }
     }
 
@@ -1933,18 +1931,21 @@ class OnePageCheckout extends base
     ** This function, called from the 'checkout_success' OPC header processing, creates a
     ** customer-account from the information associated with the just-placed order.
     */
-    public function createAccountFromGuestInfo($order_id, $password, $newsletter, $email_format)
+    public function createAccountFromGuestInfo($order_id, $newsletter, $email_format): bool
     {
         global $db;
 
-        $password_error = (strlen((string)$password) < ENTRY_PASSWORD_MIN_LENGTH);
-        if (!$this->guestIsActive || !isset($this->guestCustomerInfo) || !isset($this->tempAddressValues) || $password_error) {
-            trigger_error("Invalid access ($password_error):" . var_export($this, true), E_USER_ERROR);
-            exit();
+        if ($this->guestIsActive === false || !isset($this->guestCustomerInfo) || !isset($this->tempAddressValues)) {
+            trigger_error(
+                'Invalid access: guestIsActive(' . $this->guestIsActive . '), ' .
+                'guestCustomerInfo (' . isset($this->guestCustomerInfo) . '), ' .
+                'tempAddressValues (' . isset($this->tempAddressValues) . ')',
+                E_USER_NOTICE);
+            return false;
         }
 
         $customer_id = $this->createCustomerRecordFromGuestInfo($password, $newsletter, $email_format);
-        $_SESSION['customer_id'] = $customer_id;
+        $_SESSION['customer_id'] = (int)$customer_id;
         $db->Execute(
             "UPDATE " . TABLE_ORDERS . "
                 SET customers_id = $customer_id
@@ -1988,6 +1989,8 @@ class OnePageCheckout extends base
         $_SESSION['customers_authorization'] = 0;
 
         $this->reset();
+
+        return true;
     }
 
     // -----
@@ -2164,7 +2167,7 @@ class OnePageCheckout extends base
 
     /* -----
     ** This public method is called by the OPC observer-class upon receipt of the indication that
-    ** PayPal Express Checkout is preparing to send the order up to PayPal for fulfilment.  If temporary
+    ** PayPal Express Checkout is preparing to send the order up to PayPal for fulfillment.  If temporary
     ** addresses are currently in use, this processing will return a PayPal-formatted array to be combined
     ** with the order's current PayPal options.
     **
@@ -2174,7 +2177,17 @@ class OnePageCheckout extends base
     */
     public function createPayPalTemporaryAddressInfo($paypal_options, $order)
     {
+        // -----
+        // Determine which (bill/ship) temporary address is currently in use for the order's shipping.
+        // If a guest is currently placing an order and the current shipping address doesn't reflect
+        // a temporary one, the determineTempShippingAddress method has performed the required
+        // corrections to the session-based billto/sendto address-book-id.
+        //
         $which = $this->determineTempShippingAddress();
+        if ($which === false && $this->guestIsActive === true) {
+            return false;
+        }
+
         $paypal_temp = [];
         if ($which !== false) {
             $temp_address = $this->createOrderAddressFromTemporary($which);
@@ -2196,8 +2209,10 @@ class OnePageCheckout extends base
             }
             $this->debugMessage("createPayPalTemporaryAddressInfo, returning ($which): " . json_encode($paypal_temp));
         }
+
         $this->paypalTotalValue = $order->info['total'];
-        $this->paypalNoShipping = $paypal_options['NOSHIPPING'];
+        $this->paypalNoShipping = (bool)$paypal_options['NOSHIPPING'];
+
         return $paypal_temp;
     }
 
@@ -2206,6 +2221,12 @@ class OnePageCheckout extends base
     ** PayPal Express Checkout is preparing to check/create the address associated with the PayPal-approved
     ** payment. If the current ship-to address is temporary or, for virtual orders, the bill-to address is
     ** temporary, this processing will indicate that PayPal should bypass its automatic address-book creation.
+    **
+    ** Notes:
+    ** 1) If the determineTempShippingAddress method determines that a guest-checkout sendto/billto address
+    **    book id is invalid, we'll return a (string)message to be displayed to the customer.
+    ** 2) If the PayPal ship-to country is not supported by the store, we'll return a (string)message
+    **    to be displayed to the customer.
     **
     ** If the order is virtual and the "shipping" address is temporary, a guest has placed a virtual order and
     ** we'll simply return that PayPal should bypass its address-creation process.
@@ -2221,12 +2242,16 @@ class OnePageCheckout extends base
     ** 2) Set the shipping=billing flag to indicate that the shipping/billing addresses don't match.
     ** 3) The PayPal-returned address is recorded as the current ship-to address.
     **
-    ** The method returns a boolean flag, indicating whether or not the paypalwpp payment-method should bypass
+    ** The method "normally" returns a boolean flag, indicating whether or not the paypalwpp payment-method should bypass
     ** its automatic address-record creation.
     */
     public function setPayPalAddressCreationBypass($paypal_ec_payment_info)
     {
         $which = $this->determineTempShippingAddress();
+        if ($which === false && $this->guestIsActive === true) {
+            return ERROR_OPC_ADDRESS_INVALID;
+        }
+
         $bypass_address_creation = false;
         unset($this->paypalAddressOverride);
 
@@ -2331,6 +2356,10 @@ class OnePageCheckout extends base
                     $this->tempAddressValues['ship']['company'] = '';
 
                     $country_info = $this->getCountryInfoFromIsoCode2($paypal_ec_payment_info['ship_country_code']);
+                    if ($country_info === false) {
+                        return sprintf(ERROR_TEXT_COUNTRY_DISABLED_PLEASE_CHANGE, $paypal_ec_payment_info['ship_country_code']);
+                    }
+
                     $this->tempAddressValues['ship']['country'] = $country_info['id'];
                     $this->tempAddressValues['ship']['country_id'] = $country_info['id'];
                     $this->tempAddressValues['ship']['format_id'] = $country_info['address_format_id'];
@@ -2353,7 +2382,8 @@ class OnePageCheckout extends base
 
     // -----
     // This internal function returns 'which' temporary address is currently being used as
-    // the order's shipping address; the value returned is (bool)false if a permanent address is in use.
+    // the order's shipping address for PayPal Express Checkout processing; the value returned
+    // is (bool)false if the address is not one of OPC's temporary addresses.
     //
     protected function determineTempShippingAddress()
     {
@@ -2372,12 +2402,20 @@ class OnePageCheckout extends base
 
         // -----
         // If we're currently processing in guest-checkout mode, the shipping address "should"
-        // be one of the temporary ship/bill entries -- if not, bail out with an error since
-        // someone's mucked with the session-based values and it's not a recoverable case.
+        // be one of the temporary ship/bill entries -- if not, log an error since
+        // someone's mucked with the session-based values; we'll provide a fix-up here to
+        // the session's sendto/billto addresses.
         //
         if ($which === false && $this->guestIsActive === true) {
-            trigger_error('Cannot determine guest shipping address, $_SESSION:' . PHP_EOL . var_export($_SESSION, true), E_USER_ERROR);
-            exit;
+            trigger_error('Cannot determine guest shipping address, $_SESSION:' . PHP_EOL . var_export($_SESSION, true), E_USER_WARNING);
+
+            $_SESSION['billto'] = $this->tempBilltoAddressBookId;
+            if ($this->isVirtualOrder === false) {
+                $_SESSION['sendto'] = ($this->getShippingBilling() === true) ? $this->tempBilltoAddressBookId : $this->tempSendtoAddressBookId;
+            } else {
+                $_SESSION['sendto'] = false;
+
+            }
         }
         return $which;
     }
@@ -2398,8 +2436,8 @@ class OnePageCheckout extends base
               LIMIT 1"
         );
         if ($country_info->EOF) {
-            trigger_error("Could not locate the country with the iso-code-2 of $iso_code_2.", E_USER_ERROR);
-            exit;
+            trigger_error("Could not locate the country with the iso-code-2 of $iso_code_2.", E_USER_WARNING);
+            return false;
         } else {
             $country = [
                 'id' => $country_info->fields['countries_id'],
@@ -2533,10 +2571,11 @@ class OnePageCheckout extends base
                           LIMIT 1"
                     );
                     if ($country_zone->EOF) {
-                        trigger_error("Unknown/invalid billto address #{$_SESSION['billto']} for customer#{$_SESSION['customer_id']}.", E_USER_ERROR);
-                        exit();
+                        trigger_error("Unknown/invalid billto address #{$_SESSION['billto']} for customer#{$_SESSION['customer_id']}, resetting to customer's default #{$_SESSION['customer_default_address_id']}.", E_USER_WARNING);
+                        $_SESSION['billto'] = $_SESSION['customer_default_address_id'];
+                        return null;
                     }
-                    if ($this->isVirtualOrder === true || $country_zone->fields['entry_zone_id'] == STORE_ZONE) {
+                    if ($this->isVirtualOrder === true || $country_zone->fields['entry_zone_id'] === STORE_ZONE) {
                         $country_id = $country_zone->fields['entry_country_id'];
                         $zone_id = $country_zone->fields['entry_zone_id'];
                     }
@@ -2557,8 +2596,9 @@ class OnePageCheckout extends base
                               LIMIT 1"
                         );
                         if ($country_zone->EOF) {
-                            trigger_error("Unknown/invalid sendto address #{$_SESSION['sendto']} for customer#{$_SESSION['customer_id']}.", E_USER_ERROR);
-                            exit();
+                            trigger_error("Unknown/invalid sendto address #{$_SESSION['sendto']} for customer#{$_SESSION['customer_id']}, resetting to customer's default #{$_SESSION['customer_default_address_id']}.", E_USER_WARNING);
+                            $_SESSION['sendto'] = $_SESSION['customer_default_address_id'];
+                            return null;
                         }
                         $country_id = $country_zone->fields['entry_country_id'];
                         $zone_id = $country_zone->fields['entry_zone_id'];
@@ -2568,7 +2608,7 @@ class OnePageCheckout extends base
 
             default:
                 trigger_error('Unknown value (' . STORE_PRODUCT_TAX_BASIS . ') found for \'STORE_PRODUCT_TAX_BASIS\'.', E_USER_ERROR);
-                exit();
+                zen_exit();
                 break;
         }
 

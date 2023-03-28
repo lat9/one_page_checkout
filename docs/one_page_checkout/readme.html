@@ -497,8 +497,10 @@ a[target=_blank] { text-decoration: underline; }
                   <li>/includes/modules/pages/create_account_success/header_php_create_account_success_register.php</li>
                   <li>/includes/modules/pages/create_account_success/main_template_vars.php</li>
                   <li>/includes/modules/pages/login/header_php_login_guest.php</li>
+                  <li>/includes/modules/pages/login/jscript_opc_reset_guest_for_ppec.php</li>
                   <li>/includes/modules/pages/login/main_template_vars.php</li>
                   <li>/includes/modules/pages/order_status/header_php.php <span class="corefile smaller">(Note that this is now a core file in zc158)</span></li>
+                  <li>/includes/modules/pages/shopping_cart/jscript_opc_reset_guest_for_ppec.php</li>
                   <li>/includes/templates/template_default/css/checkout_one.css</li>
                   <li>/includes/templates/template_default/css/checkout_one_confirmation.css</li>
                   <li>/includes/templates/template_default/css/checkout_success.css</li>
@@ -674,10 +676,10 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                 <li>/includes/modules/pages/create_account_success/header_php_create_account_success_register.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/modules/pages/create_account_success/main_template_vars.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/modules/pages/login/header_php_login_guest.php <span class="smaller">(Added in v2.0.0)</span></li>
-                <li>/includes/modules/pages/login/jscript_opc_reset_guest_for_ppec <span class="smaller">(Added in v2.4.6)</span></li>
+                <li>/includes/modules/pages/login/jscript_opc_reset_guest_for_ppec.php <span class="smaller">(Added in v2.4.6)</span></li>
                 <li>/includes/modules/pages/login/main_template_vars.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li><span class="corefile">/includes/modules/pages/order_status/header_php.php</span> <span class="smaller">(Added in v2.0.0, became a core-file in zc158)</span></li>
-                <li>/includes/modules/pages/shopping_cart/jscript_opc_reset_guest_for_ppec <span class="smaller">(Added in v2.4.6)</span></li>
+                <li>/includes/modules/pages/shopping_cart/jscript_opc_reset_guest_for_ppec.php <span class="smaller">(Added in v2.4.6)</span></li>
                 <li><span class="template">/includes/modules/sideboxes/YOUR_TEMPLATE/information.php</span> <span class="smaller">(Added in v2.1.3)</li>
                 <li>/includes/templates/template_default/css/checkout_one.css</li>
                 <li>/includes/templates/template_default/css/checkout_one_confirmation.css</li>
@@ -731,14 +733,18 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                     <li>BUGFIX: Redirect page correctly on AJAX return.</li>
                     <li>BUGFIX: Reset guest session values on 'conversion' to PayPal Express Checkout.</li>
                     <li>BUGFIX: Cast parameters for 'zen_get_zone_code' to prevent PHP Fatal error.</li>
+                    <li>BUGFIX: Remove all but essential, i.e. interface errors, PHP user-error-exits, replacing with customer messaging and warning logs.</li>
                     <li>The following files were changed or <span class="added">added</span>:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
                         <li>/includes/classes/observers/class.checkout_one_observer.php</li>
+                        <li>/includes/languages/english/lang.checkout_one.php</li>
+                        <li>/includes/languages/english/lang.checkout_success_guest.php</li>
                         <li>/includes/modules/pages/checkout_one/jquery_checkout_one.js</li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
-                        <li><span class="added">/includes/modules/pages/login/jscript_opc_reset_guest_for_ppec</span></li>
-                        <li><span class="added">/includes/modules/pages/shopping_cart/jscript_opc_reset_guest_for_ppec</span></li>
+                        <li>/includes/modules/pages/checkout_success/header_php_guest.php</li>
+                        <li><span class="added">/includes/modules/pages/login/jscript_opc_reset_guest_for_ppec.php</span></li>
+                        <li><span class="added">/includes/modules/pages/shopping_cart/jscript_opc_reset_guest_for_ppec.php</span></li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                     </ol></li>
                 </ul></li>

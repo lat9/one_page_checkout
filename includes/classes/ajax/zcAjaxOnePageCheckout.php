@@ -63,7 +63,9 @@ class zcAjaxOnePageCheckout extends base
 
             // -----
             // Manage the shipping-address, based on the "Shipping Address, Same as Billing?" checkbox value submitted.
-            // Noting that for a virtual order, the session's 'shipto' address is set to (bool)false.
+            //
+            // Noting that for a virtual order, the session's already been set-up to reflect that shipping and billing
+            // aren't the same, so nothing further needs to be done for the shipping address.
             //
             $checkout_one->debug_message(
                 'Billing/shipping, entry (' . $_POST['shipping_is_billing'] . '), ' .
@@ -74,28 +76,61 @@ class zcAjaxOnePageCheckout extends base
                 false,
                 'zcAjaxOnePageCheckout::updateShipping'
             );
-            if ($_SESSION['opc']->isVirtualOrder() === true) {
-                $_SESSION['sendto'] = false;
-                $_SESSION['shipping_billing'] = false;
-                $ship_to = 'billing';
-            } elseif ($_POST['shipping_is_billing'] === 'true') {
-                $_SESSION['sendto'] = $_SESSION['billto'];
-                $_SESSION['shipping_billing'] = true;
-                $ship_to = 'billing';
-                if ($_SESSION['opc']->setTempShippingToBilling() === false) {
-                    return [
-                        'status' => 'reload',
-                        'errorMessage' => ERROR_AJAX_PAGE_RELOAD_REQUIRED,
-                    ];
-                }
-            } else {
-                if (empty($_SESSION['sendto'])) {
-                    $_SESSION['sendto'] = $_SESSION['customer_default_address_id'];
-                } else {
-                    $_SESSION['opc']->validateBilltoSendto('ship');
-                }
+
+            // -----
+            // If the order requires shipping ...
+            //
+            $ship_to = 'billing';
+            if ($_SESSION['opc']->isVirtualOrder() === false) {
+                // -----
+                // If the customer has indicated that the order is to be shipped to the
+                // billing address ...
+                //
                 $ship_to = 'shipping';
-                $_SESSION['shipping_billing'] = false;
+                if ($_POST['shipping_is_billing'] === 'true') {
+                    // -----
+                    // ... and the order's currently using a shipping address other than billing ...
+                    //
+                    if ($_SESSION['opc']->getShippingBilling() === false) {
+                        // -----
+                        // Set the order's shipping address to be its billing address and
+                        // indicate as such with the shipping-equals-billing flag.
+                        //
+                        $_SESSION['sendto'] = $_SESSION['billto'];
+                        $_SESSION['shipping_billing'] = true;
+
+                        // -----
+                        // Reset the temporary shipping address to reflect billing.  If
+                        // an out-of-sync condition is detected, a message will be displayed
+                        // to the customer and the checkout_one page will be reloaded by
+                        // its jQuery processing.
+                        //
+                        if ($_SESSION['opc']->setTempShippingToBilling() === false) {
+                            return [
+                                'status' => 'reload',
+                                'errorMessage' => ERROR_OPC_ADDRESS_INVALID,
+                            ];
+                        }
+                    }
+                    $ship_to = 'billing';
+                // -----
+                // Otherwise, the order is to be shipped to a non-billing shipping address ...
+                //
+                } else {
+                    // -----
+                    // ... and the order's shipping address is currently set to its billing
+                    // address ...
+                    //
+                    if ($_SESSION['opc']->getShippingBilling() === true) {
+                        if (empty($_SESSION['sendto'])) {
+                            $_SESSION['sendto'] = $_SESSION['customer_default_address_id'];
+                        } else {
+                            $_SESSION['opc']->validateBilltoSendto('ship');
+                        }
+                        $_SESSION['shipping_billing'] = false;
+                    }
+                    $ship_to = 'shipping';
+                }
             }
 
             if (empty($_POST['payment'])) {
@@ -361,15 +396,15 @@ class zcAjaxOnePageCheckout extends base
     {
         global $checkout_one;
 
+        $this->loadLanguageFiles();
         $error_message = '';
         $address_html = '';
- 
+
         // -----
         // Initialize the response's status code, continuing only if all is 'ok'.
         //
         $status = $this->initializeResponseStatus('restoreAddressValues', $error_message);
         if ($status === 'ok') {
-            $this->loadLanguageFiles();
             if (!isset($_POST['which']) || ($_POST['which'] !== 'bill' && $_POST['which'] !== 'ship')) {
                 $status = 'error';
                 $error_message = ERROR_INVALID_REQUEST;
@@ -397,6 +432,7 @@ class zcAjaxOnePageCheckout extends base
     {
         global $checkout_one;
 
+        $this->loadLanguageFiles();
         $error_message = '';
         $address_html = '';
         $messages = [];
@@ -406,7 +442,6 @@ class zcAjaxOnePageCheckout extends base
         //
         $status = $this->initializeResponseStatus('validateAddressValues', $error_message);
         if ($status === 'ok') {
-            $this->loadLanguageFiles();
             if (!isset($_POST['which']) || ($_POST['which'] !== 'bill' && $_POST['which'] !== 'ship')) {
                 $status = 'error';
                 $error_message = ERROR_INVALID_REQUEST;
@@ -432,6 +467,8 @@ class zcAjaxOnePageCheckout extends base
     {
         global $checkout_one;
 
+        $this->loadLanguageFiles();
+
         $error_message = '';
         $address_html = '';
         $messages = [];
@@ -441,7 +478,6 @@ class zcAjaxOnePageCheckout extends base
         //
         $status = $this->initializeResponseStatus('validateCustomerInfo', $error_message);
         if ($status === 'ok') {
-            $this->loadLanguageFiles();
             $messages = $_SESSION['opc']->validateAndSaveAjaxCustomerInfo();
         }
 
@@ -450,7 +486,7 @@ class zcAjaxOnePageCheckout extends base
             'errorMessage' => $error_message,
             'messages' => $messages
         ];
-        $checkout_one->debug_message('validateAddressValues, returning:' . json_encode($return_array) . PHP_EOL . json_encode($_SESSION['opc']));
+        $checkout_one->debug_message('validateCustomerInfo, returning:' . json_encode($return_array) . PHP_EOL . json_encode($_SESSION['opc']));
 
         return $return_array;
     }
@@ -462,6 +498,8 @@ class zcAjaxOnePageCheckout extends base
     {
         global $checkout_one;
 
+        $this->loadLanguageFiles();
+
         $error_message = '';
         $info_html = '';
 
@@ -470,8 +508,6 @@ class zcAjaxOnePageCheckout extends base
         //
         $status = $this->initializeResponseStatus('restoreCustomerInfo', $error_message);
         if ($status === 'ok') {
-            $this->loadLanguageFiles();
-
             global $current_page_base, $template;
 
             $template_file = 'tpl_modules_opc_customer_info.php';
@@ -501,6 +537,8 @@ class zcAjaxOnePageCheckout extends base
     {
         global $checkout_one;
 
+        $this->loadLanguageFiles();
+
         $error_message = '';
         $address_html = '';
 
@@ -509,7 +547,6 @@ class zcAjaxOnePageCheckout extends base
         //
         $status = $this->initializeResponseStatus('setAddressFromSavedSelections', $error_message);
         if ($status === 'ok') {
-            $this->loadLanguageFiles();
             if (!isset($_POST['which']) || ($_POST['which'] !== 'bill' && $_POST['which'] !== 'ship')) {
                 $status = 'error';
                 $error_message = ERROR_INVALID_REQUEST;
@@ -668,7 +705,7 @@ class zcAjaxOnePageCheckout extends base
         //
         } elseif ($_SESSION['opc']->sanitizeCustomerAddressInfo() === false) {
             $status = 'reload';
-            $error_message = ERROR_AJAX_PAGE_RELOAD_REQUIRED;
+            $error_message = ERROR_OPC_ADDRESS_INVALID;
         }
 
         return $status;
