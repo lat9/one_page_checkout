@@ -730,7 +730,9 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                     <li>BUGFIX: Correct unwanted redirect when pricing includes an &amp;nbsp;.</li>
                     <li>BUGFIX: Redirect page correctly on AJAX return.</li>
                     <li>BUGFIX: Reset guest session values on 'conversion' to PayPal Express Checkout.</li>
+                    <li>BUGFIX: Cast parameters for 'zen_get_zone_code' to prevent PHP Fatal error.</li>
                     <li>The following files were changed or <span class="added">added</span>:<ol>
+                        <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
                         <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                         <li>/includes/modules/pages/checkout_one/jquery_checkout_one.js</li>

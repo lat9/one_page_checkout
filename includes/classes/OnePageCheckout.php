@@ -1,12 +1,12 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2017-2022, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2017-2023, Vinos de Frutas Tropicales.  All rights reserved.
 //
 // This class, instantiated in the current customer session, keeps track of a customer's login and checkout
 // progression with the aid of the OPC's observer- and AJAX-classes.
 //
-// Last updated: OPC v2.4.5.
+// Last updated: OPC v2.4.6
 //
 class OnePageCheckout extends base
 {
@@ -2067,7 +2067,7 @@ class OnePageCheckout extends base
     */
     public function createPayPalTemporaryAddressInfo($paypal_options, $order)
     {
-        $which = $this->determineTempShippingAddress();       
+        $which = $this->determineTempShippingAddress();
         $paypal_temp = [];
         if ($which !== false) {
             $temp_address = $this->createOrderAddressFromTemporary($which);
@@ -2077,7 +2077,7 @@ class OnePageCheckout extends base
                 'PAYMENTREQUEST_0_SHIPTOSTREET2' => (!empty($temp_address['suburb'])) ? $temp_address['suburb'] : '',
                 'PAYMENTREQUEST_0_SHIPTOCITY' => $temp_address['city'],
                 'PAYMENTREQUEST_0_SHIPTOZIP' => $temp_address['postcode'],
-                'PAYMENTREQUEST_0_SHIPTOSTATE' => zen_get_zone_code($temp_address['country']['id'], $temp_address['zone_id'], $temp_address['state']),
+                'PAYMENTREQUEST_0_SHIPTOSTATE' => zen_get_zone_code((int)$temp_address['country']['id'], (int)$temp_address['zone_id'], $temp_address['state']),
                 'PAYMENTREQUEST_0_SHIPTOCOUNTRYCODE' => $temp_address['country']['iso_code_2']
             ];
  
@@ -2176,7 +2176,7 @@ class OnePageCheckout extends base
                 // If neither the state "code" (e.g. 'FL') nor the full state name (e.g. 'Florida') of the
                 // temporary address matches the state field returned by PayPal, it's not a match.
                 //
-                $state_code = zen_get_zone_code($temp_address['country']['id'], $temp_address['zone_id'], $temp_address['state']);
+                $state_code = zen_get_zone_code((int)$temp_address['country']['id'], (int)$temp_address['zone_id'], $temp_address['state']);
                 $paypal_state = strtoupper(trim($paypal_ec_payment_info['ship_state']));
                 if ($paypal_state !== $state_code && $paypal_state !== strtoupper($temp_address['state'])) {
                     $address_match = false;
