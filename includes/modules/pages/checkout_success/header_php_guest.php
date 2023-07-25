@@ -31,7 +31,7 @@ if (isset($_SESSION['order_placed_by_guest'])) {
         } elseif ($password != $confirmation) {
             $messageStack->add('checkout_success', ENTRY_PASSWORD_ERROR_NOT_MATCHING, 'error');
         } else {
-            if ($_SESSION['opc']->createAccountFromGuestInfo($_SESSION['order_placed_by_guest'], $newsletter, $email_format) === false) {
+            if ($_SESSION['opc']->createAccountFromGuestInfo($_SESSION['order_placed_by_guest'], $password, $newsletter, $email_format) === false) {
                 $messageStack->add('checkout_success', ERROR_GUEST_ACCOUNT_CREATION_FAILED, 'error');
             }
             if (SESSION_RECREATE === 'True') {

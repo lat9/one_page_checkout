@@ -1931,7 +1931,7 @@ class OnePageCheckout extends base
     ** This function, called from the 'checkout_success' OPC header processing, creates a
     ** customer-account from the information associated with the just-placed order.
     */
-    public function createAccountFromGuestInfo($order_id, $newsletter, $email_format): bool
+    public function createAccountFromGuestInfo($order_id, $password, $newsletter, $email_format): bool
     {
         global $db;
 
