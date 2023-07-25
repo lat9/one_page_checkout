@@ -1062,8 +1062,6 @@ class OnePageCheckout extends base
     {
         global $db;
 
-        $this->inputPreCheck($which);
-
         // -----
         // First, determine whether the specified address is/isn't temporary.
         //
@@ -1138,8 +1136,6 @@ class OnePageCheckout extends base
     */
     public function setAddressFromSavedSelections($which, $address_book_id)
     {
-        $this->inputPreCheck($which);
-
         if ($which === 'bill') {
             $_SESSION['billto'] = $address_book_id;
             if ($this->getShippingBilling() === true) {
@@ -1152,8 +1148,6 @@ class OnePageCheckout extends base
 
     public function getAddressValues($which)
     {
-        $this->inputPreCheck($which);
-
         $address_book_id = (int)($which === 'bill') ? $_SESSION['billto'] : $_SESSION['sendto'];
 
         if ($address_book_id === $this->tempBilltoAddressBookId || $address_book_id === $this->tempSendtoAddressBookId) {
@@ -1290,8 +1284,6 @@ class OnePageCheckout extends base
 
     public function getAddressDropDownSelection($which)
     {
-        $this->inputPreCheck($which);
-
         if ($which === 'bill') {
             $selection = (!isset($_SESSION['billto']) || (int)$_SESSION['billto'] === $this->tempBilltoAddressBookId) ? 0 : $_SESSION['billto'];
         } else {
@@ -1384,8 +1376,6 @@ class OnePageCheckout extends base
     }
     public function formatAddressElement($which, $field_name, $field_value, $field_text, $db_table, $db_fieldname, $min_length, $placeholder, $field_params = '', $label_params = '')
     {
-        $this->inputPreCheck($which);
-
         // -----
         // Special handling for the 'company' and 'suburb' fields, to guide browser autofill operations to
         // fill in the proper fields.
@@ -1414,7 +1404,6 @@ class OnePageCheckout extends base
 
     public function validateAndSaveAjaxPostedAddress($which, &$messages)
     {
-        $this->inputPreCheck($which);
         $this->debugMessage("validateAndSaveAJaxPostedAddress($which, ..), POST: " . var_export($_POST, true));
 
         $address_info = $_POST;
@@ -1523,34 +1512,6 @@ class OnePageCheckout extends base
               LIMIT 1"
         );
         return !$check->EOF;
-    }
-
-    // -----
-    // Called by various functions with public interfaces to validate the "environment"
-    // for the caller's processing.  If either the 'which' (address-value) input is not
-    // valid or the class' addressValues element is not yet initialized, there's a
-    // sequencing error somewhere.
-    //
-    // If either condition is found, log an ERROR ... which results in the page's processing
-    // to cease.
-    //
-    protected function inputPreCheck($which)
-    {
-        if ($which !== 'bill' && $which !== 'ship') {
-            trigger_error("Unknown address selection ($which) received.", E_USER_ERROR);
-            zen_exit();
-        }
-        if (!isset($this->tempAddressValues)) {
-            // -----
-            // Include the information identifying whether the values were reset (and via
-            // what processing path) as an aid in identifying the source of this occasional
-            // error.
-            //
-            $extra_info = (isset($_SESSION['payment'])) ? $_SESSION['payment'] : 'not set';
-            $extra_info .= ', ' . (isset($_SESSION['shipping'])) ? json_encode($_SESSION['shipping']) : 'not set';
-            trigger_error('Invalid request, tempAddressValues not set: ' . $extra_info . PHP_EOL . json_encode($this), E_USER_ERROR);
-            zen_exit();
-        }
     }
 
     // -----
