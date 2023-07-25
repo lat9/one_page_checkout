@@ -12,7 +12,6 @@ if (!defined('IS_ADMIN_FLAG')) {
 class checkout_one_observer extends base
 {
     private
-        $browser,
         $enabled = false,
         $debug = false,
         $debug_logfile,
@@ -20,9 +19,18 @@ class checkout_one_observer extends base
         $needUnsupportedPageMessage = false,
         $needGuestCheckoutUnavailableMessage = false;
             
-    public function __construct() 
+    public function __construct()
     {
         global $current_page_base;
+
+        // -----
+        // If the session-based OPC 'brains' aren't available, there's nothing to be done.
+        // The observer will not attach to its various notifications.
+        //
+        if (empty($_SESSION['opc']) || !is_object($_SESSION['opc'])) {
+//            trigger_error('Missing $_SESSION[\'opc\']:' . var_export($_SERVER, true) . PHP_EOL . var_export($_GET, true) . PHP_EOL . var_export($_POST, true), E_USER_WARNING);
+            return;
+        }
 
         // -----
         // Determine if the current session browser is an Internet Explorer version less than 9 (that don't properly support
@@ -32,29 +40,15 @@ class checkout_one_observer extends base
             require DIR_WS_CLASSES . 'Vinos_Browser.php';
         }
         $browser = new Vinos_Browser();
-        $unsupported_browser = ($browser->getBrowser() == Vinos_Browser::BROWSER_IE && $browser->getVersion() < 9);
-        $this->browser = $browser->getBrowser() . '::' . $browser->getVersion();
-
-        // -----
-        // If the session-based OPC 'brains' aren't available, there's nothing to be done.
-        // The plugin will not attach to its various notifications.
-        //
-        if (empty($_SESSION['opc']) || !is_object($_SESSION['opc'])) {
-//            trigger_error('Missing $_SESSION[\'opc\']:' . var_export($_SERVER, true) . PHP_EOL . var_export($_GET, true) . PHP_EOL . var_export($_POST, true), E_USER_WARNING);
-            return;
-        }
+        $unsupported_browser = ($browser->getBrowser() === Vinos_Browser::BROWSER_IE && $browser->getVersion() < 9);
 
         // -----
         // If the plugin's configuration is not set or not enabled or if the browser/access is not supported, perform
-        // a quick return.  That will result in an overall 'OPC' disablement.
+        // a quick return.  That will result in an overall 'OPC' disablement and any previous guest-related
+        // accesses being cleared.
         //
-        if (!defined('CHECKOUT_ONE_ENABLED') || CHECKOUT_ONE_ENABLED === 'false' || $unsupported_browser || $browser->isRobot()) {
-            // -----
-            // If the OPC session is present, ensure that any previous guest-related accesses are cleared.
-            //
-            if (isset($_SESSION['opc']) && is_object($_SESSION['opc'])) {
-                $_SESSION['opc']->resetGuestSessionValues();
-            }
+        if (!defined('CHECKOUT_ONE_ENABLED') || CHECKOUT_ONE_ENABLED === 'false' || $unsupported_browser === true || $browser->isRobot() === true) {
+            $_SESSION['opc']->resetGuestSessionValues();
             return;
         }
 
@@ -83,7 +77,7 @@ class checkout_one_observer extends base
         // Initialize the plugin's debug filename and enabled control.
         //
         $this->debug = (defined('CHECKOUT_ONE_DEBUG') && (CHECKOUT_ONE_DEBUG === 'true' || CHECKOUT_ONE_DEBUG === 'full'));
-        if ($this->debug && defined('CHECKOUT_ONE_DEBUG_EXTRA') && CHECKOUT_ONE_DEBUG_EXTRA !== '' && CHECKOUT_ONE_DEBUG_EXTRA !== '*') {
+        if ($this->debug === true && defined('CHECKOUT_ONE_DEBUG_EXTRA') && CHECKOUT_ONE_DEBUG_EXTRA !== '' && CHECKOUT_ONE_DEBUG_EXTRA !== '*') {
             $debug_customers = explode(',', str_replace(' ', '', CHECKOUT_ONE_DEBUG_EXTRA));
             if (!in_array($_SESSION['customer_id'], $debug_customers)) {
                 $this->debug = false;
@@ -108,21 +102,21 @@ class checkout_one_observer extends base
         // We'll attach notifiers to the various elements of the 3-page checkout to consolidate that
         // processing into a single page.
         //
-        if ($_SESSION['opc']->checkEnabled()) {
+        if ($_SESSION['opc']->checkEnabled() === true) {
             $this->enabled = true;
             $this->current_page_base = $current_page_base;
 
             // -----
             // If the customer is currently active in a guest-checkout ...
             //
-            if ($_SESSION['opc']->isGuestCheckout()) {
+            if ($_SESSION['opc']->isGuestCheckout() === true) {
                 // -----
                 // ... check to see that guest-checkout is **still** enabled.  If so, check to see that
                 // the current page is "allowed" during a guest-checkout; otherwise, reset the
                 // OPC's guest-checkout settings so that the checkout-process will revert to the
                 // built-in 3-page version.
                 //
-                if ($_SESSION['opc']->guestCheckoutEnabled()) {
+                if ($_SESSION['opc']->guestCheckoutEnabled() === true) {
                     $disallowed_pages = explode(',', str_replace(' ', '', CHECKOUT_ONE_GUEST_PAGES_DISALLOWED));
                     if (in_array($this->current_page_base, $disallowed_pages)) {
                         $this->needUnsupportedPageMessage = true;
@@ -134,13 +128,13 @@ class checkout_one_observer extends base
             }
 
             $this->attach(
-                $this, 
+                $this,
                 [
                     'NOTIFY_LOGIN_SUCCESS',
                     'NOTIFY_LOGIN_SUCCESS_VIA_CREATE_ACCOUNT',
-                    'NOTIFY_HEADER_START_CHECKOUT_SHIPPING', 
-                    'NOTIFY_HEADER_START_CHECKOUT_PAYMENT', 
-                    'NOTIFY_HEADER_START_CHECKOUT_SHIPPING_ADDRESS', 
+                    'NOTIFY_HEADER_START_CHECKOUT_SHIPPING',
+                    'NOTIFY_HEADER_START_CHECKOUT_PAYMENT',
+                    'NOTIFY_HEADER_START_CHECKOUT_SHIPPING_ADDRESS',
                     'NOTIFY_HEADER_START_CHECKOUT_CONFIRMATION',
                     'NOTIFY_HEADER_START_ADDRESS_BOOK_PROCESS',
                     'NOTIFY_CHECKOUT_PROCESS_BEFORE_CART_RESET',
@@ -158,9 +152,9 @@ class checkout_one_observer extends base
         // Note: This is left as "legacy", just in case they need to be 'unobserved' in the future.
         // Right now (v2.1.0), that opc method returns an unconditional (bool)true.
         //
-        if ($this->enabled && $_SESSION['opc']->initTemporaryAddresses()) {
+        if ($this->enabled === true && $_SESSION['opc']->initTemporaryAddresses() === true) {
             $this->attach(
-                $this, 
+                $this,
                 [
                     'NOTIFY_ORDER_CART_AFTER_ADDRESSES_SET',
                     'NOTIFY_ORDER_DURING_CREATE_ADDED_ORDER_HEADER',
@@ -183,7 +177,7 @@ class checkout_one_observer extends base
         // session is cleaned of any 'left-over' settings, in case OPC was enabled for some portion
         // of the customer's checkout process.
         //
-        if (!$this->enabled) {
+        if ($this->enabled === false) {
             $_SESSION['opc']->resetGuestSessionValues();
         }
 
@@ -229,19 +223,19 @@ class checkout_one_observer extends base
         // the observers for the zen_is_logged_in/zen_in_guest_checkout functions haven't yet been
         // attached!
         //
-        if (!(isset($_SESSION['opc_error']) && $_SESSION['opc_error'] == OnePageCheckout::OPC_ERROR_NO_JS) && $_SESSION['opc']->guestCheckoutEnabled()) {
-            if (!$_SESSION['opc']->isLoggedIn() || $_SESSION['opc']->isGuestCheckout()) {
+        if (!(isset($_SESSION['opc_error']) && $_SESSION['opc_error'] === OnePageCheckout::OPC_ERROR_NO_JS) && $_SESSION['opc']->guestCheckoutEnabled() === true) {
+            if ($_SESSION['opc']->isLoggedIn() === false || $_SESSION['opc']->isGuestCheckout() === true) {
                 unset($_SESSION['opc_error']);
                 $cart_products = $_SESSION['cart']->get_products();
                 foreach ($cart_products as $current_product) {
                     if (strpos($current_product['model'], 'GIFT') === 0) {
                         $pages_to_reset_for_gc = [
                             FILENAME_LOGIN,
-                            FILENAME_CHECKOUT_ONE
+                            FILENAME_CHECKOUT_ONE,
                         ];
                         if (!in_array($current_page_base, $pages_to_reset_for_gc)) {
                             $gift_certificate_message = WARNING_GUEST_NO_GCS;
-                            if ($_SESSION['opc']->isGuestCheckout()) {
+                            if ($_SESSION['opc']->isGuestCheckout() === true) {
                                 $gift_certificate_message .= ' ' . WARNING_GUEST_GCS_RESET . '<br><br>' . WARNING_GUEST_REMOVE_GC;
                             }
                             $messageStack->add('header', $gift_certificate_message, 'caution');
@@ -264,7 +258,7 @@ class checkout_one_observer extends base
         }
     }
 
-    public function update(&$class, $eventID, $p1, &$p2, &$p3, &$p4, &$p5, &$p6, &$p7) 
+    public function update(&$class, $eventID, $p1, &$p2, &$p3, &$p4, &$p5, &$p6, &$p7)
     {
         switch ($eventID) {
             // -----
@@ -313,7 +307,7 @@ class checkout_one_observer extends base
             // allow that address change.
             //
             case 'NOTIFY_HEADER_START_CHECKOUT_SHIPPING_ADDRESS':
-                if ($_SESSION['opc']->isGuestCheckout()) {
+                if ($_SESSION['opc']->isGuestCheckout() === true) {
                     $this->debug_message('checkout_one redirect 2: ', true, 'checkout_one_observer');
                     zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, zen_get_all_get_params(), 'SSL'));
                 }
@@ -325,7 +319,7 @@ class checkout_one_observer extends base
             // to the main checkout_one page to allow that address change.
             //
             case 'NOTIFY_HEADER_START_CHECKOUT_PAYMENT_ADDRESS':
-                if ($_SESSION['opc']->isGuestCheckout()) {
+                if ($_SESSION['opc']->isGuestCheckout() === true) {
                     $this->debug_message('checkout_one redirect 3: ', true, 'checkout_one_observer');
                     zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, zen_get_all_get_params(), 'SSL'));
                 }
@@ -427,13 +421,13 @@ class checkout_one_observer extends base
 
             // -----
             // If the customer has just added an address, force that address to be the
-            // primary if the customer currently has no permanent addresses.
+            // primary if the registered customer currently has no permanent addresses.
             //
             case 'NOTIFY_HEADER_START_ADDRESS_BOOK_PROCESS':
                 global $db;
 
-                if (zen_is_logged_in()) {
-                    if (isset($_POST['action']) && $_POST['action'] == 'process') {
+                if ($_SESSION['opc']->isLoggedIn() === true) {
+                    if (isset($_POST['action']) && $_POST['action'] === 'process') {
                         $check = $db->Execute(
                             "SELECT address_book_id
                                FROM " . TABLE_ADDRESS_BOOK . "
@@ -484,7 +478,8 @@ class checkout_one_observer extends base
             //
             case 'NOTIFY_ORDER_DURING_CREATE_ADDED_ORDER_HEADER':
                 global $db;
-                if (zen_in_guest_checkout()) {
+
+                if ($_SESSION['opc']->isGuestCheckout() === true) {
                     $db->Execute(
                         "UPDATE " . TABLE_ORDERS . "
                             SET is_guest_order = 1
@@ -515,7 +510,7 @@ class checkout_one_observer extends base
             // $p1 ... (r/o) The just-created order's order_id.
             //
             case 'NOTIFY_CHECKOUT_PROCESS_BEFORE_CART_RESET':
-                if (zen_in_guest_checkout()) {
+                if ($_SESSION['opc']->isGuestCheckout() === true) {
                     $_SESSION['order_placed_by_guest'] = (int)$p1;
                 }
                 $_SESSION['opc']->resetSessionVariables();
@@ -533,7 +528,7 @@ class checkout_one_observer extends base
             // information from that order.
             //
             case 'NOTIFY_HEADER_START_CHECKOUT_SUCCESS':
-                if (zen_in_guest_checkout() && !isset($_SESSION['order_number_created'])) {
+                if ($_SESSION['opc']->isGuestCheckout() === true && !isset($_SESSION['order_number_created'])) {
                     $_SESSION['order_number_created'] = $_SESSION['order_placed_by_guest'];
                 }
                 break;
@@ -552,7 +547,7 @@ class checkout_one_observer extends base
             case 'NOTIFY_ORDER_INVOICE_CONTENT_READY_TO_SEND':
                 $temp_addresses = [
                     CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID,
-                    CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID
+                    CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID,
                 ];
                 if (in_array($_SESSION['sendto'], $temp_addresses) || $_SESSION['billto'] == CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID) {
                     $order_id = (int)$p1['zf_insert_id'];
@@ -562,7 +557,7 @@ class checkout_one_observer extends base
                     // -----
                     // If the checkout is for a guest, change the "invoice" link to reference the 'order_status' page.
                     //
-                    if (zen_in_guest_checkout()) {
+                    if ($_SESSION['opc']->isGuestCheckout() === true) {
                         $account_history_link = zen_href_link(FILENAME_ACCOUNT_HISTORY_INFO, "order_id=$order_id", 'SSL', false);
                         $account_history_link_text = EMAIL_TEXT_INVOICE_URL . ' ' . $account_history_link;
                         
@@ -597,7 +592,7 @@ class checkout_one_observer extends base
 
             // -----
             // Issued by paypalwpp::ec_step1 just before sending the customer up to PayPal for payment
-            // fulfilment.  Gives us the opportunity to record any temporary shipping address into the
+            // fulfillment.  Gives us the opportunity to record any temporary shipping address into the
             // request and to save the order's current total in an OPC-class variable.
             //
             // On entry,
@@ -608,7 +603,19 @@ class checkout_one_observer extends base
             // $p4 ... (r/w) A reference to the order's current totals array.
             //
             case 'NOTIFY_PAYMENT_PAYPALEC_BEFORE_SETEC':
-                $p2 = array_merge($p2, $_SESSION['opc']->createPayPalTemporaryAddressInfo($p2, $p3));
+                // -----
+                // Retrieve any temporary shipping address that has been set.  If OPC is currently
+                // processing a guest-checkout and the current session's sendto/billto addresses
+                // don't reflect one of the OPC temporary addresses, OPC returns (bool)false and
+                // has reset the session's sendto/billto addresses appropriately.
+                //
+                $temporary_address = $_SESSION['opc']->createPayPalTemporaryAddressInfo($p2, $p3);
+                if ($temporary_address === false) {
+                    global $messageStack;
+                    $messageStack->add_session('checkout', ERROR_OPC_ADDRESS_INVALID, 'error');
+                    zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE));
+                }
+                $p2 = array_merge($p2, $temporary_address);
                 break;
 
             // -----
@@ -625,7 +632,13 @@ class checkout_one_observer extends base
                 if ($p2 !== false) {
                     $this->debug_message('NOTIFY_PAYPALEXPRESS_BYPASS_ADDRESS_CREATION previously handled!');
                 } else {
-                    $p2 = $_SESSION['opc']->setPayPalAddressCreationBypass($p1);
+                    $bypass_result = $_SESSION['opc']->setPayPalAddressCreationBypass($p1);
+                    if (is_bool($bypass_result) === false) {
+                        global $messageStack;
+                        $messageStack->add_session('checkout', $bypass_result, 'error');
+                        zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE));
+                    }
+                    $p2 = $bypass_result;
                 }
                 break;
 
@@ -638,7 +651,7 @@ class checkout_one_observer extends base
             case 'NOTIFY_PAYPALWPP_BEFORE_DOEXPRESSCHECKOUT':
                 global $order, $messageStack;
 
-                if ($_SESSION['opc']->didPayPalOrderTotalValueChange($order)) {
+                if ($_SESSION['opc']->didPayPalOrderTotalValueChange($order) === true) {
                     $this->debug_message('checkout_one redirect 4: ', true, 'checkout_one_observer');
                     $messageStack->add_session('checkout_shipping', WARNING_PAYPALWPP_TOTAL_CHANGED, 'caution');
                     zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, zen_get_all_get_params(), 'SSL'));
@@ -675,9 +688,15 @@ class checkout_one_observer extends base
                 // that follow-on order processing **might result** in a PHP error!
                 //
                 if ($p2 !== false) {
-                    trigger_error('zen_get_tax_locations, overridden by another observer; OPC processing bypassed.', E_USER_WARNING);
+                    $this->debug_message('zen_get_tax_locations, overridden by another observer; OPC processing bypassed.');
                 } else {
-                    $p2 = $_SESSION['opc']->getTaxLocations();
+                    $tax_address = $_SESSION['opc']->getTaxLocations();
+                    if ($tax_address === null) {
+                        global $messageStack;
+                        $messageStack->add_session('checkout', ERROR_OPC_ADDRESS_INVALID, 'error');
+                        zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE));
+                    }
+                    $p2 = $tax_address;
                 }
                 break;
 
@@ -688,9 +707,9 @@ class checkout_one_observer extends base
 
     public function debug_message($message, $include_request = false, $other_caller = '')
     {
-        if ($this->debug) {
+        if ($this->debug === true) {
             $extra_info = '';
-            if ($include_request) {
+            if ($include_request !== false) {
                 $the_request = $_REQUEST;
                 foreach ($the_request as $name => $value) {
                     if (strpos($name, 'cc_number') !== false || strpos($name, 'cc_cvv') !== false || strpos($name, 'card-number') !== false || strpos($name, 'cv2-number') !== false) {
@@ -704,7 +723,7 @@ class checkout_one_observer extends base
             // Change any occurrences of [code] to ["code"] in the logs so that they can be properly posted between [CODE} tags on the Zen Cart forums.
             //
             $message = str_replace('[code]', '["code"]', $message);
-            error_log(date('Y-m-d H:i:s') . ' ' . (($other_caller != '') ? $other_caller : $this->current_page_base) . ": $message$extra_info" . PHP_EOL, 3, $this->debug_logfile);
+            error_log(date('Y-m-d H:i:s') . ' ' . (($other_caller !== '') ? $other_caller : $this->current_page_base) . ": $message$extra_info" . PHP_EOL, 3, $this->debug_logfile);
             $this->notify($message);
         }
     }
@@ -712,10 +731,7 @@ class checkout_one_observer extends base
     public function hashSession($current_order_total)
     {
         $session_data = $_SESSION;
-        if (isset($session_data['shipping'])) {
-           unset($session_data['shipping']['extras']);
-        }
-        unset($session_data['shipping_billing'], $session_data['comments'], $session_data['navigation']);
+        unset($session_data['shipping']['extras'], $session_data['shipping_billing'], $session_data['comments'], $session_data['navigation']);
 
         // -----
         // The ot_gv order-total in Zen Cart 1.5.4 sets its session-variable to either 0 or '0.00', which results in
