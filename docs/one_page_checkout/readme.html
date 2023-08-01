@@ -728,12 +728,13 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank" rel="noopener">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color and removals are indicated like <span class="removed">this</span>.</p>
               <ul>
-                <li>v2.4.6-beta3, 2023-03-28 (lat9 and marco-pm):<ul>
+                <li>v2.4.6-beta4, 2023-08-01 (lat9 and marco-pm):<ul>
                     <li>BUGFIX: Correct unwanted redirect when pricing includes an &amp;nbsp;.</li>
                     <li>BUGFIX: Redirect page correctly on AJAX return.</li>
                     <li>BUGFIX: Reset guest session values on 'conversion' to PayPal Express Checkout.</li>
                     <li>BUGFIX: Cast parameters for 'zen_get_zone_code' to prevent PHP Fatal error.</li>
                     <li>BUGFIX: Remove all but essential, i.e. interface errors, PHP user-error-exits, replacing with customer messaging and warning logs.</li>
+                    <li>BUGFIX: Correct PHP Warnings when <var>ACCOUNT_STATE</var> is set to 'false'.</li>
                     <li>The following files were changed or <span class="added">added</span>:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>

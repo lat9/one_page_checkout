@@ -1597,6 +1597,9 @@ class OnePageCheckout extends base
             $messages['postcode'] = $message_prefix . ENTRY_POST_CODE_ERROR;
         }
 
+        $state = '';
+        $zone_id = 0;
+        $country_has_zones = false;
         $country = zen_db_prepare_input($address_values['zone_country_id']);
         if (!ctype_digit($country)) {
             $error = true;
