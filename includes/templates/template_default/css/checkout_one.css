@@ -32,7 +32,7 @@ fieldset > #cartContentsDisplay div { margin-right: 0; }
 .opc-cc-submit, #opc-order-confirm, #opc-order-review, #opc-bill-cancel, #opc-bill-save, #opc-ship-cancel, #opc-ship-save, #opc-guest-cancel, #opc-guest-save, #opc-bill-edit, #opc-ship-edit { cursor: pointer; }
 .opc-base, .opc-credit { position: relative; }
 .opc-overlay.active { background: #dcdcdc; height: 100%; width: 100%; opacity: 0.5; top: 0; left: 0; position: absolute; padding: 0; z-index: 1; }
-.opc-disabled { background: #dcdcdc; opacity: 0.5; z-index: 1; curser: not-allowed; pointer-events: none; }
+.opc-disabled { background: #dcdcdc; opacity: 0.5; z-index: 1; cursor: not-allowed; pointer-events: none; }
 .buttonRow.opc-buttons { clear: both; }
 
 .back { float: left; }
