@@ -751,11 +751,13 @@ jQuery(document).ready(function(){
 
     function changeBillingFields(event)
     {
-        jQuery(this).addClass('opc-changed');
-        jQuery('#checkoutOneBillto .opc-buttons, #opc-bill-save, #opc-add-bill, #opc-add-bill+label').show();
-        jQuery('#opc-bill-edit').hide();
-        jQuery('#checkoutPayment > .opc-overlay').addClass('active');
-        jQuery('#checkoutOneGuestInfo, #checkoutOneBillto').addClass('opc-view');
+        if (jQuery('#address-form-bill').is(':visible')) {
+            jQuery(this).addClass('opc-changed');
+            jQuery('#checkoutOneBillto .opc-buttons, #opc-bill-save, #opc-add-bill, #opc-add-bill+label').show();
+            jQuery('#opc-bill-edit').hide();
+            jQuery('#checkoutPayment > .opc-overlay').addClass('active');
+            jQuery('#checkoutOneGuestInfo, #checkoutOneBillto').addClass('opc-view');
+        }
     }
     jQuery(document).on('focus', '#checkoutOneGuestInfo input, #checkoutOneBillto input, #checkoutOneBillto select:not(#select-address-bill)', changeBillingFields);
 
@@ -802,11 +804,13 @@ jQuery(document).ready(function(){
 
     function changeShippingFields(event)
     {
-        jQuery(this).addClass('opc-changed');
-        jQuery('#checkoutOneShipto .opc-buttons, #opc-ship-save, #opc-add-ship, #opc-add-ship+label').show();
-        jQuery('#checkoutPayment > .opc-overlay').addClass('active');
-        jQuery('#checkoutOneShipto').removeClass('visibleField');
-        jQuery('#checkoutOneShipto').addClass('opc-view');
+        if (jQuery('#address-form-ship').is(':visible')) {
+            jQuery(this).addClass('opc-changed');
+            jQuery('#checkoutOneShipto .opc-buttons, #opc-ship-save, #opc-add-ship, #opc-add-ship+label').show();
+            jQuery('#checkoutPayment > .opc-overlay').addClass('active');
+            jQuery('#checkoutOneShipto').removeClass('visibleField');
+            jQuery('#checkoutOneShipto').addClass('opc-view');
+        }
     }
     jQuery(document).on('focus', '#checkoutOneShipto input, #checkoutOneShipto select:not(#select-address-ship)', changeShippingFields);
 
