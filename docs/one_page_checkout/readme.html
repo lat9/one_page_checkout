@@ -728,6 +728,13 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
             <div id="changes">
               <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank" rel="noopener">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color and removals are indicated like <span class="removed">this</span>.</p>
               <ul>
+                <li>v2.4.7, 2023-12-18 (lat9):<ul>
+                    <li>BUGFIX: Correct PHP warning for registered-account creation (missing <var>$fax</var>).</li>
+                    <li>The following files were changed or <span class="added">added</span>:<ol>
+                        <li>/includes/modules/pages/create_account/header_php_create_account_register.php</li>
+                        <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
+                    </ol></li>
+                </ul></li>
                 <li>v2.4.6, 2023-08-19 (lat9 and marco-pm):<ul>
                     <li>BUGFIX: Correct unwanted redirect when pricing includes an &amp;nbsp;.</li>
                     <li>BUGFIX: Redirect page correctly on AJAX return.</li>
