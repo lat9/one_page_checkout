@@ -1,9 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2017-2022, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2017-2023, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.4.5
+// Last updated: OPC v2.4.7
 //
 // This should be first line of the script:
 $zco_notifier->notify('NOTIFY_HEADER_START_CREATE_ACCOUNT_REGISTER');
@@ -134,7 +134,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
             }
         }
     }
-    
+
     $nick = (isset($_POST['nick'])) ? zen_db_prepare_input($_POST['nick']) : '';
     $nick_length_min = ENTRY_NICK_MIN_LENGTH;
     $zco_notifier->notify('NOTIFY_NICK_CHECK_FOR_MIN_LENGTH', $nick, $nick_error, $nick_length_min);
@@ -183,75 +183,75 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
         $db_string_type = $_SESSION['opc']->getDbStringType();
         $sql_data_array = [
             [
-                'fieldName' => 'customers_firstname', 
-                'value' => $firstname, 
+                'fieldName' => 'customers_firstname',
+                'value' => $firstname,
                 'type' => $db_string_type
             ],
             [
-                'fieldName' => 'customers_lastname', 
-                'value' => $lastname, 
+                'fieldName' => 'customers_lastname',
+                'value' => $lastname,
                 'type' => $db_string_type
             ],
             [
-                'fieldName' => 'customers_email_address', 
-                'value' => $email_address, 
+                'fieldName' => 'customers_email_address',
+                'value' => $email_address,
                 'type' => $db_string_type
             ],
             [
-                'fieldName' => 'customers_nick', 
-                'value' => $nick, 
+                'fieldName' => 'customers_nick',
+                'value' => $nick,
                 'type' => $db_string_type
             ],
             [
-                'fieldName' => 'customers_telephone', 
-                'value' => $telephone, 
+                'fieldName' => 'customers_telephone',
+                'value' => $telephone,
                 'type' => $db_string_type
             ],
             [
-                'fieldName' => 'customers_newsletter', 
-                'value' => $newsletter, 
+                'fieldName' => 'customers_newsletter',
+                'value' => $newsletter,
                 'type' => 'integer'
             ],
             [
-                'fieldName' => 'customers_email_format', 
-                'value' => $email_format, 
+                'fieldName' => 'customers_email_format',
+                'value' => $email_format,
                 'type' => $db_string_type
             ],
             [
-                'fieldName' => 'customers_default_address_id', 
-                'value' => 0, 
+                'fieldName' => 'customers_default_address_id',
+                'value' => 0,
                 'type' => 'integer'
             ],
             [
-                'fieldName' => 'customers_password', 
-                'value' => zen_encrypt_password($password), 
+                'fieldName' => 'customers_password',
+                'value' => zen_encrypt_password($password),
                 'type' => $db_string_type
             ],
             [
-                'fieldName' => 'customers_authorization', 
-                'value' => $customers_authorization, 
+                'fieldName' => 'customers_authorization',
+                'value' => $customers_authorization,
                 'type' => 'integer'
             ],
         ];
 
         if ((CUSTOMERS_REFERRAL_STATUS === '2' && $customers_referral !== '')) {
             $sql_data_array[] = [
-                'fieldName' => 'customers_referral', 
-                'value' => $customers_referral, 
+                'fieldName' => 'customers_referral',
+                'value' => $customers_referral,
                 'type' => $db_string_type
             ];
         }
         if (ACCOUNT_GENDER === 'true') {
             $sql_data_array[] = [
-                'fieldName' => 'customers_gender', 
-                'value' => $gender, 
+                'fieldName' => 'customers_gender',
+                'value' => $gender,
                 'type' => $db_string_type
             ];
         }
         if (ACCOUNT_DOB === 'true') {
             $sql_data_array[] = [
-                'fieldName' => 'customers_dob', 
-                'value' => empty($_POST['dob']) ? zen_db_prepare_input('0001-01-01 00:00:00') : zen_date_raw($_POST['dob']), 
+                'fieldName' => 'customers_dob',
+                'value' => empty($_POST['dob']) ? zen_db_prepare_input('0001-01-01 00:00:00') : zen_date_raw($_POST['dob']),
                 'type' => 'date'
             ];
         }
@@ -317,14 +317,14 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
         ];
         if (ACCOUNT_GENDER === 'true') {
             $sql_data_array[] = [
-                'fieldName' => 'entry_gender', 
+                'fieldName' => 'entry_gender',
                 'value' => $gender, 
                 'type' => $db_string_type
             ];
         }
         if (ACCOUNT_COMPANY === 'true') {
             $sql_data_array[] = [
-                'fieldName' => 'entry_company', 
+                'fieldName' => 'entry_company',
                 'value' => $company, 
                 'type' => $db_string_type
             ];
@@ -402,9 +402,9 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
                         trigger_error('Unknown coupon_id (' . NEW_SIGNUP_DISCOUNT_COUPON . ') during account creation.  The coupon was not sent.', E_USER_WARNING);
                     } else {
                         $db->Execute(
-                            "INSERT INTO " . TABLE_COUPON_EMAIL_TRACK . " 
-                                (coupon_id, customer_id_sent, sent_firstname, emailed_to, date_sent) 
-                             VALUES 
+                            "INSERT INTO " . TABLE_COUPON_EMAIL_TRACK . "
+                                (coupon_id, customer_id_sent, sent_firstname, emailed_to, date_sent)
+                             VALUES
                                 (" . $coupon_id . ", '0', 'Admin', '" . $email_address . "', now() )"
                         );
 
@@ -431,8 +431,8 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
             if (NEW_SIGNUP_GIFT_VOUCHER_AMOUNT > 0) {
                 $coupon_code = zen_create_coupon_code();
                 $insert_query = $db->Execute(
-                    "INSERT INTO " . TABLE_COUPONS . " 
-                        (coupon_code, coupon_type, coupon_amount, date_created) 
+                    "INSERT INTO " . TABLE_COUPONS . "
+                        (coupon_code, coupon_type, coupon_amount, date_created)
                      VALUES ('" . $coupon_code . "', 'G', '" . NEW_SIGNUP_GIFT_VOUCHER_AMOUNT . "', now())"
                 );
                 $insert_id = $db->Insert_ID();
@@ -441,13 +441,13 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
                 // if on, add in GV explanation
                 $email_text .= 
                     PHP_EOL . PHP_EOL . 
-                    sprintf(EMAIL_GV_INCENTIVE_HEADER, $currencies->format(NEW_SIGNUP_GIFT_VOUCHER_AMOUNT)) . 
+                    sprintf(EMAIL_GV_INCENTIVE_HEADER, $currencies->format(NEW_SIGNUP_GIFT_VOUCHER_AMOUNT)) .
                     sprintf(EMAIL_GV_REDEEM, $coupon_code) .
                     EMAIL_GV_LINK . zen_href_link(FILENAME_GV_REDEEM, 'gv_no=' . $coupon_code, 'NONSSL', false) . PHP_EOL . PHP_EOL .
                     EMAIL_GV_LINK_OTHER . 
                     EMAIL_SEPARATOR;
                 $html_msg['GV_WORTH'] = str_replace('\n', '', sprintf(EMAIL_GV_INCENTIVE_HEADER, $currencies->format(NEW_SIGNUP_GIFT_VOUCHER_AMOUNT)) );
-                $html_msg['GV_REDEEM'] = str_replace('\n', '', str_replace('\n\n','<br />',sprintf(EMAIL_GV_REDEEM, '<strong>' . $coupon_code . '</strong>')));
+                $html_msg['GV_REDEEM'] = str_replace('\n', '', str_replace('\n\n', '<br>',sprintf(EMAIL_GV_REDEEM, '<strong>' . $coupon_code . '</strong>')));
                 $html_msg['GV_CODE_NUM'] = $coupon_code;
                 $html_msg['GV_CODE_URL'] = str_replace('\n', '', EMAIL_GV_LINK . '<a href="' . zen_href_link(FILENAME_GV_REDEEM, 'gv_no=' . $coupon_code, 'NONSSL', false) . '">' . TEXT_GV_NAME . ': ' . $coupon_code . '</a>');
                 $html_msg['GV_LINK_OTHER'] = EMAIL_GV_LINK_OTHER;
@@ -471,7 +471,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
 
             // send additional emails
             if (SEND_EXTRA_CREATE_ACCOUNT_EMAILS_TO_STATUS === '1' && SEND_EXTRA_CREATE_ACCOUNT_EMAILS_TO !== '') {
-                $extra_info = email_collect_extra_info($name, $email_address, $name, $email_address, $telephone, $fax);
+                $extra_info = email_collect_extra_info($name, $email_address, $name, $email_address, $telephone, $fax ?? '');
                 $html_msg['EXTRA_INFO'] = $extra_info['HTML'];
                 if (trim(SEND_EXTRA_CREATE_ACCOUNT_EMAILS_TO_SUBJECT) !== 'n/a') {
                     zen_mail('', SEND_EXTRA_CREATE_ACCOUNT_EMAILS_TO, SEND_EXTRA_CREATE_ACCOUNT_EMAILS_TO_SUBJECT . ' ' . EMAIL_SUBJECT, $email_text . $extra_info['TEXT'], STORE_NAME, EMAIL_FROM, $html_msg, 'welcome_extra');
