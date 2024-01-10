@@ -1,9 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2024, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.4.2
+// Last updated: OPC v2.4.7
 //
 
 // -----
@@ -33,12 +33,12 @@ if ($confirmation_required === true) {
 
     <div id="checkoutBillto" class="back">
         <h2 id="checkoutConfirmDefaultBillingAddress"><?php echo HEADING_BILLING_ADDRESS; ?></h2>
-<?php 
-    if ($flagDisablePaymentAddressChange === false) { 
+<?php
+    if ($flagDisablePaymentAddressChange === false) {
 ?>
         <div class="buttonRow forward"><?php echo '<a href="' . zen_href_link(FILENAME_CHECKOUT_PAYMENT_ADDRESS, '', 'SSL') . '">' . zen_image_button(BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) . '</a>'; ?></div>
-<?php 
-    } 
+<?php
+    }
 ?>
 
         <address><?php echo zen_address_format($order->billing['format_id'], $order->billing, 1, ' ', '<br>'); ?></address>
@@ -101,16 +101,16 @@ if ($confirmation_required === true) {
 
     <div class="buttonRow forward"><?php echo '<a href="' . zen_href_link(FILENAME_SHOPPING_CART, '', 'SSL') . '">' . zen_image_button (BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) . '</a>'; ?></div>
     <br class="clearBoth">
-<?php  
-    if ($flagAnyOutOfStock) { 
-        if (STOCK_ALLOW_CHECKOUT === 'true') {  
+<?php
+    if ($flagAnyOutOfStock) {
+        if (STOCK_ALLOW_CHECKOUT === 'true') {
 ?>
     <div class="messageStackError"><?php echo OUT_OF_STOCK_CAN_CHECKOUT; ?></div>
-<?php    
+<?php
         } else { 
 ?>
     <div class="messageStackError"><?php echo OUT_OF_STOCK_CANT_CHECKOUT; ?></div>
-<?php    
+<?php
         } //endif STOCK_ALLOW_CHECKOUT
     } //endif flagAnyOutOfStock 
 ?>
@@ -128,14 +128,14 @@ if ($confirmation_required === true) {
 ?>
             <th scope="col" id="ccTotalHeading"><?php echo TABLE_HEADING_TOTAL; ?></th>
         </tr>
-<?php 
+<?php
     // now loop thru all products to display quantity and pric
     for ($i = 0, $n = count($order->products); $i < $n; $i++) {
 ?>
         <tr class="<?php echo $order->products[$i]['rowClass']; ?>">
             <td  class="cartQuantity"><?php echo $order->products[$i]['qty']; ?>&nbsp;x</td>
             <td class="cartProductDisplay"><?php echo $order->products[$i]['name'] . $stock_check[$i]; ?>
-<?php 
+<?php
         // if there are attributes, loop thru them and display one per line
         if (isset($order->products[$i]['attributes']) && count($order->products[$i]['attributes']) > 0) {
 ?>
@@ -156,13 +156,13 @@ if ($confirmation_required === true) {
         }
 ?>
             </td>
-<?php 
+<?php
         // display tax info if exists
         if (count($order->info['tax_groups']) > 1)  {
 ?>
             <td class="cartTotalDisplay"><?php echo zen_display_tax_value($order->products[$i]['tax']); ?>%</td>
-<?php    
-        }  // endif tax info display  
+<?php
+        }  // endif tax info display
 ?>
             <td class="cartTotalDisplay"><?php echo $currencies->display_price($order->products[$i]['final_price'], $order->products[$i]['tax'], $order->products[$i]['qty']); ?>
 <?php
@@ -172,7 +172,7 @@ if ($confirmation_required === true) {
 ?>
             </td>
         </tr>
-<?php  
+<?php
     }  // end for loopthru all products 
 ?>
     </table>
