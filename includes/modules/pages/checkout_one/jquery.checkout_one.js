@@ -1,8 +1,8 @@
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
-// Copyright (C) 2013-2023, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2024, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last changed: OPC v2.4.6
+// Last changed: OPC v2.4.7
 //
 var selected;
 var submitter = null;
@@ -32,15 +32,15 @@ function couponpopupWindow(url)
 function submitonce()
 {
     var button = document.getElementById("btn_submit");
-    button.style.cursor="wait";
+    button.style.cursor = "wait";
     button.disabled = true;
-    setTimeout('button_timeout()', 4000);
+    setTimeout('button_timeout()', shippingTimeout);
     return false;
 }
 function button_timeout() 
 {
     var button = document.getElementById("btn_submit");
-    button.style.cursor="pointer";
+    button.style.cursor = "pointer";
     button.disabled = false;
 }
 
