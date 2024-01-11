@@ -1,12 +1,12 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2017-2023, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2017-2024, Vinos de Frutas Tropicales.  All rights reserved.
 //
 // This class, instantiated in the current customer session, keeps track of a customer's login and checkout
 // progression with the aid of the OPC's observer- and AJAX-classes.
 //
-// Last updated: OPC v2.4.6
+// Last updated: OPC v2.4.7
 //
 class OnePageCheckout extends base
 {
@@ -1743,6 +1743,13 @@ class OnePageCheckout extends base
         // a temporary address-book record.
         //
         if (!$add_address === true || $this->guestIsActive === true) {
+            // -----
+            // Ensure that the zone_id is an integer type (it will be an empty string if the associated
+            // country doesn't have zones!); needed if follow-on processing is passing the values to
+            // a function (e.g. zen_get_zone_code) that requires int-typed inputs.
+            //
+            $address['zone_id'] = (int)$address['zone_id'];
+
             $this->tempAddressValues[$which] = $address;
             if ($which === 'ship') {
                 $_SESSION['sendto'] = $this->tempSendtoAddressBookId;

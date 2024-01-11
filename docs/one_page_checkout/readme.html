@@ -732,7 +732,9 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                     <li>BUGFIX: Correct PHP warning for registered-account creation (missing <var>$fax</var>).</li>
                     <li>BUGFIX: Correct 'missing' <var>id=</var> attribute on confirmation form button.</li>
                     <li>BUGFIX: Enable <var>checkout_one</var> page's submit-button timeout to be configurable.</li>
+                    <li>BUGFIX: Ensure that temporary addresses' <var>zone_id</var> elements are an integer-type; the value was an empty string (non-integer) when the associated country doesn't have zones.</li>
                     <li>The following files were changed or <span class="added">added</span>:<ol>
+                        <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/modules/pages/create_account/header_php_create_account_register.php</li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
