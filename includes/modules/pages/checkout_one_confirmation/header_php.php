@@ -1,16 +1,20 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
-// Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2024, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.4.4
+// Last updated: OPC v2.4.7
 //
 
 // This should be first line of the script:
 $zco_notifier->notify('NOTIFY_HEADER_START_CHECKOUT_ONE_CONFIRMATION');
 
+// -----
+// Note: Loaded here since some messages are issued from the page-header, unlike the
+// 3-page checkout's checkout_confirmation header where the language constants are
+// loaded towards the end of the module!
+//
 require DIR_WS_MODULES . zen_get_module_directory('require_languages.php');
-require_once DIR_WS_CLASSES . 'http_client.php';
 
 // -----
 // Use "normal" checkout if not enabled.
@@ -38,18 +42,18 @@ if ($_SESSION['cart']->count_contents() <= 0) {
 if (!zen_is_logged_in()) {
     $_SESSION['navigation']->set_snapshot(['mode' => 'SSL', 'page' => FILENAME_CHECKOUT_ONE]);
     zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
-} else {
-    // validate customer
-    if (zen_get_customer_validate_session($_SESSION['customer_id']) == false) {
-        $_SESSION['navigation']->set_snapshot();
-        zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
-    }
+}
+
+// validate customer
+if (zen_get_customer_validate_session($_SESSION['customer_id']) == false) {
+    $_SESSION['navigation']->set_snapshot();
+    zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
 }
 
 // -----
-// In the "normal" Zen Cart checkout flow, the module /includes/init_includes/init_customer_auth.php performs the
+// For the "3-page" Zen Cart checkout flow, the module /includes/init_includes/init_customer_auth.php performs the
 // following check to see that the customer is authorized to checkout.  Rather than changing the code in that
-// core-file, we'll repeat that check here.
+// core-file to include this page in its verification, we'll perform that check here.
 //
 if ($_SESSION['customers_authorization'] != 0) {
     $messageStack->add_session('header', TEXT_AUTHORIZATION_PENDING_CHECKOUT, 'caution');
@@ -70,14 +74,15 @@ if (!isset($_SESSION['shipping'])) {
     zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));
 }
 
-$checkout_one->debug_message('Starting confirmation, shipping and request data follows:' . print_r($_SESSION['shipping'], true), true);
+$checkout_one->debug_message('Starting confirmation, shipping and request data follows:' . json_encode($_SESSION['shipping'], JSON_PRETTY_PRINT), true);
 
 $free_shipping_enabled = (defined('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING') && MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING === 'true');
 $free_shipping_over = 0;
 if (defined('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER')) {
     $free_shipping_over = $currencies->value((float)MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER);
 }
-if (isset($_SESSION['shipping']['id']) && $_SESSION['shipping']['id'] === 'free_free' && $_SESSION['cart']->get_content_type() !== 'virtual' && $free_shipping_enabled &&  $_SESSION['cart']->show_total() < $free_shipping_over) {
+$cart_not_virtual = ($_SESSION['cart']->get_content_type() !== 'virtual');
+if (isset($_SESSION['shipping']['id']) && $_SESSION['shipping']['id'] === 'free_free' && $cart_not_virtual === true && $free_shipping_enabled === true && $_SESSION['cart']->show_total() < $free_shipping_over) {
     $checkout_one->debug_message('NOTIFY_CHECKOUT_ONE_CONFIRMATION_FREE_SHIPPING');
     unset($_SESSION['shipping']);
     $messageStack->add_session('checkout_shipping', ERROR_PLEASE_RESELECT_SHIPPING_METHOD, 'error');
@@ -128,9 +133,10 @@ if (!empty($_SESSION['shipping_billing'])) {
 $_SESSION['comments'] = (!empty($_POST['comments'])) ? htmlspecialchars($_POST['comments'], ENT_NOQUOTES, CHARSET, true) : '';
 $comments = $_SESSION['comments'];
 
-$total_weight = $_SESSION['cart']->show_weight();
-$total_count = $_SESSION['cart']->count_contents();
-
+// -----
+// Create the order-object, using the cart's current contents as the starting
+// point.
+//
 require DIR_WS_CLASSES . 'order.php';
 $order = new order;
 
