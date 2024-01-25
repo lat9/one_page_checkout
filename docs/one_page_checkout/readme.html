@@ -90,7 +90,7 @@ a[target=_blank] { text-decoration: underline; }
   <hr />
   <i class="fas fa-exclamation-circle fa-5x red back"></i>&nbsp;&nbsp;<h2>Important Notes</h2>
   <ol class="clearBoth">
-    <li>This version of <em>One-Page Checkout</em> supports Zen Cart <em>1.5.7<b>a</b> and later</em> &hellip; <b>only</b>, there are <span class="corefile">no core-file changes</span> required; the plugin is drop-in.</li>
+    <li>This version of <em>One-Page Checkout</em> supports Zen Cart <em>1.5.7<b>a</b> and later, including 2.0.0</em> &hellip; <b>only</b>, there are <span class="corefile">no core-file changes</span> required; the plugin is drop-in.  An exception is for 1.5.8 and later, where an <var>order_status</var> page is supplied.  If you want to include <em>OPC</em>'s version, you'll need to make those overwrites.</li>
   </ol>
   <hr />
   <p><b>Credits:</b></p>
@@ -157,7 +157,7 @@ a[target=_blank] { text-decoration: underline; }
                 </ol>
               </div>
               <p><em>One-Page Checkout's</em> installation loads all the plugin's files into the sub-directories associated with the <em>template_default</em> template's use; that way, the processing is available for <b>all</b> templates you might use in your store.  If you make changes to those default files, you'll use the Zen Cart &quot;override&quot; system to make your updates.  For example, if you're adding a top-of-page message, you'll copy the file /includes/languages/english/checkout_one.php to the /includes/languages/english/YOUR_TEMPLATE sub-directory and make your changes there.</p>
-              <p>The plugin has been validated on Zen Cart 1.5.7a through 1.5.7d, using the following shipping, order-total and payment methods:</p>
+              <p>The plugin has been validated on Zen Cart 1.5.7a through 2.0.0-alpha and PHP versions 7.3 through 8.3, using the following shipping, order-total and payment methods:</p>
               <div class="multi-list">
                 <h3>Shipping Methods</h3>
                 <ol>
@@ -201,8 +201,8 @@ a[target=_blank] { text-decoration: underline; }
                   <li>First Data Hosted Checkout Payment Pages</li>
                   <li>Layaway Plan</li>
                   <li>NoChex</li>
-                  <li>Payeezy (payeezyjszc), v0.99 or later</li>
                   <li>PayPal Express Checkout (paypalwpp).  <strong>Note:</strong> Orders placed via the <em>PayPal Express Checkout</em> button, normally on a site's 'shopping-cart' or 'login' pages, will continue with the &quot;normal&quot; 3-page-checkout process.</li>
+                  <li>PayPal RESTful</li>
                   <li>Purchase Order (purchaseorders)</li>
                   <li>Sage Pay Form</li>
                   <li>Square (square), v0.96 or later</li>
@@ -220,20 +220,6 @@ a[target=_blank] { text-decoration: underline; }
               <p>The primary interoperability issue between <em>OPC</em> (or any checkout-page &quot;consolidator&quot;) and a payment-method centers on the collective javascript/jQuery implementation. Newer payment-processors' APIs have become more complicated, resulting in additional jQuery/AJAX constructs within the associated Zen Cart payment-method.</p>
               <p>That issue arises when the checkout-page and the payment-method bind to the same DOM event, whether it's the submission of the form or a click of a submit-button. The net result is that some jQuery fragment is not run which, in turn, causes the page/payment-method integration to fail (i.e. orders cannot be placed).</p>
               <p>The following guidelines are <em>assumed</em> by One-Page Checkout in support of interoperation with the varied payment-methods, identifying which selectors each class of module binds to. This will serve to reduce those jQuery event conflicts and lessen the integration headaches for payment-method developers.</p>
-
-              <h2><code class="no-pad">checkout_payment</code>-loaded jscript modules</h2>
-              <p>When a payment module requires a separate javascript/jQuery &quot;helper&quot; on the <code class="no-pad">checkout_payment</code> page, that separately-loaded script must be sensitive to the Zen Cart implementation of the <em>PayPal Express Checkout</em> &quot;shortcut button&quot;.  Specifically, when the customer is checking-out via that &quot;shortcut&quot;, <b>the only payment-method that is formatted</b> for the customer's use is that for <em>PayPal Express Checkout</em>. The Zen Cart payment-class method <code class="no-pad">in_special_checkout</code> can be used by a payment module's separately-loaded script to determine a case where that script should not be loaded.</p>
-              <p>There are two known cases of this interoperability issue:</p>
-              <ol>
-                <li><a href="https://www.zen-cart.com/downloads.php?do=file&id=156" target="_blank" rel="noopener">Square</a>, v0.90 and earlier, <code class="no-pad">/includes/modules/pages/checkout_payment/jscript_square.php</code>.  As reported in the payment-method's Zen Cart <a href="https://www.zen-cart.com/showthread.php?222449-Square-Payment-Module-for-Zen-Cart-Support-Thread&p=1339138#post1339138" target="_blank" rel="noopener">support thread</a>, the code fragment highlighted below must be incorporated to correct the interoperability issue:<br>
-                <pre class="no-pad scroll">if (<span class="new-code">$payment_modules->in_special_checkout() || </span>!defined(MODULE_PAYMENT_SQUARE_STATUS) || MODULE_PAYMENT_SQUARE_STATUS != 'True' || (!defined('MODULE_PAYMENT_SQUARE_APPLICATION_ID') || MODULE_PAYMENT_SQUARE_ACCESS_TOKEN == '')) {
-    return false;
-}</pre></li>
-                <li><a href="https://www.zen-cart.com/downloads.php?do=file&id=2050" target="_blank" rel="noopener">Payeezy JS</a>, v0.96 and earlier, <code class="no-pad">/includes/modules/pages/checkout_payment/jscript_payeezy.php</code>.  As reported in the payment-method's <a href="https://github.com/zencart/payeezyjs/issues/1" target="_blank" rel="noopener">GitHub repository</a>, the code fragment highlighted below must be incorporated to correct the interoperability issue:<br><pre class="no-pad scroll">if (<span class="new-code">$payment_modules->in_special_checkout() || </span>!defined(MODULE_PAYMENT_PAYEEZYJSZC_STATUS) || MODULE_PAYMENT_PAYEEZYJSZC_STATUS != 'True' || (!defined('MODULE_PAYMENT_PAYEEZYJSZC_JSSECURITY_KEY') && !defined('MODULE_PAYMENT_PAYEEZYJSZC_JSSECURITY_KEY_SANDBOX') )) {
-    return false;
-}</pre></li>
-              </ol>
-              <p>If your site required a scripting patch, as described above, be sure to copy the updated jscript file to <code class="no-pad">/includes/modules/pages/checkout_one</code>!</p>
 
               <h2>Common Page Elements</h2>
               <p>There are four (4) elements on the &quot;normal&quot; <code class="no-pad">checkout-payment</code> page that have bearing on the page's form submissions:</p>
@@ -367,7 +353,7 @@ a[target=_blank] { text-decoration: underline; }
                 </tr>
                 <tr>
                     <td>Enable One-Page Checkout Debug?</td>
-                    <td>When enabled, debug files named <code>one_page_checkout-<em>xx</em>-YYYY-mm-dd.log</code> are created in your /logs sub-directory, where <em>xx</em> is the customer_id for the checkout and <em>YYYY-mm-dd</em> is the date associated with the information. Use the <b>true</b> or <b>full</b> settings in combination with the <em>Debug: Customer List</em> setting to limit the customers for which the debug-action is taken.  Setting the value to <b>full</b> will also set the PHP error-level for the checkout_one page's processing so that <b>all</b> PHP errors are logged.</td>
+                    <td>When enabled, debug files named <code class="no-pad">one_page_checkout-<em>xx</em>-YYYY-mm-dd.log</code> are created in your /logs sub-directory, where <em>xx</em> is the customer_id for the checkout and <em>YYYY-mm-dd</em> is the date associated with the information. Use the <b>true</b> or <b>full</b> settings in combination with the <em>Debug: Customer List</em> setting to limit the customers for which the debug-action is taken.  Setting the value to <b>full</b> will also set the PHP error-level for the checkout_one page's processing so that <b>all</b> PHP errors are logged.</td>
                     <td>1.0.0</td>
                 </tr>
                 <tr>
@@ -420,9 +406,9 @@ a[target=_blank] { text-decoration: underline; }
               <hr />
               <p>There are <span class="template">template-override</span> changes required by this plugin; you should <strong>always</strong> backup your cart's database and files prior to making any changes.  Unzip the plugin's package file and then:</p>
               <ol type="A">
-                <li>If your store is running on Zen Cart 1.5.8, there are <span class="corefile">core-file overwrites</span> now required.  zc158 provides a version of the <code class="no-pad">order_status</code> page that performs a simple redirect to the customer's account, while the version provided by <em>OPC</em> supports guests viewing their previously-placed orders as well.  If that's your case:<ol type="a">
-                  <li>Rename your current <code class="no-pad">header_php.php</code> in the <code class="no-pad">/includes/modules/pages/order_status</code> sub-directory to <code class="no-pad">header_php.php~</code>.</li>
-                  <li>Rename your current <code class="no-pad">tpl_order_status_default.php</code> in the <code class="no-pad">/includes/templates/template_default/templates</code> sub-directory to <code class="no-pad">tpl_order_status_default.php~</code>.</li>
+                <li>If your store is running on Zen Cart 1.5.8 or later, there are <span class="corefile">core-file overwrites</span> now required.  zc158 provides a version of the <code class="no-pad">order_status</code> page that performs a simple redirect to the customer's account, while the version provided by <em>OPC</em> supports guests viewing their previously-placed orders as well.  If that's your case:<ol type="a">
+                  <li>Rename your current <code class="no-pad">header_php.php</code> in the <code class="no-pad">/includes/modules/pages/order_status</code> sub-directory to <code class="no-pad">header_php.php.notused</code>.</li>
+                  <li>Rename your current <code class="no-pad">tpl_order_status_default.php</code> in the <code class="no-pad">/includes/templates/template_default/templates</code> sub-directory to <code class="no-pad">tpl_order_status_default.php.notused</code>.</li>
                 </ol></li>
                 <li>Rename the YOUR_TEMPLATE sub-directories <b>(5 of them)</b> to match your store's template name:<ol type="a">
                   <li>/includes/languages/english/html_includes/YOUR_TEMPLATE</li>
@@ -534,7 +520,6 @@ a[target=_blank] { text-decoration: underline; }
                   <li>/includes/templates/YOUR_TEMPLATE/css/create_account.css</li>
                   <li>/includes/templates/YOUR_TEMPLATE/css/login.css</li>
                   <li>/YOUR_ADMIN/opc_admin.php</li>
-                  <li>/YOUR_ADMIN/opc_debug_redirection_error.php</li>
                   <li>/YOUR_ADMIN/includes/auto_loaders/config.checkout_one.php</li>
                   <li>/YOUR_ADMIN/includes/classes/observers/CheckoutOneAdminObserver.php</li>
                   <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
@@ -714,7 +699,6 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                 <li>/includes/templates/YOUR_TEMPLATE/css/create_account.css <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/includes/templates/YOUR_TEMPLATE/css/login.css <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/YOUR_ADMIN/opc_admin.php <span class="smaller">(Added in v2.3.4)</span></li>
-                <li>/YOUR_ADMIN/opc_debug_redirection_error.php <span class="smaller">(Added in v2.3.5)</span></li>
                 <li>/YOUR_ADMIN/includes/auto_loaders/config.checkout_one.php</li>
                 <li>/YOUR_ADMIN/includes/classes/observers/CheckoutOneAdminObserver.php <span class="smaller">(Added in v2.0.0)</span></li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
@@ -733,12 +717,12 @@ require DIR_WS_TEMPLATES . 'template_default/jscript/jscript_framework.php';
                     <li>BUGFIX: Correct 'missing' <var>id=</var> attribute on confirmation form button.</li>
                     <li>BUGFIX: Enable <var>checkout_one</var> page's submit-button timeout to be configurable.</li>
                     <li>BUGFIX: Ensure that temporary addresses' <var>zone_id</var> elements are an integer-type; the value was an empty string (non-integer) when the associated country doesn't have zones.</li>
-                    <li>The following files were changed or <span class="added">added</span>:<ol>
+                    <li>The following files were changed:<ol>
                         <li>/includes/classes/OnePageCheckout.php</li>
                         <li>/includes/modules/pages/create_account/header_php_create_account_register.php</li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
                         <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
-                        <li>/includes/templates/template_default/templates/tpl_checkout_one_confirmation_default.php</li>
+                        <li><span class="template-changed">/includes/templates/template_default/templates/tpl_checkout_one_confirmation_default.php</span></li>
                         <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                     </ol></li>
                 </ul></li>
