@@ -505,7 +505,8 @@ class OnePageCheckout extends base
     public function resetSessionVariables()
     {
         unset(
-            $_SESSION['shipping_billing']
+            $_SESSION['shipping_billing'],
+            $_SESSION['opc_order_hash']
         );
         if (isset($_SESSION['opc_error']) && $_SESSION['opc_error'] !== self::OPC_ERROR_NO_JS) {
             unset($_SESSION['opc_error']);
@@ -847,7 +848,7 @@ class OnePageCheckout extends base
     */
     public function updateOrderAddresses($order, &$taxCountryId, &$taxZoneId)
     {
-        $current_settings = print_r($this, true);
+        $current_settings = json_encode($this->tempAddressValues);
         $session_sendto = (isset($_SESSION['sendto'])) ? (int)$_SESSION['sendto'] : 'not set';
         $this->debugMessage(
             "updateOrderAddresses, on entry: Current sendto: $session_sendto" . PHP_EOL .
@@ -949,7 +950,7 @@ class OnePageCheckout extends base
             'suburb' => $this->tempAddressValues[$which]['suburb'],
             'city' => $this->tempAddressValues[$which]['city'],
             'postcode' => $this->tempAddressValues[$which]['postcode'],
-            'state' => ((zen_not_null($this->tempAddressValues[$which]['state'])) ? $this->tempAddressValues[$which]['state'] : $this->tempAddressValues[$which]['zone_name']),
+            'state' => ((!empty($this->tempAddressValues[$which]['state'])) ? $this->tempAddressValues[$which]['state'] : $this->tempAddressValues[$which]['zone_name']),
             'zone_id' => $this->tempAddressValues[$which]['zone_id'],
             'country' => [
                 'id' => $country_id, 
@@ -970,7 +971,10 @@ class OnePageCheckout extends base
     //
     protected function recalculateTaxBasis($order, $use_temp_billing, $use_temp_shipping)
     {
-        $this->debugMessage("recalculateTaxBasis(order, $use_temp_billing, $use_temp_shipping): " . var_export($order, true) . var_export($this->tempAddressValues, true));
+        $this->debugMessage(
+            "recalculateTaxBasis(order, $use_temp_billing, $use_temp_shipping):\n" .
+            json_encode($order, JSON_PRETTY_PRINT) . "\n" .
+            json_encode($this->tempAddressValues, JSON_PRETTY_PRINT));
         switch (STORE_PRODUCT_TAX_BASIS) {
             case 'Shipping':
                 if ($order->content_type === 'virtual') {
@@ -1209,7 +1213,7 @@ class OnePageCheckout extends base
 
         $this->notify('NOTIFY_OPC_INIT_ADDRESS_FROM_DB', $address_book_id, $address_info->fields);
 
-        $this->debugMessage("getAddressValuesFromDb($address_book_id, $which), returning: " . json_encode($address_info->fields)); 
+        $this->debugMessage("getAddressValuesFromDb($address_book_id, $which), returning: " . json_encode($address_info->fields, JSON_PRETTY_PRINT)); 
 
         return $address_info->fields;
     }
@@ -1241,10 +1245,10 @@ class OnePageCheckout extends base
         ];
         $address_values = $this->updateStateDropdownSettings($address_values);
 
-        $original_address_values = json_encode($address_values);
+        $original_address_values = json_encode($address_values, JSON_PRETTY_PRINT);
         $this->notify('NOTIFY_OPC_INIT_ADDRESS_FOR_GUEST', $which, $address_values);
         if ($original_address_values !== json_encode($address_values)) {
-            $this->debugMessage("Guest address values ($which) modified by observer. Starting values:\n$original_address_values\nFinal values:\n" . json_encode($address_values));
+            $this->debugMessage("Guest address values ($which) modified by observer. Starting values:\n$original_address_values\nFinal values:\n" . json_encode($address_values, JSON_PRETTY_PRINT));
         }
 
         return $address_values;
@@ -1404,7 +1408,7 @@ class OnePageCheckout extends base
 
     public function validateAndSaveAjaxPostedAddress($which, &$messages)
     {
-        $this->debugMessage("validateAndSaveAJaxPostedAddress($which, ..), POST: " . var_export($_POST, true));
+        $this->debugMessage("validateAndSaveAJaxPostedAddress($which, ..), POST: " . json_encode($_POST, JSON_PRETTY_PRINT));
 
         $address_info = $_POST;
         if ($address_info['shipping_billing'] === 'true') {
@@ -1532,7 +1536,7 @@ class OnePageCheckout extends base
 
         $message_prefix = ($prepend_which === true) ? (($which === 'bill') ? ERROR_IN_BILLING : ERROR_IN_SHIPPING) : '';
 
-        $this->debugMessage("Start validateUpdatedAddress, which = $which:" . var_export($address_values, true));
+        $this->debugMessage("Start validateUpdatedAddress, which = $which:" . json_encode($address_values, JSON_PRETTY_PRINT));
 
         if ($which === 'bill') {
             $this->billtoTempAddrOk = false;
@@ -1735,7 +1739,7 @@ class OnePageCheckout extends base
     {
         global $db;
 
-        $this->debugMessage("saveCustomerAddress($which, $add_address), " . (($this->getShippingBilling()) ? 'shipping=billing' : 'shipping!=billing') . ' ' . json_encode($address));
+        $this->debugMessage("saveCustomerAddress($which, $add_address), " . (($this->getShippingBilling()) ? 'shipping=billing' : 'shipping!=billing') . "\n" . json_encode($address, JSON_PRETTY_PRINT));
 
         // -----
         // If the address is **not** to be added to the customer's address book or if
@@ -1774,7 +1778,7 @@ class OnePageCheckout extends base
                     $_SESSION['sendto'] = $this->tempSendtoAddressBookId;
                 }
             }
-            $this->debugMessage("Updated tempAddressValues[$which], billing=shipping(" . $_SESSION['shipping_billing'] . "), sendto(" . $_SESSION['sendto'] . "), billto(" . $_SESSION['billto'] . "):" . json_encode($this->tempAddressValues));
+            $this->debugMessage("Updated tempAddressValues[$which], billing=shipping(" . $_SESSION['shipping_billing'] . "), sendto(" . $_SESSION['sendto'] . "), billto(" . $_SESSION['billto'] . "):\n" . json_encode($this->tempAddressValues, JSON_PRETTY_PRINT));
         // -----
         // Otherwise, the address is to be saved in the database ...
         //
@@ -2106,7 +2110,7 @@ class OnePageCheckout extends base
                 break;
             }
         }
-        $this->debugMessage("findAddressBookEntry, returning ($address_book_id) for '$address_to_match'" . json_encode($address));
+        $this->debugMessage("findAddressBookEntry, returning ($address_book_id) for '$address_to_match'\n" . json_encode($address, JSON_PRETTY_PRINT));
         return $address_book_id;
     }
 
@@ -2178,7 +2182,7 @@ class OnePageCheckout extends base
                     $paypal_temp['PAYMENTREQUEST_0_SHIPTOPHONENUM'] = $this->guestCustomerInfo['telephone'];
                 }
             }
-            $this->debugMessage("createPayPalTemporaryAddressInfo, returning ($which): " . json_encode($paypal_temp));
+            $this->debugMessage("createPayPalTemporaryAddressInfo, returning ($which):\n" . json_encode($paypal_temp, JSON_PRETTY_PRINT));
         }
 
         $this->paypalTotalValue = $order->info['total'];
@@ -2591,7 +2595,7 @@ class OnePageCheckout extends base
                 'zone_id' => $zone_id
             ];
         }
-        $this->debugMessage("getTaxLocations ($billing_is_temp:$shipping_is_temp), " . json_encode($tax_locations));
+        $this->debugMessage("getTaxLocations ($billing_is_temp:$shipping_is_temp),\n" . json_encode($tax_locations, JSON_PRETTY_PRINT));
         return $tax_locations;
     }
 
