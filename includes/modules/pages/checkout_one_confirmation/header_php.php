@@ -90,14 +90,6 @@ if (isset($_SESSION['shipping']['id']) && $_SESSION['shipping']['id'] === 'free_
 }
 
 // -----
-// If we've received control from the checkout_one page's form, the action should be 'process'.
-//
-if (!isset($_GET['redirect']) && (!isset($_POST['action']) || $_POST['action'] !== 'process')) {
-    $checkout_one->debug_message('NOTIFY_CHECKOUT_ONE_CONFIRMATION_BAD_POST', true);
-    zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));
-}
-
-// -----
 // If a payment-method has been posted, save that payment-method in the current session.
 //
 if (isset($_POST['payment'])) {
