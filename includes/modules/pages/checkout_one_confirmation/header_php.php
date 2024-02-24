@@ -1,16 +1,20 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
-// Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2024, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.4.4
+// Last updated: OPC v2.5.0
 //
 
 // This should be first line of the script:
 $zco_notifier->notify('NOTIFY_HEADER_START_CHECKOUT_ONE_CONFIRMATION');
 
+// -----
+// Note: Loaded here since some messages are issued from the page-header, unlike the
+// 3-page checkout's checkout_confirmation header where the language constants are
+// loaded towards the end of the module!
+//
 require DIR_WS_MODULES . zen_get_module_directory('require_languages.php');
-require_once DIR_WS_CLASSES . 'http_client.php';
 
 // -----
 // Use "normal" checkout if not enabled.
@@ -38,18 +42,18 @@ if ($_SESSION['cart']->count_contents() <= 0) {
 if (!zen_is_logged_in()) {
     $_SESSION['navigation']->set_snapshot(['mode' => 'SSL', 'page' => FILENAME_CHECKOUT_ONE]);
     zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
-} else {
-    // validate customer
-    if (zen_get_customer_validate_session($_SESSION['customer_id']) == false) {
-        $_SESSION['navigation']->set_snapshot();
-        zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
-    }
+}
+
+// validate customer
+if (zen_get_customer_validate_session($_SESSION['customer_id']) == false) {
+    $_SESSION['navigation']->set_snapshot();
+    zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
 }
 
 // -----
-// In the "normal" Zen Cart checkout flow, the module /includes/init_includes/init_customer_auth.php performs the
+// For the "3-page" Zen Cart checkout flow, the module /includes/init_includes/init_customer_auth.php performs the
 // following check to see that the customer is authorized to checkout.  Rather than changing the code in that
-// core-file, we'll repeat that check here.
+// core-file to include this page in its verification, we'll perform that check here.
 //
 if ($_SESSION['customers_authorization'] != 0) {
     $messageStack->add_session('header', TEXT_AUTHORIZATION_PENDING_CHECKOUT, 'caution');
@@ -70,25 +74,18 @@ if (!isset($_SESSION['shipping'])) {
     zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));
 }
 
-$checkout_one->debug_message('Starting confirmation, shipping and request data follows:' . print_r($_SESSION['shipping'], true), true);
+$checkout_one->debug_message('Starting confirmation, shipping and request data follows:' . json_encode($_SESSION['shipping'], JSON_PRETTY_PRINT), true);
 
 $free_shipping_enabled = (defined('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING') && MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING === 'true');
 $free_shipping_over = 0;
 if (defined('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER')) {
     $free_shipping_over = $currencies->value((float)MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER);
 }
-if (isset($_SESSION['shipping']['id']) && $_SESSION['shipping']['id'] === 'free_free' && $_SESSION['cart']->get_content_type() !== 'virtual' && $free_shipping_enabled &&  $_SESSION['cart']->show_total() < $free_shipping_over) {
+$cart_not_virtual = ($_SESSION['cart']->get_content_type() !== 'virtual');
+if (isset($_SESSION['shipping']['id']) && $_SESSION['shipping']['id'] === 'free_free' && $cart_not_virtual === true && $free_shipping_enabled === true && $_SESSION['cart']->show_total() < $free_shipping_over) {
     $checkout_one->debug_message('NOTIFY_CHECKOUT_ONE_CONFIRMATION_FREE_SHIPPING');
     unset($_SESSION['shipping']);
     $messageStack->add_session('checkout_shipping', ERROR_PLEASE_RESELECT_SHIPPING_METHOD, 'error');
-    zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));
-}
-
-// -----
-// If we've received control from the checkout_one page's form, the action should be 'process'.
-//
-if (!isset($_GET['redirect']) && (!isset($_POST['action']) || $_POST['action'] !== 'process')) {
-    $checkout_one->debug_message('NOTIFY_CHECKOUT_ONE_CONFIRMATION_BAD_POST', true);
     zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));
 }
 
@@ -128,22 +125,14 @@ if (!empty($_SESSION['shipping_billing'])) {
 $_SESSION['comments'] = (!empty($_POST['comments'])) ? htmlspecialchars($_POST['comments'], ENT_NOQUOTES, CHARSET, true) : '';
 $comments = $_SESSION['comments'];
 
-$total_weight = $_SESSION['cart']->show_weight();
-$total_count = $_SESSION['cart']->count_contents();
-
+// -----
+// Create the order-object, using the cart's current contents as the starting
+// point.
+//
 require DIR_WS_CLASSES . 'order.php';
 $order = new order;
 
-// -----
-// Generate a starting hash of the session information, so that we can check to see if anything has changed
-// after processing the order-total modules.
-//
-// Note: The posted data won't be present for some payment methods (notably gps), if they bypass the checkout_one
-// page's transition to this page.
-//
-$session_start_hash = $checkout_one->hashSession(!empty($_POST['current_order_total']) ? $_POST['current_order_total'] : 0);
-
-$checkout_one->debug_message('Initial order information:' . var_export($order, true));
+$checkout_one->debug_message('Initial order information:' . json_encode($order, JSON_PRETTY_PRINT));
 
 // -----
 // If the order's all-virtual, then the shipping (free) has already been set; no need to go through all
@@ -219,38 +208,30 @@ if (!class_exists('order_total')) {
 $order_total_modules = new order_total;
 $order_total_modules->collect_posts();
 $order_total_modules->pre_confirmation_check();
-$checkout_one->debug_message('Returned from call to order-totals:' . json_encode($order_total_modules));
+$checkout_one->debug_message('Returned from call to order-totals:' . json_encode($order_total_modules, JSON_PRETTY_PRINT));
+
+require DIR_WS_CLASSES . 'payment.php';
 
 if (!isset($credit_covers)) {
     $credit_covers = false;
 }
 
-// -----
-// Process the payment modules **only if** the order has been confirmed.  Don't want/need this processing for coupon/GC actions.
-//
-// Note: The order is considered 'confirmed' if we've been redirected from the 'checkout_confirmation' page, too.
-//
-require DIR_WS_CLASSES . 'payment.php';
-
-$order_confirmed = (!empty($_GET['redirect']) || !empty($_POST['order_confirmed']));
-if ($order_confirmed) {
-    if ($credit_covers === true) {
-        unset($_SESSION['payment']);
-        $_SESSION['payment'] = '';
-        $payment_title = PAYMENT_METHOD_GV;
+if ($credit_covers === true) {
+    unset($_SESSION['payment']);
+    $_SESSION['payment'] = '';
+    $payment_title = PAYMENT_METHOD_GV;
+} else {
+    if (!empty($_SESSION['payment'])) {
+        $payment_modules = new payment($_SESSION['payment']);
+        $payment_modules->update_status();
+        if (is_array($payment_modules->modules)) {
+            $payment_modules->pre_confirmation_check();
+        }
+    }
+    if (!empty($_SESSION['payment']) && is_object(${$_SESSION['payment']})) {
+        $payment_title = ${$_SESSION['payment']}->title;
     } else {
-        if (!empty($_SESSION['payment'])) {
-            $payment_modules = new payment($_SESSION['payment']);
-            $payment_modules->update_status();
-            if (is_array($payment_modules->modules)) {
-                $payment_modules->pre_confirmation_check();
-            }
-        }
-        if (!empty($_SESSION['payment']) && is_object(${$_SESSION['payment']})) {
-            $payment_title = ${$_SESSION['payment']}->title;
-        } else {
-            $messageStack->add_session('checkout_payment', ERROR_NO_PAYMENT_MODULE_SELECTED, 'error');
-        }
+        $messageStack->add_session('checkout_payment', ERROR_NO_PAYMENT_MODULE_SELECTED, 'error');
     }
 }
 
@@ -261,18 +242,8 @@ if ($order_confirmed) {
 $order_totals = $order_total_modules->process();
 
 // -----
-// Check to see that the order's total value hasn't been changed by the confirmation-page's processing.  This can happen if:
-//
-// 1) The customer's disabled javascript in their browser, check to see if the session-related information has changed.  This would
-//    occur, for instance, if the customer has chosen a different shipping method or applied a coupon/GB to their order.
-// 2) An order-total (e.g. ot_cod_fee) has added its cost to the order as a result of the previous processing on this page.
-//
-// If so, redirect back to the checkout_one page so that the customer sees what they're confirming on the next pass through the
-// confirmation page.
-//
-// Note: Some payment methods, notably gps, perform a redirect to 'checkout_confirmation' which is redirected
-// here by the OPC observer.  Bypass the hash-check if the current payment method is in the list of those requiring
-// confirmation.
+// Determine whether the current payment method requires this confirmation page to
+// be displayed.
 //
 $confirmation_required = false;
 if ($credit_covers === true && strpos(CHECKOUT_ONE_CONFIRMATION_REQUIRED, 'credit_covers') !== false) {
@@ -281,27 +252,18 @@ if ($credit_covers === true && strpos(CHECKOUT_ONE_CONFIRMATION_REQUIRED, 'credi
     $confirmation_required = true;
 }
 
-$session_end_hash = $checkout_one->hashSession($currencies->format($order->info['total']));
-if ($confirmation_required === false && $order_confirmed === true && $session_end_hash !== $session_start_hash) {
+$order_info_mismatch = (($_SESSION['opc_order_hash'] ?? '') !== md5(json_encode($order->info)));
+if ($confirmation_required === false && $order_info_mismatch === true) {
     $error = true;
     $messageStack->add_session('checkout_payment', ERROR_NOJS_ORDER_CHANGED, 'error');
 }
 
 // -----
-// Check to see if any session-based messages exist for the 'checkout' (issued by credit-class order-totals) or the 'checkout_payment'
+// Check to see if any messages exist for the 'checkout' (issued by credit-class order-totals) or the 'checkout_payment'
 // page; that will also result in a redirect back to the 'checkout_one' main page.
 //
-// Note: Don't want to use $messageStack->size, since that resets any session-based messages.
-//
-$session_messages = [];
-if ($error === false && !empty($_SESSION['messageToStack'])) {
-    $session_messages = $_SESSION['messageToStack'];
-    foreach ($session_messages as $next_message) {
-        if ($next_message['class'] === 'checkout' || $next_message['class'] === 'checkout_payment') {
-            $error = true;
-            break;
-        }
-    }
+if ($messageStack->size('checkout') !== 0 || $messageStack->size('checkout_payment') !== 0) {
+    $error = true;
 }
 
 // -----
@@ -310,10 +272,10 @@ if ($error === false && !empty($_SESSION['messageToStack'])) {
 $zco_notifier->notify('NOTIFY_CHECKOUT_ONE_CONFIRMATION_PRE_ORDER_CHECK', '', $error);
 
 // -----
-// If no previous errors and the order has been confirmed, check to see if either the
+// If no previous errors, check to see if either the
 // terms-and-conditions or privacy-terms agreement need to be ticked.
 //
-if ($error === false && $order_confirmed === true) {
+if ($error === false) {
     if (DISPLAY_CONDITIONS_ON_CHECKOUT === 'true') {
         if (!isset($_POST['conditions']) || $_POST['conditions'] !== '1') {
             $error = true;
@@ -330,11 +292,10 @@ if ($error === false && $order_confirmed === true) {
 }
 
 // -----
-// If an error was detected or the order hasn't been confirmed, redirect back to the
-// main data-gathering page.
+// If an error was detected, redirect back to the main data-gathering page.
 //
-if ($error === true || $order_confirmed === false) {
-    $checkout_one->debug_message("Something causing redirection back to checkout_one, error ($error), order_confirmed ($order_confirmed)" . json_encode($messageStack->messages) . json_encode($session_messages) . json_encode($ot_total));
+if ($error === true) {
+    $checkout_one->debug_message('Something causing redirection back to checkout_one: ' . json_encode($messageStack->messages));
     zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));
 }
 
@@ -343,7 +304,8 @@ $flagAnyOutOfStock = false;
 $stock_check = [];
 if (STOCK_CHECK === 'true') {
     for ($i = 0, $n = count($order->products); $i < $n; $i++) {
-        if ($stock_check[$i] = zen_check_stock($order->products[$i]['id'], $order->products[$i]['qty'])) {
+        $stock_check[$i] = zen_check_stock($order->products[$i]['id'], $order->products[$i]['qty']);
+        if (!empty($stock_check[$i])) {
             $flagAnyOutOfStock = true;
         }
     }
@@ -437,9 +399,11 @@ if (is_array($confirmation)) {
 // If the currently-selected payment method requires the order-confirmation page to be displayed, then the
 // header/footer are displayed too; otherwise, all elements of the display are hidden.
 //
-$flag_disable_left = $flag_disable_right = true;
+$flag_disable_left = true;
+$flag_disable_right = true;
 if ($confirmation_required === false) {
-    $flag_disable_header = $flag_disable_footer = true;
+    $flag_disable_header = true;
+    $flag_disable_footer = true;
 }
 
 $breadcrumb->add(NAVBAR_TITLE_1, zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));

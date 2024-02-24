@@ -1,9 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
-// Copyright (C) 2013-2023, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2024, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.4.6
+// Last updated: OPC v2.5.0
 //
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
@@ -723,96 +723,9 @@ class checkout_one_observer extends base
             // Change any occurrences of [code] to ["code"] in the logs so that they can be properly posted between [CODE} tags on the Zen Cart forums.
             //
             $message = str_replace('[code]', '["code"]', $message);
-            error_log(date('Y-m-d H:i:s') . ' ' . (($other_caller !== '') ? $other_caller : $this->current_page_base) . ": $message$extra_info" . PHP_EOL, 3, $this->debug_logfile);
+            error_log("\n" . date('Y-m-d H:i:s') . ' ' . (($other_caller !== '') ? $other_caller : $this->current_page_base) . ": $message$extra_info" . PHP_EOL, 3, $this->debug_logfile);
             $this->notify($message);
         }
-    }
-
-    public function hashSession($current_order_total)
-    {
-        $session_data = $_SESSION;
-        unset($session_data['shipping']['extras'], $session_data['shipping_billing'], $session_data['comments'], $session_data['navigation']);
-
-        // -----
-        // The ot_gv order-total in Zen Cart 1.5.4 sets its session-variable to either 0 or '0.00', which results in
-        // false change-detection by this function.  As such, if the order-total's variable is present in the session
-        // and is 0, set the variable to a "known" representation of 0!
-        //
-        if (isset($session_data['cot_gv']) && $session_data['cot_gv'] == 0) {
-            $session_data['cot_gv'] = '0.00';
-        }
-
-        // -----
-        // Some of the payment methods (e.g. ceon_manual_card and ceon_sage_pay_direct) and possibly shipping/order_totals update
-        // information into the session upon their processing ... and ultimately cause the hash on entry
-        // to be different from the hash on exit.  Simply update the following list with the variables that
-        // can be safely ignored in the hash.
-        //
-        unset(
-            $session_data['ceon_manual_card_card_holder'],
-            $session_data['ceon_manual_card_card_type'],
-            $session_data['ceon_manual_card_card_expiry_month'],
-            $session_data['ceon_manual_card_card_expiry_year'],
-            $session_data['ceon_manual_card_card_cv2_number_not_present'],
-            $session_data['ceon_manual_card_card_start_month'],
-            $session_data['ceon_manual_card_card_start_year'],
-            $session_data['ceon_manual_card_card_issue_number'],
-            $session_data['ceon_manual_card_data_entered'],
-            $session_data['ceon_sage_pay_direct_card_holder'],
-            $session_data['ceon_sage_pay_direct_card_type'],
-            $session_data['ceon_sage_pay_direct_card_expiry_month'],
-            $session_data['ceon_sage_pay_direct_card_expiry_year'],
-            $session_data['ceon_sage_pay_direct_card_start_month'] ,
-            $session_data['ceon_sage_pay_direct_card_start_year'] ,
-            $session_data['ceon_sage_pay_direct_card_issue_number'],
-            $session_data['ceon_sage_pay_direct_data_entered'],
-            $session_data['ceon_sage_pay_direct_error_encountered'],
-            $session_data['ceon_sage_pay_direct_debug_file']
-        );
-
-        // -----
-        // Add the order's current total to the blob that's being hashed, so that changes in the total based on
-        // payment-module selection can be properly detected (e.g. COD fee).
-        //
-        // Some currencies use a non-ASCII symbol for its symbol, e.g. £.  To ensure that we don't get into
-        // a checkout-loop, make sure that the order's current total is scrubbed to convert any "HTML entities"
-        // into their character representation.
-        //
-        // This is needed since the order's current total, as passed into the confirmation page, is created by
-        // javascript that captures the character representation of any symbols.
-        //
-        // Note: Some templates also include carriage-returns within the total's display, so remove them from
-        // the mix, too! Updated to remove "all" whitespace characters, as found in this stackoverflow posting:
-        // (https://stackoverflow.com/questions/40724543/how-to-replace-decoded-non-breakable-space-nbsp)
-        //
-        // That also eliminates any unwanted alternate decodes of &nbsp; as well as regular spaces so the
-        // session-data matching is not dependent on whitespace characters at all.
-        //
-        $session_data['order_current_total'] = preg_replace("/\s+/u", '', html_entity_decode($current_order_total, ENT_COMPAT, CHARSET));
-
-        // -----
-        // The order's payment-method (e.g. moneyorder) might not be present in the session after the
-        // order-confirmation pre-checks.  Specifically, if a credit-class order-totals 'credit' covers
-        // the full order payment (e.g. a 100%+free-shipping coupon), the payment-method is removed from
-        // the session ... after the first session-hash is computed.
-        //
-        // Since we're looking for a **monetary** change in the session values, that payment-method will be
-        // disregarded.
-        //
-        unset($session_data['payment']);
-
-        // -----
-        // Give a watching observer the opportunity to provide fix-ups over-and-above the prior processing.
-        //
-        $saved_session_data = $session_data;
-        $this->notify('NOTIFY_OPC_OBSERVER_SESSION_FIXUPS', '', $session_data);
-        if ($session_data !== $saved_session_data) {
-            $this->debug_message("hashSession, observer override: " . PHP_EOL . json_encode($session_data) . PHP_EOL . json_encode($saved_session_data));
-        }
-
-        $hash_values = print_r($session_data, true);
-        $this->debug_message("hashSession returning an md5 of $hash_values", false, 'checkout_one_observer');
-        return md5($hash_values);
     }
 
     public function isEnabled()
