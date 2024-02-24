@@ -1,9 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
-// Copyright (C) 2013-2023, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2024, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated for OPC v2.4.6
+// Last updated for OPC v2.5.0
 //
 // -----
 // This should be first line of the script:
@@ -40,7 +40,7 @@ if ($_SESSION['cart']->count_contents() <= 0) {
 //
 $is_guest_checkout = $_SESSION['opc']->startGuestOnePageCheckout();
 if (!zen_is_logged_in()) {
-    if (!$is_guest_checkout) {
+    if ($is_guest_checkout === false) {
         $_SESSION['navigation']->set_snapshot();
         zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
     }
@@ -52,7 +52,7 @@ if (!zen_is_logged_in()) {
 }
 
 // -----
-// In the "normal" Zen Cart checkout flow, the module /includes/init_includes/init_customer_auth.php performs the
+// In the "3-page" Zen Cart checkout flow, the module /includes/init_includes/init_customer_auth.php performs the
 // following check to see that the customer is authorized to checkout.  Rather than changing the code in that
 // core-file, we'll repeat that check here.
 //
@@ -244,7 +244,7 @@ if (!$is_virtual_order === true && $customer_info_ok === true && $temp_shipto_ad
         }
 
         $checkval = $_SESSION['shipping']['id'];
-        $checkout_one->debug_message("CHECKOUT_ONE_SHIPPING_CHECK ($checkval)\n" . json_encode($quotes) . "\n" . json_encode($checklist));
+        $checkout_one->debug_message("CHECKOUT_ONE_SHIPPING_CHECK ($checkval)\n" . json_encode($quotes, JSON_PRETTY_PRINT) . "\n" . json_encode($checklist, JSON_PRETTY_PRINT));
         if (!in_array($checkval, $checklist) && !($_SESSION['shipping']['id'] === 'free_free' && ($is_virtual_order === true || $free_shipping === true))) {
             // -----
             // Since the available shipping methods have changed, need to kill the current shipping method and display a
@@ -285,13 +285,18 @@ $shipping_module_available = $is_virtual_order === true || ($display_shipping_bl
 //
 $shipping_debug = '';
 if (isset($_SESSION['shipping']) && is_array($_SESSION['shipping'])) {
-    $shipping_debug = json_encode($_SESSION['shipping']);
+    $shipping_debug = json_encode($_SESSION['shipping'], JSON_PRETTY_PRINT);
     $order->info['shipping_method'] = $_SESSION['shipping']['title'];
     $order->info['shipping_module_code'] = $_SESSION['shipping']['id'];
     $order->info['shipping_cost'] = $_SESSION['shipping']['cost'];
 }
 
-$checkout_one->debug_message("CHECKOUT_ONE_AFTER_SHIPPING_QUOTES\n" . $shipping_debug . var_export($order, true) . json_encode($messageStack) . json_encode($quotes));
+$checkout_one->debug_message(
+    "CHECKOUT_ONE_AFTER_SHIPPING_QUOTES\n" .
+    $shipping_debug . "\n" .
+    json_encode($order->info, JSON_PRETTY_PRINT) . "\n" .
+    json_encode($messageStack, JSON_PRETTY_PRINT) . "\n" .
+    json_encode($quotes, JSON_PRETTY_PRINT));
 
 // Should address-edit button be offered?
 $address_can_be_changed = (MAX_ADDRESS_BOOK_ENTRIES > 1);
@@ -317,9 +322,36 @@ if (!class_exists('order_total')) {
 }
 $order_total_modules = new order_total;
 $order_total_modules->collect_posts();
-$order_total_modules->pre_confirmation_check();
 
-$checkout_one->debug_message("CHECKOUT_ONE_AFTER_ORDER_TOTAL_PROCESSING\n" . var_export($order_total_modules, true) . var_export($order, true) . var_export($messageStack, true));
+// -----
+// Note: Unlike the checkout_payment page, we'll mimic the order_total class'
+// handling of this pre_confirmation_check so that it's possible to have the
+// resultant order information which is hashed into the session so that a
+// customer *always* sees their final order-total value prior to the order's
+// final processing.
+//
+// Note: As a side-effect of running the totals' process method, they've set
+// their output array; need to reset all those to an empty array, again emulating
+// the order_total class' pre_confirmation_check method.
+//
+$saved_order_info = $order->info;
+$order_total_modules->process();
+foreach ($order_total_modules->modules as $next_module) {
+    $ot_class = pathinfo($next_module, PATHINFO_FILENAME);
+    if (isset($GLOBALS[$ot_class])) {
+        $GLOBALS[$ot_class]->output = [];
+    }
+}
+
+$_SESSION['opc_order_hash'] = md5(json_encode($order->info));
+$checkout_one->debug_message(
+    "CHECKOUT_ONE_AFTER_ORDER_TOTAL_PROCESSING\n" .
+    json_encode($order_total_modules, JSON_PRETTY_PRINT) . "\n" .
+    json_encode($saved_order_info, JSON_PRETTY_PRINT) . "\n" .
+    json_encode($order->info, JSON_PRETTY_PRINT) . "\n" .
+    json_encode($messageStack, JSON_PRETTY_PRINT)
+);
+$order->info = $saved_order_info;
 
 // -----
 // Ensure that the customer-information and temporary shipto/billto addresses have been
@@ -369,7 +401,7 @@ if (isset($_GET['payment_error']) && is_object(${$_GET['payment_error']}) && ($e
 }
 
 $extra_message = (isset($_SESSION['shipping'])) ? json_encode($_SESSION['shipping']) : ' (not set)';
-$checkout_one->debug_message("CHECKOUT_ONE_AFTER_PAYMENT_MODULES_SELECTION\n" . var_export($payment_modules, true) . $extra_message);
+$checkout_one->debug_message("CHECKOUT_ONE_AFTER_PAYMENT_MODULES_SELECTION\n" . json_encode($payment_modules, JSON_PRETTY_PRINT) . "\n" . $extra_message);
 
 // -----
 // If the payment method has been set in the session, there are a couple more cleanup/template-setting actions that might be needed.
@@ -416,7 +448,8 @@ $_SESSION['opc']->saveCheckoutProcessingFlags($flagDisablePaymentAddressChange, 
 // -----
 // Disable the right- and left-sideboxes for the one-page checkout; the space is needed to get the 2-column display.
 //
-$flag_disable_right = $flag_disable_left = true;
+$flag_disable_right = true;
+$flag_disable_left = true;
 
 // -----
 // Add the breadcrumbs to give the customer guidance.
