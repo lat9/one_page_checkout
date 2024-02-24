@@ -1,3 +1,0 @@
-# *Download* Page Modifications #
-
-One of the few *core-file* overwrites in OPC's guest-checkout handling is a required update to `/includes/pages/download/header_php.php`.  That update (posted as a pull-request to the Zen Cart GitHub repository for v156), enables a not-logged-in customer to access a purchased download, using an order's ID and the email-address that was used when the order was placed.
