@@ -165,13 +165,12 @@ a[target=_blank] { text-decoration: underline; }
             <li><span class="template">/includes/languages/english/YOUR_TEMPLATE/lang.order_status.php</span> <span class="smaller">(Added in v2.4.4)</span></li>
             <li><span class="template">/includes/languages/english/YOUR_TEMPLATE/order_status.php</span> <span class="smaller">(Added in v2.4.4)</span></li>
         </ol></li>
-        <li>Sign into your Zen Cart's admin panel.  Due the the number of files that require uploading, I suggest that you place the site into <em>Maintenance Mode</em> by setting <b><i>Configuration-&gt;Website Maintenance-&gt;Down for Maintenance: ON/OFF</i></b> to <em>true</em>.</li>
+        <li>Sign into your Zen Cart's admin panel.  Due the the number of files that require uploading, I suggest that you place the site into <em>Maintenance Mode</em> by setting <b><i>Configuration :: Website Maintenance :: Down for Maintenance: ON/OFF</i></b> to <em>true</em>.</li>
         <li>Copy the plugin's <em>new</em> files &mdash; with the sub-directories renamed as identified in steps <b>A</b> and <b>B</b> and the file-merges performed as identified in step <b>C</b> &mdash; to your store's directory structure.  You'll use either your webhost's cPanel File Manager or an FTP program (like WinSCP or FileZilla) to perform this copy.<ol>
             <li>/includes/auto_loaders/config.checkout_one.php</li>
             <li>/includes/auto_loaders/paypal_ipn.checkout_one.php</li>
             <li>/includes/classes/OnePageCheckout.php</li>
             <li>/includes/classes/OnePageCheckoutNoPayment</li>
-            <li>/includes/classes/Vinos_Browser.php</li>
             <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
             <li>/includes/classes/observers/class.checkout_one_observer.php</li>
             <li>/includes/classes/observers/CheckoutOneEmailObserver.php</li>
@@ -298,8 +297,10 @@ a[target=_blank] { text-decoration: underline; }
             <li>BUGFIX: Enable <code>checkout_one</code> page's submit-button timeout to be configurable.</li>
             <li>BUGFIX: Ensure that temporary addresses' <code>zone_id</code> elements are an integer-type; the value was an empty string (non-integer) when the associated country doesn't have zones.</li>
             <li>CHANGE: Simplify the transition from the <code>checkout_one</code> page to <code>checkout_confirmation</code> &mdash; no more session-checks.</li>
+            <li>CHANGE: Remove redirect to traditional 3-page checkout for processing by IE-9.</li>
             <li>The following files were changed or <span class="removed">removed</span>:<ol>
                 <li>/includes/classes/OnePageCheckout.php</li>
+                <li><span class="removed">/includes/classes/Vinos_Browser.php</span> <span class="smaller">(Removed from <em>this</em> distribution, but note that other plugins might still rely on its presence!)</span></li>
                 <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
                 <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                 <li>/includes/modules/pages/create_account/header_php_create_account_register.php</li>
@@ -1357,7 +1358,7 @@ a[target=_blank] { text-decoration: underline; }
         <li>/includes/auto_loaders/paypal_ipn.checkout_one.php <span class="smaller">(Added in v2.1.0)</span></li>
         <li>/includes/classes/OnePageCheckout.php <span class="smaller">(Added in v2.0.0)</span></li>
         <li>/includes/classes/OnePageCheckoutNoPayment.php <span class="smaller">(Added in v2.1.0)</span></li>
-        <li>/includes/classes/Vinos_Browser.php <span class="smaller">(Added in v1.0.4)</span></li>
+        <li><span class="removed">/includes/classes/Vinos_Browser.php</span> <span class="smaller">(Added in v1.0.4, removed in v2.5.0)</span></li>
         <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
         <li>/includes/classes/observers/class.checkout_one_observer.php</li>
         <li>/includes/classes/observers/CheckoutOneEmailObserver.php <span class="smaller">(Added in v2.3.2)</span></li>

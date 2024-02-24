@@ -21,7 +21,7 @@ class checkout_one_observer extends base
             
     public function __construct()
     {
-        global $current_page_base;
+        global $current_page_base, $spider_flag;
 
         // -----
         // If the session-based OPC 'brains' aren't available, there's nothing to be done.
@@ -33,21 +33,11 @@ class checkout_one_observer extends base
         }
 
         // -----
-        // Determine if the current session browser is an Internet Explorer version less than 9 (that don't properly support
-        // jQuery).
-        //
-        if (!class_exists('Vinos_Browser')) {
-            require DIR_WS_CLASSES . 'Vinos_Browser.php';
-        }
-        $browser = new Vinos_Browser();
-        $unsupported_browser = ($browser->getBrowser() === Vinos_Browser::BROWSER_IE && $browser->getVersion() < 9);
-
-        // -----
-        // If the plugin's configuration is not set or not enabled or if the browser/access is not supported, perform
+        // If the plugin's configuration is not set or not enabled or if the access is not supported, perform
         // a quick return.  That will result in an overall 'OPC' disablement and any previous guest-related
         // accesses being cleared.
         //
-        if (!defined('CHECKOUT_ONE_ENABLED') || CHECKOUT_ONE_ENABLED === 'false' || $unsupported_browser === true || $browser->isRobot() === true) {
+        if (!defined('CHECKOUT_ONE_ENABLED') || CHECKOUT_ONE_ENABLED === 'false' || !empty($spider_flag)) {
             $_SESSION['opc']->resetGuestSessionValues();
             return;
         }
