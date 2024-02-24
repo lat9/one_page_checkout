@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2024, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.4.7
+// Last updated: OPC v2.5.0
 //
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
