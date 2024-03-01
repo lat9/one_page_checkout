@@ -1821,8 +1821,8 @@ class OnePageCheckout extends base
             // If a matching address-book entry is found for this logged-in customer (whose account has
             // a primary address), use that pre-saved address entry.  Otherwise, save the new/updated address for the customer.
             //
-            $existing_address_book_id = ($this->customerAccountNeedsPrimaryAddress() === false && $this->findAddressBookEntry($address) === true);
-            if ($existing_address_book_id !== false) {
+            $existing_address_book_id = $this->findAddressBookEntry($address);
+            if ($existing_address_book_id !== false && $this->customerAccountNeedsPrimaryAddress() === false) {
                 $address_book_id = $existing_address_book_id;
             } elseif ($this->customerAccountNeedsPrimaryAddress() === false) {
                 $sql_data_array[] = ['fieldName' => 'customers_id', 'value' => $_SESSION['customer_id'], 'type' => 'integer'];
