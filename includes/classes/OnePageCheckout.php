@@ -135,6 +135,13 @@ class OnePageCheckout extends base
                 }
             }
 
+            $set_disabled = false;
+            $this->notify('NOTIFY_OPC_SET_DISABLED', [], $set_disabled);
+            if ($set_disabled === true) {
+                $this->isEnabled = false;
+                $this->debugMessage('checkEnabled(), forced to disabled via observer action');
+            }
+
             // -----
             // Perform some OPC-session cleanup if, after starting a paypalwpp-paid order, the
             // customer decides to change payment methods.
