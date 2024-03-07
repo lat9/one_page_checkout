@@ -1832,7 +1832,7 @@ class OnePageCheckout extends base
             if ($existing_address_book_id !== false && $this->customerAccountNeedsPrimaryAddress() === false) {
                 $address_book_id = $existing_address_book_id;
 
-                $this->notify('NOTIFY_OPC_EXISTING_ADDRESS_BOOK_RECORD', ['address_book_id' => $address_book_id);
+                $this->notify('NOTIFY_OPC_EXISTING_ADDRESS_BOOK_RECORD', ['address_book_id' => $address_book_id]);
             } elseif ($this->customerAccountNeedsPrimaryAddress() === false) {
                 $sql_data_array[] = ['fieldName' => 'customers_id', 'value' => $_SESSION['customer_id'], 'type' => 'integer'];
                 $db->perform(TABLE_ADDRESS_BOOK, $sql_data_array);
