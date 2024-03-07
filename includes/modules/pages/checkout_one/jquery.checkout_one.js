@@ -308,52 +308,6 @@ jQuery(document).ready(function(){
         zcLog2Console('submitFunction, on exit submitter='+submitter);
     }
 
-    // -----
-    // The "collectsCartDataOnsite" interface built into Zen Cart magically transformed between
-    // Zen Cart 1.5.4 and 1.5.5, so this module for the One-Page Checkout plugin includes both
-    // forms.  That way, if a payment module was written for 1.5.4 it'll work, ditto for those
-    // written for the 1.5.5 method.
-    //
-    // Zen Cart 1.5.4 uses the single-function approach (collectsCardDataOnsite) while the 1.5.5
-    // approach splits the functions int "doesCollectsCardDataOnsite" and "doCollectsCardDataOnsite".
-    //
-    collectsCardDataOnsite = function(paymentValue)
-    {
-        zcLog2Console( 'Checking collectsCardDataOnsite('+paymentValue+') ...' );
-        zcJS.ajax({
-            url: "ajax.php?act=ajaxPayment&method=doesCollectsCardDataOnsite",
-            data: {paymentValue: paymentValue}
-        }).done(function( response ) {
-            if (response.data == true) {
-                zcLog2Console( ' ... it does!' );
-                var str = jQuery('form[name="checkout_payment"]').serializeArray();
-
-                zcJS.ajax({
-                    url: "ajax.php?act=ajaxPayment&method=prepareConfirmation",
-                    data: str
-                }).done(function( response ) {
-                    jQuery('#checkoutPayment').hide();
-                    jQuery('#navBreadCrumb').html(response.breadCrumbHtml);
-                    jQuery('#checkoutPayment').before(response.confirmationHtml);
-                    jQuery(document).attr('title', response.pageTitle);
-                    jQuery(document).scrollTop( 0 );
-                    if (confirmation_required.indexOf( paymentValue ) == -1) {
-                        zcLog2Console( 'Preparing to submit form, since confirmation is not required for "'+paymentValue+'", per the required list: "'+confirmation_required );
-                        jQuery('#checkoutOneLoading').show();
-                        jQuery('form[name="checkout_confirmation"]')[0].submit();
-                    } else {
-                        zcLog2Console( 'Confirmation required, displaying for '+paymentValue+'.' );
-                        jQuery('#checkoutConfirmDefault').show();
-                    }
-                });
-            } else {
-                zcLog2Console( ' ... it does not, submitting.' );
-                jQuery('form[name="checkout_payment"]')[0].submit();
-            }
-        });
-        return false;
-    }
-
     var lastPaymentValue = null;
 
     doesCollectsCardDataOnsite = function(paymentValue)
