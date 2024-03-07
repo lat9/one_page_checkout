@@ -516,21 +516,19 @@ jQuery(document).ready(function(){
                         }
                     }
                     if (response.errorMessage != '') {
-                        if (type == 'submit' || (type == 'shipping-billing' && response.status != 'invalid') || type == 'submit-cc') {
+                        if (type == 'submit' || (type == 'shipping-billing' && response.status != 'invalid')) {
                             alert(response.errorMessage);
                         }
                     }
                 }  
                 zcLog2Console('Shipping method updated, error: '+shippingError); 
 
-                if (response.status !== 'reload' && (type === 'submit' || type === 'submit-cc')) {
+                if (response.status !== 'reload' && type === 'submit') {
                     if (shippingError == true) {
                         zcLog2Console('Shipping error, correct to proceed.');
                     } else {
                         zcLog2Console('Form submitted, type ('+type+'), submit_type('+submit_type+'), orderConfirmed ('+orderConfirmed+')');
-                        if (type == 'submit-cc') {
-                            jQuery('form[name="checkout_payment"]').submit();
-                        } else if (orderConfirmed) {
+                        if (orderConfirmed) {
                             jQuery('#confirm-the-order').attr('disabled', true);
 
                             // -----
@@ -591,14 +589,13 @@ jQuery(document).ready(function(){
     // -----
     // The tpl_checkout_one_default.php processing has applied 'class="opc-cc-submit"' to each credit-class
     // order-total's "Apply" button.  When one of those "Apply" buttons is clicked, note that the order has
-    // **not** been confirmed, make the AJAX call to recalculate the order-totals and submit the form,
-    // causing the transition to (and back from) the checkout_one_confirmation page where that credit-class
-    // processing has recorded its changes.
+    // **not** been confirmed and the transition to (and back from) the checkout_one_confirmation page
+    // where that credit-class processing will record its changes.
     //
     jQuery(document).on('click', '.opc-cc-submit', function(event) {
         zcLog2Console('Submitting credit-class request');
         setOrderConfirmed(0);
-        changeShippingSubmitForm('submit-cc');
+        jQuery('form[name="checkout_payment"]').submit();
     });
 
     // -----
