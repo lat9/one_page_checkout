@@ -46,7 +46,7 @@ if (!zen_is_logged_in()) {
     }
 } else {
     if (zen_get_customer_validate_session($_SESSION['customer_id']) == false) {
-        $_SESSION['navigation']->set_snapshot(array ('mode' => 'SSL', 'page' => FILENAME_CHECKOUT_ONE));
+        $_SESSION['navigation']->set_snapshot(['mode' => 'SSL', 'page' => FILENAME_CHECKOUT_ONE]);
         zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
     }
 }
@@ -148,26 +148,26 @@ if (!isset($_SESSION['sendto'])) {
     $_SESSION['opc']->validateBilltoSendto('ship');
 }
 
-// -----
-// Check to see if the order qualifies for free-shipping and, if so, set that shipping method into the customer's session.
-//
-$free_shipping = $_SESSION['opc']->isOrderFreeShipping();
-if ($free_shipping === true) {
-    $_SESSION['shipping'] = [
-        'id' => 'free_free', 
-        'title' => FREE_SHIPPING_TITLE, 
-        'cost' => 0 
-    ];
-}
-
 require DIR_WS_CLASSES . 'order.php';
 $order = new order;
 
 $total_weight = $_SESSION['cart']->show_weight();
 $total_count = $_SESSION['cart']->count_contents();
 
-$comments = (isset($_SESSION['comments'])) ? $_SESSION['comments'] : '';
+$comments = $_SESSION['comments'] ?? '';
 $quotes = [];
+
+// -----
+// Check to see if the order qualifies for free-shipping and, if so, set that shipping method into the customer's session.
+//
+$free_shipping = $_SESSION['opc']->isOrderFreeShipping();
+if ($free_shipping === true) {
+    $_SESSION['shipping'] = [
+        'id' => 'free_free',
+        'title' => FREE_SHIPPING_TITLE,
+        'cost' => 0,
+    ];
+}
 
 // -----
 // If the order DOES NOT contain only virtual products, a guest-checkout has supplied
@@ -176,7 +176,7 @@ $quotes = [];
 //
 $customer_info_ok = $_SESSION['opc']->validateCustomerInfo();
 $temp_shipto_addr_ok = $_SESSION['opc']->validateTempShiptoAddress();
-if (!$is_virtual_order === true && $customer_info_ok === true && $temp_shipto_addr_ok === true) {
+if ($is_virtual_order === false && $customer_info_ok === true && $temp_shipto_addr_ok === true) {
     // load all enabled shipping modules
     require DIR_WS_CLASSES . 'shipping.php';
     $shipping_modules = new shipping;
@@ -189,13 +189,13 @@ if (!$is_virtual_order === true && $customer_info_ok === true && $temp_shipto_ad
         $check_delivery_postcode = zen_get_UKPostcodeFirstPart($check_delivery_postcode);
 
         // now check db for allowed postcodes and enable / disable relevant shipping modules
-        if (in_array($check_delivery_postcode, explode(",", MODULE_SHIPPING_LOCALDELIVERY_POSTCODE))) {
+        if (in_array($check_delivery_postcode, explode(',', MODULE_SHIPPING_LOCALDELIVERY_POSTCODE))) {
         // continue as normal
         } else {
             $localdelivery = false;
         }
 
-        if (in_array($check_delivery_postcode, explode(",", MODULE_SHIPPING_STOREPICKUP_POSTCODE))) {
+        if (in_array($check_delivery_postcode, explode(',', MODULE_SHIPPING_STOREPICKUP_POSTCODE))) {
         // continue as normal
         } else {
             $storepickup = false;
@@ -344,6 +344,7 @@ foreach ($order_total_modules->modules as $next_module) {
 }
 
 $_SESSION['opc_order_hash'] = md5(json_encode($order->info));
+$_SESSION['opc_hashed_order_info'] = $order->info;
 $checkout_one->debug_message(
     "CHECKOUT_ONE_AFTER_ORDER_TOTAL_PROCESSING\n" .
     json_encode($order_total_modules, JSON_PRETTY_PRINT) . "\n" .
