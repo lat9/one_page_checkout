@@ -1,9 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
-// Copyright (C) 2013-2023, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2024, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated for OPC v2.4.6
+// Last updated for OPC v2.5.0
 //
 $define = [
     'NAVBAR_TITLE_1' => 'Checkout',
@@ -43,6 +43,8 @@ $define = [
     'ERROR_UNKNOWN_SHIPPING_SELECTION' => 'An unknown shipping-method was submitted.  Please contact the store owner.',
     'ERROR_INVALID_REQUEST' => 'An unknown request was received.  Please contact the store owner.',
 
+    'ERROR_AJAX_SHIPPING_SELECTION' => 'The shipping method you selected was not understood. Please contact the store owner.',
+
 // -----
 // These definitions are prepended to any address-value-related error message as an indication
 // of which address-field is being referenced.
@@ -61,8 +63,11 @@ $define = [
     'ERROR_OPC_ADDRESS_INVALID' => 'Sorry, we could not validate one or more of this order\'s addresses; please review and re-enter if necessary.',
 
 // -----
-// NOTE: The following constants are used in the page's jscript_main.php file as javascript text literals.  If you want to include single-quotes in a value,
-// you'll need to specify them as \\\'; for a new-line, use \n.  Just be sure to keep a constant's string within a set of single-quotes and you should be good-to-go!
+// NOTE: The following constants are used in the page's jscript_main.php file as javascript text literals or
+// for messages displayed to the customer during AJAX processing issues (displayed in a 'alert'.
+//
+// If you want to include single-quotes in a value, you'll need to specify them as \\\'; for a new-line,
+// use \n.  Just be sure to keep a constant's string within a set of single-quotes and you should be good-to-go!
 //
     'JS_ERROR_SESSION_TIMED_OUT' => 'Sorry, your session has timed out.\n\nThe items in your cart have been saved and will be restored the next time you log in.',
     'JS_ERROR_OPC_NOT_ENABLED' => 'Our expedited checkout process is temporarily unavailable.  You\\\'ll be redirected to our alternate checkout process.',

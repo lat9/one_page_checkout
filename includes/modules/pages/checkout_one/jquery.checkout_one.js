@@ -84,17 +84,17 @@ function setJavaScriptEnabled()
 // to indicate whether the transition was due to an order-confirmation vs. a credit-class order-total update.
 //
 var orderConfirmed = 0;
-function setOrderConfirmed (value)
+function setOrderConfirmed(value)
 {
     orderConfirmed = value;
-    jQuery('#confirm-the-order').val( value );
+    jQuery('#confirm-the-order').val(value);
     zcLog2Console('Setting orderConfirmed ('+value+'), submitter ('+submitter+')');
 }
 
 // -----
 // Main processing section, starts when the browser has finished and the page is "ready" ...
 //
-jQuery(document).ready(function(){
+jQuery(document).ready(function() {
     // -----
     // There are a bunch of "required" elements for this submit-less form to be properly handled.  Check
     // to see that they're present, alerting the customer (hopefully the owner!) if any of those elements
@@ -252,7 +252,7 @@ jQuery(document).ready(function(){
     // When the checkbox associated with the site's privacy policy and/or conditions acceptance
     // is changed, set the form's submit button accordingly.
     //
-    jQuery(document).on('change', '#privacy, #conditions', function(event) {
+    jQuery(document).on('change', '#privacy, #conditions', function() {
         setFormSubmitButton();
     });
 
@@ -273,7 +273,7 @@ jQuery(document).ready(function(){
     // null/0 (payment-handling required) or 1 (no payment-handling required) and is used by the Zen Cart payment class
     // to determine whether to "invoke" the selected payment method.
     // 
-    submitFunction = function($gv,$total) 
+    submitFunction = function($gv, $total)
     {
         var arg_count = arguments.length;
         submitter = null;
@@ -570,18 +570,52 @@ jQuery(document).ready(function(){
     }
 
     // -----
-    // When a shipping-choice is clicked, make the AJAX call to recalculate the order-totals based
+    // When the shipping-choice is changed, make the AJAX call to recalculate the order-totals based
     // on that shipping selection.
     //
-    jQuery(document).on('click', '#checkoutShippingMethod input[name=shipping]', function(event) {
-        changeShippingSubmitForm('shipping-only', event);
+    jQuery(document).on('change', 'input[name=shipping]', function() {
+        var shippingData = {
+            shipping_selection: jQuery(this).val(),
+        };
+
+        if (additionalShippingInputs.length != 0) {
+            jQuery.each(additionalShippingInputs, function(field_name, values) {
+                shippingInputs[field_name] = jQuery('input[name="'+values['input_name']+'"]'+values['parms']).val();
+            });
+            shippingData = jQuery.extend(shippingData, shippingInputs);
+        }
+
+        zcLog2Console('Updating shipping method to '+jQuery(this).val());
+        zcJS.ajax({
+            url: 'ajax.php?act=ajaxOnePageCheckout&method=updateShippingSelection',
+            data: shippingData,
+            timeout: shippingTimeout,
+            error: function (jqXHR, textStatus, errorThrown) {
+                zcLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
+                if (textStatus == 'timeout') {
+                    alert(ajaxTimeoutShippingErrorMessage);
+                }
+                shippingError = true;
+            },
+        }).done(function(response) {
+            // -----
+            // Handle any redirects required, based on the AJAX response's status.
+            //
+            checkForRedirect(response);
+
+            if (response.errorMessage !== '') {
+                alert(response.errorMessage);
+            } else {
+                jQuery('#orderTotalDivs').html(response.orderTotalHtml);
+            }
+        });
     });
 
     // -----
     // When the billing=shipping box is clicked, record the current selection and make the AJAX call to
     // recalculate the order-totals, now that the shipping address might be different.
     //
-    jQuery(document).on('click', '#shipping_billing', function( event ) {
+    jQuery(document).on('click', '#shipping_billing', function() {
         shippingIsBilling();
         changeShippingSubmitForm('shipping-billing');
     });
@@ -592,7 +626,7 @@ jQuery(document).ready(function(){
     // **not** been confirmed and the transition to (and back from) the checkout_one_confirmation page
     // where that credit-class processing will record its changes.
     //
-    jQuery(document).on('click', '.opc-cc-submit', function(event) {
+    jQuery(document).on('click', '.opc-cc-submit', function() {
         zcLog2Console('Submitting credit-class request');
         setOrderConfirmed(0);
         jQuery('form[name="checkout_payment"]').submit();

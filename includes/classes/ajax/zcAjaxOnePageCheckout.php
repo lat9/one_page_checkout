@@ -19,6 +19,144 @@ class zcAjaxOnePageCheckout extends base
     }
 
     // -----
+    // Update the order's shipping module/method when the shipping selection was
+    // changed on the checkout_one page.
+    //
+    public function updateShippingSelection()
+    {
+        // -----
+        // Since we're running as a function, need to declare the objects we're instantiating here, for use by the various classes
+        // involved in creating the order's total-block.
+        //
+        global $db, $order, $currencies, $checkout_one, $total_weight, $total_count, $discount_coupon, $messageStack;
+        global $shipping_weight, $uninsurable_value, $shipping_quoted, $shipping_num_boxes, $template, $template_dir;
+        global $language_page_directory, $current_page_base;
+
+        // -----
+        // Load the One-Page Checkout page's language files. Note that this method also sets the
+        // page being processed to 'checkout_one'!
+        //
+        $this->loadLanguageFiles();
+
+        $error_message = '';
+        $order_total_html = '';
+
+        // -----
+        // Initialize the response's status code, continuing only if all is 'ok'.
+        //
+        $status = $this->initializeResponseStatus('updateShippingSelection', $error_message);
+        if ($status === 'ok') {
+            // -----
+            // Check to ensure that all the required posted values are present; returning an
+            // error back to the OPC jQuery if not. Note that this condition could result if
+            // OPC's jquery.checkout_one{.min}.js was not properly updated.
+            //
+            if (!isset($_POST['shipping_selection'])) {
+                $status = 'error';
+                $error_message = ERROR_INVALID_REQUEST;
+            } else {
+                // -----
+                // The 'shipping_selection' is the value associated with the shipping-method
+                // selection just made.  That value is in the form of {module}_{method}. Grab those
+                // two elements and make sure that there's a record of that combination in the
+                // session. If not, a message will be displayed to the customer and a page-reload
+                // issued to try to put the session/page-elements back.
+                //
+                $shipping_elements = explode('_', $_POST['shipping_selection']);
+                if (count($shipping_elements) !== 2 || !isset($_SESSION['opc_shipping_quotes'][$shipping_elements[0]][$shipping_elements[1]])) {
+                    $status = 'reload';
+                    $error_message = ERROR_AJAX_SHIPPING_SELECTION;
+                    $checkout_one->debug_message(
+                        "Couldn't find requested shipping selection (" . $_POST['shipping_selection'] . "):\n" .
+                        json_encode($_SESSION['opc_shipping_quotes'], JSON_PRETTY_PRINT),
+                        false,
+                        'zcAjaxOnePageCheckout::updateShippingSelection'
+                    );
+                } else {
+                    // -----
+                    // Mimic the processing in the checkout_one page's header processing, setting the selected
+                    // shipping module/method into the order's information array as well
+                    // as the session.  That information is used by a subsequent call to the ot_shipping.php
+                    // module.
+                    //
+                    // Grab the previously-saved quote information for the currently-selected
+                    // quote (saved by the checkout_one page's jscript_main.php's processing).
+                    //
+                    $shipping_module_id = $shipping_elements[0];
+                    $shipping_module_title = $_SESSION['opc_shipping_quotes'][$shipping_module_id]['title'];
+
+                    $shipping_method_id = $shipping_elements[1];
+                    ['title' => $shipping_method_title, 'cost' => $shipping_method_cost] = $_SESSION['opc_shipping_quotes'][$shipping_module_id][$shipping_method_id];
+
+                    $_SESSION['shipping'] = [
+                        'id' => $shipping_module_id . '_' . $shipping_method_id,
+                        'title' => "$shipping_module_title ($shipping_method_title)",
+                        'module' => $shipping_module_id,
+                        'cost' => $shipping_method_cost,
+                    ];
+
+                    // -----
+                    // Create an instance of the order-class, setting the in-cart products
+                    // and their pricing/taxes as well as the updated shipping-selection recorded
+                    // in the session, above.
+                    //
+                    require DIR_WS_CLASSES . 'order.php';
+                    $order = new order();
+
+                    // -----
+                    // Create an instance of the shipping-class; that'll pull in the language files and make
+                    // an instance of all the currently-enabled shipping modules.
+                    //
+                    require DIR_WS_CLASSES . 'shipping.php';
+                    $shipping_modules = new shipping();
+
+                    // -----
+                    // The ot_coupon order-total expects the $discount_coupon variable to be present if
+                    // there's a coupon associated with the order.
+                    //
+                    if (!empty($_SESSION['cc_id'])) {
+                        $discount_coupon_query = "SELECT coupon_code FROM " . TABLE_COUPONS . " WHERE coupon_id = :couponID LIMIT 1";
+                        $discount_coupon_query = $db->bindVars($discount_coupon_query, ':couponID', $_SESSION['cc_id'], 'integer');
+                        $discount_coupon = $db->Execute($discount_coupon_query);
+                    }
+
+                    // -----
+                    // Pull in changes/re-calculations for the order's totals based on the change in
+                    // shipping method.
+                    //
+                    if (!class_exists('order_total')) {
+                        require DIR_WS_CLASSES . 'order_total.php';
+                    }
+                    $order_total_modules = new order_total();
+
+                    ob_start();
+                    $order_total_modules->process();
+                    $_SESSION['opc_order_hash'] = md5(json_encode($order->info));
+                    $order_total_modules->output();
+                    $order_total_html = ob_get_clean();
+
+                    $checkout_one->debug_message(
+                        "Returning:\n" .
+                        json_encode($order->info, JSON_PRETTY_PRINT) . "\n" .
+                        json_encode($_SESSION['shipping']) . "\n",
+                        false,
+                        'zcAjaxOnePageCheckout::updateShippingSelection'
+                    );
+                }
+            }
+        }
+
+        // -----
+        // Return the re-formatted HTML to be updated into the order's "Totals" section.
+        //
+        return [
+            'status' => $status,
+            'errorMessage' => $error_message,
+            'orderTotalHtml' => $order_total_html,
+        ];
+    }
+
+    // -----
     // Update the order's shipping method when the selection has changed on the checkout_one page.
     //
     public function updateShipping()
@@ -147,7 +285,7 @@ class zcAjaxOnePageCheckout extends base
                 $method = '';
                 $_POST['shipping'] = '';
             } else {
-                list($module, $method) = explode('_', $_POST['shipping']);
+                [$module, $method] = explode('_', $_POST['shipping']);
             }
 
             $free_shipping = $_SESSION['opc']->isOrderFreeShipping($_SESSION['sendto']);
@@ -672,8 +810,10 @@ class zcAjaxOnePageCheckout extends base
         //
         global $current_page, $current_page_base, $template, $language_page_directory, $template_dir, $languageLoader;
 
-        $_GET['main_page'] = $current_page_base = $current_page = FILENAME_CHECKOUT_ONE;
-        
+        $current_page = FILENAME_CHECKOUT_ONE;
+        $current_page_base = FILENAME_CHECKOUT_ONE;
+        $_GET['main_page'] = FILENAME_CHECKOUT_ONE;
+
         require DIR_WS_MODULES . zen_get_module_directory('require_languages.php');
     }
 

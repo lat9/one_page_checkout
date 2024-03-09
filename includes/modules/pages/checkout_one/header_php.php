@@ -203,7 +203,7 @@ if ($is_virtual_order === false && $customer_info_ok === true && $temp_shipto_ad
     }
 //-eof-product_delivery_by_postcode (PDP) integration
 
-    $extra_message = (isset($_SESSION['shipping'])) ? var_export($_SESSION['shipping'], true) : ' (not set)';
+    $extra_message = json_encode(($_SESSION['shipping'] ?? ' (not set)'), JSON_PRETTY_PRINT);
 
     // -----
     // Detect (and log) the condition where the store's configuration shows "Shipping/Packaging->Order Free Shipping 0 Weight Status"
@@ -220,7 +220,7 @@ if ($is_virtual_order === false && $customer_info_ok === true && $temp_shipto_ad
     $quotes = $shipping_modules->quote();
 
     // -----
-    // If a shipping-method was previously selected, check that it is still valid (in case a zone restriction has disabled it, etc). 
+    // If a shipping-method was previously selected, check that it is still valid (in case a zone restriction has disabled it, etc).
     //
     // Also take this opportunity to see if the selected module's cost has changed.  If it has, just update the current method's
     // price for the display.
@@ -233,6 +233,10 @@ if ($is_virtual_order === false && $customer_info_ok === true && $temp_shipto_ad
             if (!empty($quote['methods'])) {
                 foreach ($quote['methods'] as $method) {
                     if ($_SESSION['shipping']['id'] === $quote['id'] . '_' . $method['id']) {
+                        // -----
+                        // Using a 'loose' comparison, since some costs are recorded as numbers
+                        // and some as strings.
+                        //
                         if ($_SESSION['shipping']['cost'] == $method['cost']) {
                             $checklist[] = $quote['id'] . '_' . $method['id'];
                         }
@@ -244,7 +248,12 @@ if ($is_virtual_order === false && $customer_info_ok === true && $temp_shipto_ad
         }
 
         $checkval = $_SESSION['shipping']['id'];
-        $checkout_one->debug_message("CHECKOUT_ONE_SHIPPING_CHECK ($checkval)\n" . json_encode($quotes, JSON_PRETTY_PRINT) . "\n" . json_encode($checklist, JSON_PRETTY_PRINT));
+        $checkout_one->debug_message(
+            "CHECKOUT_ONE_SHIPPING_CHECK\n" .
+            json_encode($_SESSION['shipping'], JSON_PRETTY_PRINT) . "\n" .
+            json_encode($quotes, JSON_PRETTY_PRINT) . "\n" .
+            json_encode($checklist, JSON_PRETTY_PRINT)
+        );
         if (!in_array($checkval, $checklist) && !($_SESSION['shipping']['id'] === 'free_free' && ($is_virtual_order === true || $free_shipping === true))) {
             // -----
             // Since the available shipping methods have changed, need to kill the current shipping method and display a
