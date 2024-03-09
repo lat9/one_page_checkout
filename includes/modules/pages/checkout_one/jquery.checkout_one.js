@@ -12,7 +12,7 @@ var submitter = null;
 //
 function concatExpiresFields(fields) 
 {
-    return jQuery(":input[name=" + fields[0] + "]").val() + jQuery(":input[name=" + fields[1] + "]").val();
+    return jQuery(':input[name='+fields[0]+']').val()+ jQuery(':input[name='+ fields[1]+']').val();
 }
 
 function popupWindow(url) 
@@ -31,16 +31,16 @@ function couponpopupWindow(url)
 //
 function submitonce()
 {
-    var button = document.getElementById("btn_submit");
-    button.style.cursor = "wait";
+    var button = document.getElementById('btn_submit');
+    button.style.cursor = 'wait';
     button.disabled = true;
     setTimeout('button_timeout()', shippingTimeout);
     return false;
 }
 function button_timeout() 
 {
-    var button = document.getElementById("btn_submit");
-    button.style.cursor = "pointer";
+    var button = document.getElementById('btn_submit');
+    button.style.cursor = 'pointer';
     button.disabled = false;
 }
 
@@ -73,7 +73,7 @@ function methodSelect(theMethod)
 //
 function setJavaScriptEnabled()
 {
-    var jsEnabled = document.getElementById( 'javascript-enabled' );
+    var jsEnabled = document.getElementById('javascript-enabled');
     if (jsEnabled) {
         jsEnabled.value = '1';
     }
@@ -101,13 +101,13 @@ jQuery(document).ready(function() {
     // are missing.
     //
     var elementsMissing = false;
-    if (jQuery( 'form[name="checkout_payment"]' ).length == 0) {
+    if (jQuery('form[name="checkout_payment"]').length == 0) {
         elementsMissing = true;
-        zcLog2Console( 'Missing form[name="checkout_payment"]' );
+        zcLog2Console('Missing form[name="checkout_payment"]');
     }
-    if (jQuery( '#orderTotalDivs' ).length == 0) {
+    if (jQuery('#orderTotalDivs').length == 0) {
         elementsMissing = true;
-        zcLog2Console( 'Missing #orderTotalDivs' );
+        zcLog2Console('Missing #orderTotalDivs');
     }
 
     // -----
@@ -170,7 +170,7 @@ jQuery(document).ready(function() {
     // Requires:
     // - checkbox, id="shipping_billing"
     //
-    function shippingIsBilling() 
+    function shippingIsBilling()
     {
         if (jQuery('#checkoutOneShipto').length) {
             if (jQuery("#shipping_billing").is(':checked')) {
@@ -194,7 +194,7 @@ jQuery(document).ready(function() {
     // Disallow the Enter key (so that all form-submittal actions occur via "click"), except when that
     // key is pressed within a textarea section.
     //
-    jQuery(document).on("keypress", ":input:not(textarea)", function(event) {
+    jQuery(document).on('keypress', ':input:not(textarea)', function(event) {
         return event.keyCode != 13;
     });
 
@@ -213,7 +213,7 @@ jQuery(document).ready(function() {
         var payment_module = null;
         if (document.checkout_payment.payment) {
             if (document.checkout_payment.payment.length) {
-                for (var i=0; i<document.checkout_payment.payment.length; i++) {
+                for (var i = 0; i < document.checkout_payment.payment.length; i++) {
                     if (document.checkout_payment.payment[i].checked) {
                         payment_module = document.checkout_payment.payment[i].value;
                     }
@@ -224,10 +224,10 @@ jQuery(document).ready(function() {
                 payment_module = document.checkout_payment.payment.value;
             }
         }
-        zcLog2Console( 'setFormSubmitButton, payment-module: '+payment_module );
+        zcLog2Console('setFormSubmitButton, payment-module: '+payment_module);
         jQuery( '#opc-order-review, #opc-order-confirm' ).hide();
         if (payment_module == null || confirmation_required.indexOf(payment_module) == -1) {
-            jQuery( '#opc-order-confirm' ).show();
+            jQuery('#opc-order-confirm').show();
             if (payment_module != null && paymentsThatSubmit.indexOf(payment_module) != -1) {
                 paymentMethodHandlesSubmit = true;
             } else {
@@ -235,7 +235,7 @@ jQuery(document).ready(function() {
             }
             zcLog2Console('Showing "confirm", paymentMethodHandlesSubmit ('+paymentMethodHandlesSubmit+')');
         } else {
-            jQuery( '#opc-order-review' ).show();
+            jQuery('#opc-order-review').show();
             zcLog2Console( 'Showing "review"' );
         }
         if ((jQuery('#privacy').length != 0 && !jQuery('#privacy').is(':checked')) || (jQuery('#conditions').length != 0 && !jQuery('#conditions').is(':checked'))) {
@@ -312,15 +312,15 @@ jQuery(document).ready(function() {
 
     doesCollectsCardDataOnsite = function(paymentValue)
     {
-        zcLog2Console( 'Checking doesCollectsCardDataOnsite('+paymentValue+') ...' );
+        zcLog2Console('Checking doesCollectsCardDataOnsite('+paymentValue+') ...');
         if (jQuery('#'+paymentValue+'_collects_onsite').val()) {
             if (jQuery('#pmt-'+paymentValue).is(':checked')) {
-                zcLog2Console( '... it does!' );
+                zcLog2Console('... it does!');
                 lastPaymentValue = paymentValue;
                 return true;
             }
         }
-        zcLog2Console( '... it does not.' );
+        zcLog2Console('... it does not.');
         lastPaymentValue = null;
         return false;
     }
@@ -329,11 +329,11 @@ jQuery(document).ready(function() {
     {
         var str = jQuery('form[name="checkout_payment"]').serializeArray();
 
-        zcLog2Console( 'doCollectsCardDataOnsite for '+lastPaymentValue );
+        zcLog2Console('doCollectsCardDataOnsite for '+lastPaymentValue);
         zcJS.ajax({
-            url: "ajax.php?act=ajaxPayment&method=prepareConfirmation",
+            url: 'ajax.php?act=ajaxPayment&method=prepareConfirmation',
             data: str
-        }).done(function( response ) {
+        }).done(function(response) {
             // -----
             // On return from a successful AJAX request, the updated HTML includes some
             // 'jQuery(document).ready(function()' processing to be performed, but the document's
@@ -341,12 +341,12 @@ jQuery(document).ready(function() {
             // jQuery to do its thing.
             //
             jQuery('#checkoutPayment').hide();
-            jQuery('#navBreadCrumb').html(response.breadCrumbHtml.replace(/\.ready/g, ".ajaxComplete"));
-            jQuery('#checkoutPayment').before(response.confirmationHtml.replace(/\.ready/g, ".ajaxComplete"));
+            jQuery('#navBreadCrumb').html(response.breadCrumbHtml.replace(/\.ready/g, '.ajaxComplete'));
+            jQuery('#checkoutPayment').before(response.confirmationHtml.replace(/\.ready/g, '.ajaxComplete'));
             jQuery(document).attr('title', response.pageTitle);
             jQuery(document).scrollTop( 0 );
             if (confirmation_required.indexOf( lastPaymentValue ) == -1) {
-                zcLog2Console( 'Preparing to submit form, since confirmation is not required for "'+lastPaymentValue+'", per the required list: "'+confirmation_required );
+                zcLog2Console('Preparing to submit form, since confirmation is not required for "'+lastPaymentValue+'", per the required list: "'+confirmation_required);
                 jQuery('#checkoutOneLoading').show();
                 jQuery('#checkoutConfirmationDefault').hide();
                 
@@ -358,7 +358,7 @@ jQuery(document).ready(function() {
                     jQuery('form[name="checkout_confirmation"]')[0].submit();
                 });
             } else {
-                zcLog2Console( 'Confirmation required, displaying for '+lastPaymentValue+'.' );
+                zcLog2Console('Confirmation required, displaying for '+lastPaymentValue+'.');
                 jQuery('#checkoutConfirmDefault').show();
             }
         });
@@ -416,7 +416,7 @@ jQuery(document).ready(function() {
             submit_type = ''; 
         }
         var shippingSelected = jQuery('input[name=shipping]');
-        if (shippingSelected.is( ':radio' )) {
+        if (shippingSelected.is(':radio')) {
             shippingSelected = jQuery('input[name=shipping]:checked');
         }
         if (shippingSelected.length == 0 && type != 'shipping-billing') {
@@ -424,7 +424,7 @@ jQuery(document).ready(function() {
             focusOnShipping();
         } else {
             shippingSelected = shippingSelected.val();
-            var shippingIsBilling = jQuery( '#shipping_billing' ).is( ':checked' );
+            var shippingIsBilling = jQuery('#shipping_billing').is(':checked');
             var paymentSelected = jQuery('input[name=payment]');
             if (paymentSelected.is(':radio')) {
                 paymentSelected = jQuery('input[name=payment]:checked');
@@ -451,7 +451,7 @@ jQuery(document).ready(function() {
 
             zcLog2Console('Updating shipping method to '+shippingSelected+', processing type: '+type);
             zcJS.ajax({
-                url: "ajax.php?act=ajaxOnePageCheckout&method=updateShipping",
+                url: 'ajax.php?act=ajaxOnePageCheckout&method=updateShipping',
                 data: shippingData,
                 timeout: shippingTimeout,
                 error: function (jqXHR, textStatus, errorThrown) {
@@ -468,24 +468,6 @@ jQuery(document).ready(function() {
                 checkForRedirect(response);
 
                 jQuery('#orderTotalDivs').html(response.orderTotalHtml);
-
-                // -----
-                // Don't change the payment-method block if a form-submittal is requested.  Otherwise, the
-                // customer's just-entered credit-card credentials will be "wiped out".
-                //
-                // The same is true for stores that use payment methods that don't "tolerate"
-                // a page-refresh.
-                //
-                if (type != 'submit') {
-                    if (response.paymentHtmlAction == 'refresh') {
-                        window.location.reload(true);
-                    } else if (response.paymentHtmlAction == 'update') {
-                        jQuery('#checkoutPaymentMethod').replaceWith(response.paymentHtml);
-                        jQuery(document).on('change', 'input[name=payment]', function() {
-                            setFormSubmitButton();
-                        });
-                    }
-                }
 
                 var shippingError = false;
                 jQuery('#otshipping, #otshipping+br').show();
@@ -658,7 +640,7 @@ jQuery(document).ready(function() {
 
         zcLog2Console('Updating payment method to '+paymentSelected);
         zcJS.ajax({
-            url: "ajax.php?act=ajaxOnePageCheckout&method=updatePaymentMethod",
+            url: 'ajax.php?act=ajaxOnePageCheckout&method=updatePaymentMethod',
             data: paymentData,
             timeout: shippingTimeout,
             error: function (jqXHR, textStatus, errorThrown) {
@@ -682,8 +664,8 @@ jQuery(document).ready(function() {
     // to submit their order.  Set up the various "hidden" fields to reflect the order's current state,
     // note that this is an order-review request, and cause the order to be submitted.
     //
-    jQuery(document).on('click', '#opc-order-review', function(event) {
-        submitFunction(0,0); 
+    jQuery(document).on('click', '#opc-order-review', function() {
+        submitFunction(0,0);
         setOrderConfirmed(1);
 
         zcLog2Console('Submitting order-creating form (review)');
@@ -695,7 +677,7 @@ jQuery(document).ready(function() {
     // to submit their order.  Set up the various "hidden" fields to reflect the order's current state,
     // note that this is an order-confirmation request, and cause the order to be submitted.
     //
-    jQuery(document).on('click', '#opc-order-confirm', function(event) {
+    jQuery(document).on('click', '#opc-order-confirm', function() {
         submitFunction(0,0); 
         setOrderConfirmed(1);
 
@@ -706,10 +688,10 @@ jQuery(document).ready(function() {
     // -----
     // Monitor the billing- and shipping-address blocks for changes.
     //
-    jQuery(document).on('change', '#select-address-bill', function(event) {
+    jQuery(document).on('change', '#select-address-bill', function() {
         useSelectedAddress('bill', this.value);
     });
-    jQuery(document).on('change', '#select-address-ship', function(event) {
+    jQuery(document).on('change', '#select-address-ship', function() {
         useSelectedAddress('ship', this.value);
     });
     function useSelectedAddress(which, address_id)
@@ -717,7 +699,7 @@ jQuery(document).ready(function() {
         zcLog2Console('useSelectedAddress('+which+', '+address_id+')');
         jQuery('#checkoutPayment > .opc-overlay').addClass('active');
         zcJS.ajax({
-            url: "ajax.php?act=ajaxOnePageCheckout&method=setAddressFromSavedSelections",
+            url: 'ajax.php?act=ajaxOnePageCheckout&method=setAddressFromSavedSelections',
             data: {
                 which: which,
                 address_id: address_id
@@ -729,7 +711,7 @@ jQuery(document).ready(function() {
                     alert(ajaxTimeoutSetAddressErrorMessage);
                 }
             },
-        }).done(function( response ) {
+        }).done(function(response) {
             location.reload();
         });
     }
@@ -818,7 +800,7 @@ jQuery(document).ready(function() {
     {
         zcLog2Console('restoreAddressValues('+which+', '+address_block+')');
         zcJS.ajax({
-            url: "ajax.php?act=ajaxOnePageCheckout&method=restoreAddressValues",
+            url: 'ajax.php?act=ajaxOnePageCheckout&method=restoreAddressValues',
             data: {
                 which: which
             },
@@ -869,7 +851,7 @@ jQuery(document).ready(function() {
             add_address = jQuery('#opc-add-'+which).prop('checked');
 
         zcJS.ajax({
-            url: "ajax.php?act=ajaxOnePageCheckout&method=validateAddressValues",
+            url: 'ajax.php?act=ajaxOnePageCheckout&method=validateAddressValues',
             data: {
                 which: which,
                 gender: gender,
@@ -984,7 +966,7 @@ jQuery(document).ready(function() {
     {
         zcLog2Console('restoreCustomerInfo, starts ...');
         zcJS.ajax({
-            url: "ajax.php?act=ajaxOnePageCheckout&method=restoreCustomerInfo",
+            url: 'ajax.php?act=ajaxOnePageCheckout&method=restoreCustomerInfo',
             timeout: shippingTimeout,
             error: function (jqXHR, textStatus, errorThrown) {
                 zcLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
@@ -1007,7 +989,7 @@ jQuery(document).ready(function() {
     {
         zcLog2Console('saveCustomerInfo, starts ...');
         zcJS.ajax({
-            url: "ajax.php?act=ajaxOnePageCheckout&method=validateCustomerInfo",
+            url: 'ajax.php?act=ajaxOnePageCheckout&method=validateCustomerInfo',
             data: jQuery('#checkoutOneGuestInfo input, #checkoutOneGuestInfo select').serialize(),
             timeout: shippingTimeout,
             error: function (jqXHR, textStatus, errorThrown) {

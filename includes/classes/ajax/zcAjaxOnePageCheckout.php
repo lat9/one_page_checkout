@@ -505,13 +505,6 @@ class zcAjaxOnePageCheckout extends base
             $order_total_html = ob_get_clean();
         }
  
-        // -----
-        // Some payment methods, e.g. square, have some external jQuery that is loaded and run on initial
-        // page-load **only**.  Set a processing flag for use by the 'checkout_one' page's jQuery to indicate what
-        // action should be taken for the payment-method HTML on a shipping-method update.
-        //
-        // Possible values are 'update', 'no-update' or 'refresh'.
-        //
         $return_array = [
             'status' => $status,
             'errorMessage' => $error_message,
@@ -519,7 +512,6 @@ class zcAjaxOnePageCheckout extends base
             'shippingHtml' => $shipping_html,
             'shippingMessage' => $shipping_choose_message,
             'paymentHtml' => $payment_html,
-            'paymentHtmlAction' => CHECKOUT_ONE_PAYMENT_BLOCK_ACTION,
         ];
         $session_shipping = (isset($_SESSION['shipping'])) ? json_encode($_SESSION['shipping']) : 'Shipping not set';
         $checkout_one->debug_message('updateShipping, returning:' . json_encode($return_array) . PHP_EOL . $session_shipping);
@@ -745,12 +737,12 @@ class zcAjaxOnePageCheckout extends base
             $shipping_modules = new shipping($_SESSION['shipping']);
 
             require DIR_WS_CLASSES . 'payment.php';
-            $payment_modules = new payment;
+            $payment_modules = new payment();
 
             if (!class_exists('order_total')) {
                 require DIR_WS_CLASSES . 'order_total.php';
             }
-            $order_total_modules = new order_total;
+            $order_total_modules = new order_total();
 
             ob_start();
             $order_total_modules->process();
