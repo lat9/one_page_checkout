@@ -35,7 +35,7 @@ if (!defined('CHECKOUT_ONE_CONFIRMATION_REQUIRED')) {
 
 // if there is nothing in the customers cart, redirect them to the shopping_cart page
 if ($_SESSION['cart']->count_contents() <= 0) {
-    zen_redirect(zen_href_link(FILENAME_SHOPPING_CART, '', 'NONSSL'));
+    zen_redirect(zen_href_link(FILENAME_TIME_OUT));
 }
 
 // if the customer is not logged on, redirect them to the login page
@@ -61,7 +61,7 @@ if ($_SESSION['customers_authorization'] != 0) {
 }
 
 // avoid hack attempts during the checkout procedure by checking the internal cartID
-if (!empty($_SESSION['cart']->cartID)) {
+if (isset($_SESSION['cart']->cartID, $_SESSION['cartID'])) {
     if ($_SESSION['cart']->cartID != $_SESSION['cartID']) {
         $checkout_one->debug_message('NOTIFY_CHECKOUT_ONE_CONFIRMATION_CARTID_MISMATCH');
         zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));
@@ -130,85 +130,29 @@ $comments = $_SESSION['comments'];
 // point.
 //
 require DIR_WS_CLASSES . 'order.php';
-$order = new order;
-
+$order = new order();
 $checkout_one->debug_message('Initial order information:' . json_encode($order, JSON_PRETTY_PRINT));
 
 // -----
-// If the order's all-virtual, then the shipping (free) has already been set; no need to go through all
-// the shipping-related handling.
+// Load the selected shipping module.
 //
-$shipping_modules_debug = '';
-if ($order->content_type !== 'virtual') {
-    require DIR_WS_CLASSES . 'shipping.php';
-    $shipping_modules = new shipping($_SESSION['shipping']);
+require DIR_WS_CLASSES . 'shipping.php';
+$shipping_modules = new shipping($_SESSION['shipping']);
+$checkout_one->debug_message('Shipping setup, preparing to call order-totals.' . json_encode($_SESSION['shipping'], JSON_PRETTY_PRINT));
 
-    // -----
-    // Determine free shipping conditions.
-    //
-    $free_shipping = $_SESSION['opc']->isOrderFreeShipping();
-
-    // -----
-    // Handle selected shipping module quote.
-    //
-    $quote = [];
-    if (zen_count_shipping_modules() > 0 || $free_shipping) {
-        if (isset($_POST['shipping']) && strpos($_POST['shipping'], '_') !== false) {
-            /**
-            * check to be sure submitted data hasn't been tampered with
-            */
-            if ($_POST['shipping'] === 'free_free' && ($order->content_type !== 'virtual' && !$free_shipping)) {
-                $error = true;
-                $messageStack->add_session('checkout_shipping', ERROR_INVALID_SHIPPING_SELECTION, 'error');
-            }
-            list($module, $method) = explode('_', $_POST['shipping']);
-            if (is_object(${$module}) || $_POST['shipping'] === 'free_free') {
-                if ($_POST['shipping'] === 'free_free') {
-                    $quote[0]['methods'][0]['title'] = FREE_SHIPPING_TITLE;
-                    $quote[0]['methods'][0]['cost'] = 0;
-                    $quote[0]['methods'][0]['icon'] = '';
-                } else {
-                    $quote = $shipping_modules->quote($method, $module);
-
-                }
-                $checkout_one->debug_message("SHIPPING_QUOTE for " . $_POST['shipping'] . ":\n" . var_export($quote, true));
-                if (isset($quote['error'])) {
-                    $error = true;
-                    $messageStack->add_session('checkout_shipping', $quote['error'], 'error');
-                } else {
-                    if (isset($quote[0]) && isset($quote[0]['error'])) {
-                        $error = true;
-                    }
-                    if (isset($quote[0]['methods'][0]['title']) && isset($quote[0]['methods'][0]['cost'])) {
-                        $_SESSION['shipping'] = [
-                            'id' => $_POST['shipping'],
-                            'title' => ($free_shipping) ?  $quote[0]['methods'][0]['title'] : ($quote[0]['module'] . ' (' . $quote[0]['methods'][0]['title'] . ')'),
-                            'cost' => $quote[0]['methods'][0]['cost'] 
-                        ];
-                        $_SESSION['shipping']['extras'] = (isset($quote[0]['extras'])) ? $quote[0]['extras'] : '';
-                    }
-                }
-            } else {
-                unset($_SESSION['shipping']);
-                $checkout_one->debug_message("Missing shipping module ($module/$method)? is_object (" . var_export(is_object(${$module}), true) . ')');
-                $error = true;
-            }
-        }
-    } else {
-        unset($_SESSION['shipping']);
-        $error = true;
-    }
-    $shipping_modules_debug = json_encode($shipping_modules) . PHP_EOL . json_encode($quote);
-}
-$checkout_one->debug_message('Shipping setup, preparing to call order-totals.' . $shipping_modules_debug . ((isset($_SESSION['shipping'])) ? json_encode($_SESSION['shipping']) : 'Shipping not set'));
-
-if (!class_exists('order_total')) {
-    require DIR_WS_CLASSES . 'order_total.php';
-}
-$order_total_modules = new order_total;
+require DIR_WS_CLASSES . 'order_total.php';
+$order_total_modules = new order_total();
 $order_total_modules->collect_posts();
 $order_total_modules->pre_confirmation_check();
 $checkout_one->debug_message('Returned from call to order-totals:' . json_encode($order_total_modules, JSON_PRETTY_PRINT));
+
+// -----
+// Check to see if any messages exist for  'checkout', 'checkout_payment' or 'redemptions' (issued by credit-class order-totals); if so,
+// redirect back to the 'checkout_one' page at this time.
+//
+if ($messageStack->size('checkout') !== 0 || $messageStack->size('checkout_payment') !== 0 || $messageStack->size('redemptions') !== 0) {
+    zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));
+}
 
 require DIR_WS_CLASSES . 'payment.php';
 
@@ -255,6 +199,11 @@ if ($credit_covers === true && strpos(CHECKOUT_ONE_CONFIRMATION_REQUIRED, 'credi
 $order_info_mismatch = (($_SESSION['opc_order_hash'] ?? '') !== md5(json_encode($order->info)));
 if ($confirmation_required === false && $order_info_mismatch === true) {
     $error = true;
+    $checkout_one->debug_message(
+        "Order-information mismatch, before and after:\n" .
+        json_encode($_SESSION['opc_hashed_order_info'], JSON_PRETTY_PRINT) . "\n" .
+        json_encode($order->info, JSON_PRETTY_PRINT)
+    );
     $messageStack->add_session('checkout_payment', ERROR_NOJS_ORDER_CHANGED, 'error');
 }
 
