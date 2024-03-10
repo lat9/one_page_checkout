@@ -1126,6 +1126,28 @@ class OnePageCheckout extends base
     }
 
     /* -----
+    ** This function, called from OPC's AJAX handler, requests that the customer
+    ** has indicated that their shipping-address should be the same as the billing
+    ** one.
+    **
+    ** Returns a boolean flag that indicates whether the session's shipto address
+    ** was changed.
+    */
+    public function setShippingEqualBilling(): bool
+    {
+        $shipping_address_changed = false;
+        if (!empty($_SESSION['sendto']) && ((int)$_SESSION['sendto']) !== ((int)$_SESSION['billto'])) {
+            $shipping_address_changed = true;
+            $_SESSION['sendto'] = (int)$_SESSION['billto'];
+        }
+
+        $_SESSION['shipping_billing'] = true;
+        $this->setTempShippingToBilling();
+
+        return $shipping_address_changed;
+    }
+
+    /* -----
     ** This function, called from OPC's AJAX handler, requests that the temporary shipping
     ** address' contents be set to the current billing address.
     **
@@ -1145,8 +1167,9 @@ class OnePageCheckout extends base
     /* -----
     ** This function resets the current session's address to the specified address-book entry.
     */
-    public function setAddressFromSavedSelections($which, $address_book_id)
+    public function setAddressFromSavedSelections(string $which, int $address_book_id, string $shipping_is_billing)
     {
+        $_SESSION['shipping_billing'] = ($shipping_is_billing === 'true');
         if ($which === 'bill') {
             $_SESSION['billto'] = $address_book_id;
             if ($this->getShippingBilling() === true) {
@@ -1418,11 +1441,8 @@ class OnePageCheckout extends base
         $this->debugMessage("validateAndSaveAJaxPostedAddress($which, ..), POST: " . json_encode($_POST, JSON_PRETTY_PRINT));
 
         $address_info = $_POST;
-        if ($address_info['shipping_billing'] === 'true') {
-            $_SESSION['shipping_billing'] = true;
-        } else {
-            $_SESSION['shipping_billing'] = false;
-        }
+        $_SESSION['shipping_billing'] = ($address_info['shipping_billing'] === 'true');
+
         unset($address_info['securityToken'], $address_info['add_address'], $address_info['shipping_billing']);
         $messages = $this->validateUpdatedAddress($address_info, $which, false);
         if ($address_info['validated'] === true) {

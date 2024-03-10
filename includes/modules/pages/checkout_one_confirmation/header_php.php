@@ -94,13 +94,6 @@ if (isset($_SESSION['shipping']['id']) && $_SESSION['shipping']['id'] === 'free_
 //
 if (isset($_POST['payment'])) {
     $_SESSION['payment'] = $_POST['payment'];
-// -----
-// Otherwise, if the session's payment-method has not yet been set, save it as an empty value
-// since the order-totals' pre_confirmation_check method expects it to be set for the determination
-// of whether/not a GV/DC credit 'covers' the order's cost.
-//
-} elseif (!isset($_SESSION['payment'])) {
-    $_SESSION['payment'] = '';
 }
 
 // -----
@@ -155,13 +148,9 @@ if ($messageStack->size('checkout') !== 0 || $messageStack->size('checkout_payme
 }
 
 require DIR_WS_CLASSES . 'payment.php';
-
-if (!isset($credit_covers)) {
-    $credit_covers = false;
-}
+$credit_covers = $credit_covers ?? false;
 
 if ($credit_covers === true) {
-    unset($_SESSION['payment']);
     $_SESSION['payment'] = '';
     $payment_title = PAYMENT_METHOD_GV;
 } else {
