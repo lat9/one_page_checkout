@@ -94,13 +94,6 @@ if (isset($_SESSION['shipping']['id']) && $_SESSION['shipping']['id'] === 'free_
 //
 if (isset($_POST['payment'])) {
     $_SESSION['payment'] = $_POST['payment'];
-// -----
-// Otherwise, if the session's payment-method has not yet been set, save it as an empty value
-// since the order-totals' pre_confirmation_check method expects it to be set for the determination
-// of whether/not a GV/DC credit 'covers' the order's cost.
-//
-} elseif (!isset($_SESSION['payment'])) {
-    $_SESSION['payment'] = '';
 }
 
 // -----
@@ -155,13 +148,9 @@ if ($messageStack->size('checkout') !== 0 || $messageStack->size('checkout_payme
 }
 
 require DIR_WS_CLASSES . 'payment.php';
-
-if (!isset($credit_covers)) {
-    $credit_covers = false;
-}
+$credit_covers = $credit_covers ?? false;
 
 if ($credit_covers === true) {
-    unset($_SESSION['payment']);
     $_SESSION['payment'] = '';
     $payment_title = PAYMENT_METHOD_GV;
 } else {
@@ -186,6 +175,14 @@ if ($credit_covers === true) {
 $order_totals = $order_total_modules->process();
 
 // -----
+// Check to see if any messages exist for the 'checkout' (issued by credit-class order-totals) or the 'checkout_payment'
+// page; that will also result in a redirect back to the 'checkout_one' main page.
+//
+if ($messageStack->size('checkout') !== 0 || $messageStack->size('checkout_payment') !== 0 || $messageStack->size('redemptions') !== 0) {
+    zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));
+}
+
+// -----
 // Determine whether the current payment method requires this confirmation page to
 // be displayed.
 //
@@ -196,8 +193,7 @@ if ($credit_covers === true && strpos(CHECKOUT_ONE_CONFIRMATION_REQUIRED, 'credi
     $confirmation_required = true;
 }
 
-$order_info_mismatch = (($_SESSION['opc_order_hash'] ?? '') !== md5(json_encode($order->info)));
-if ($confirmation_required === false && $order_info_mismatch === true) {
+if (($_SESSION['opc_order_hash'] ?? '') !== md5(json_encode($order->info))) {
     $error = true;
     $checkout_one->debug_message(
         "Order-information mismatch, before and after:\n" .
@@ -205,14 +201,6 @@ if ($confirmation_required === false && $order_info_mismatch === true) {
         json_encode($order->info, JSON_PRETTY_PRINT)
     );
     $messageStack->add_session('checkout_payment', ERROR_NOJS_ORDER_CHANGED, 'error');
-}
-
-// -----
-// Check to see if any messages exist for the 'checkout' (issued by credit-class order-totals) or the 'checkout_payment'
-// page; that will also result in a redirect back to the 'checkout_one' main page.
-//
-if ($messageStack->size('checkout') !== 0 || $messageStack->size('checkout_payment') !== 0) {
-    $error = true;
 }
 
 // -----

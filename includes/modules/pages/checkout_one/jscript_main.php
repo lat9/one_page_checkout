@@ -1,7 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
-// Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2024, Vinos de Frutas Tropicales.  All rights reserved.
+//
+// Last updated: OPC v2.5.0
 //
 ?>
 <script>
@@ -37,67 +39,81 @@ if (CHECKOUT_ONE_PAYMENT_METHODS_THAT_SUBMIT !== '') {
 //
 $show_state_dropdowns = true;
 ?>
-var confirmation_required = [<?php echo $required_list; ?>];
-var paymentsThatSubmit = [<?php echo $payments_that_submit; ?>];
+    var confirmation_required = [<?= $required_list ?>];
+    var paymentsThatSubmit = [<?= $payments_that_submit ?>];
 
-var virtual_order = <?php echo ($is_virtual_order) ? 'true' : 'false'; ?>;
-var timeoutUrl = '<?php echo zen_href_link(FILENAME_LOGIN, '', 'SSL'); ?>';
-var sessionTimeoutErrorMessage = '<?php echo JS_ERROR_SESSION_TIMED_OUT; ?>';
-var ajaxTimeoutErrorMessage = '<?php echo JS_ERROR_AJAX_TIMEOUT . JS_ERROR_CONTACT_US; ?>';
-var ajaxTimeoutShippingErrorMessage = '<?php echo JS_ERROR_AJAX_SHIPPING_TIMEOUT . JS_ERROR_CONTACT_US; ?>';
-var ajaxTimeoutPaymentErrorMessage = '<?php echo JS_ERROR_AJAX_PAYMENT_TIMEOUT . JS_ERROR_CONTACT_US; ?>';
-var ajaxTimeoutSetAddressErrorMessage = '<?php echo JS_ERROR_AJAX_SET_ADDRESS_TIMEOUT . JS_ERROR_CONTACT_US; ?>';
-var ajaxTimeoutRestoreAddressErrorMessage = '<?php echo JS_ERROR_AJAX_RESTORE_ADDRESS_TIMEOUT . JS_ERROR_CONTACT_US; ?>';
-var ajaxTimeoutValidateAddressErrorMessage = '<?php echo JS_ERROR_AJAX_VALIDATE_ADDRESS_TIMEOUT . JS_ERROR_CONTACT_US; ?>';
-var ajaxTimeoutRestoreCustomerErrorMessage = '<?php echo JS_ERROR_AJAX_RESTORE_CUSTOMER_TIMEOUT . JS_ERROR_CONTACT_US; ?>';
-var ajaxTimeoutValidateCustomerErrorMessage = '<?php echo JS_ERROR_AJAX_VALIDATE_CUSTOMER_TIMEOUT . JS_ERROR_CONTACT_US; ?>';
-var ajaxNotAvailableMessage = '<?php echo JS_ERROR_OPC_NOT_ENABLED; ?>';
-var checkoutShippingUrl = '<?php echo zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'); ?>';
-var noShippingSelectedError = '<?php echo ERROR_NO_SHIPPING_SELECTED; ?>';
-var flagOnSubmit = <?php echo ($flagOnSubmit) ? 'true' : 'false'; ?>;
-var shippingTimeout = <?php echo (int)((defined('CHECKOUT_ONE_SHIPPING_TIMEOUT')) ? CHECKOUT_ONE_SHIPPING_TIMEOUT : 5000); ?>;
-var textPleaseSelect = '<?php echo PLEASE_SELECT; ?>';
-var displayShippingBlock = <?php echo ($display_shipping_block) ? 'true' : 'false'; ?>;
-var displayPaymentBlock = <?php echo ($display_payment_block) ? 'true' : 'false'; ?>;
-var ottotalSelector = '<?php echo CHECKOUT_ONE_OTTOTAL_SELECTOR; ?>';
-var billingTitle = '<?php echo TITLE_BILLING_ADDRESS; ?>';
-var billingShippingTitle = '<?php echo TITLE_BILLING_SHIPPING_ADDRESS; ?>';
-var shippingChoiceAvailable = <?php echo (is_array($quotes) && count($quotes) > 0) ? 'true' : 'false'; ?>;
-var paymentChoiceAvailable = <?php echo (is_array($enabled_payment_modules) && count($enabled_payment_modules) > 0) ? 'true' : 'false'; ?>;
+    var virtual_order = <?= ($is_virtual_order) ? 'true' : 'false' ?>;
+    var timeoutUrl = '<?= zen_href_link(FILENAME_LOGIN, '', 'SSL') ?>';
+    var sessionTimeoutErrorMessage = '<?= JS_ERROR_SESSION_TIMED_OUT ?>';
+    var ajaxTimeoutErrorMessage = '<?= JS_ERROR_AJAX_TIMEOUT . JS_ERROR_CONTACT_US ?>';
+    var ajaxTimeoutShippingErrorMessage = '<?= JS_ERROR_AJAX_SHIPPING_TIMEOUT . JS_ERROR_CONTACT_US ?>';
+    var ajaxTimeoutPaymentErrorMessage = '<?= JS_ERROR_AJAX_PAYMENT_TIMEOUT . JS_ERROR_CONTACT_US ?>';
+    var ajaxTimeoutSetAddressErrorMessage = '<?= JS_ERROR_AJAX_SET_ADDRESS_TIMEOUT . JS_ERROR_CONTACT_US ?>';
+    var ajaxTimeoutRestoreAddressErrorMessage = '<?= JS_ERROR_AJAX_RESTORE_ADDRESS_TIMEOUT . JS_ERROR_CONTACT_US ?>';
+    var ajaxTimeoutValidateAddressErrorMessage = '<?= JS_ERROR_AJAX_VALIDATE_ADDRESS_TIMEOUT . JS_ERROR_CONTACT_US ?>';
+    var ajaxTimeoutRestoreCustomerErrorMessage = '<?= JS_ERROR_AJAX_RESTORE_CUSTOMER_TIMEOUT . JS_ERROR_CONTACT_US ?>';
+    var ajaxTimeoutValidateCustomerErrorMessage = '<?= JS_ERROR_AJAX_VALIDATE_CUSTOMER_TIMEOUT . JS_ERROR_CONTACT_US ?>';
+    var ajaxNotAvailableMessage = '<?= JS_ERROR_OPC_NOT_ENABLED ?>';
+    var checkoutShippingUrl = '<?= zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL') ?>';
+    var noShippingSelectedError = '<?= ERROR_NO_SHIPPING_SELECTED ?>';
+    var flagOnSubmit = <?= ($flagOnSubmit) ? 'true' : 'false' ?>;
+    var shippingTimeout = <?= (int)((defined('CHECKOUT_ONE_SHIPPING_TIMEOUT')) ? CHECKOUT_ONE_SHIPPING_TIMEOUT : 5000) ?>;
+    var textPleaseSelect = '<?= PLEASE_SELECT ?>';
+    var displayShippingBlock = <?= ($display_shipping_block) ? 'true' : 'false' ?>;
+    var displayPaymentBlock = <?= ($display_payment_block) ? 'true' : 'false' ?>;
+    var ottotalSelector = '<?= CHECKOUT_ONE_OTTOTAL_SELECTOR ?>';
+    var billingTitle = '<?= TITLE_BILLING_ADDRESS ?>';
+    var billingShippingTitle = '<?= TITLE_BILLING_SHIPPING_ADDRESS ?>';
+    var shippingChoiceAvailable = <?= (is_array($quotes) && count($quotes) > 0) ? 'true' : 'false' ?>;
+    var paymentChoiceAvailable = <?= (is_array($enabled_payment_modules) && count($enabled_payment_modules) > 0) ? 'true' : 'false' ?>;
 <?php
 // -----
 // If dropdown states are to be displayed, include that json-formatted array of countries/zones.
 //
-if ($show_state_dropdowns) {
+if ($show_state_dropdowns === true) {
     echo $_SESSION['opc']->getCountriesZonesJavascript();
 }
-?>
-var additionalShippingInputs = {
-<?php
+
 // -----
-// If the current order has generated shipping quotes (i.e. it's got at least one physical product), check to see if a 
-// shipping-module has required inputs that should accompany the post, format the necessary jQuery to gather those inputs.
+// Save the shipping quotes' information into the session, for use by the AJAX
+// processing's 'updateShippingSelection' method.
 //
-$input_array = 'var shippingInputs = {';
+// Keeping the values in the session so that the checkout_one page's
+// jquery.checkout_one.js can simply pass the updated shipping-method "name". Otherwise,
+// characters like &nbsp; and &reg; get decoded to their utf8 representation and
+// make it "difficult" to record those values in the order.
+//
+$_SESSION['opc_shipping_quotes'] = [];
+$opc_additional_shipping_inputs = [];
 if (isset($quotes) && is_array($quotes)) {
-    $additional_shipping_inputs = [];
     foreach ($quotes as $current_quote) {
+        if (empty($current_quote['methods'])) {
+            continue;
+        }
+
+        $module_id = $current_quote['id'];
+        $_SESSION['opc_shipping_quotes'][$module_id] = [
+            'title' => $current_quote['module'],
+        ];
+        foreach ($current_quote['methods'] as $next_method) {
+            $_SESSION['opc_shipping_quotes'][$module_id][$next_method['id']] = [
+                'title' => $next_method['title'],
+                'cost' => $next_method['cost'],
+            ];
+        }
+
         if (isset($current_quote['required_input_names']) && is_array($current_quote['required_input_names'])) {
             foreach ($current_quote['required_input_names'] as $current_input_name => $selection_required) {
-                $variable_name = base::camelize($current_input_name);
-                $input_array .= "$variable_name: '', ";
-?>
-    <?php echo $variable_name; ?>: { input_name: '<?php echo $current_input_name; ?>', parms: '<?php echo ($selection_required) ? ':checked' : ''; ?>' },
-<?php
+                $opc_additional_shipping_inputs[base::camelize($current_input_name)] = [
+                    'input_name' => '',
+                    'parms' => ($selection_required) ? ':checked' : '',
+                ];
             }
         }
     }
 }
 ?>
-};
-<?php
-echo $input_array . '};'.PHP_EOL;
-?>
+    var additionalShippingInputs = <?= json_encode($opc_additional_shipping_inputs) ?>;
 </script>
 <?php
 if (defined('CHECKOUT_ONE_MINIFIED_SCRIPT') && CHECKOUT_ONE_MINIFIED_SCRIPT === 'true') {
@@ -111,17 +127,17 @@ $main_script_filepath = DIR_WS_MODULES . "pages/checkout_one/$main_script_filena
 $main_script_mtime = filemtime($main_script_filepath);
 $main_script_filepath .= "?$main_script_mtime";
 ?>
-<script src="<?php echo $main_script_filepath; ?>" defer></script>
+<script src="<?= $main_script_filepath ?>" defer></script>
 <?php
 // -----
 // Check to see if dropdown states are to be displayed, including that processing only
 // if enabled.
 //
-if ($show_state_dropdowns) {
+if ($show_state_dropdowns === true) {
     $addr_script_filepath = DIR_WS_MODULES . "pages/checkout_one/$addr_script_filename";
     $addr_script_mtime = filemtime($addr_script_filepath);
     $addr_script_filepath .= "?$addr_script_mtime";
 ?>
-<script src="<?php echo $addr_script_filepath; ?>" defer></script>
+<script src="<?= $addr_script_filepath ?>" defer></script>
 <?php
 }

@@ -46,7 +46,7 @@ if (!zen_is_logged_in()) {
     }
 } else {
     if (zen_get_customer_validate_session($_SESSION['customer_id']) == false) {
-        $_SESSION['navigation']->set_snapshot(array ('mode' => 'SSL', 'page' => FILENAME_CHECKOUT_ONE));
+        $_SESSION['navigation']->set_snapshot(['mode' => 'SSL', 'page' => FILENAME_CHECKOUT_ONE]);
         zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
     }
 }
@@ -148,26 +148,26 @@ if (!isset($_SESSION['sendto'])) {
     $_SESSION['opc']->validateBilltoSendto('ship');
 }
 
-// -----
-// Check to see if the order qualifies for free-shipping and, if so, set that shipping method into the customer's session.
-//
-$free_shipping = $_SESSION['opc']->isOrderFreeShipping();
-if ($free_shipping === true) {
-    $_SESSION['shipping'] = [
-        'id' => 'free_free', 
-        'title' => FREE_SHIPPING_TITLE, 
-        'cost' => 0 
-    ];
-}
-
 require DIR_WS_CLASSES . 'order.php';
 $order = new order;
 
 $total_weight = $_SESSION['cart']->show_weight();
 $total_count = $_SESSION['cart']->count_contents();
 
-$comments = (isset($_SESSION['comments'])) ? $_SESSION['comments'] : '';
+$comments = $_SESSION['comments'] ?? '';
 $quotes = [];
+
+// -----
+// Check to see if the order qualifies for free-shipping and, if so, set that shipping method into the customer's session.
+//
+$free_shipping = $_SESSION['opc']->isOrderFreeShipping();
+if ($free_shipping === true) {
+    $_SESSION['shipping'] = [
+        'id' => 'free_free',
+        'title' => FREE_SHIPPING_TITLE,
+        'cost' => 0,
+    ];
+}
 
 // -----
 // If the order DOES NOT contain only virtual products, a guest-checkout has supplied
@@ -176,7 +176,7 @@ $quotes = [];
 //
 $customer_info_ok = $_SESSION['opc']->validateCustomerInfo();
 $temp_shipto_addr_ok = $_SESSION['opc']->validateTempShiptoAddress();
-if (!$is_virtual_order === true && $customer_info_ok === true && $temp_shipto_addr_ok === true) {
+if ($is_virtual_order === false && $customer_info_ok === true && $temp_shipto_addr_ok === true) {
     // load all enabled shipping modules
     require DIR_WS_CLASSES . 'shipping.php';
     $shipping_modules = new shipping;
@@ -189,13 +189,13 @@ if (!$is_virtual_order === true && $customer_info_ok === true && $temp_shipto_ad
         $check_delivery_postcode = zen_get_UKPostcodeFirstPart($check_delivery_postcode);
 
         // now check db for allowed postcodes and enable / disable relevant shipping modules
-        if (in_array($check_delivery_postcode, explode(",", MODULE_SHIPPING_LOCALDELIVERY_POSTCODE))) {
+        if (in_array($check_delivery_postcode, explode(',', MODULE_SHIPPING_LOCALDELIVERY_POSTCODE))) {
         // continue as normal
         } else {
             $localdelivery = false;
         }
 
-        if (in_array($check_delivery_postcode, explode(",", MODULE_SHIPPING_STOREPICKUP_POSTCODE))) {
+        if (in_array($check_delivery_postcode, explode(',', MODULE_SHIPPING_STOREPICKUP_POSTCODE))) {
         // continue as normal
         } else {
             $storepickup = false;
@@ -203,7 +203,7 @@ if (!$is_virtual_order === true && $customer_info_ok === true && $temp_shipto_ad
     }
 //-eof-product_delivery_by_postcode (PDP) integration
 
-    $extra_message = (isset($_SESSION['shipping'])) ? var_export($_SESSION['shipping'], true) : ' (not set)';
+    $extra_message = json_encode(($_SESSION['shipping'] ?? ' (not set)'), JSON_PRETTY_PRINT);
 
     // -----
     // Detect (and log) the condition where the store's configuration shows "Shipping/Packaging->Order Free Shipping 0 Weight Status"
@@ -220,7 +220,7 @@ if (!$is_virtual_order === true && $customer_info_ok === true && $temp_shipto_ad
     $quotes = $shipping_modules->quote();
 
     // -----
-    // If a shipping-method was previously selected, check that it is still valid (in case a zone restriction has disabled it, etc). 
+    // If a shipping-method was previously selected, check that it is still valid (in case a zone restriction has disabled it, etc).
     //
     // Also take this opportunity to see if the selected module's cost has changed.  If it has, just update the current method's
     // price for the display.
@@ -233,6 +233,10 @@ if (!$is_virtual_order === true && $customer_info_ok === true && $temp_shipto_ad
             if (!empty($quote['methods'])) {
                 foreach ($quote['methods'] as $method) {
                     if ($_SESSION['shipping']['id'] === $quote['id'] . '_' . $method['id']) {
+                        // -----
+                        // Using a 'loose' comparison, since some costs are recorded as numbers
+                        // and some as strings.
+                        //
                         if ($_SESSION['shipping']['cost'] == $method['cost']) {
                             $checklist[] = $quote['id'] . '_' . $method['id'];
                         }
@@ -244,7 +248,12 @@ if (!$is_virtual_order === true && $customer_info_ok === true && $temp_shipto_ad
         }
 
         $checkval = $_SESSION['shipping']['id'];
-        $checkout_one->debug_message("CHECKOUT_ONE_SHIPPING_CHECK ($checkval)\n" . json_encode($quotes, JSON_PRETTY_PRINT) . "\n" . json_encode($checklist, JSON_PRETTY_PRINT));
+        $checkout_one->debug_message(
+            "CHECKOUT_ONE_SHIPPING_CHECK\n" .
+            json_encode($_SESSION['shipping'], JSON_PRETTY_PRINT) . "\n" .
+            json_encode($quotes, JSON_PRETTY_PRINT) . "\n" .
+            json_encode($checklist, JSON_PRETTY_PRINT)
+        );
         if (!in_array($checkval, $checklist) && !($_SESSION['shipping']['id'] === 'free_free' && ($is_virtual_order === true || $free_shipping === true))) {
             // -----
             // Since the available shipping methods have changed, need to kill the current shipping method and display a
@@ -344,6 +353,7 @@ foreach ($order_total_modules->modules as $next_module) {
 }
 
 $_SESSION['opc_order_hash'] = md5(json_encode($order->info));
+$_SESSION['opc_hashed_order_info'] = $order->info;
 $checkout_one->debug_message(
     "CHECKOUT_ONE_AFTER_ORDER_TOTAL_PROCESSING\n" .
     json_encode($order_total_modules, JSON_PRETTY_PRINT) . "\n" .

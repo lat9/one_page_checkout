@@ -1,7 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
-// Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2024, Vinos de Frutas Tropicales.  All rights reserved.
+//
+// Last updated: OPC v2.5.0
 //
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
@@ -363,6 +365,19 @@ switch (true) {
                 SET configuration_description = 'Identify (using a comma-separated list) the payment modules on your store that require confirmation.  If your store requires confirmation on all orders, simply list all payment modules used by your store.<br><br>Use the <code>credit_covers</code> &quot;method&quot; if orders that are fully paid using a Gift Certificate or coupon should also require confirmation.<br><br>Default: <code>eway_rapid,stripepay,gps</code><br>',
                     last_modified = now()
               WHERE configuration_key = 'CHECKOUT_ONE_CONFIRMATION_REQUIRED'
+              LIMIT 1"
+        );
+
+    // -----
+    // v2.5.0:
+    //
+    // - The setting 'CHECKOUT_ONE_PAYMENT_BLOCK_ACTION', since there's no longer a page
+    //   reload when the shipping selection is changed.
+    //
+    case version_compare(CHECKOUT_ONE_MODULE_VERSION, '2.5.0', '<'):    //-Fall-through processing from above
+        $db->Execute(
+            "DELETE FROM " . TABLE_CONFIGURATION . "
+              WHERE configuration_key = 'CHECKOUT_ONE_PAYMENT_BLOCK_ACTION'
               LIMIT 1"
         );
     default:                                                            //-Fall-through processing from above

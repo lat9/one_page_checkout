@@ -706,7 +706,9 @@ class checkout_one_observer extends base
                         unset($the_request[$name]);
                     }
                 }
-                $extra_info = print_r($the_request, true) . "\n\n" . print_r($_SESSION, true);
+                $session_vars = $_SESSION;
+                unset($session_vars['navigation']);
+                $extra_info = json_encode($the_request, JSON_PRETTY_PRINT) . "\n\n" . json_encode($session_vars, JSON_PRETTY_PRINT);
             }
 
             // -----
