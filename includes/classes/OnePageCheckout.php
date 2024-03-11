@@ -627,7 +627,7 @@ class OnePageCheckout extends base
         }
 
         $current_settings = print_r($this, true);
-        $this->debugMessage('startGuestOnePageCheckout, exit: sendto: ' . ((isset($_SESSION['sendto'])) ? $_SESSION['sendto'] : 'not set') . ', billto: ' . ((isset($_SESSION['billto'])) ? $_SESSION['billto'] : 'not set') . PHP_EOL . $current_settings);
+        $this->debugMessage('startGuestOnePageCheckout, exit: sendto: ' . ($_SESSION['sendto'] ?? 'not set') . ', billto: ' . ($_SESSION['billto'] ?? 'not set') . PHP_EOL . $current_settings);
 
         if ($redirect_required === true) {
             zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));
@@ -1126,6 +1126,28 @@ class OnePageCheckout extends base
     }
 
     /* -----
+    ** This function, called from OPC's AJAX handler, requests that the customer
+    ** has indicated that their shipping-address should be the same as the billing
+    ** one.
+    **
+    ** Returns a boolean flag that indicates whether the session's shipto address
+    ** was changed.
+    */
+    public function setShippingEqualBilling(): bool
+    {
+        $shipping_address_changed = false;
+        if (!empty($_SESSION['sendto']) && ((int)$_SESSION['sendto']) !== ((int)$_SESSION['billto'])) {
+            $shipping_address_changed = true;
+            $_SESSION['sendto'] = (int)$_SESSION['billto'];
+        }
+
+        $_SESSION['shipping_billing'] = true;
+        $this->setTempShippingToBilling();
+
+        return $shipping_address_changed;
+    }
+
+    /* -----
     ** This function, called from OPC's AJAX handler, requests that the temporary shipping
     ** address' contents be set to the current billing address.
     **
@@ -1145,8 +1167,9 @@ class OnePageCheckout extends base
     /* -----
     ** This function resets the current session's address to the specified address-book entry.
     */
-    public function setAddressFromSavedSelections($which, $address_book_id)
+    public function setAddressFromSavedSelections(string $which, int $address_book_id, string $shipping_is_billing)
     {
+        $_SESSION['shipping_billing'] = ($shipping_is_billing === 'true');
         if ($which === 'bill') {
             $_SESSION['billto'] = $address_book_id;
             if ($this->getShippingBilling() === true) {
@@ -1418,11 +1441,8 @@ class OnePageCheckout extends base
         $this->debugMessage("validateAndSaveAJaxPostedAddress($which, ..), POST: " . json_encode($_POST, JSON_PRETTY_PRINT));
 
         $address_info = $_POST;
-        if ($address_info['shipping_billing'] === 'true') {
-            $_SESSION['shipping_billing'] = true;
-        } else {
-            $_SESSION['shipping_billing'] = false;
-        }
+        $_SESSION['shipping_billing'] = ($address_info['shipping_billing'] === 'true');
+
         unset($address_info['securityToken'], $address_info['add_address'], $address_info['shipping_billing']);
         $messages = $this->validateUpdatedAddress($address_info, $which, false);
         if ($address_info['validated'] === true) {
@@ -1438,7 +1458,7 @@ class OnePageCheckout extends base
         $messages = [];
         $this->customerInfoOk = false;
 
-        $email_address = (isset($_POST['email_address'])) ? zen_db_prepare_input(zen_sanitize_string($_POST['email_address'])) : '';
+        $email_address = zen_db_prepare_input(zen_sanitize_string($_POST['email_address'] ?? ''));
         if (strlen($email_address) < ENTRY_EMAIL_ADDRESS_MIN_LENGTH) {
             $messages['email_address'] = ENTRY_EMAIL_ADDRESS_ERROR;
         } elseif (!zen_validate_email($email_address) || $this->isEmailBanned($email_address) === true) {
@@ -1450,7 +1470,7 @@ class OnePageCheckout extends base
             }
         }
 
-        $telephone = (isset($_POST['telephone'])) ? zen_db_prepare_input(zen_sanitize_string($_POST['telephone'])) : '';
+        $telephone = zen_db_prepare_input(zen_sanitize_string($_POST['telephone'] ?? ''));
         if (strlen($telephone) < ENTRY_TELEPHONE_MIN_LENGTH) {
             $messages['telephone'] = ENTRY_TELEPHONE_NUMBER_ERROR;
         }
@@ -1465,7 +1485,7 @@ class OnePageCheckout extends base
         $dob = '';
         $dob_display = '';
         if (ACCOUNT_DOB === 'true') {
-            $dob = (isset($_POST['dob'])) ? zen_db_prepare_input($_POST['dob']) : '';
+            $dob = zen_db_prepare_input($_POST['dob'] ?? '');
             $dob_display = $dob;
             if (ENTRY_DOB_MIN_LENGTH > 0 || !empty($_POST['dob'])) {
                 // Support ISO-8601 style date
@@ -1567,7 +1587,7 @@ class OnePageCheckout extends base
         }
 
         if (ACCOUNT_GENDER === 'true') {
-            $gender = (isset($address_values['gender'])) ? zen_db_prepare_input($address_values['gender']) : '';
+            $gender = zen_db_prepare_input($address_values['gender'] ?? '');
             if ($gender !== 'm' && $gender !== 'f') {
                 $error = true;
                 $messages['gender'] = $message_prefix . ENTRY_GENDER_ERROR;
@@ -1616,8 +1636,8 @@ class OnePageCheckout extends base
             $error = true;
             $messages['zone_country_id'] = $message_prefix . ENTRY_COUNTRY_ERROR;
         } elseif (ACCOUNT_STATE === 'true') {
-            $state = (isset($address_values['state'])) ? trim(zen_db_prepare_input($address_values['state'])) : '';
-            $zone_id = (isset($address_values['zone_id'])) ? zen_db_prepare_input($address_values['zone_id']) : 0;
+            $state = trim(zen_db_prepare_input($address_values['state']) ?? '');
+            $zone_id = zen_db_prepare_input($address_values['zone_id'] ?? 0);
 
             $country_has_zones = $this->countryHasZones((int)$country);
             if ($country_has_zones) {
@@ -2332,7 +2352,7 @@ class OnePageCheckout extends base
                         if ($t === 'customer_name') {
                             $name_pieces = explode(' ', $paypal_ec_payment_info[$pp]);
                             $this->tempAddressValues['ship']['firstname'] = trim($name_pieces[0]);
-                            $this->tempAddressValues['ship']['lastname'] = (isset($name_pieces[1])) ? trim($name_pieces[1]) : '';
+                            $this->tempAddressValues['ship']['lastname'] = trim($name_pieces[1] ?? '');
                         } else {
                             $this->tempAddressValues['ship'][$t] = $paypal_ec_payment_info[$pp];
                         }
