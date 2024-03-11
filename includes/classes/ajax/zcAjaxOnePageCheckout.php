@@ -101,7 +101,20 @@ class zcAjaxOnePageCheckout extends base
             'status' => $status,
             'errorMessage' => $error_message,
             'orderTotalHtml' => $order_total_html,
+            'total' => $this->formatOrderTotal(),
         ];
+    }
+
+    // -----
+    // Called to format methods' return of the order's current total,
+    // rounding to the number of decimal digits in the session's active
+    // currency.
+    //
+    protected function formatOrderTotal()
+    {
+        global $currencies;
+
+        return $currencies->value($_SESSION['opc_hashed_order_info']['total']);
     }
 
     // -----
@@ -131,6 +144,26 @@ class zcAjaxOnePageCheckout extends base
         return [
             'status' => $status,
             'errorMessage' => $error_message,
+        ];
+    }
+
+    // -----
+    // Function that returns the order's currently-recorded, as saved in the session when
+    // an order-hash is calculated.
+    //
+    public function getOrderTotal(): array
+    {
+        // -----
+        // Load the One-Page Checkout page's language files.
+        //
+        $this->loadLanguageFiles();
+
+        $error_message = '';
+        $status = $this->initializeResponseStatus('setShippingEqualBilling', $error_message);
+        return [
+            'status' => $status,
+            'errorMessage' => $error_message,
+            'total' => $this->formatOrderTotal(),
         ];
     }
 
@@ -342,6 +375,7 @@ class zcAjaxOnePageCheckout extends base
             'status' => $status,
             'errorMessage' => $error_message,
             'orderTotalHtml' => $order_total_html,
+            'total' => $this->formatOrderTotal(),
         ];
     }
 
@@ -393,6 +427,7 @@ class zcAjaxOnePageCheckout extends base
         ob_start();
         $order_total_modules->process();
         $_SESSION['opc_order_hash'] = md5(json_encode($order->info));
+        $_SESSION['opc_hashed_order_info'] = $order->info;
         $order_total_modules->output();
         $order_total_html = ob_get_clean();
 

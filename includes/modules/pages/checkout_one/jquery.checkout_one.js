@@ -191,6 +191,29 @@ jQuery(document).ready(function() {
     setJavaScriptEnabled();
 
     // -----
+    // Retrieve the order's current total. It might be modified on a shipping-/payment-module
+    // change.  Used when submitting the form.
+    //
+    zcJS.ajax({
+        url: 'ajax.php?act=ajaxOnePageCheckout&method=getOrderTotal',
+        timeout: shippingTimeout,
+        error: function (jqXHR, textStatus, errorThrown) {
+            zcLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
+            if (textStatus == 'timeout') {
+                alert(ajaxTimeoutShippingErrorMessage);
+            }
+            shippingError = true;
+        },
+    }).done(function(response) {
+        // -----
+        // Handle any redirects required, based on the AJAX response's status.
+        //
+        checkForRedirect(response);
+
+        jQuery('#current-order-total').val(response.total);
+    });
+
+    // -----
     // Disallow the Enter key (so that all form-submittal actions occur via "click"), except when that
     // key is pressed within a textarea section.
     //
@@ -273,37 +296,11 @@ jQuery(document).ready(function() {
     // null/0 (payment-handling required) or 1 (no payment-handling required) and is used by the Zen Cart payment class
     // to determine whether to "invoke" the selected payment method.
     // 
-    submitFunction = function($gv, $total)
+    submitFunction = function(gv, total)
     {
-        var arg_count = arguments.length;
         submitter = null;
-        var arg_list = '';
-        for (var i = 0; i < arg_count; i++) {
-            arg_list += arguments[i] + ', ';
-        }
-        zcLog2Console('submitFunction, '+arg_count+' arguments: '+arg_list);
-        if (arg_count == 2) {
-            var total = jQuery(ottotalSelector).text();
-            zcLog2Console('Current order total: '+total);
-            jQuery('#current-order-total').val(total);
-            if (total == 0) {
-                zcLog2Console('Order total is 0, setting submitter');
-                submitter = 1;
-            } else {
-                var ot_codes = [].slice.call(document.querySelectorAll('[id^=disc-]'));
-                for (var i = 0; i < ot_codes.length; i++) {
-                    if (ot_codes[i].value != '') {
-                        submitter = 1;
-                    }
-                }
-                var ot_gv = document.getElementsByName('cot_gv');
-                if (ot_gv.length != 0) {
-                    zcLog2Console('Checking ot_gv value ('+ot_gv[0].value+') against order total ('+total+')');
-                    if (ot_gv[0].value >= total) {
-                        submitter = 1;
-                    }
-                }
-            }
+        if (gv >= total) {
+            submitter = 1;
         }
         zcLog2Console('submitFunction, on exit submitter='+submitter);
     }
@@ -414,7 +411,7 @@ jQuery(document).ready(function() {
 
     function submitCheckoutForm(submit_type)
     {
-        submitFunction(0, 0);
+        submitFunction(jQuery('input[name=cot_gv]').val(), jQuery('#current-order-total').val());
         setOrderConfirmed(1);
         zcLog2Console('Form being submitted, submit_type('+submit_type);
 
@@ -491,6 +488,7 @@ jQuery(document).ready(function() {
                 alert(response.errorMessage);
             } else {
                 jQuery('#orderTotalDivs').html(response.orderTotalHtml);
+                jQuery('#current-order-total').val(response.total);
             }
         });
     });
@@ -580,6 +578,7 @@ jQuery(document).ready(function() {
             checkForRedirect(response);
 
             jQuery('#orderTotalDivs').html(response.orderTotalHtml);
+            jQuery('#current-order-total').val(response.total);
         });
     });
 

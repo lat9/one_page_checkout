@@ -513,7 +513,8 @@ class OnePageCheckout extends base
     {
         unset(
             $_SESSION['shipping_billing'],
-            $_SESSION['opc_order_hash']
+            $_SESSION['opc_order_hash'],
+            $_SESSION['opc_hashed_order_info']
         );
         if (isset($_SESSION['opc_error']) && $_SESSION['opc_error'] !== self::OPC_ERROR_NO_JS) {
             unset($_SESSION['opc_error']);
