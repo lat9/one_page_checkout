@@ -175,6 +175,14 @@ if ($credit_covers === true) {
 $order_totals = $order_total_modules->process();
 
 // -----
+// Check to see if any messages exist for the 'checkout' (issued by credit-class order-totals) or the 'checkout_payment'
+// page; that will also result in a redirect back to the 'checkout_one' main page.
+//
+if ($messageStack->size('checkout') !== 0 || $messageStack->size('checkout_payment') !== 0 || $messageStack->size('redemptions') !== 0) {
+    zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));
+}
+
+// -----
 // Determine whether the current payment method requires this confirmation page to
 // be displayed.
 //
@@ -185,8 +193,7 @@ if ($credit_covers === true && strpos(CHECKOUT_ONE_CONFIRMATION_REQUIRED, 'credi
     $confirmation_required = true;
 }
 
-$order_info_mismatch = (($_SESSION['opc_order_hash'] ?? '') !== md5(json_encode($order->info)));
-if ($confirmation_required === false && $order_info_mismatch === true) {
+if (($_SESSION['opc_order_hash'] ?? '') !== md5(json_encode($order->info))) {
     $error = true;
     $checkout_one->debug_message(
         "Order-information mismatch, before and after:\n" .
@@ -194,14 +201,6 @@ if ($confirmation_required === false && $order_info_mismatch === true) {
         json_encode($order->info, JSON_PRETTY_PRINT)
     );
     $messageStack->add_session('checkout_payment', ERROR_NOJS_ORDER_CHANGED, 'error');
-}
-
-// -----
-// Check to see if any messages exist for the 'checkout' (issued by credit-class order-totals) or the 'checkout_payment'
-// page; that will also result in a redirect back to the 'checkout_one' main page.
-//
-if ($messageStack->size('checkout') !== 0 || $messageStack->size('checkout_payment') !== 0) {
-    $error = true;
 }
 
 // -----
