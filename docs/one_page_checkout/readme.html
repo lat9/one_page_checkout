@@ -291,7 +291,7 @@ a[target=_blank] { text-decoration: underline; }
     <h3>Changes and Bugfixes</h3>
     <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank" rel="noopener">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color and removals are indicated like <span class="removed">this</span>.</p>
     <ul>
-        <li>v2.5.0-beta3, 2024-03-02 (lat9, drbyte):<ul>
+        <li>v2.5.0-beta3, 2024-03-11 (lat9, drbyte):<ul>
             <li>BUGFIX: Correct PHP warning for registered-account creation (missing <code>$fax</code>).</li>
             <li>BUGFIX: Correct 'missing' <code>id=</code> attribute on confirmation form button.</li>
             <li>BUGFIX: Enable <code>checkout_one</code> page's submit-button timeout to be configurable.</li>
@@ -300,19 +300,23 @@ a[target=_blank] { text-decoration: underline; }
             <li>CHANGE: Remove redirect to traditional 3-page checkout for processing by IE-9.</li>
             <li>BUGFIX: Use pre-existing address-book entry's 'id' if a match is found.</li>
             <li>CHANGE: Add notification (<code>NOTIFY_OPC_SET_DISABLED</code>) to allow an observer to force OPC to its disabled state.</li>
+            <li>CHANGE: <b>Major</b> restructuring to reduce page-loads required during the <code>checkout_one</code> page's data-gathering.</li>
             <li>The following files were changed or <span class="removed">removed</span>:<ol>
                 <li>/includes/classes/OnePageCheckout.php</li>
                 <li><span class="removed">/includes/classes/Vinos_Browser.php</span> <span class="smaller">(Removed from <em>this</em> distribution, but note that other plugins might still rely on its presence!)</span></li>
                 <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
                 <li>/includes/classes/observers/class.checkout_one_observer.php</li>
+                <li>/includes/languages/english/lang.checkout_one.php</li>
                 <li>/includes/modules/pages/create_account/header_php_create_account_register.php</li>
                 <li>/includes/modules/pages/checkout_one/header_php.php</li>
                 <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
                 <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
+                <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
                 <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
                 <li><span class="template-changed">/includes/templates/template_default/templates/tpl_checkout_one_confirmation_default.php</span></li>
                 <li><span class="removed">/YOUR_ADMIN/debug_opc_redirection_error.php</span></li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
+                <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one_upgrade.php</li>
             </ol></li>
         </ul></li>
         <li>v2.4.6, 2023-08-19 (lat9 and marco-pm):<ul>
