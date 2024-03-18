@@ -290,7 +290,7 @@ a[target=_blank] { text-decoration: underline; }
     <h3>Changes and Bugfixes</h3>
     <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank" rel="noopener">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color and removals are indicated like <span class="removed">this</span>.</p>
     <ul>
-        <li>v2.5.0-beta4, 2024-03-14 (lat9, drbyte):<ul>
+        <li>v2.5.0-beta5, 2024-03-18 (lat9, drbyte):<ul>
             <li>BUGFIX: Correct PHP warning for registered-account creation (missing <code>$fax</code>).</li>
             <li>BUGFIX: Correct 'missing' <code>id=</code> attribute on confirmation form button.</li>
             <li>BUGFIX: Enable <code>checkout_one</code> page's submit-button timeout to be configurable.</li>
@@ -302,6 +302,7 @@ a[target=_blank] { text-decoration: underline; }
             <li>CHANGE: <b>Major</b> restructuring to reduce page-loads required during the <code>checkout_one</code> page's data-gathering.</li>
             <li>BUGFIX: Correct jQuery so that local validation of entered data is possible.</li>
             <li>CHANGE: Update credit-selections to account for order-totals that don't have selections.</li>
+            <li>CHANGE: Update shipping-choices block to display the shipping-modules' heading block, even if there are no shipping methods available.</li>
             <li>The following files were changed or <span class="removed">removed</span>:<ol>
                 <li>/includes/classes/OnePageCheckout.php</li>
                 <li><span class="removed">/includes/classes/Vinos_Browser.php</span> <span class="smaller">(Removed from <em>this</em> distribution, but note that other plugins might still rely on its presence!)</span></li>
@@ -316,6 +317,7 @@ a[target=_blank] { text-decoration: underline; }
                 <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
                 <li><span class="template-changed">/includes/templates/template_default/templates/tpl_checkout_one_confirmation_default.php</span></li>
                 <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_credit_selections.php</span></li>
+                <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_shipping_choices.php</span></li>
                 <li><span class="removed">/YOUR_ADMIN/debug_opc_redirection_error.php</span></li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one_upgrade.php</li>
