@@ -1,15 +1,12 @@
-# One-Page Checkout v2.4.6
+# One-Page Checkout v2.5.0
 
 This documentation contains implementation details associated with the *guest-checkout* and *registered-account* features introduced by v2.0.0 of [***One-Page Checkout***](https://github.com/lat9/one_page_checkout) (*OPC*) for Zen Cart and augments the information already present in the plugin's readme. The roots of OPC's *guest-checkout* and *registered-account* processing (*OPC-GC/RA*) are found in the [COWOA](https://www.zen-cart.com/showthread.php?196995-COWOA-%28for-ZC-v1-5-x%29) (by @DivaVocals, @countrycharm and others) and [COWAA](https://www.zen-cart.com/downloads.php?do=file&id=2131) (by @davewest) plugins &hellip; but the implementation is quite different.
 
 **Notes:** 
 
 
-1. v2.1.0 drops support for Zen Cart versions _prior to_ `1.5.5b`!
-2. For Zen Cart versions *prior to* `1.5.7`, there are required edits to the `shipping_estimator` to enable its integration with _OPC_.  See [this](https://github.com/lat9/one_page_checkout/issues/193) GitHub issue for version-specific changes required!
-3. v2.3.3 and later of *OPC* provide integration with Zen Cart `1.5.7`, with no core-file overwrites!
-4. v2.4.0 drops support for Zen Cart versions *prior to* **1.5.7a**!
-5. v2.4.3 adds support for `zc158` and has been validated on PHP versions up to and including 8.2.
+1. Supports Zen Cart versions *prior to* **1.5.7a** through 2.0.0!
+5. Validated on PHP versions 7.4 through 8.3.
 
 ## Overview ##
 

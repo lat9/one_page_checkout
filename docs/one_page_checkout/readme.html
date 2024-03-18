@@ -69,7 +69,7 @@ a[target=_blank] { text-decoration: underline; }
         <li>Tableau (numinix)</li>
         <li>YourStore (themeforest)</li>
     </ol>
-    <p>One-Page Checkout has been validated with the <a href="https://www.zen-cart.com/downloads.php?do=file&id=2191" target="_blank" rel="noopener">ZCA Bootstrap Template</a>, <b>v3.6.3</b>.</p>
+    <p>One-Page Checkout has been validated with the <a href="https://www.zen-cart.com/downloads.php?do=file&id=2191" target="_blank" rel="noopener">ZCA Bootstrap Template</a>, <b>v3.6.4</b>.</p>
 
     <div class="box-border">
         <p>The plugin checks (on confirmation) that the order's information hasn't changed by inspecting the customer's session, ensuring that what the customer saw on the checkout page is the same on confirmation page.  There are order-total modules that make changes to those session-based settings, resulting in an order-confirmation loop and are, as such, incompatible with <em>One-Page Checkout</em>:</p>
@@ -83,7 +83,7 @@ a[target=_blank] { text-decoration: underline; }
     </div>
 
     <p><em>One-Page Checkout's</em> installation loads all the plugin's files into the sub-directories associated with the <em>template_default</em> template's use; that way, the processing is available for <b>all</b> templates you might use in your store.  If you make changes to those default files, you'll use the Zen Cart &quot;override&quot; system to make your updates.  For example, if you're adding a top-of-page message, you'll copy the file /includes/languages/english/checkout_one.php to the /includes/languages/english/YOUR_TEMPLATE sub-directory and make your changes there.</p>
-    <p>The plugin has been validated on Zen Cart 1.5.7a through 2.0.0-rc1 and PHP versions 7.4 through 8.3, using the following shipping, order-total and payment methods:</p>
+    <p>The plugin has been validated on Zen Cart 1.5.7a through 2.0.0-rc2 and PHP versions 7.4 through 8.3, using the following shipping, order-total and payment methods:</p>
     <div class="multi-list">
         <h4>Shipping Methods</h4>
         <ol>
@@ -290,7 +290,7 @@ a[target=_blank] { text-decoration: underline; }
     <h3>Changes and Bugfixes</h3>
     <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank" rel="noopener">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color and removals are indicated like <span class="removed">this</span>.</p>
     <ul>
-        <li>v2.5.0-beta5, 2024-03-18 (lat9, drbyte):<ul>
+        <li>v2.5.0, 2024-03-18 (lat9, drbyte):<ul>
             <li>BUGFIX: Correct PHP warning for registered-account creation (missing <code>$fax</code>).</li>
             <li>BUGFIX: Correct 'missing' <code>id=</code> attribute on confirmation form button.</li>
             <li>BUGFIX: Enable <code>checkout_one</code> page's submit-button timeout to be configurable.</li>
