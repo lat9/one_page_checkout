@@ -5,7 +5,7 @@ This documentation contains implementation details associated with the *guest-ch
 **Notes:** 
 
 
-1. Supports Zen Cart versions *prior to* **1.5.7a** through 2.0.0!
+1. Supports Zen Cart versions **1.5.7a** through 2.0.0!
 5. Validated on PHP versions 7.4 through 8.3.
 
 ## Overview ##
