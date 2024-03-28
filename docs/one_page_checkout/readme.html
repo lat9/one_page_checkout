@@ -43,7 +43,7 @@ a[target=_blank] { text-decoration: underline; }
 
 <body>
     <h1>One-Page Checkout &hellip; with Guest &hellip; <span class="smaller">for Zen Cart v1.5.7a (and later)</span></h1>
-    <h3>Version 2.5.0 by lat9, swguy, simon1066, marco-pm and drbyte</h3>
+    <h3>Version 2.5.1 by lat9, swguy, simon1066, marco-pm and drbyte</h3>
     <h3>Copyright &copy; 2013-2024 <a href="https://vinosdefrutastropicales.com" target="_blank" rel="noopener">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
     <p>Released under the General Public License (see the file named <code>license.txt</code> in the plugin's distribution for full details). This script is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</p>
     <hr>
@@ -290,6 +290,13 @@ a[target=_blank] { text-decoration: underline; }
     <h3>Changes and Bugfixes</h3>
     <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank" rel="noopener">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color and removals are indicated like <span class="removed">this</span>.</p>
     <ul>
+        <li>v2.5.1-beta1, 2024-03-27 (lat9):<ul>
+            <li>BUGFIX: Correct misspelling of <code>square_webPay</code> in the <i>Payment Methods Handling Form Submittal</i> setting.</li>
+            <li>The following files were changed or <span class="removed">removed</span>:<ol>
+                <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
+                <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one_upgrade.php</li>
+            </ol></li>
+        </ul></li>
         <li>v2.5.0, 2024-03-18 (lat9, drbyte):<ul>
             <li>BUGFIX: Correct PHP warning for registered-account creation (missing <code>$fax</code>).</li>
             <li>BUGFIX: Correct 'missing' <code>id=</code> attribute on confirmation form button.</li>
