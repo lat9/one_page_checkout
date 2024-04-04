@@ -421,29 +421,29 @@ jQuery(document).ready(function() {
         // If there is at least one payment method available, submit the form.
         //
         if (flagOnSubmit) {
+            setFormSubmitButton();
             var formPassed = check_form();
-            zcLog2Console('Form checked, passed ('+formPassed+')');
+            zcLog2Console('Form checked, passed (' + formPassed + ')');
 
-            if (formPassed) {
-                // -----
-                // If we're submitting based on a "Confirm Order" button-click,
-                // activate the OPC overlay, disable that button and set the document's
-                // cursor to the 'wait' state.
-                //
-                if (submit_type === 'confirm') {
-                    jQuery('*').css('cursor', 'wait');
-                    jQuery('#checkoutPayment > .opc-overlay').addClass('active');
-                    jQuery('#opc-order-confirm').attr('disabled', true);
-                }
-                jQuery('#confirm-the-order').attr('disabled', false);
-
-                // -----
-                // If the currently-selected payment method handles the submission of the
-                // payment-form, defer the submission to its handling.
-                //
-                if (paymentMethodHandlesSubmit == true) {
-                    zcLog2Console('Deferring form submittal to the currently-selected payment method.');
-                } else {
+            if (paymentMethodHandlesSubmit == true) {
+                zcLog2Console('Deferring form submittal to the currently-selected payment method.');
+            } else {
+                if (formPassed) {
+                    // -----
+                    // If we're submitting based on a "Confirm Order" button-click,
+                    // activate the OPC overlay, disable that button and set the document's
+                    // cursor to the 'wait' state.
+                    //
+                    if (submit_type === 'confirm') {
+                        jQuery('*').css('cursor', 'wait');
+                        jQuery('#checkoutPayment > .opc-overlay').addClass('active');
+                        jQuery('#opc-order-confirm').attr('disabled', true);
+                    }
+                    jQuery('#confirm-the-order').attr('disabled', false);
+                    // -----
+                    // If the currently-selected payment method handles the submission of the
+                    // payment-form, defer the submission to its handling.
+                    //
                     jQuery('form[name="checkout_payment"]').submit();
                 }
             }
