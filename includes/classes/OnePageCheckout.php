@@ -6,7 +6,7 @@
 // This class, instantiated in the current customer session, keeps track of a customer's login and checkout
 // progression with the aid of the OPC's observer- and AJAX-classes.
 //
-// Last updated: OPC v2.5.0
+// Last updated: OPC v2.5.1
 //
 class OnePageCheckout extends base
 {
@@ -712,7 +712,7 @@ class OnePageCheckout extends base
             $this->rebuildRequired = true;
             return '';
         }
-        return $this->guestCustomerInfo['email_address'];
+        return zen_output_string_protected($this->guestCustomerInfo['email_address']);
     }
 
     /* -----
@@ -726,7 +726,7 @@ class OnePageCheckout extends base
             $this->rebuildRequired = true;
             return '';
         }
-        return $this->guestCustomerInfo['telephone'];
+        return zen_output_string_protected($this->guestCustomerInfo['telephone']);
     }
 
     /* -----
@@ -1434,7 +1434,11 @@ class OnePageCheckout extends base
 
         return
             $field_label .
-            zen_draw_input_field($field_name, $field_value, "$field_len id=\"$field_id\"$autocomplete placeholder=\"$placeholder\" $field_required$field_params");
+            zen_draw_input_field(
+                $field_name,
+                zen_output_string_protected($field_value),
+                "$field_len id=\"$field_id\"$autocomplete placeholder=\"$placeholder\" $field_required$field_params"
+            );
     }
 
     public function validateAndSaveAjaxPostedAddress($which, &$messages)
@@ -1445,6 +1449,11 @@ class OnePageCheckout extends base
         $_SESSION['shipping_billing'] = ($address_info['shipping_billing'] === 'true');
 
         unset($address_info['securityToken'], $address_info['add_address'], $address_info['shipping_billing']);
+
+        // -----
+        // Note: $address_info is updated by the following method call, running each entry through
+        // zen_db_prepare_input and zen_sanitize_string!
+        //
         $messages = $this->validateUpdatedAddress($address_info, $which, false);
         if ($address_info['validated'] === true) {
             $add_address = ($this->customerAccountNeedsPrimaryAddress() === true || (isset($_POST['add_address']) && $_POST['add_address'] === 'true'));
@@ -1580,7 +1589,7 @@ class OnePageCheckout extends base
         $suburb = '';
 
         if (ACCOUNT_COMPANY === 'true') {
-            $company = zen_db_prepare_input($address_values['company']);
+            $company = zen_db_prepare_input(zen_sanitize_string($address_values['company']));
             if (((int)ENTRY_COMPANY_MIN_LENGTH > 0) && strlen($company) < ((int)ENTRY_COMPANY_MIN_LENGTH)) {
                 $error = true;
                 $messages['company'] = $message_prefix . ENTRY_COMPANY_ERROR;
@@ -1607,23 +1616,23 @@ class OnePageCheckout extends base
             $messages['lastname'] = $message_prefix . ENTRY_LAST_NAME_ERROR;
         }
 
-        $street_address = zen_db_prepare_input($address_values['street_address']);
+        $street_address = zen_db_prepare_input(zen_sanitize_string($address_values['street_address']));
         if (strlen($street_address) < ENTRY_STREET_ADDRESS_MIN_LENGTH) {
             $error = true;
             $messages['street_address'] = $message_prefix . ENTRY_STREET_ADDRESS_ERROR;
         }
 
         if (ACCOUNT_SUBURB === 'true') {
-            $suburb = zen_db_prepare_input($address_values['suburb']);
+            $suburb = zen_db_prepare_input(zen_sanitize_string($address_values['suburb']));
         }
 
-        $city = zen_db_prepare_input($address_values['city']);
+        $city = zen_db_prepare_input(zen_sanitize_string($address_values['city']));
         if (strlen($city) < ENTRY_CITY_MIN_LENGTH) {
             $error = true;
             $messages['city'] = $message_prefix . ENTRY_CITY_ERROR;
         }
 
-        $postcode = zen_db_prepare_input($address_values['postcode']);
+        $postcode = zen_db_prepare_input(zen_sanitize_string($address_values['postcode']));
         if (strlen($postcode) < ENTRY_POSTCODE_MIN_LENGTH) {
             $error = true;
             $messages['postcode'] = $message_prefix . ENTRY_POST_CODE_ERROR;
@@ -1637,8 +1646,8 @@ class OnePageCheckout extends base
             $error = true;
             $messages['zone_country_id'] = $message_prefix . ENTRY_COUNTRY_ERROR;
         } elseif (ACCOUNT_STATE === 'true') {
-            $state = trim(zen_db_prepare_input($address_values['state']) ?? '');
-            $zone_id = zen_db_prepare_input($address_values['zone_id'] ?? 0);
+            $state = trim(zen_db_prepare_input(zen_sanitize_string($address_values['state'] ?? '')));
+            $zone_id = (int)zen_db_prepare_input($address_values['zone_id'] ?? 0);
 
             $country_has_zones = $this->countryHasZones((int)$country);
             if ($country_has_zones) {

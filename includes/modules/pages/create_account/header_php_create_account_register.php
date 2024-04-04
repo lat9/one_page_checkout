@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
 // Copyright (C) 2017-2024, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.5.0
+// Last updated: OPC v2.5.1
 //
 // This should be first line of the script:
 $zco_notifier->notify('NOTIFY_HEADER_START_CREATE_ACCOUNT_REGISTER');
@@ -42,7 +42,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
     }
 
     $customers_authorization = (int)CUSTOMERS_APPROVAL_AUTHORIZATION;
-    $customers_referral = isset($_POST['customers_referral']) ? zen_db_prepare_input($_POST['customers_referral']) : '';
+    $customers_referral = isset($_POST['customers_referral']) ? zen_db_prepare_input(zen_sanitize_string($_POST['customers_referral'])) : '';
 
     if (ACCOUNT_NEWSLETTER_STATUS === '1' || ACCOUNT_NEWSLETTER_STATUS === '2') {
         $newsletter = 0;
@@ -96,7 +96,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
     }
 
     if (ACCOUNT_COMPANY === 'true') {
-        $company = zen_db_prepare_input($_POST['company']);
+        $company = zen_db_prepare_input(zen_sanitize_string($_POST['company']));
         if ((int)ENTRY_COMPANY_MIN_LENGTH > 0 && strlen($company) < ENTRY_COMPANY_MIN_LENGTH) {
             $error = true;
             $messageStack->add('create_account', ENTRY_COMPANY_ERROR);
@@ -135,7 +135,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
         }
     }
 
-    $nick = (isset($_POST['nick'])) ? zen_db_prepare_input($_POST['nick']) : '';
+    $nick = (isset($_POST['nick'])) ? zen_db_prepare_input(zen_sanitize_string($_POST['nick'])) : '';
     $nick_length_min = ENTRY_NICK_MIN_LENGTH;
     $zco_notifier->notify('NOTIFY_NICK_CHECK_FOR_MIN_LENGTH', $nick, $nick_error, $nick_length_min);
     if ($nick_error === true) {
@@ -155,7 +155,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
         }
     }
 
-    $telephone = zen_db_prepare_input($_POST['telephone']);
+    $telephone = zen_db_prepare_input(zen_sanitize_string($_POST['telephone']));
     if (strlen($telephone) < ENTRY_TELEPHONE_MIN_LENGTH) {
         $error = true;
         $messageStack->add('create_account', ENTRY_TELEPHONE_NUMBER_ERROR);

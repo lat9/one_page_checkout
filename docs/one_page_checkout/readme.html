@@ -293,9 +293,12 @@ a[target=_blank] { text-decoration: underline; }
         <li>v2.5.1-beta2, 2024-04-04 (lat9, proseLA):<ul>
             <li>BUGFIX: Correct misspelling of <code>square_webPay</code> in the <i>Payment Methods Handling Form Submittal</i> setting.</li>
             <li>BUGFIX: Correct interaction with payment-modules, like <code>square_webPay</code> that perform its own form-submittal.</li>
+            <li>BUGFIX: Ensure that input fields are properly 'sanitized'.</li>
             <li>The following files were changed or <span class="removed">removed</span>:<ol>
+                <li>/includes/classes/OnePageCheckout.php</li>
                 <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
                 <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
+                <li>/includes/modules/pages/create_account/header_php_create_account_register.php</li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one_upgrade.php</li>
             </ol></li>
