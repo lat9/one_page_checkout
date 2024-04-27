@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2024, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.5.0
+// Last updated: OPC v2.5.2
 //
 ?>
 <script>
@@ -61,7 +61,6 @@ $show_state_dropdowns = true;
     var textPleaseSelect = '<?= PLEASE_SELECT ?>';
     var displayShippingBlock = <?= ($display_shipping_block) ? 'true' : 'false' ?>;
     var displayPaymentBlock = <?= ($display_payment_block) ? 'true' : 'false' ?>;
-    var ottotalSelector = '<?= CHECKOUT_ONE_OTTOTAL_SELECTOR ?>';
     var billingTitle = '<?= TITLE_BILLING_ADDRESS ?>';
     var billingShippingTitle = '<?= TITLE_BILLING_SHIPPING_ADDRESS ?>';
     var shippingChoiceAvailable = <?= (is_array($quotes) && count($quotes) > 0) ? 'true' : 'false' ?>;

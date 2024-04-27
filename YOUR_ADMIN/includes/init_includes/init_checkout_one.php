@@ -15,8 +15,8 @@ if (!defined('IS_ADMIN_FLAG')) {
 // 500-599 ... Registered-account settings
 // 1000+ ..... Debug settings
 //
-define('CHECKOUT_ONE_CURRENT_VERSION', '2.5.1');
-define('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2024-04-04');
+define('CHECKOUT_ONE_CURRENT_VERSION', '2.5.2-beta1');
+define('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2024-04-27');
 
 if (isset($_SESSION['admin_id'])) {
     $version_release_date = CHECKOUT_ONE_CURRENT_VERSION . ' (' . CHECKOUT_ONE_CURRENT_UPDATE_DATE . ')';
@@ -136,19 +136,6 @@ if (isset($_SESSION['admin_id'])) {
             $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = 'false' WHERE configuration_key = 'CHECKOUT_ONE_ENABLED' LIMIT 1");
             $messageStack->add(sprintf(ERROR_STORESIDE_CONFIG, "$jscript_dir/jscript_framework.php"), 'error');
             break;
-        }
-    }
-
-    // -----
-    // The setting 'CHECKOUT_ONE_OTTOTAL_SELECTOR', introduced in OPC v2.3.0, can validly contain 'special'
-    // HTML characters '>' and '"', since the value is a CSS/jQuery selector.  The admin sanitizer will convert
-    // those characters to their HTML symbols, &gt; and &quot; respectively, so we'll change those back to
-    // keep the values as-edited when the value is updated in the store's configuration settings.
-    //
-    if (isset($_POST['submitCHECKOUT_ONE_OTTOTAL_SELECTOR'])) {
-        $opc_config_value = $_POST['configuration_value'];
-        if (strpos($opc_config_value, '&gt;') !== false || strpos($opc_config_value, '&quot;') !== false) {
-            $_POST['configuration_value'] = str_replace(array('&gt;', '&quot;'), array('>', '"'), $opc_config_value);
         }
     }
 }

@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2024, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.5.1
+// Last updated: OPC v2.5.2
 //
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
@@ -391,6 +391,18 @@ switch (true) {
             "UPDATE " . TABLE_CONFIGURATION . "
                 SET configuration_description = 'Use a comma-separated list (intervening blanks are OK) to identify any payment methods that handle the checkout form\'s submittal themselves, e.g. <code>square_webPay</code>, the default.<br>'
               WHERE configuration_key = 'CHECKOUT_ONE_PAYMENT_METHODS_THAT_SUBMIT'
+              LIMIT 1"
+        );
+
+    // -----
+    // v2.5.2:
+    //
+    // - Remove no-longer-used 'CHECKOUT_ONE_OTTOTAL_SELECTOR' setting.
+    //
+    case version_compare(CHECKOUT_ONE_MODULE_VERSION, '2.5.2', '<'):    //-Fall-through processing from above
+        $db->Execute(
+            "DELETE FROM " . TABLE_CONFIGURATION . "
+              WHERE configuration_key = 'CHECKOUT_ONE_OTTOTAL_SELECTOR'
               LIMIT 1"
         );
 

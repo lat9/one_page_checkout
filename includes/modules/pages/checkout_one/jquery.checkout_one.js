@@ -2,7 +2,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
 // Copyright (C) 2013-2024, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last changed: OPC v2.5.1
+// Last changed: OPC v2.5.2
 //
 var selected;
 var submitter = null;
@@ -144,10 +144,6 @@ jQuery(document).ready(function() {
         if (jQuery('#opc-order-review').length == 0) {
             elementsMissing = true;
             zcLog2Console('Missing #opc-order-review');
-        }
-        if (jQuery(ottotalSelector).length == 0) {
-            elementsMissing = true;
-            zcLog2Console('Missing '+ottotalSelector);
         }
     }
 
