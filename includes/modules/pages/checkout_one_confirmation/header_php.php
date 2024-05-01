@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2024, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.5.0
+// Last updated: OPC v2.5.2
 //
 
 // This should be first line of the script:
@@ -193,12 +193,12 @@ if ($credit_covers === true && strpos(CHECKOUT_ONE_CONFIRMATION_REQUIRED, 'credi
     $confirmation_required = true;
 }
 
-if (($_SESSION['opc_order_hash'] ?? '') !== md5(json_encode($order->info))) {
+if (($_SESSION['opc_saved_order_total'] ?? '') !== $currencies->value($order->info['total'])) {
     $error = true;
     $checkout_one->debug_message(
-        "Order-information mismatch, before and after:\n" .
-        json_encode($_SESSION['opc_hashed_order_info'], JSON_PRETTY_PRINT) . "\n" .
-        json_encode($order->info, JSON_PRETTY_PRINT)
+        "Order-total mismatch, before and after:\n" .
+        json_encode($_SESSION['opc_saved_order_total'], JSON_PRETTY_PRINT) . "\n" .
+        json_encode($currencies->value($order->info['total']), JSON_PRETTY_PRINT)
     );
     $messageStack->add_session('checkout_payment', ERROR_NOJS_ORDER_CHANGED, 'error');
 }

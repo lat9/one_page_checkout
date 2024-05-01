@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2024, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated for OPC v2.5.0
+// Last updated for OPC v2.5.2
 //
 // -----
 // This should be first line of the script:
@@ -352,8 +352,7 @@ foreach ($order_total_modules->modules as $next_module) {
     }
 }
 
-$_SESSION['opc_order_hash'] = md5(json_encode($order->info));
-$_SESSION['opc_hashed_order_info'] = $order->info;
+$_SESSION['opc_saved_order_total'] = $currencies->value($order->info['total']);
 $checkout_one->debug_message(
     "CHECKOUT_ONE_AFTER_ORDER_TOTAL_PROCESSING\n" .
     json_encode($order_total_modules, JSON_PRETTY_PRINT) . "\n" .

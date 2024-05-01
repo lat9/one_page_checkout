@@ -43,7 +43,7 @@ a[target=_blank] { text-decoration: underline; }
 
 <body>
     <h1>One-Page Checkout &hellip; with Guest &hellip; <span class="smaller">for Zen Cart v1.5.7a (and later)</span></h1>
-    <h3>Version 2.5.1 by lat9, swguy, simon1066, marco-pm, drbyte and proseLA</h3>
+    <h3>Version 2.5.2 by lat9, swguy, simon1066, marco-pm, drbyte and proseLA</h3>
     <h3>Copyright &copy; 2013-2024 <a href="https://vinosdefrutastropicales.com" target="_blank" rel="noopener">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
     <p>Released under the General Public License (see the file named <code>license.txt</code> in the plugin's distribution for full details). This script is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</p>
     <hr>
@@ -292,10 +292,15 @@ a[target=_blank] { text-decoration: underline; }
     <ul>
         <li>v2.5.2-beta1, 2024-04-27 (lat9):<ul>
             <li>BUGFIX: Remove no-longer-used (and problematic) <samp>CHECKOUT_ONE_OTTOTAL_SELECTOR</samp> setting.</li>
+            <li>BUGFIX: Further simplification of the transition from the <code>checkout_one</code> page to <code>checkout_confirmation</code>, ensuring <em>only</em> that the order's total-value hasn't changed.</li>
             <li>The following files were changed:<ol>
+                <li>/includes/classes/OnePageCheckout.php</li>
+                <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
+                <li>/includes/modules/pages/checkout_one/header_php.php</li>
                 <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
                 <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
                 <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
+                <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one_upgrade.php</li>
             </ol></li>

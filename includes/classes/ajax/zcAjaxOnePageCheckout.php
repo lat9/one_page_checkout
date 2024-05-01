@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
 // Copyright (C) 2013-2024, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.5.0
+// Last updated: OPC v2.5.2
 //
 class zcAjaxOnePageCheckout extends base
 {
@@ -112,9 +112,7 @@ class zcAjaxOnePageCheckout extends base
     //
     protected function formatOrderTotal()
     {
-        global $currencies;
-
-        return $currencies->value($_SESSION['opc_hashed_order_info']['total']);
+        return $_SESSION['opc_saved_order_total'];
     }
 
     // -----
@@ -381,7 +379,7 @@ class zcAjaxOnePageCheckout extends base
 
     protected function createOrderTotalHtml(): string
     {
-        global $db, $order, $shipping_modules, $payment_modules, $checkout_one, $discount_coupon;
+        global $db, $order, $shipping_modules, $payment_modules, $checkout_one, $discount_coupon, $currencies;
 
         $this->disableGzip();
 
@@ -426,8 +424,7 @@ class zcAjaxOnePageCheckout extends base
 
         ob_start();
         $order_total_modules->process();
-        $_SESSION['opc_order_hash'] = md5(json_encode($order->info));
-        $_SESSION['opc_hashed_order_info'] = $order->info;
+        $_SESSION['opc_saved_order_total'] = $currencies->value($order->info['total']);
         $order_total_modules->output();
         $order_total_html = ob_get_clean();
 

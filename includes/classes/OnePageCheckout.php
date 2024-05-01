@@ -6,7 +6,7 @@
 // This class, instantiated in the current customer session, keeps track of a customer's login and checkout
 // progression with the aid of the OPC's observer- and AJAX-classes.
 //
-// Last updated: OPC v2.5.1
+// Last updated: OPC v2.5.2
 //
 class OnePageCheckout extends base
 {
@@ -513,8 +513,7 @@ class OnePageCheckout extends base
     {
         unset(
             $_SESSION['shipping_billing'],
-            $_SESSION['opc_order_hash'],
-            $_SESSION['opc_hashed_order_info']
+            $_SESSION['opc_saved_order_total']
         );
         if (isset($_SESSION['opc_error']) && $_SESSION['opc_error'] !== self::OPC_ERROR_NO_JS) {
             unset($_SESSION['opc_error']);
