@@ -43,7 +43,7 @@ a[target=_blank] { text-decoration: underline; }
 
 <body>
     <h1>One-Page Checkout &hellip; with Guest &hellip; <span class="smaller">for Zen Cart v1.5.7a (and later)</span></h1>
-    <h3>Version 2.5.2 by lat9, swguy, simon1066, marco-pm, drbyte and proseLA</h3>
+    <h3>Version 2.5.3 by lat9, swguy, simon1066, marco-pm, drbyte and proseLA</h3>
     <h3>Copyright &copy; 2013-2024 <a href="https://vinosdefrutastropicales.com" target="_blank" rel="noopener">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
     <p>Released under the General Public License (see the file named <code>license.txt</code> in the plugin's distribution for full details). This script is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</p>
     <hr>
@@ -290,6 +290,13 @@ a[target=_blank] { text-decoration: underline; }
     <h3>Changes and Bugfixes</h3>
     <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank" rel="noopener">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color and removals are indicated like <span class="removed">this</span>.</p>
     <ul>
+        <li>v2.5.3-beta1, 2024-07-17 (lat9):<ul>
+            <li>BUGFIX: Correct PHP Warning when <samp>$_SESSION['opc_saved_order_total']</samp> isn't set.</li>
+            <li>The following files were changed:<ol>
+                <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
+                <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
+            </ol></li>
+        </ul></li>
         <li>v2.5.2, 2024-06-21 (lat9):<ul>
             <li>BUGFIX: Remove no-longer-used (and problematic) <samp>CHECKOUT_ONE_OTTOTAL_SELECTOR</samp> setting.</li>
             <li>BUGFIX: Further simplification of the transition from the <code>checkout_one</code> page to <code>checkout_confirmation</code>, ensuring <em>only</em> that the order's total-value hasn't changed.</li>

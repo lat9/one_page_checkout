@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2024, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.5.2
+// Last updated: OPC v2.5.3
 //
 
 // This should be first line of the script:
@@ -197,7 +197,7 @@ if (($_SESSION['opc_saved_order_total'] ?? '') !== $currencies->value($order->in
     $error = true;
     $checkout_one->debug_message(
         "Order-total mismatch, before and after:\n" .
-        json_encode($_SESSION['opc_saved_order_total'], JSON_PRETTY_PRINT) . "\n" .
+        json_encode($_SESSION['opc_saved_order_total'] ?? '', JSON_PRETTY_PRINT) . "\n" .
         json_encode($currencies->value($order->info['total']), JSON_PRETTY_PRINT)
     );
     $messageStack->add_session('checkout_payment', ERROR_NOJS_ORDER_CHANGED, 'error');
