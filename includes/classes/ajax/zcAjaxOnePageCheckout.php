@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
 // Copyright (C) 2013-2024, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.5.2
+// Last updated: OPC v2.5.3
 //
 class zcAjaxOnePageCheckout extends base
 {
@@ -431,7 +431,7 @@ class zcAjaxOnePageCheckout extends base
         $checkout_one->debug_message(
             "Returning:\n" .
             json_encode($order->info, JSON_PRETTY_PRINT) . "\n" .
-            json_encode($_SESSION['shipping']) . "\n" .
+            json_encode($_SESSION['shipping'] ?? [], JSON_PRETTY_PRINT) . "\n" .
             ($_SESSION['payment'] ?? '[not set]'),
             false,
             'zcAjaxOnePageCheckout::createOrderTotalHtml'
