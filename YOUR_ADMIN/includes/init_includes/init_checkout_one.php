@@ -15,8 +15,8 @@ if (!defined('IS_ADMIN_FLAG')) {
 // 500-599 ... Registered-account settings
 // 1000+ ..... Debug settings
 //
-define('CHECKOUT_ONE_CURRENT_VERSION', '2.5.3-beta1');
-define('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2024-07-17');
+define('CHECKOUT_ONE_CURRENT_VERSION', '2.5.3-beta3');
+define('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2024-08-08');
 
 if (isset($_SESSION['admin_id'])) {
     $version_release_date = CHECKOUT_ONE_CURRENT_VERSION . ' (' . CHECKOUT_ONE_CURRENT_UPDATE_DATE . ')';
@@ -49,11 +49,30 @@ if (isset($_SESSION['admin_id'])) {
 
     // -----
     // Make sure that the guest-/temporary-address indexes have been registered (in case the store-owner
-    // somehow removes those settings).
+    // somehow removes those settings).  If defined, make sure that they reference
+    // existing entries in the customers/address_book tables, too!
     //
+    $guest_customer_id_ok = false;
     if (defined('CHECKOUT_ONE_GUEST_CUSTOMER_ID')) {
-        $guest_customer_id = CHECKOUT_ONE_GUEST_CUSTOMER_ID;
-    } else {
+        $guest_customer_id = (int)CHECKOUT_ONE_GUEST_CUSTOMER_ID;
+        $opc_check = $db->Execute(
+            "SELECT customers_id
+               FROM " . TABLE_CUSTOMERS . "
+              WHERE customers_id = $guest_customer_id
+                AND customers_authorization = 0
+              LIMIT 1"
+        );
+        if (!$opc_check->EOF) {
+            $guest_customer_id_ok = true;
+        } else {
+            $db->Execute(
+                "DELETE FROM " . TABLE_CONFIGURATION . "
+                  WHERE configuration_key = 'CHECKOUT_ONE_GUEST_CUSTOMER_ID'
+                  LIMIT 1"
+            );
+        }
+    }
+    if ($guest_customer_id_ok === false) {
         $sql_data_array = [
             'customers_firstname' => 'Guest',
             'customers_lastname' => 'Customer, **do not remove**'
@@ -61,10 +80,10 @@ if (isset($_SESSION['admin_id'])) {
         zen_db_perform(TABLE_CUSTOMERS, $sql_data_array);
         $guest_customer_id = zen_db_insert_id();
         $db->Execute(
-            "INSERT IGNORE INTO " . TABLE_CONFIGURATION . " 
-                ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) 
-                VALUES 
-                ( 'Guest Checkout: Customer ID', 'CHECKOUT_ONE_GUEST_CUSTOMER_ID', '$guest_customer_id', 'This (hidden) value identifies the customers-table entry that is used as the pseudo-customers_id for any guest checkout in your store.', 6, now(), 30, NULL, NULL)"
+            "INSERT INTO " . TABLE_CONFIGURATION . " 
+                (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order)
+             VALUES
+                ('Guest Checkout: Customer ID', 'CHECKOUT_ONE_GUEST_CUSTOMER_ID', '$guest_customer_id', 'This (hidden) value identifies the customers-table entry that is used as the pseudo-customers_id for any guest checkout in your store.', 6, now(), 30)"
         );
         $sql_data_array = [
             'customers_info_id' => $guest_customer_id,
@@ -74,10 +93,29 @@ if (isset($_SESSION['admin_id'])) {
     }
 
     // -----
-    // $opc_recreate_billto is set by the OPC upgrade initialization script if it finds that the
-    // billto address has been changed from its default and requires recreation.
+    // Ensure that OPC's guest billing address-id is present and actually
+    // present in the address_book table.
     //
-    if (!defined('CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID') || !empty($opc_recreate_billto)) {
+    $guest_address_id_ok = false;
+    if (defined('CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID')) {
+        $opc_check = $db->Execute(
+            "SELECT address_book_id
+               FROM " . TABLE_ADDRESS_BOOK . "
+              WHERE address_book_id = " . (int)CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID . "
+                AND customers_id = $guest_customer_id
+              LIMIT 1"
+        );
+        if (!$opc_check->EOF) {
+            $guest_address_id_ok = true;
+        } else {
+            $db->Execute(
+                "DELETE FROM " . TABLE_CONFIGURATION . "
+                  WHERE configuration_key = 'CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID'
+                  LIMIT 1"
+            );
+        }
+    }
+    if ($guest_address_id_ok === false) {
         $sql_data_array = [
             'customers_id' => $guest_customer_id,
             'entry_firstname' => 'Guest',
@@ -89,10 +127,10 @@ if (isset($_SESSION['admin_id'])) {
         zen_db_perform(TABLE_ADDRESS_BOOK, $sql_data_array);
         $address_book_id = zen_db_insert_id();
         $db->Execute(
-            "INSERT IGNORE INTO " . TABLE_CONFIGURATION . " 
-                ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) 
-                VALUES 
-                ( 'Guest Checkout: Billing-Address ID', 'CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID', '$address_book_id', 'This (hidden) value identifies the address_book-table entry that is used as the pseudo-billing-address entry for any guest checkout in your store.', 6, now(), 30, NULL, NULL)"
+            "INSERT INTO " . TABLE_CONFIGURATION . " 
+                (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order)
+             VALUES
+                ('Guest Checkout: Billing-Address ID', 'CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID', '$address_book_id', 'This (hidden) value identifies the address_book-table entry that is used as the pseudo-billing-address entry for any guest checkout in your store.', 6, now(), 30)"
         );
         $db->Execute(
             "UPDATE " . TABLE_CUSTOMERS . "
@@ -103,10 +141,29 @@ if (isset($_SESSION['admin_id'])) {
     }
 
     // -----
-    // $opc_recreate_sendto is set by the OPC upgrade initialization script if it finds that the
-    // sendto address has been changed from its default and requires recreation.
+    // Ensure that OPC's guest shipping address-id is present and actually
+    // present in the address_book table.
     //
-    if (!defined('CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID') || !empty($opc_recreate_sendto)) {
+    $guest_address_id_ok = false;
+    if (defined('CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID')) {
+        $opc_check = $db->Execute(
+            "SELECT address_book_id
+               FROM " . TABLE_ADDRESS_BOOK . "
+              WHERE address_book_id = " . (int)CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID . "
+                AND customers_id = $guest_customer_id
+              LIMIT 1"
+        );
+        if (!$opc_check->EOF) {
+            $guest_address_id_ok = true;
+        } else {
+            $db->Execute(
+                "DELETE FROM " . TABLE_CONFIGURATION . "
+                  WHERE configuration_key = 'CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID'
+                  LIMIT 1"
+            );
+        }
+    }
+    if ($guest_address_id_ok === false) {
         $sql_data_array = [
             'customers_id' => $guest_customer_id,
             'entry_firstname' => 'Guest',
@@ -118,10 +175,10 @@ if (isset($_SESSION['admin_id'])) {
         zen_db_perform(TABLE_ADDRESS_BOOK, $sql_data_array);
         $address_book_id = zen_db_insert_id();
         $db->Execute(
-            "INSERT IGNORE INTO " . TABLE_CONFIGURATION . " 
-                ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) 
-                VALUES 
-                ( 'Guest Checkout: Shipping-Address ID', 'CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID', '$address_book_id', 'This (hidden) value identifies the address_book-table entry that is used as the pseudo-shipping-address entry for any guest checkout in your store, if different from the billing address.', 6, now(), 30, NULL, NULL)"
+            "INSERT INTO " . TABLE_CONFIGURATION . " 
+                (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order)
+             VALUES
+                ('Guest Checkout: Shipping-Address ID', 'CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID', '$address_book_id', 'This (hidden) value identifies the address_book-table entry that is used as the pseudo-shipping-address entry for any guest checkout in your store.', 6, now(), 30)"
         );
     }
 

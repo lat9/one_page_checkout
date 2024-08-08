@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2024, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.5.2
+// Last updated: OPC v2.5.3
 //
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
@@ -228,107 +228,6 @@ switch (true) {
                   WHERE configuration_key = 'CHECKOUT_ONE_GUEST_PAGES_DISALLOWED'
                   LIMIT 1"
             );
-        }
-
-    // -----
-    // v2.3.4:
-    //
-    // - Ensure no overwrite of guest-customer's billing/shipping address.
-    //
-    case version_compare(CHECKOUT_ONE_MODULE_VERSION, '2.3.4', '<'):    //-Fall-through processing from above
-        $guest_customer_id = (defined('CHECKOUT_ONE_GUEST_CUSTOMER_ID')) ? (int)CHECKOUT_ONE_GUEST_CUSTOMER_ID : 0;
-        $sql_data_array = [
-            'customers_id' => $guest_customer_id,
-            'entry_firstname' => 'Guest',
-            'entry_lastname' => 'Customer, **do not remove**',
-            'entry_street_address' => 'Default billing address',
-            'entry_country_id' => (int)STORE_COUNTRY,
-            'entry_zone_id' => (int)STORE_ZONE
-        ];
-
-        // -----
-        // If the guest billto address book id configuration value is present, make sure that
-        // it's a valid address-book entry.  That is, it's present and contains the default information.
-        //
-        // If the information's invalid, remove the entry, note the change in a log file and set a flag so that
-        // the 'base' OPC initialization script will recreate that entry.
-        //
-        if (defined('CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID')) {
-            $opc_ab_info_ok = false;
-            $opc_ab_info = $db->Execute(
-                "SELECT *
-                   FROM " . TABLE_ADDRESS_BOOK . "
-                  WHERE address_book_id = " . (int)CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID . "
-                    AND customers_id = $guest_customer_id
-                  LIMIT 1"
-            );
-            if ($opc_ab_info->EOF) {
-                $opc_ab_info_ok = false;
-                $opc_ab_msg = '[Empty]';
-            } else {
-                $opc_ab_info_ok = true;
-                $opc_ab_msg = json_encode($opc_ab_info->fields);
-                foreach ($sql_data_array as $key => $val) {
-                    if ($opc_ab_info->fields[$key] != $val) {
-                        $opc_ab_info_ok = false;
-                        break;
-                    }
-                }
-            }
-            if (!$opc_ab_info_ok) {
-                $opc_recreate_billto = true;
-                $db->Execute(
-                    "DELETE FROM " . TABLE_CONFIGURATION . "
-                      WHERE configuration_key = 'CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID'
-                      LIMIT 1"
-                );
-                $db->Execute(
-                    "DELETE FROM " . TABLE_ADDRESS_BOOK . "
-                      WHERE address_book_id = " . (int)CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID . "
-                      LIMIT 1"
-                );
-                error_log(date('Y-m-d H:i:s') . ": Removed invalid guest billing-address information (" . CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID . "': $opc_ab_msg.\n", 3, DIR_FS_LOGS . '/opc_admin_messages.log');
-            }
-        }
-        if (defined('CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID')) {
-            $opc_ab_info_ok = false;
-            $sql_data_array['entry_street_address'] = 'Default shipping address';
-
-            $opc_ab_info = $db->Execute(
-                "SELECT *
-                   FROM " . TABLE_ADDRESS_BOOK . "
-                  WHERE address_book_id = " . (int)CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID . "
-                    AND customers_id = $guest_customer_id
-                  LIMIT 1"
-            );
-            if ($opc_ab_info->EOF) {
-                $opc_ab_info_ok = false;
-                $opc_ab_msg = '[Empty]';
-            } else {
-                $opc_ab_info_ok = true;
-
-                $opc_ab_msg = json_encode($opc_ab_info->fields);
-                foreach ($sql_data_array as $key => $val) {
-                    if ($opc_ab_info->fields[$key] != $val) {
-                        $opc_ab_info_ok = false;
-                        break;
-                    }
-                }
-            }
-            if (!$opc_ab_info_ok) {
-                $opc_recreate_sendto = true;
-                $db->Execute(
-                    "DELETE FROM " . TABLE_CONFIGURATION . "
-                      WHERE configuration_key = 'CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID'
-                      LIMIT 1"
-                );
-                $db->Execute(
-                    "DELETE FROM " . TABLE_ADDRESS_BOOK . "
-                      WHERE address_book_id = " . (int)CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID . "
-                      LIMIT 1"
-                );
-                error_log(date('Y-m-d H:i:s') . ": Removed invalid guest shipping-address information (" . CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID . "): $opc_ab_msg.\n", 3, DIR_FS_LOGS . '/opc_admin_messages.log');
-            }
         }
 
     // -----
