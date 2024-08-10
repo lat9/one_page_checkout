@@ -83,7 +83,7 @@ a[target=_blank] { text-decoration: underline; }
     </div>
 
     <p><em>One-Page Checkout's</em> installation loads all the plugin's files into the sub-directories associated with the <em>template_default</em> template's use; that way, the processing is available for <b>all</b> templates you might use in your store.  If you make changes to those default files, you'll use the Zen Cart &quot;override&quot; system to make your updates.  For example, if you're adding a top-of-page message, you'll copy the file /includes/languages/english/checkout_one.php to the /includes/languages/english/YOUR_TEMPLATE sub-directory and make your changes there.</p>
-    <p>The plugin has been validated on Zen Cart 1.5.7a through 2.0.0-rc2 and PHP versions 7.4 through 8.3, using the following shipping, order-total and payment methods:</p>
+    <p>The plugin has been validated on Zen Cart 1.5.7a through 2.1.0-alpha1 and PHP versions 7.4 through 8.3, using the following shipping, order-total and payment methods:</p>
     <div class="multi-list">
         <h4>Shipping Methods</h4>
         <ol>
@@ -290,7 +290,7 @@ a[target=_blank] { text-decoration: underline; }
     <h3>Changes and Bugfixes</h3>
     <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank" rel="noopener">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color and removals are indicated like <span class="removed">this</span>.</p>
     <ul>
-        <li>v2.5.3-beta3, 2024-08-08 (lat9):<ul>
+        <li>v2.5.3, 2024-08-10 (lat9):<ul>
             <li>BUGFIX: Correct PHP Warning when <samp>$_SESSION['opc_saved_order_total']</samp> isn't set and debug is enabled.</li>
             <li>BUGFIX: Correct PHP Warning when <samp>$_SESSION['shipping']</samp> isn't set and debug is enabled.</li>
             <li>BUGFIX: Correct missing guest-customer records; disallow various <samp>customers.php</samp> actions on that guest-customer.</li>
