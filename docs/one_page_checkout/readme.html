@@ -292,8 +292,10 @@ a[target=_blank] { text-decoration: underline; }
     <ul>
         <li>v2.5.4-beta1, 2024-08-12 (lat9):<ul>
             <li>BUGFIX: Account for <samp>$_SESSION['opc_saved_order_total']</samp> not being set.</li>
+            <li>BUGFIX: Correct PHP Warning during <samp>paypaywpp</samp> processing.</li>
             <li>The following files were changed:<ol>
                 <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
+                <li>/includes/classes/OnePageCheckout.php</li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
             </ol></li>
         </ul></li>
