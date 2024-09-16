@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2024, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.5.3
+// Last updated: OPC v2.5.4
 //
 
 // This should be first line of the script:
@@ -140,10 +140,20 @@ $order_total_modules->pre_confirmation_check();
 $checkout_one->debug_message('Returned from call to order-totals:' . json_encode($order_total_modules, JSON_PRETTY_PRINT));
 
 // -----
+// Check to see if this confirmation-page entry was caused by something **other than**
+// the customer's click of a Review/Confirm order button. If not, processing is forced back
+// to the checkout data-gathering page **without additional customer messages**.
+//
+$non_processable_order = (($_POST['action'] ?? '') !== 'process');
+if ($non_processable_order === true) {
+    $checkout_one->debug_message('Forcing return to checkout_one, due to action (' . ($_POST['action'] ?? '') . ') submitted.');
+}
+
+// -----
 // Check to see if any messages exist for  'checkout', 'checkout_payment' or 'redemptions' (issued by credit-class order-totals); if so,
 // redirect back to the 'checkout_one' page at this time.
 //
-if ($messageStack->size('checkout') !== 0 || $messageStack->size('checkout_payment') !== 0 || $messageStack->size('redemptions') !== 0) {
+if ($non_processable_order === true || $messageStack->size('checkout') !== 0 || $messageStack->size('checkout_payment') !== 0 || $messageStack->size('redemptions') !== 0) {
     zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));
 }
 

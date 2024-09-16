@@ -302,21 +302,25 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
             <li>BUGFIX: Account for <samp>$_SESSION['opc_saved_order_total']</samp> not being set.</li>
             <li>BUGFIX: Correct PHP Warning during <samp>paypaywpp</samp> processing.</li>
             <li>INTROP: Remove storefront non-array-format language files from this distribution; <b>no longer supporting initial installation on zc157!</b></li>
+            <li>BUGFIX: Orders could be submitted via click of an &quot;Apply&quot; button for a credit-class order-total.</li>
             <li>The following files were changed:<ol>
                 <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
                 <li>/includes/classes/OnePageCheckout.php</li>
-                <li><span class="removed">/includes/langauges/english/address_book_register.php</span><sup>1</sup></li>
+                <li><span class="removed">/includes/languages/english/address_book_register.php</span><sup>1</sup></li>
                 <li><span class="removed">/includes/languages/english/checkout_one.php</span><sup>1</sup></li>
                 <li><span class="removed">/includes/languages/english/checkout_one_confirmation.php<sup>1</sup></li>
                 <li><span class="removed">/includes/languages/english/checkout_process_guest.php</span><sup>1</sup></li>
                 <li><span class="removed">/includes/languages/english/checkout_success_guest.php</span><sup>1</sup></li>
                 <li><span class="removed">/includes/languages/english/create_account_register.php</span><sup>1</sup></li>
-                <li><span class="removed">/includes/langauges/english/create_account_success_register.php</span><sup>1</sup></li>
+                <li><span class="removed">/includes/languages/english/create_account_success_register.php</span><sup>1</sup></li>
                 <li><span class="removed">/includes/languages/english/login_guest.php</span><sup>1</sup></li>
                 <li><span class="removed">/includes/languages/english/extra_definitions/checkout_one_extra_definitions.php</span><sup>1</sup></li>
                 <li><span class="removed">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_coupon.php</span><sup>1</sup></li>
                 <li><span class="removed">/includes/languages/english/modules/order_total/YOUR_TEMPLATE/ot_gv.php</span><sup>1</sup></li>
                 <li><span class="removed">/includes/languages/english/YOUR_TEMPLATE/order_status.php</span><sup>1</sup></li>
+                <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
+                <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
+                <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
             </ol></li>
             <sup>1</sup>Removed from this distribution <em>only</em>; if your site runs on a version of Zen Cart 1.5.7, these files <b>must</b> be kept from your original installation.

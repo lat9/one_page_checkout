@@ -2,7 +2,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
 // Copyright (C) 2013-2024, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last changed: OPC v2.5.2
+// Last changed: OPC v2.5.4
 //
 var selected;
 var submitter = null;
@@ -529,6 +529,7 @@ jQuery(document).ready(function() {
     jQuery(document).on('click', '.opc-cc-submit', function() {
         zcLog2Console('Submitting credit-class request');
         setOrderConfirmed(0);
+        jQuery('input[name="action"]').val('cc-submit');
         jQuery('form[name="checkout_payment"]').submit();
     });
 
