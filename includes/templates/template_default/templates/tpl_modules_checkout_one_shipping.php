@@ -1,9 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
-// Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2024, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.4.1
+// Last updated: OPC v2.5.5
 //
 // -----
 // This module is used by both the plugin's tpl_modules_opc_shipping_choices.php template and by the plugin's AJAX handler (zcAjaxOnePageCheckout.php) to render
@@ -11,7 +11,10 @@
 //
             $radio_buttons = 0;
             for ($i = 0, $n = count($quotes); $i < $n; $i++) {
-                $shipping_module_id = $quotes[$i]['id'];
+                $shipping_module_id = $quotes[$i]['id'] ?? false;
+                if ($shipping_module_id === false) {
+                    continue;
+                }
                 if ($quotes[$i]['module'] != '') { // Standard
 ?>
         <fieldset>
@@ -24,7 +27,10 @@
                     } else {
                         $shipping_tax_rate = (empty($quotes[$i]['tax'])) ? 0 : $quotes[$i]['tax'];
                         for ($j = 0, $n2 = count($quotes[$i]['methods']); $j < $n2; $j++) {
-                            $shipping_method_id = $quotes[$i]['methods'][$j]['id'];
+                            $shipping_method_id = $quotes[$i]['methods'][$j]['id'] ?? false;
+                            if ($shipping_method_id === false) {
+                                continue;
+                            }
 // set the radio button to be checked if it is the method chosen
                             $shipping_method = $shipping_module_id . '_' . $shipping_method_id;
                             $checked = ($shipping_method == $_SESSION['shipping']['id']);
