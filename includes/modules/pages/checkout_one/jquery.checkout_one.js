@@ -1,8 +1,8 @@
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
-// Copyright (C) 2013-2024, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2025, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last changed: OPC v2.5.4
+// Last changed: OPC v2.5.5
 //
 var selected;
 var submitter = null;
@@ -456,9 +456,15 @@ jQuery(document).ready(function() {
         };
 
         if (additionalShippingInputs.length != 0) {
+            var shippingInputs = {};
             jQuery.each(additionalShippingInputs, function(field_name, values) {
-                shippingInputs[field_name] = jQuery('input[name="'+values['input_name']+'"]'+values['parms']).val();
+                if (jQuery('select[name="'+field_name+'"]').length !== 0) {
+                    shippingInputs[field_name] = jQuery('select[name="'+field_name+'"]').val();
+                } else {
+                    shippingInputs[field_name] = jQuery('input[name="'+field_name+'"]'+values['parms']).val();
+                }
             });
+            console.log(shippingInputs);
             shippingData = jQuery.extend(shippingData, shippingInputs);
         }
 

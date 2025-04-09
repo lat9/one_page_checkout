@@ -1,9 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
-// Copyright (C) 2013-2024, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2025, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.5.2
+// Last updated: OPC v2.5.5
 //
 ?>
 <script>
@@ -103,8 +103,7 @@ if (isset($quotes) && is_array($quotes)) {
 
         if (isset($current_quote['required_input_names']) && is_array($current_quote['required_input_names'])) {
             foreach ($current_quote['required_input_names'] as $current_input_name => $selection_required) {
-                $opc_additional_shipping_inputs[base::camelize($current_input_name)] = [
-                    'input_name' => '',
+                $opc_additional_shipping_inputs[$current_input_name] = [
                     'parms' => ($selection_required) ? ':checked' : '',
                 ];
             }

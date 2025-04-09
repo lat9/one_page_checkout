@@ -1,9 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
-// Copyright (C) 2013-2024, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2025, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.5.4
+// Last updated: OPC v2.5.5
 //
 class zcAjaxOnePageCheckout extends base
 {
@@ -88,6 +88,8 @@ class zcAjaxOnePageCheckout extends base
                         'module' => $shipping_module_id,
                         'cost' => $shipping_method_cost,
                     ];
+
+                    $this->notify('NOTIFY_AJAX_OPC_UPDATE_SHIPPING', $shipping_elements, $status, $error_message);
 
                     $order_total_html = $this->createOrderTotalHtml();
                 }
