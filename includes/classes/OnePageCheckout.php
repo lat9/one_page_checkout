@@ -1,12 +1,12 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2017-2024, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2017-2025, Vinos de Frutas Tropicales.  All rights reserved.
 //
 // This class, instantiated in the current customer session, keeps track of a customer's login and checkout
 // progression with the aid of the OPC's observer- and AJAX-classes.
 //
-// Last updated: OPC v2.5.4
+// Last updated: OPC v2.5.5
 //
 class OnePageCheckout extends base
 {
@@ -2620,7 +2620,7 @@ class OnePageCheckout extends base
                 break;
 
             default:
-                trigger_error('Unknown value (' . STORE_PRODUCT_TAX_BASIS . ') found for \'STORE_PRODUCT_TAX_BASIS\'.', E_USER_ERROR);
+                trigger_error('FATAL Error: Unknown value (' . STORE_PRODUCT_TAX_BASIS . ') found for \'STORE_PRODUCT_TAX_BASIS\'.', E_USER_WARNING);
                 zen_exit();
                 break;
         }

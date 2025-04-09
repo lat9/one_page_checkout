@@ -301,13 +301,16 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
         <li>v2.5.5-beta2, 2025-04-09 (lat9):<ul>
             <li>BUGFIX: Silently ignore shipping modules/methods with no specified <code>id</code> to prevent PHP warnings/deprecations.</li>
             <li>BUGFIX: Correct integration with shipping modules that provide &quot;extra&quot; fields.</li>
+            <li>INTROP: E_USER_ERROR deprecated for PHP 8.4.</li>
             <li>The following files were changed:<ol>
+                <li>/includes/classes/OnePageCheckout.php</li>
                 <li>/includes/classes/ajax/ajaxOnePageCheckout.php</li>
                 <li>/includes/modules/pages/checkout_one/header_php.php</li>
                 <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
                 <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
                 <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
                 <li>/includes/templates/template_default/templates/tpl_modules_checkout_one_shipping.php</li>
+                <li>/includes/templates/template_default/templates/tpl_modules_opc_address_block.php</li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
             </ol></li>
         </ul></li>
