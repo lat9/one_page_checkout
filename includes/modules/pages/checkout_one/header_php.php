@@ -1,9 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
-// Copyright (C) 2013-2024, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2025, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated for OPC v2.5.2
+// Last updated for OPC v2.5.5
 //
 // -----
 // This should be first line of the script:
@@ -230,8 +230,11 @@ if ($is_virtual_order === false && $customer_info_ok === true && $temp_shipto_ad
         $selected_shipping_cost = 0;
         $checklist = [];
         foreach ($quotes as $quote) {
-            if (!empty($quote['methods'])) {
+            if (!empty($quote['id']) && !empty($quote['methods'])) {
                 foreach ($quote['methods'] as $method) {
+                    if (empty($method['id'])) {
+                        continue;
+                    }
                     if ($_SESSION['shipping']['id'] === $quote['id'] . '_' . $method['id']) {
                         // -----
                         // Using a 'loose' comparison, since some costs are recorded as numbers
