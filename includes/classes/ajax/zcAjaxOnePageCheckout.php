@@ -390,21 +390,27 @@ class zcAjaxOnePageCheckout extends base
         // and their pricing/taxes as well as the updated shipping-selection recorded
         // in the session, above.
         //
-        require DIR_WS_CLASSES . 'order.php';
+        if (!class_exists('order')) {
+            require DIR_WS_CLASSES . 'order.php';
+        }
         $order = new order();
 
         // -----
         // Create an instance of the shipping-class; that'll pull in the language files and make
         // an instance of the currently-selected shipping modules.
         //
-        require DIR_WS_CLASSES . 'shipping.php';
+        if (!class_exists('shipping')) {
+            require DIR_WS_CLASSES . 'shipping.php';
+        }
         $shipping_modules = new shipping($_SESSION['shipping'] ?? null);
 
         // -----
         // Create an instance of the payment-class; that'll pull in the language file(s) and create
         // an instance of the currently-selected payment module(s).
         //
-        require DIR_WS_CLASSES . 'payment.php';
+        if (!class_exists('payment')) {
+            require DIR_WS_CLASSES . 'payment.php';
+        }
         $payment_modules = new payment($_SESSION['payment'] ?? '');
 
         // -----
@@ -421,7 +427,9 @@ class zcAjaxOnePageCheckout extends base
         // Pull in changes/re-calculations for the order's totals based on the change in
         // shipping method.
         //
-        require DIR_WS_CLASSES . 'order_total.php';
+        if (!class_exists('order_total')) {
+            require DIR_WS_CLASSES . 'order_total.php';
+        }
         $order_total_modules = new order_total();
 
         ob_start();
