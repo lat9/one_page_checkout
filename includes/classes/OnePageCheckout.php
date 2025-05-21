@@ -949,6 +949,7 @@ class OnePageCheckout extends base
             return [];
         }
 
+        $state = ((!empty($this->tempAddressValues[$which]['state'])) ? $this->tempAddressValues[$which]['state'] : $this->tempAddressValues[$which]['zone_name']);
         $address = [
             'firstname' => $this->tempAddressValues[$which]['firstname'],
             'lastname' => $this->tempAddressValues[$which]['lastname'],
@@ -957,7 +958,8 @@ class OnePageCheckout extends base
             'suburb' => $this->tempAddressValues[$which]['suburb'],
             'city' => $this->tempAddressValues[$which]['city'],
             'postcode' => $this->tempAddressValues[$which]['postcode'],
-            'state' => ((!empty($this->tempAddressValues[$which]['state'])) ? $this->tempAddressValues[$which]['state'] : $this->tempAddressValues[$which]['zone_name']),
+            'state' => $state,
+            'state_code' => zen_get_zone_code((int)$country_id, (int)$this->tempAddressValues[$which]['zone_id'], $state),
             'zone_id' => $this->tempAddressValues[$which]['zone_id'],
             'country' => [
                 'id' => $country_id, 
