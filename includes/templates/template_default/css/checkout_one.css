@@ -11,7 +11,7 @@ select, fieldset select { margin-left: 0; height: 40px; }
 .floatingBox { width: 49%; }
 .clearRight { clear: right; }
 .clearBoth { clear: both; }
-.inputLabel { width: 110px; }
+.inputLabel { width: auto; }
 #cartContentsDisplay th, #cartContentsDisplay td { padding: 0.5em 1em; }
 #cartOrderTotals { border-top: 1px solid #bbb; border-bottom: 1px solid #bbb; }
 #checkoutOneCartGroup { padding-bottom: 0; }
