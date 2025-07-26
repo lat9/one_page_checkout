@@ -66,7 +66,7 @@ for ($i = 0, $n = count($order->products); $i < $n; $i++) {
   // display tax info if exists
     if (sizeof ($order->info['tax_groups']) > 1)  { 
 ?>
-          <td class="cartTotalDisplay"><?php echo zen_display_tax_value($order->products[$i]['tax']); ?>%</td>
+          <td class="cartTotalDisplay productTax"><?php echo zen_display_tax_value($order->products[$i]['tax']); ?>%</td>
 <?php
     }  // endif tax info display  
 ?>

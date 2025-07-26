@@ -24,7 +24,7 @@ class zcAjaxOnePageCheckout extends base
     //
     public function updateShippingSelection()
     {
-        global $checkout_one;
+        global $checkout_one, $order;
 
         // -----
         // Load the One-Page Checkout page's language files. Note that this method also sets the
@@ -95,6 +95,9 @@ class zcAjaxOnePageCheckout extends base
                 }
             }
         }
+        foreach ($order->products as $key => $values) {
+            $productTaxArray[$key] = $values['tax'] . '%';
+        }
 
         // -----
         // Return the re-formatted HTML to be updated into the order's "Totals" section.
@@ -104,6 +107,7 @@ class zcAjaxOnePageCheckout extends base
             'errorMessage' => $error_message,
             'orderTotalHtml' => $order_total_html,
             'total' => $this->formatOrderTotal(),
+            'productTax' => $productTaxArray,
         ];
     }
 

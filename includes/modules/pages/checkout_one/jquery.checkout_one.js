@@ -491,6 +491,14 @@ jQuery(document).ready(function() {
             } else {
                 jQuery('#orderTotalDivs').html(response.orderTotalHtml);
                 jQuery('#current-order-total').val(response.total);
+                var index = 0;
+                jQuery('.productTax').each(function() {
+                    if (index < Object.keys(response.productTax).length) {
+                        var key = Object.keys(response.productTax)[index];
+                        jQuery(this).text(response.productTax[key]);
+                        index++;
+                    }
+                });
             }
         });
     });
