@@ -70,7 +70,7 @@ for ($i = 0, $n = count($order->products); $i < $n; $i++) {
 <?php
     }  // endif tax info display  
 ?>
-          <td class="cartTotalDisplay">
+          <td class="cartTotalDisplay productPrice">
 <?php 
     echo $currencies->display_price($order->products[$i]['final_price'], $order->products[$i]['tax'], $order->products[$i]['qty']);
     if ($order->products[$i]['onetime_charges'] != 0 ) {
