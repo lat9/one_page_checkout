@@ -1,14 +1,10 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2019, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2025, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// The following definition is used in multiple pages and will in the main language file, e.g. english.php, for
-// Zen Cart versions 1.5.7 and later.
+// Last updated: OPC v2.5.5
 //
-// Provide an in-script override for the case it's not defined.
-//
-if (!defined('TEXT_OPTION_DIVIDER')) define('TEXT_OPTION_DIVIDER', '&nbsp;-&nbsp;');
 ?>
 <!--bof shopping-cart block -->
   <div id="checkoutOneShoppingCart">
@@ -49,7 +45,7 @@ for ($i = 0, $n = count($order->products); $i < $n; $i++) {
 <?php
         for ($j = 0, $n2 = count($order->products[$i]['attributes']); $j < $n2; $j++) {
 ?>
-              <li><?php echo $order->products[$i]['attributes'][$j]['option'] . TEXT_OPTION_DIVIDER . nl2br(zen_output_string_protected($order->products[$i]['attributes'][$j]['value'])); ?></li>
+              <li><?php echo $order->products[$i]['attributes'][$j]['option'] . TEXT_OPTION_DIVIDER . nl2br(zen_output_string_protected($order->products[$i]['attributes'][$j]['value']), false); ?></li>
 <?php
         } // end loop
 ?>
@@ -58,13 +54,13 @@ for ($i = 0, $n = count($order->products); $i < $n; $i++) {
     } // endif attribute-info
     
     if (isset ($posStockMessage)) {
-        echo '<br />' . $posStockMessage[$i];
+        echo '<br>' . $posStockMessage[$i];
     }
 ?>
           </td>
 <?php 
   // display tax info if exists
-    if (sizeof ($order->info['tax_groups']) > 1)  { 
+    if (count($order->info['tax_groups']) > 1) {
 ?>
           <td class="cartTotalDisplay productTax"><?php echo zen_display_tax_value($order->products[$i]['tax']); ?>%</td>
 <?php
@@ -74,20 +70,20 @@ for ($i = 0, $n = count($order->products); $i < $n; $i++) {
 <?php 
     echo $currencies->display_price($order->products[$i]['final_price'], $order->products[$i]['tax'], $order->products[$i]['qty']);
     if ($order->products[$i]['onetime_charges'] != 0 ) {
-        echo '<br /> ' . $currencies->display_price($order->products[$i]['onetime_charges'], $order->products[$i]['tax'], 1);
+        echo '<br>' . $currencies->display_price($order->products[$i]['onetime_charges'], $order->products[$i]['tax'], 1);
     }
 ?>
           </td>
         </tr>
-<?php  
-}  
+<?php
+}
 // end for loopthru all products 
 
 if (MODULE_ORDER_TOTAL_INSTALLED) {
     $row_class = ($last_row_class == 'rowEven') ? 'rowOdd' : 'rowEven';
-?>     
+?>
         <tr class="<?php echo $row_class; ?>" id="cartOrderTotals">
-            <td colspan="<?php echo (count($order->info['tax_groups']) > 1) ? 4 : 3; ?>" id="orderTotalDivs"><?php $order_total_modules->process (); $order_total_modules->output(); ?></td>
+            <td colspan="<?php echo (count($order->info['tax_groups']) > 1) ? 4 : 3; ?>" id="orderTotalDivs"><?php $order_total_modules->process(); $order_total_modules->output(); ?></td>
         </tr>
 <?php
 }

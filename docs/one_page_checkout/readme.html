@@ -298,12 +298,13 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
     <h3>Changes and Bugfixes</h3>
     <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank" rel="noopener">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color and removals are indicated like <span class="removed">this</span>.</p>
     <ul>
-        <li>v2.5.5-beta4, 2025-05-21 (lat9):<ul>
+        <li>v2.5.5-beta5, 2025-08-18 (lat9, proseLA):<ul>
             <li>BUGFIX: Silently ignore shipping modules/methods with no specified <code>id</code> to prevent PHP warnings/deprecations.</li>
             <li>BUGFIX: Correct integration with shipping modules that provide &quot;extra&quot; fields.</li>
             <li>INTROP: E_USER_ERROR deprecated for PHP 8.4.</li>
             <li>INTROP: Conditionally load order-related classes during AJAX processing.</li>
             <li>BUGFIX: Ensure temporary-address updates include the updated 'state_code' for that address.</li>
+            <li>INTROP: Update order's cart display when shipping changed, as tax might have changed as well.</li>
             <li>The following files were changed:<ol>
                 <li>/includes/classes/OnePageCheckout.php</li>
                 <li>/includes/classes/ajax/ajaxOnePageCheckout.php</li>
@@ -313,6 +314,7 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
                 <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
                 <li>/includes/templates/template_default/templates/tpl_modules_checkout_one_shipping.php</li>
                 <li>/includes/templates/template_default/templates/tpl_modules_opc_address_block.php</li>
+                <li>/includes/templates/template_default/templates/tpl_modules_opc_shopping_cart.php</li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
             </ol></li>
         </ul></li>
