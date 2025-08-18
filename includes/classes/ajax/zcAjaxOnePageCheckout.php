@@ -24,7 +24,7 @@ class zcAjaxOnePageCheckout extends base
     //
     public function updateShippingSelection()
     {
-        global $checkout_one;
+        global $checkout_one, $order, $currencies;
 
         // -----
         // Load the One-Page Checkout page's language files. Note that this method also sets the
@@ -34,6 +34,8 @@ class zcAjaxOnePageCheckout extends base
 
         $error_message = '';
         $order_total_html = '';
+        $productTaxArray = [];
+        $productPriceArray = [];
 
         // -----
         // Initialize the response's status code, continuing only if all is 'ok'.
@@ -92,6 +94,13 @@ class zcAjaxOnePageCheckout extends base
                     $this->notify('NOTIFY_AJAX_OPC_UPDATE_SHIPPING', $shipping_elements, $status, $error_message);
 
                     $order_total_html = $this->createOrderTotalHtml();
+                    foreach ($order->products as $key => $values) {
+                        $productTaxArray[$key] = $values['tax'] . '%';
+                        $productPriceArray[$key] =  $currencies->display_price($values['final_price'], $values['tax'], $values['qty']);
+                        if ($values['onetime_charges'] != 0 ) {
+                            $productPriceArray[$key] .= '<br> ' . $currencies->display_price($values['onetime_charges'], $values['tax'], 1);
+                        }
+                    }
                 }
             }
         }
@@ -104,6 +113,8 @@ class zcAjaxOnePageCheckout extends base
             'errorMessage' => $error_message,
             'orderTotalHtml' => $order_total_html,
             'total' => $this->formatOrderTotal(),
+            'productTax' => $productTaxArray,
+            'productPrice' => $productPriceArray,
         ];
     }
 

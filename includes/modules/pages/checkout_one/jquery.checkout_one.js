@@ -491,6 +491,17 @@ jQuery(document).ready(function() {
             } else {
                 jQuery('#orderTotalDivs').html(response.orderTotalHtml);
                 jQuery('#current-order-total').val(response.total);
+                const updateElements = (selector, data) => {
+                    let index = 0;
+                    $(selector).each(function() {
+                        if (index < Object.keys(data).length) {
+                            $(this).text(data[Object.keys(data)[index]]);
+                            index++;
+                        }
+                    });
+                };
+                updateElements('.productTax', response.productTax);
+                updateElements('.productPrice', response.productPrice);
             }
         });
     });
