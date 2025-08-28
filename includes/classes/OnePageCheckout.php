@@ -1472,7 +1472,7 @@ class OnePageCheckout extends base
         $email_address = zen_db_prepare_input(zen_sanitize_string($_POST['email_address'] ?? ''));
         if (strlen($email_address) < ENTRY_EMAIL_ADDRESS_MIN_LENGTH) {
             $messages['email_address'] = ENTRY_EMAIL_ADDRESS_ERROR;
-        } elseif (!zen_validate_email($email_address) || $this->isEmailBanned($email_address) === true) {
+        } elseif (!zen_validate_email($email_address) || $this->isEmailAuthorized($email_address) === false) {
             $messages['email_address'] = ENTRY_EMAIL_ADDRESS_CHECK_ERROR;
         } elseif (CHECKOUT_ONE_GUEST_EMAIL_CONFIRMATION === 'true') {
             $email_confirm = zen_db_prepare_input(zen_sanitize_string($_POST['email_address_conf']));
@@ -1538,22 +1538,15 @@ class OnePageCheckout extends base
     }
 
     // -----
-    // See if the supplied email-address is present (and banned) within the store's
-    // database.  Returns true if present and banned; false otherwise.
+    // See if the supplied email-address is present but not authorized within the store's
+    // database.  Returns false if present and not authorized; true otherwise.
     //
-    protected function isEmailBanned($email_address)
+    protected function isEmailAuthorized(string $email_address): bool
     {
-        global $db;
+        $customer = new Customer();
+        $check_customer = $customer->doLoginLookupByEmail($email_address);
 
-        $email_address = $db->prepare_input($email_address);
-        $check = $db->Execute(
-            "SELECT customers_id
-               FROM " . TABLE_CUSTOMERS . "
-              WHERE customers_email_address = '$email_address'
-                AND customers_authorization = 4
-              LIMIT 1"
-        );
-        return !$check->EOF;
+        return ($check_customer === false || $check_customer['customers_authorization'] === '0');
     }
 
     // -----
