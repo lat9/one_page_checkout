@@ -897,7 +897,7 @@ jQuery(document).ready(function() {
             //
             checkForRedirect(response);
 
-            jQuery('#checkoutOneGuestInfo').html(response.infoHtml);
+            jQuery('#checkoutOneGuestInfo').replaceWith(response.infoHtml);
             restoreAddressValues('bill', '#checkoutOneBillto');
         });
     }
