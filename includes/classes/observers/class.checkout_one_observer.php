@@ -213,7 +213,7 @@ class checkout_one_observer extends base
         // the observers for the zen_is_logged_in/zen_in_guest_checkout functions haven't yet been
         // attached!
         //
-        if (!(isset($_SESSION['opc_error']) && $_SESSION['opc_error'] === OnePageCheckout::OPC_ERROR_NO_JS) && isset($_SESSION['opc']) && $_SESSION['opc']->guestCheckoutEnabled() === true) {
+        if (!(isset($_SESSION['opc_error']) && $_SESSION['opc_error'] === OnePageCheckout::OPC_ERROR_NO_JS) && isset($_SESSION['opc']) && is_object($_SESSION['opc']) && $_SESSION['opc']->guestCheckoutEnabled() === true) {
             if ($_SESSION['opc']->isLoggedIn() === false || $_SESSION['opc']->isGuestCheckout() === true) {
                 unset($_SESSION['opc_error']);
                 $cart_products = $_SESSION['cart']->get_products();
