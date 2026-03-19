@@ -753,12 +753,8 @@ jQuery(document).ready(function() {
             }
             if (which == 'ship') {
                 jQuery(document).on('change', '#checkoutOneShipto input, #checkoutOneShipto select:not(#select-address-ship)', changeShippingFields);
-                jQuery(document).on('click', '#opc-ship-cancel', restoreShipping);
-                jQuery(document).on('click', '#opc-ship-save', saveShipping);
             } else {
                 jQuery(document).on('change', '#checkoutOneBillto input, #checkoutOneBillto select:not(#select-address-bill)', changeBillingFields);
-                jQuery(document).on('click', '#opc-bill-cancel', restoreBilling);
-                jQuery(document).on('click', '#opc-bill-save', saveBilling);
             }
         });
     }
@@ -897,7 +893,7 @@ jQuery(document).ready(function() {
             //
             checkForRedirect(response);
 
-            jQuery('#checkoutOneGuestInfo').html(response.infoHtml);
+            jQuery('#checkoutOneGuestInfo').replaceWith(response.infoHtml);
             restoreAddressValues('bill', '#checkoutOneBillto');
         });
     }
