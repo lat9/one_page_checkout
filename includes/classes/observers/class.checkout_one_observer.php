@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
-// Copyright (C) 2013-2025, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
 // Last updated: OPC v2.6.0
 //
@@ -213,7 +213,7 @@ class checkout_one_observer extends base
         // the observers for the zen_is_logged_in/zen_in_guest_checkout functions haven't yet been
         // attached!
         //
-        if (!(isset($_SESSION['opc_error']) && $_SESSION['opc_error'] === OnePageCheckout::OPC_ERROR_NO_JS) && isset($_SESSION['opc']) && is_object($_SESSION['opc']) && $_SESSION['opc']->guestCheckoutEnabled() === true) {
+        if (($_SESSION['opc_error'] ?? '') !== OnePageCheckout::OPC_ERROR_NO_JS && is_object($_SESSION['opc'] ?? '') && $_SESSION['opc']->guestCheckoutEnabled() === true) {
             if ($_SESSION['opc']->isLoggedIn() === false || $_SESSION['opc']->isGuestCheckout() === true) {
                 unset($_SESSION['opc_error']);
                 $cart_products = $_SESSION['cart']->get_products();
