@@ -131,6 +131,9 @@ class checkout_one_observer extends base
                     'NOTIFY_ZEN_IN_GUEST_CHECKOUT',
                     'NOTIFY_ZEN_IS_LOGGED_IN',
                     'NOTIFY_ZEN_ADDRESS_LABEL',
+                    'NOTIFY_ORDER_STATUS_VALIDATION_CHECK',
+                    'NOTIFY_ORDER_STATUS_SLAMMING_ALERT',
+                    'NOTIFY_HEADER_END_ORDER_STATUS',
                 ]
             );
         }
@@ -688,6 +691,46 @@ class checkout_one_observer extends base
                     }
                     $p2 = $tax_address;
                 }
+                break;
+
+            // -----
+            // Issued by the order_status page's header_php.php, just before
+            // any slamming-related actions.
+            //
+            // We'll use this as an opportunity to create the ORDER_STATUS_SLAM_COUNT
+            // definition, if not already defined (it is for zc210+), so that a PHP
+            // error can be averted.
+            //
+            case 'NOTIFY_ORDER_STATUS_VALIDATION_CHECK':
+                zen_define_default('ORDER_STATUS_SLAM_COUNT', 3);
+                break;
+
+            // -----
+            // Issued by the order_status page's header_php.php, when checking
+            // if the slamming count has been exceeded.  We'll replace the current
+            // threshold with OPC's configuration version.
+            //
+            // On entry:
+            //
+            // $p2 ... (r/w) the current slamming threshold.
+            //
+            case 'NOTIFY_ORDER_STATUS_SLAMMING_ALERT':
+                $slamming_threshold = (int)CHECKOUT_ONE_ORDER_STATUS_SLAM_COUNT;
+                if ($slamming_threshold <= 0) {
+                    $slamming_threshold = 3;
+                }
+                $p2 = $slamming_threshold;
+                break;
+
+            // -----
+            // Issued at the end of the order_status page's header_php.php.  If the
+            // constants used by the template aren't currently defined, set them to
+            // the default value.  They're provided for zc210 and later.
+            // 
+            case 'NOTIFY_HEADER_END_ORDER_STATUS':
+                zen_define_default('ORDER_STATUS_DISPLAY_PAYMENT', true);
+                zen_define_default('ORDER_STATUS_DISPLAY_SHIPPING', true);
+                zen_define_default('ORDER_STATUS_DISPLAY_PRODUCTS', true);
                 break;
 
             default:

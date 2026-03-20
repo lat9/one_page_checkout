@@ -1,15 +1,9 @@
 <?php
-// -----
-// Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
-//
-// Last updated: OPC v2.4.4
-//
-// Adapted from the like-named page handling with the following history:
-// - J_Schilz for Integrated COWOA - 2007
-// - JT of GTI Custom Modified for Integrated COWOA 02-July-2010
-// - Integrated COWAA v1.0 by @davewest
-//
+/**
+ * @copyright Copyright 2003-2025 Zen Cart Development Team
+ * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
+ * @version $Id: Scott Wilson 2024 Nov 23 Modified in v2.2.0 $
+ */
 
 // This should be first line of the script:
 $zco_notifier->notify('NOTIFY_HEADER_START_ORDER_STATUS');
@@ -49,19 +43,19 @@ $query_email_address = '';
 // -----
 // Create the store-specific name of the spam "honeypot" by hashing the store's defined name.
 //
-$spam_input_name = md5(STORE_NAME);
+$spam_input_name = hash('md5', STORE_NAME);
 
 if (isset($_GET['action']) && $_GET['action'] === 'status') {
     $error = false;
     unset($_SESSION['email_address'], $_SESSION['email_is_os']);
 
-    $orderID = isset($_POST['order_id']) ? (int)$_POST['order_id'] : 0;
+    $orderID = (int)($_POST['order_id'] ?? 0);
     if ($orderID < 1) {
         $error = true;
         $messageStack->add('order_status', ERROR_INVALID_ORDER);
     }
 
-    $query_email_address = isset($_POST['query_email_address']) ? zen_db_prepare_input($_POST['query_email_address']) : '';
+    $query_email_address = zen_db_prepare_input((string)($_POST['query_email_address'] ?? ''));
     if ($query_email_address === '' || !zen_validate_email($query_email_address)) {
         $error = true;
         $messageStack->add('order_status', ERROR_INVALID_EMAIL);
@@ -97,7 +91,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'status') {
         }
         $_SESSION['os_errors']++;
 
-        $slamming_threshold = (((int)CHECKOUT_ONE_ORDER_STATUS_SLAM_COUNT) > 0) ? (int)CHECKOUT_ONE_ORDER_STATUS_SLAM_COUNT : 3;
+        $slamming_threshold = (((int)ORDER_STATUS_SLAM_COUNT) > 0) ? (int)ORDER_STATUS_SLAM_COUNT : 3;
         $zco_notifier->notify('NOTIFY_ORDER_STATUS_SLAMMING_ALERT', $_SESSION['os_errors'], $slamming_threshold);
         if ($_SESSION['os_errors'] > (int)$slamming_threshold) {
             $zco_notifier->notify('NOTIFY_ORDER_STATUS_SLAMMING_LOCKOUT');
