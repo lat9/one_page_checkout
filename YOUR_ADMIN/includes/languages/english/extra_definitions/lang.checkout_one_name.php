@@ -18,6 +18,6 @@ $defines = [
     'TEXT_OPC_UPDATED' => 'The <em>One-Page Checkout</em> plugin was successfully upgraded from [%1$s] to [%2$s].',
 ];
 
-$defines['ICON_GUEST_CHECKOUT'] = '<i class="fa fa-user-secret" aria-hidden="true" title="' . ICON_GUEST_ALT . '"></i>';
+$defines['ICON_GUEST_CHECKOUT'] = '<i class="fa fa-user-secret" aria-hidden="true" title="' . $defines['ICON_GUEST_ALT'] . '"></i>';
 
 return $defines;
