@@ -1,12 +1,12 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2017-2025, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2017-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
 // This class, instantiated in the current customer session, keeps track of a customer's login and checkout
 // progression with the aid of the OPC's observer- and AJAX-classes.
 //
-// Last updated: OPC v2.5.5
+// Last updated: OPC v2.6.0
 //
 class OnePageCheckout extends base
 {
@@ -404,7 +404,7 @@ class OnePageCheckout extends base
     //
     protected function initializeGuestCheckout()
     {
-        global $current_page_base;
+        global $current_page_base, $spider_flag;
 
         $this->checkEnabled();
 
@@ -417,7 +417,7 @@ class OnePageCheckout extends base
             $this->debugMessage("Guest checkout disabled via observer.");
         }
 
-        $this->isGuestCheckoutEnabled = ($allow_guest_checkout === true && !zen_is_spider_session() && (defined('CHECKOUT_ONE_ENABLE_GUEST') && CHECKOUT_ONE_ENABLE_GUEST === 'true'));
+        $this->isGuestCheckoutEnabled = ($allow_guest_checkout === true && empty($spider_flag) && (defined('CHECKOUT_ONE_ENABLE_GUEST') && CHECKOUT_ONE_ENABLE_GUEST === 'true'));
         if ($this->isGuestCheckoutEnabled === true) {
             if (isset($_SESSION['opc_error']) && ($_SESSION['opc_error'] === self::OPC_ERROR_NO_GC || $_SESSION['opc_error'] === self::OPC_ERROR_NO_JS)) {
                 if ($_SESSION['opc_error'] === self::OPC_ERROR_NO_JS || in_array($current_page_base, [FILENAME_LOGIN, FILENAME_CHECKOUT_ONE, FILENAME_CHECKOUT_ONE_CONFIRMATION])) {
