@@ -48,7 +48,7 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
     <p>Released under the General Public License (see the file named <code>license.txt</code> in the plugin's distribution for full details). This script is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</p>
     <hr>
     <div><i class="fas fa-exclamation-circle fa-5x red back"></i>&nbsp;&nbsp;<b>Important Notes:</b></div>
-    <p>This version of <em>One-Page Checkout</em> supports Zen Cart <em>1.5.8 and later, including 2.1.0</em> &hellip; <b>only</b>. The <a href="#install">installation instructions</a> for <em>OPC</em> differ, depending on the version of Zen Cart on which your site runs.</p>
+    <p>This version of <em>One-Page Checkout</em> supports Zen Cart <em>1.5.8 and later, including 2.1.0 and 2.2.x</em> &hellip; <b>only</b>. The <a href="#install">installation instructions</a> for <em>OPC</em> differ, depending on the version of Zen Cart on which your site runs.</p>
     <ol>
         <li>For zc158, zc158a, zc200 and zc201, there are <span class="corefile">core-file overwrites</span> for the <code>order_status</code> page if you want to include <em>OPC</em>'s version.</li>
         <li>For zc210 and later, no such overwrites are needed as <em>OPC</em>'s version of the page is now in-core.</li>
@@ -88,7 +88,7 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
     </div>
 
     <p><em>One-Page Checkout's</em> installation loads all the plugin's files into the sub-directories associated with the <em>template_default</em> template's use; that way, the processing is available for <b>all</b> templates you might use in your store.  If you make changes to those default files, you'll use the Zen Cart &quot;override&quot; system to make your updates.  For example, if you're adding a top-of-page message, you'll copy the file /includes/languages/english/lang.checkout_one.php to the /includes/languages/english/YOUR_TEMPLATE sub-directory and make your changes there.</p>
-    <p>The plugin has been validated on Zen Cart 1.5.8 through 2.1.0 and PHP versions 7.4 through 8.4, using the following shipping, order-total and payment methods:</p>
+    <p>The plugin has been validated on Zen Cart 1.5.8 through 2.2.1 and PHP versions 7.4 through 8.5, using the following shipping, order-total and payment methods:</p>
     <div class="multi-list">
         <h4>Shipping Methods</h4>
         <ol>
@@ -96,7 +96,7 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
           <li>Flat Rate</li>
           <li>Store Pickup</li>
           <li>Table Rate (and various clones)</li>
-          <li>United States Postal Service (usps)</li>
+          <li>United States Postal Service (uspsr)</li>
           <li>United Parcel Service (upsoauth)</li>
           <li>FedEx (fedexrest)</li>
           <li>Product Delivery by Postcode (PDP)</li>
@@ -300,9 +300,14 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
     <ul>
         <li>v2.6.0-beta2, 2026-03-19 (lat9):<ul>
             <li>BUGFIX: Correct unwanted PHP Fatal errors when OPC session is missing or isn't an object.</li>
-            <li>The following files were changed:<ol>
+            <li>CHANGE: Ensure admin language files are in array format.</li>
+            <li>CHANGE: Remove Zen Cart version checking for features now provided by zc158 and later.</li>
+            <li>The following files were changed, <span class="added">added</span> or <span class="removed">removed</span>:<ol>
                 <li>/includes/classes/observers/class.checkout_one_observer.php</li>
-                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
+                <li><span class="removed">/YOUR_ADMIN/includes/languages/english/checkout_one_name.php</span></li>
+                <li><span class="added">/YOUR_ADMIN/includes/languages/english/lang.checkout_one_name.php</span></li>
+                <li>/includes/functions/extra_functions/one_page_checkout_functions.php</li>
+                <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
             </ol></li>
         <li>v2.5.5, 2025-09-19 (lat9, proseLA):<ul>
             <li>BUGFIX: Silently ignore shipping modules/methods with no specified <code>id</code> to prevent PHP warnings/deprecations.</li>
