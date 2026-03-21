@@ -436,7 +436,7 @@ class OnePageCheckout extends base
         // is using an earlier version of Zen Cart, we'll log a debug message and use the 'string'
         // type instead.
         //
-        // Note: Always use 'stringIgnoreNull' now that OPC supports only zc157 and later.
+        // Note: Always use 'stringIgnoreNull' now that OPC supports only zc158 and later.
         //
         $this->dbStringType = 'stringIgnoreNull';
     }
@@ -1937,7 +1937,7 @@ class OnePageCheckout extends base
 
     /* -----
     ** This function, called from the 'checkout_success' OPC header processing, creates a
-    ** customer-account from the information associated with the just-placed order.
+    ** customer-account from the information associated with the just-placed guest-order.
     */
     public function createAccountFromGuestInfo($order_id, $password, $newsletter, $email_format): bool
     {
@@ -1952,8 +1952,51 @@ class OnePageCheckout extends base
             return false;
         }
 
-        $customer_id = $this->createCustomerRecordFromGuestInfo($password, $newsletter, $email_format);
-        $_SESSION['customer_id'] = (int)$customer_id;
+        // -----
+        // Create the $data array, containing the information needed by the Customer
+        // class to create the customer and their primary (i.e. billing) address.
+        //
+        $data = [
+            'password' => $password,
+            'newsletter' => (int)$newsletter,
+            'email_format' => $email_format,
+            'nick' => '',
+            'fax' => '',
+            'customers_referral' => '',
+            'gender' => (ACCOUNT_GENDER === 'true') ? $this->guestCustomerInfo['gender'] : '',
+            'dob' => (ACCOUNT_DOB === 'true') ? $this->guestCustomerInfo['dob'] : '',
+            'firstname' => $this->guestCustomerInfo['firstname'],
+            'lastname' => $this->guestCustomerInfo['lastname'],
+            'email_address' => $this->guestCustomerInfo['email_address'],
+            'telephone' => $this->guestCustomerInfo['telephone'],
+            'customers_authorization' => (int)CUSTOMERS_APPROVAL_AUTHORIZATION,
+            'ip_address' => zen_get_ip_address(),
+
+            'street_address' => $this->tempAddressValues['bill']['street_address'],
+            'postcode' => $this->tempAddressValues['bill']['postcode'],
+            'city' => $this->tempAddressValues['bill']['city'],
+            'country' => $this->tempAddressValues['bill']['country'],
+            'company' => (ACCOUNT_COMPANY === 'true') ? $this->tempAddressValues['bill']['country'] : '',
+            'suburb' => (ACCOUNT_SUBURB === 'true') ? $this->tempAddressValues['bill']['suburb'] : '',
+        ];
+
+        if (ACCOUNT_STATE === 'true') {
+            if ($this->tempAddressValues['bill']['zone_id'] > 0) {
+                $data['zone_id'] = $this->tempAddressValues['bill']['zone_id'];
+                $data['state'] = '';
+            } else {
+                $data['zone_id'] = 0;
+                $data['state'] = $this->tempAddressValues['bill']['state'];
+            }
+        }
+
+        // -----
+        // Create the customer record via the built-in Customer class.
+        //
+        $customer = new Customer();
+        $result = $customer->create($data);
+        
+        $customer_id = (int)$result['customers_id'];
         $db->Execute(
             "UPDATE " . TABLE_ORDERS . "
                 SET customers_id = $customer_id
@@ -1967,16 +2010,8 @@ class OnePageCheckout extends base
         //
         $this->notify('NOTIFY_OPC_CREATE_ACCOUNT_ORDER_UPDATED', ['customer_id' => $customer_id, 'order_id' => $order_id]);
 
-        $default_address_id = $this->createAddressBookRecord($customer_id, 'bill');
-        $db->Execute(
-            "UPDATE " . TABLE_CUSTOMERS . "
-                SET customers_default_address_id = $default_address_id
-              WHERE customers_id = $customer_id
-              LIMIT 1"
-        );
-
         if ($this->tempAddressValues['ship']['firstname'] !== '') {
-            if ($this->addressArrayToString($this->tempAddressValues['ship']) != $this->addressArrayToString($this->tempAddressValues['bill'])) {
+            if ($this->addressArrayToString($this->tempAddressValues['ship']) !== $this->addressArrayToString($this->tempAddressValues['bill'])) {
                 $this->createAddressBookRecord($customer_id, 'ship');
             }
         }
@@ -1987,67 +2022,11 @@ class OnePageCheckout extends base
             $_SESSION['shipping_billing'], 
             $_SESSION['order_placed_by_guest']
         );
-
-        $_SESSION['customer_first_name'] = $this->guestCustomerInfo['firstname'];
-        $_SESSION['customer_last_name'] = $this->guestCustomerInfo['lastname'];
-        $_SESSION['customer_default_address_id'] = $default_address_id;
-        $_SESSION['customers_email_address'] = $this->guestCustomerInfo['email_address'];
-        $_SESSION['customer_country_id'] = $this->tempAddressValues['bill']['country'];
-        $_SESSION['customer_zone_id'] = $this->tempAddressValues['bill']['zone_id'];
-        $_SESSION['customers_authorization'] = 0;
-
         $this->reset();
+        
+        $customer->login($customer_id);
 
         return true;
-    }
-
-    // -----
-    // This internal function creates a customer record in the database for the
-    // current guest.
-    //
-    protected function createCustomerRecordFromGuestInfo($password, $newsletter, $email_format)
-    {
-        global $db;
-
-        if ($email_format !== 'HTML' && $email_format !== 'TEXT') {
-            $email_format = (ACCOUNT_EMAIL_PREFERENCE === '1' ? 'HTML' : 'TEXT');
-        }
-        $sql_data_array = [
-            ['fieldName' => 'customers_firstname', 'value' => $this->guestCustomerInfo['firstname'], 'type' => $this->dbStringType],
-            ['fieldName' => 'customers_lastname', 'value' => $this->guestCustomerInfo['lastname'], 'type' => $this->dbStringType],
-            ['fieldName' => 'customers_email_address', 'value' => $this->guestCustomerInfo['email_address'], 'type' => $this->dbStringType],
-            ['fieldName' => 'customers_telephone', 'value' => $this->guestCustomerInfo['telephone'], 'type' => $this->dbStringType],
-            ['fieldName' => 'customers_newsletter', 'value' => $newsletter, 'type' => 'integer'],
-            ['fieldName' => 'customers_email_format', 'value' => $email_format, 'type' => $this->dbStringType],
-            ['fieldName' => 'customers_default_address_id', 'value' => 0, 'type' => 'integer'],
-            ['fieldName' => 'customers_password', 'value' => zen_encrypt_password($password), 'type' => $this->dbStringType],
-            ['fieldName' => 'customers_authorization', 'value' => 0, 'type' => 'integer'],
-        ];
-
-        if (ACCOUNT_GENDER === 'true') {
-            $gender = $this->guestCustomerInfo['gender'];
-            $sql_data_array[] = ['fieldName' => 'customers_gender', 'value' => $gender, 'type' => $this->dbStringType];
-        }
-        if (ACCOUNT_DOB === 'true') {
-            $dob = $this->guestCustomerInfo['dob'];
-            $dob = (empty($dob) || $dob === '0001-01-01 00:00:00') ? zen_db_prepare_input('0001-01-01 00:00:00') : zen_date_raw($dob);
-            $sql_data_array[] = ['fieldName' => 'customers_dob', 'value' => $dob, 'type' => 'date'];
-        }
-
-        $db->perform(TABLE_CUSTOMERS, $sql_data_array);
-        $customer_id = $db->Insert_ID();
-
-        $db->Execute(
-            "INSERT INTO " . TABLE_CUSTOMERS_INFO . "
-                    (customers_info_id, customers_info_number_of_logons, customers_info_date_account_created, customers_info_date_of_last_logon)
-                VALUES 
-                    ($customer_id, 1, now(), now())"
-        );
-
-        $this->notify('OPC_ADDED_CUSTOMER_RECORD_FOR_GUEST', $customer_id, $sql_data_array);    //-DEPRECATED for zc158+
-        $this->notify('NOTIFY_OPC_ADDED_CUSTOMER_RECORD_FOR_GUEST', $customer_id, $sql_data_array);
-
-        return $customer_id;
     }
 
     // -----
@@ -2153,7 +2132,7 @@ class OnePageCheckout extends base
     //
     protected function addressArrayToString($address_array)
     {
-        $the_address = 
+        $the_address =
             $address_array['company'] .
             $address_array['gender'] .
             $address_array['firstname'] .
