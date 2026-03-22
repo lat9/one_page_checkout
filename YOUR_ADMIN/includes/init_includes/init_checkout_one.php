@@ -15,8 +15,8 @@ if (!defined('IS_ADMIN_FLAG')) {
 // 500-599 ... Registered-account settings
 // 1000+ ..... Debug settings
 //
-define('CHECKOUT_ONE_CURRENT_VERSION', '2.6.0-beta1');
-define('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2026-03-20');
+define('CHECKOUT_ONE_CURRENT_VERSION', '2.6.0-beta2');
+define('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2026-03-22');
 
 if (isset($_SESSION['admin_id'])) {
     $version_release_date = CHECKOUT_ONE_CURRENT_VERSION . ' (' . CHECKOUT_ONE_CURRENT_UPDATE_DATE . ')';
@@ -85,12 +85,13 @@ if (isset($_SESSION['admin_id'])) {
              VALUES
                 ('Guest Checkout: Customer ID', 'CHECKOUT_ONE_GUEST_CUSTOMER_ID', '$guest_customer_id', 'This (hidden) value identifies the customers-table entry that is used as the pseudo-customers_id for any guest checkout in your store.', 6, now(), 30)"
         );
-        $sql_data_array = [
-            'customers_info_id' => $guest_customer_id,
-            'customers_info_date_account_created' => 'now()'
-        ];
-        zen_db_perform(TABLE_CUSTOMERS_INFO, $sql_data_array);
     }
+    $db->Execute(
+        "INSERT IGNORE INTO " . TABLE_CUSTOMERS_INFO . "
+            (customers_info_id, customers_info_date_account_created)
+         VALUES
+            ($guest_customer_id, NOW())"
+    );
 
     // -----
     // Ensure that OPC's guest billing address-id is present and actually
