@@ -70,11 +70,11 @@ $telephone_field_length = zen_set_field_length(TABLE_CUSTOMERS, 'customers_telep
         <br class="clearBoth">
 
         <label class="inputLabel" for="lastname"><?= ENTRY_LAST_NAME ?></label>
-        <?= zen_draw_input_field('lastname', '', $lastname_field_length . ' id="lastname" placeholder="' . ENTRY_LAST_NAME_TEXT . '"'. ((int)ENTRY_LAST_NAME_MIN_LENGTH > 0 ? ' required' : '')) ?>
+        <?= zen_draw_input_field('lastname', '', $lastname_field_length . ' id="lastname" placeholder="' . ENTRY_LAST_NAME_TEXT . '"' . ((int)ENTRY_LAST_NAME_MIN_LENGTH > 0 ? ' required' : '')) ?>
         <br class="clearBoth">
 
         <label class="inputLabel" for="telephone"><?= ENTRY_TELEPHONE_NUMBER ?></label>
-        <?= zen_draw_input_field('telephone', '', $telephone_field_length . ' id="telephone" placeholder="' . ENTRY_TELEPHONE_NUMBER_TEXT . '"' . ((int)ENTRY_TELEPHONE_MIN_LENGTH > 0 ? ' required' : ''), 'tel') ?>
+        <?= zen_draw_input_field('telephone', '', $telephone_field_length . ' id="telephone" placeholder="' . ENTRY_TELEPHONE_NUMBER_TEXT . '"' . ($telephone_min_length > 0 ? ' required' : ''), 'tel') ?>
         <br class="clearBoth">
 <?php
 unset($company_field_length, $firstname_field_length, $lastname_field_length, $telephone_field_length);
@@ -82,7 +82,7 @@ unset($company_field_length, $firstname_field_length, $lastname_field_length, $t
 if (ACCOUNT_DOB === 'true') {
 ?>
         <label class="inputLabel" for="dob"><?= ENTRY_DATE_OF_BIRTH ?></label>
-        <?= zen_draw_input_field('dob','', 'id="dob" placeholder="' . ENTRY_DATE_OF_BIRTH_TEXT . '"' . (ACCOUNT_DOB == 'true' && (int)ENTRY_DOB_MIN_LENGTH > 0 ? ' required' : '')) ?>
+        <?= zen_draw_input_field('dob', '', 'id="dob" placeholder="' . ENTRY_DATE_OF_BIRTH_TEXT . '"' . ((int)ENTRY_DOB_MIN_LENGTH > 0 ? ' required' : '')) ?>
         <br class="clearBoth">
 <?php
 }
@@ -90,7 +90,7 @@ if (ACCOUNT_DOB === 'true') {
 if ($display_nick_field == true) {
 ?>
         <label class="inputLabel" for="nickname"><?= ENTRY_NICK ?></label>
-        <?= zen_draw_input_field('nick','','id="nickname" placeholder="' . ENTRY_NICK_TEXT . '"') ?>
+        <?= zen_draw_input_field('nick', '', 'id="nickname" placeholder="' . ENTRY_NICK_TEXT . '"') ?>
         <br class="clearBoth">
 <?php
 }
