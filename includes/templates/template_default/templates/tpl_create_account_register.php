@@ -64,6 +64,7 @@ if (ACCOUNT_GENDER === 'true') {
 $firstname_field_length = zen_set_field_length(TABLE_CUSTOMERS, 'customers_firstname', '40');
 $lastname_field_length = zen_set_field_length(TABLE_CUSTOMERS, 'customers_lastname', '40');
 $telephone_field_length = zen_set_field_length(TABLE_CUSTOMERS, 'customers_telephone', '40');
+$telephone_required = ($telephone_min_length > 0) ? ' required' : '';
 ?>
         <label class="inputLabel" for="firstname"><?= ENTRY_FIRST_NAME ?></label>
         <?= zen_draw_input_field('firstname', '', $firstname_field_length . ' id="firstname" placeholder="' . ENTRY_FIRST_NAME_TEXT . '"' . ((int)ENTRY_FIRST_NAME_MIN_LENGTH > 0 ? ' required' : '')) ?>
@@ -73,9 +74,9 @@ $telephone_field_length = zen_set_field_length(TABLE_CUSTOMERS, 'customers_telep
         <?= zen_draw_input_field('lastname', '', $lastname_field_length . ' id="lastname" placeholder="' . ENTRY_LAST_NAME_TEXT . '"' . ((int)ENTRY_LAST_NAME_MIN_LENGTH > 0 ? ' required' : '')) ?>
         <br class="clearBoth">
 
-        <label class="inputLabel" for="telephone"><?= ENTRY_TELEPHONE_NUMBER ?></label>
-        <?= zen_draw_input_field('telephone', '', $telephone_field_length . ' id="telephone" placeholder="' . ENTRY_TELEPHONE_NUMBER_TEXT . '"' . ($telephone_min_length > 0 ? ' required' : ''), 'tel') ?>
-        <br class="clearBoth">
+        <label class="inputLabel phone" for="telephone"><?= ENTRY_TELEPHONE_NUMBER ?></label>
+        <?= zen_draw_input_field('telephone', '', $telephone_field_length . ' id="telephone" class="phone" placeholder="' . $telephone_placeholder . '"' . $telephone_required, 'tel') ?>
+        <br class="clearBoth phone">
 <?php
 unset($company_field_length, $firstname_field_length, $lastname_field_length, $telephone_field_length);
 

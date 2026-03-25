@@ -52,6 +52,12 @@ if (!function_exists('zen_valid_date')) {
 $telephone_min_length = (int)((defined('CHECKOUT_ONE_REGISTERED_ACCT_TELEPHONE_MIN')) ? CHECKOUT_ONE_REGISTERED_ACCT_TELEPHONE_MIN : ENTRY_TELEPHONE_MIN_LENGTH);
 
 // -----
+// Ditto for the telephone number's placeholder text, using the registered-account version, if
+// the constant's available or falling back to the base value otherwise.
+//
+$telephone_placeholder = (defined('TEXT_TELEPHONE_PLACEHOLDER')) ? TEXT_TELEPHONE_PLACEHOLDER : ENTRY_TELEPHONE_NUMBER_TEXT;
+
+// -----
 // Process the form-submittal, if indicated.
 //
 if (isset($_POST['action']) && $_POST['action'] === 'register') {
