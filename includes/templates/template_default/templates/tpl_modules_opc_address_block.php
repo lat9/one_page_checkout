@@ -1,12 +1,12 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2017-2025, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2017-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
 // This module is included by tpl_modules_opc_billing_address.php and tpl_modules_opc_shipping_address.php and
 // provides a common-formatting for those two address-blocks.
 //
-// Last updated: OPC v2.5.5
+// Last updated: OPC v2.6.0
 //
 ?>
 <!--bof address block -->
@@ -14,7 +14,7 @@
 // -----
 // Sanitize module input values.
 //
-if (!isset($opc_address_type) || !in_array($opc_address_type, array('bill', 'ship'))) {
+if (!isset($opc_address_type) || !in_array($opc_address_type, ['bill', 'ship'])) {
     trigger_error("FATAL Error: Unknown value for opc_address_type ($opc_address_type).", E_USER_WARNING);
     zen_exit();
 }
@@ -49,12 +49,12 @@ $_SESSION['opc']->setAddressLabelParams(' class="inputLabel"');
 //
 if ($display_condensed_address) {
 ?>
-<div id="address-<?php echo $which; ?>">
-    <div class="floatingBox back"><?php echo zen_address_format(zen_get_address_format_id($address['country_id']), $address, true, '', '<br>'); ?></div>
+<div id="address-<?= $which ?>">
+    <div class="floatingBox back"><?= zen_address_format(zen_get_address_format_id($address['country_id']), $address, true, '', '<br>') ?></div>
 <?php
 if (!$opc_disable_address_change) {
 ?>
-    <div class="floatingBox forward opc-right" id="opc-<?php echo $which; ?>-edit"><?php echo zen_image_button(BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT); ?></div>
+    <div class="floatingBox forward opc-right" id="opc-<?= $which ?>-edit"><?= zen_image_button(BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) ?></div>
 <?php
 }
 ?>
@@ -71,7 +71,7 @@ if ($opc_disable_address_change) {
     return;
 }
 ?>
-<div id="address-form-<?php echo $which; ?>"<?php echo $address_form_class; ?>>
+<div id="address-form-<?= $which ?>"<?= $address_form_class ?>>
 <?php
 // -----
 // If the address can be changed and an account-bearing customer has previously-defined addresses, create a dropdown list
@@ -85,7 +85,7 @@ if (!$opc_disable_address_change) {
     if (count($address_selections) > 2) {
         $selected = $_SESSION['opc']->getAddressDropDownSelection($which);
 ?>
-    <div id="choices-<?php echo $which; ?>"><?php echo zen_draw_pull_down_menu("address-$which", $address_selections, $selected); ?></div>
+    <div id="choices-<?= $which ?>"><?= zen_draw_pull_down_menu("address-$which", $address_selections, $selected) ?></div>
 <?php
     }
 }
@@ -123,11 +123,11 @@ if (ACCOUNT_STATE === 'true') {
     $state_zone_id = "stateZone-$which";
     $zone_field_name = "zone_id[$which]";
 ?>
-      <label class="inputLabel"><?php echo ENTRY_STATE; ?></label>
-<?php    
+    <label class="inputLabel"><?= ENTRY_STATE ?></label>
+<?php
     if ($address['show_pulldown_states']) {
         echo zen_draw_pull_down_menu($zone_field_name, zen_prepare_country_zones_pull_down($address['country']), $address['zone_id'], "id=\"$state_zone_id\"");
-        if (zen_not_null(ENTRY_STATE_TEXT)) {
+        if (!empty(ENTRY_STATE_TEXT)) {
             echo '<span class="alert">' . ENTRY_STATE_TEXT . '</span>';
         }
         echo '<br />';
@@ -143,10 +143,24 @@ echo $_SESSION['opc']->formatAddressElement($which, 'postcode', $address['postco
 $field_name = "zone_country_id[$which]";
 $field_id = "country-$which";
 ?>
-      <label class="inputLabel" for="<?php echo $field_id; ?>"><?php echo ENTRY_COUNTRY; ?></label>
-      <?php echo zen_get_country_list($field_name, $address['country'], "id=\"$field_id\"") . 
-      (zen_not_null(ENTRY_COUNTRY_TEXT) ? '<span class="alert">' . ENTRY_COUNTRY_TEXT . '</span>' : '') . $clear_both; ?>
-
-      <div id="messages-<?php echo $which; ?>"></div>
+    <label class="inputLabel" for="<?= $field_id ?>"><?= ENTRY_COUNTRY ?></label>
+    <?= zen_get_country_list($field_name, $address['country'], "id=\"$field_id\"") . 
+        (!empty(ENTRY_COUNTRY_TEXT) ? '<span class="alert">' . ENTRY_COUNTRY_TEXT . '</span>' : '') . $clear_both ?>
+<?php
+// -----
+// Starting with OPC v2.6.0, the customer's phone number can be changed during
+// the checkout process.  It's displayed **only** for the billing address block.
+//
+if ($which === 'bill') {
+    $telephone_field_length = zen_set_field_length(TABLE_CUSTOMERS, 'customers_telephone', '40');
+    $telephone_required = (((int)ENTRY_TELEPHONE_MIN_LENGTH) > 0) ? ' required' : '';
+?>
+    <label class="inputLabel phone" for="telephone"><?= ENTRY_TELEPHONE_NUMBER ?></label>
+    <?= zen_draw_input_field('telephone[bill]', $address['telephone'], $telephone_field_length . ' id="telephone" class="phone" placeholder="' . ENTRY_TELEPHONE_NUMBER_TEXT . '"' . $telephone_required, 'tel') ?>
+    <div class="clearBoth phone"></div>
+<?php
+}
+?>
+    <div id="messages-<?= $which ?>"></div>
 </div>
 <!--eof address block -->
