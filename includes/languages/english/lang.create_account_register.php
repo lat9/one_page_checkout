@@ -1,9 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
-// Copyright (C) 2018-2022, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2018-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.4.2 (for zc158 and later).
+// Last updated: OPC v2.6.0
 //
 $define = [
     'NAVBAR_TITLE_REGISTER' => 'Account Registration',
@@ -16,5 +16,11 @@ $define = [
 
     'ENTRY_EMAIL_MISMATCH_ERROR' => 'The <em>Email</em> and <em>Confirm Email</em> entries do not match.',
     'ENTRY_EMAIL_MISMATCH_ERROR_JS' => '* The "Email" and "Confirm Email" entries do not match.',
+
+    // -----
+    // Set the placeholder for the telephone number for registered-account creations.  The value's set
+    // to '*' if the configuration setting isn't available or isn't 'empty'; an empty string otherwise.
+    //
+    'TEXT_TELEPHONE_PLACEHOLDER' => (defined('CHECKOUT_ONE_REGISTERED_ACCT_TELEPHONE_MIN') && empty(CHECKOUT_ONE_REGISTERED_ACCT_TELEPHONE_MIN)) ? '' : '*',
 ];
 return $define;

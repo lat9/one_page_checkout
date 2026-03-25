@@ -1,9 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
-// Copyright (C) 2013-2024, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.5.3
+// Last updated: OPC v2.6.0
 //
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
@@ -303,6 +303,20 @@ switch (true) {
             "DELETE FROM " . TABLE_CONFIGURATION . "
               WHERE configuration_key = 'CHECKOUT_ONE_OTTOTAL_SELECTOR'
               LIMIT 1"
+        );
+
+    // -----
+    // v2.6.0:
+    //
+    // - Add setting to enable telephone number to **always** be optional during account registration
+    //
+    case version_compare(CHECKOUT_ONE_MODULE_VERSION, '2.6.0', '<'):    //-Fall-through processing from above
+        $telephone_min_length = (int)ENTRY_TELEPHONE_MIN_LENGTH;
+        $db->Execute(
+            "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
+                (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function) 
+             VALUES 
+                ('Registered Accounts: Telephone Minimum Length', 'CHECKOUT_ONE_REGISTERED_ACCT_TELEPHONE_MIN', '$telephone_min_length', 'When a customer creates a <em>registered</em> account, is a telephone number required? If so, enter the minimum length of the telephone number; use <code>0</code> to indicate the the telephone number is optional.<br><br><b>Note:</b> This setting <em>overrides</em> the value in <code>Minimum Values :: Telephone Number</code>.', $cgi, now(), 502, NULL, NULL)"
         );
 
     default:                                                            //-Fall-through processing from above

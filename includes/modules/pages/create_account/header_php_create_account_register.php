@@ -45,6 +45,19 @@ if (!function_exists('zen_valid_date')) {
 }
 
 // -----
+// Determine the minimum length of an entered telephone number. It's set
+// to the OPC-specific value (added in v2.6.0), if present, otherwise it'll
+// default to the base's minimum value setting.
+//
+$telephone_min_length = (int)((defined('CHECKOUT_ONE_REGISTERED_ACCT_TELEPHONE_MIN')) ? CHECKOUT_ONE_REGISTERED_ACCT_TELEPHONE_MIN : ENTRY_TELEPHONE_MIN_LENGTH);
+
+// -----
+// Ditto for the telephone number's placeholder text, using the registered-account version, if
+// the constant's available or falling back to the base value otherwise.
+//
+$telephone_placeholder = (defined('TEXT_TELEPHONE_PLACEHOLDER')) ? TEXT_TELEPHONE_PLACEHOLDER : ENTRY_TELEPHONE_NUMBER_TEXT;
+
+// -----
 // Process the form-submittal, if indicated.
 //
 if (isset($_POST['action']) && $_POST['action'] === 'register') {
@@ -105,7 +118,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
 
     if (ACCOUNT_DOB === 'true') {
         $dob = zen_db_prepare_input($_POST['dob']);
-        if (ENTRY_DOB_MIN_LENGTH > 0 or !empty($_POST['dob'])) {
+        if ((int)ENTRY_DOB_MIN_LENGTH > 0 || !empty($_POST['dob'])) {
             if (strlen($dob) > 10 || zen_valid_date($dob) === false) {
                 $error = true;
                 $messageStack->add('create_account', ENTRY_DATE_OF_BIRTH_ERROR);
@@ -171,7 +184,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
     }
 
     $telephone = zen_db_prepare_input(zen_sanitize_string($_POST['telephone']));
-    if (strlen($telephone) < ENTRY_TELEPHONE_MIN_LENGTH) {
+    if (strlen($telephone) < $telephone_min_length) {
         $error = true;
         $messageStack->add('create_account', ENTRY_TELEPHONE_NUMBER_ERROR);
     }
