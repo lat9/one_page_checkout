@@ -379,9 +379,9 @@ class OnePageCheckout extends base
         $default_address = $db->Execute($addresses_query);
         
         if (!$default_address->EOF) {
-            if (strlen($default_address->fields['street_address']) >= (int)ENTRY_STREET_ADDRESS_MIN_LENGTH ||
-                strlen($default_address->fields['city']) >= (int)ENTRY_CITY_MIN_LENGTH ||
-                strlen($default_address->fields['postcode']) >= (int)ENTRY_POSTCODE_MIN_LENGTH) {
+            if (mb_strlen($default_address->fields['street_address']) >= (int)ENTRY_STREET_ADDRESS_MIN_LENGTH ||
+                mb_strlen($default_address->fields['city']) >= (int)ENTRY_CITY_MIN_LENGTH ||
+                mb_strlen($default_address->fields['postcode']) >= (int)ENTRY_POSTCODE_MIN_LENGTH) {
                 $account_needs_primary_address = false;
             }
         }
@@ -1228,12 +1228,22 @@ class OnePageCheckout extends base
         foreach ($address_info->fields as $key => $value) {
             if (strpos($key, 'entry_') === 0) {
                 $new_key = substr($key, 6);
-                if ($new_key == 'country_id') {
+                if ($new_key === 'country_id') {
                     $address_info->fields['country'] = $value;
                 }
                 $address_info->fields[$new_key] = $value;
                 unset($address_info->fields[$key]);
             }
+        }
+
+        if ($which === 'bill') {
+            $telephone = $db->Execute(
+                "SELECT customers_telephone
+                   FROM " . TABLE_CUSTOMERS . "
+                  WHERE customers_id = " . $_SESSION['customer_id'] . "
+                  LIMIT 1"
+            );
+            $address_info->fields['telephone'] = $telephone->fields['customers_telephone'] ?? '';
         }
 
         $address_info->fields['error_state_input'] = false;
@@ -1470,7 +1480,7 @@ class OnePageCheckout extends base
         $this->customerInfoOk = false;
 
         $email_address = zen_db_prepare_input(zen_sanitize_string($_POST['email_address'] ?? ''));
-        if (strlen($email_address) < ENTRY_EMAIL_ADDRESS_MIN_LENGTH) {
+        if (mb_strlen($email_address) < ENTRY_EMAIL_ADDRESS_MIN_LENGTH) {
             $messages['email_address'] = ENTRY_EMAIL_ADDRESS_ERROR;
         } elseif (!zen_validate_email($email_address) || $this->isEmailAuthorized($email_address) === false) {
             $messages['email_address'] = ENTRY_EMAIL_ADDRESS_CHECK_ERROR;
@@ -1584,7 +1594,7 @@ class OnePageCheckout extends base
 
         if (ACCOUNT_COMPANY === 'true') {
             $company = zen_db_prepare_input(zen_sanitize_string($address_values['company']));
-            if (((int)ENTRY_COMPANY_MIN_LENGTH > 0) && strlen($company) < ((int)ENTRY_COMPANY_MIN_LENGTH)) {
+            if (((int)ENTRY_COMPANY_MIN_LENGTH > 0) && mb_strlen($company) < ((int)ENTRY_COMPANY_MIN_LENGTH)) {
                 $error = true;
                 $messages['company'] = $message_prefix . ENTRY_COMPANY_ERROR;
             }
@@ -1599,19 +1609,19 @@ class OnePageCheckout extends base
         }
 
         $firstname = zen_db_prepare_input(zen_sanitize_string($address_values['firstname']));
-        if (strlen($firstname) < ENTRY_FIRST_NAME_MIN_LENGTH) {
+        if (mb_strlen($firstname) < ENTRY_FIRST_NAME_MIN_LENGTH) {
             $error = true;
             $messages['firstname'] = $message_prefix . ENTRY_FIRST_NAME_ERROR;
         }
 
         $lastname = zen_db_prepare_input(zen_sanitize_string($address_values['lastname']));
-        if (strlen($lastname) < ENTRY_LAST_NAME_MIN_LENGTH) {
+        if (mb_strlen($lastname) < ENTRY_LAST_NAME_MIN_LENGTH) {
             $error = true;
             $messages['lastname'] = $message_prefix . ENTRY_LAST_NAME_ERROR;
         }
 
         $street_address = zen_db_prepare_input(zen_sanitize_string($address_values['street_address']));
-        if (strlen($street_address) < ENTRY_STREET_ADDRESS_MIN_LENGTH) {
+        if (mb_strlen($street_address) < ENTRY_STREET_ADDRESS_MIN_LENGTH) {
             $error = true;
             $messages['street_address'] = $message_prefix . ENTRY_STREET_ADDRESS_ERROR;
         }
@@ -1621,13 +1631,13 @@ class OnePageCheckout extends base
         }
 
         $city = zen_db_prepare_input(zen_sanitize_string($address_values['city']));
-        if (strlen($city) < ENTRY_CITY_MIN_LENGTH) {
+        if (mb_strlen($city) < ENTRY_CITY_MIN_LENGTH) {
             $error = true;
             $messages['city'] = $message_prefix . ENTRY_CITY_ERROR;
         }
 
         $postcode = zen_db_prepare_input(zen_sanitize_string($address_values['postcode']));
-        if (strlen($postcode) < ENTRY_POSTCODE_MIN_LENGTH) {
+        if (mb_strlen($postcode) < ENTRY_POSTCODE_MIN_LENGTH) {
             $error = true;
             $messages['postcode'] = $message_prefix . ENTRY_POST_CODE_ERROR;
         }
@@ -1679,11 +1689,19 @@ class OnePageCheckout extends base
                     $messages['zone_id'] = $message_prefix . ENTRY_STATE_ERROR_SELECT;
                 }
             } else {
-                if (strlen($state) < ENTRY_STATE_MIN_LENGTH) {
+                if (mb_strlen($state) < ENTRY_STATE_MIN_LENGTH) {
                     $error = true;
                     $error_state_input = true;
                     $messages['state'] = $message_prefix . ENTRY_STATE_ERROR;
                 }
+            }
+        }
+
+        if (isset($address_values['telephone'])) {
+            $telephone = zen_db_prepare_input($address_values['telephone']);
+            if (strlen($telephone) < (int)ENTRY_TELEPHONE_MIN_LENGTH) {
+                $error = true;
+                $messages['telephone'] = $message_prefix . ENTRY_TELEPHONE_NUMBER_ERROR;
             }
         }
 
@@ -1712,7 +1730,7 @@ class OnePageCheckout extends base
         $additional_messages = [];
         $additional_address_values = [];
         $this->notify('NOTIFY_OPC_ADDRESS_VALIDATION', ['which' => $which, 'address_values' => $address_values], $additional_messages, $additional_address_values);
-        if (count($additional_messages) != 0) {
+        if (count($additional_messages) !== 0) {
             $this->debugMessage('validateUpdatedAddress, observer returned errors: ' . json_encode($additional_messages));
             $error = true;
             $messages = array_merge($messages, $additional_messages);
@@ -1721,7 +1739,7 @@ class OnePageCheckout extends base
         if ($error === true) {
             $address_values['validated'] = false;
         } else {
-            if (count($additional_address_values) != 0) {
+            if (count($additional_address_values) !== 0) {
                 $this->debugMessage('validateUpdatedAddress, observer returned additional address values: ' . json_encode($additional_address_values));
             }
             $address_values = array_merge(
@@ -1877,6 +1895,14 @@ class OnePageCheckout extends base
             //
             if ($which === 'bill') {
                 $_SESSION['billto'] = $address_book_id;
+                if (isset($address['telephone'])) {
+                    $db->Execute(
+                        "UPDATE " . TABLE_CUSTOMERS . "
+                            SET customers_telephone = '" . $address['telephone'] . "'
+                          WHERE customers_id = " . $_SESSION['customer_id'] . "
+                          LIMIT 1"
+                    );
+                }
             } else {
                 $_SESSION['sendto'] = $address_book_id;
             }

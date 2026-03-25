@@ -146,7 +146,21 @@ $field_id = "country-$which";
     <label class="inputLabel" for="<?= $field_id ?>"><?= ENTRY_COUNTRY ?></label>
     <?= zen_get_country_list($field_name, $address['country'], "id=\"$field_id\"") . 
         (!empty(ENTRY_COUNTRY_TEXT) ? '<span class="alert">' . ENTRY_COUNTRY_TEXT . '</span>' : '') . $clear_both ?>
-
+<?php
+// -----
+// Starting with OPC v2.6.0, the customer's phone number can be changed during
+// the checkout process.  It's displayed **only** for the billing address block.
+//
+if ($which === 'bill') {
+    $telephone_field_length = zen_set_field_length(TABLE_CUSTOMERS, 'customers_telephone', '40');
+    $telephone_required = (((int)ENTRY_TELEPHONE_MIN_LENGTH) > 0) ? ' required' : '';
+?>
+    <label class="inputLabel phone" for="telephone"><?= ENTRY_TELEPHONE_NUMBER ?></label>
+    <?= zen_draw_input_field('telephone[bill]', $address['telephone'], $telephone_field_length . ' id="telephone" class="phone" placeholder="' . ENTRY_TELEPHONE_NUMBER_TEXT . '"' . $telephone_required, 'tel') ?>
+    <div class="clearBoth phone"></div>
+<?php
+}
+?>
     <div id="messages-<?= $which ?>"></div>
 </div>
 <!--eof address block -->
