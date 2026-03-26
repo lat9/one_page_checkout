@@ -1965,7 +1965,7 @@ class OnePageCheckout extends base
     ** This function, called from the 'checkout_success' OPC header processing, creates a
     ** customer-account from the information associated with the just-placed guest-order.
     */
-    public function createAccountFromGuestInfo($order_id, $password, $newsletter, $email_format): bool
+    public function createAccountFromGuestInfo($order_id, $password, $newsletter, $email_format): bool|array
     {
         global $db;
 
@@ -2002,7 +2002,7 @@ class OnePageCheckout extends base
             'postcode' => $this->tempAddressValues['bill']['postcode'],
             'city' => $this->tempAddressValues['bill']['city'],
             'country' => $this->tempAddressValues['bill']['country'],
-            'company' => (ACCOUNT_COMPANY === 'true') ? $this->tempAddressValues['bill']['country'] : '',
+            'company' => (ACCOUNT_COMPANY === 'true') ? $this->tempAddressValues['bill']['company'] : '',
             'suburb' => (ACCOUNT_SUBURB === 'true') ? $this->tempAddressValues['bill']['suburb'] : '',
         ];
 
@@ -2049,10 +2049,10 @@ class OnePageCheckout extends base
             $_SESSION['order_placed_by_guest']
         );
         $this->reset();
-        
+
         $customer->login($customer_id);
 
-        return true;
+        return $data;
     }
 
     // -----

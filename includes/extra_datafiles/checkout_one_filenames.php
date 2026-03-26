@@ -12,4 +12,6 @@ if (!defined('IS_ADMIN_FLAG')) {
 define('FILENAME_CHECKOUT_ONE', 'checkout_one');
 define('FILENAME_CHECKOUT_ONE_CONFIRMATION', 'checkout_one_confirmation');
 
+define('FILENAME_CHECKOUT_ONE_SEND_WELCOME_EMAIL', 'checkout_one_send_welcome_email');
+
 define('FILENAME_DEFINE_CHECKOUT_SUCCESS_GUEST', 'define_checkout_success_guest');
