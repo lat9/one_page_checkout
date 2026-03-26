@@ -151,7 +151,7 @@ $field_id = "country-$which";
 // Starting with OPC v2.6.0, the customer's phone number can be changed during
 // the checkout process.  It's displayed **only** for the billing address block.
 //
-if ($which === 'bill') {
+if ($which === 'bill' && !zen_in_guest_checkout()) {
     $telephone_field_length = zen_set_field_length(TABLE_CUSTOMERS, 'customers_telephone', '40');
     $telephone_required = (((int)ENTRY_TELEPHONE_MIN_LENGTH) > 0) ? ' required' : '';
 ?>
