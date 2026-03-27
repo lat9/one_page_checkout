@@ -8,9 +8,7 @@
 //
 // Last updated: OPC v2.6.0
 //
-?>
-<!--bof address block -->
-<?php
+
 // -----
 // Sanitize module input values.
 //
@@ -163,4 +161,3 @@ if ($which === 'bill' && !zen_in_guest_checkout()) {
 ?>
     <div id="messages-<?= $which ?>"></div>
 </div>
-<!--eof address block -->
