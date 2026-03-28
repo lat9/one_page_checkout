@@ -118,9 +118,10 @@ class OnePageCheckout extends base
         // Determine whether the overall OPC processing should be enabled.  It's enabled if:
         //
         // - No previous error (missing jQuery) found to prevent OPC's use.
-        // - The plugin's database configuration is available and set for either
+        // - The plugin's database configuration is available and set for one of
         //   - Full enablement
-        //   - Conditional enablement and the current customer is in the conditional-customers list
+        //   - Conditional enablement and the current customer is in the conditionally-enabled customers list
+        //   - Conditional disablement and the current customer isn't in the conditionally-disabled customers list
         //
         // Note: If we're currently in the PayPal Express Checkout's "Express Checkout" 
         // (aka in_special_checkout) processing, OPC will (currently) be disabled.
@@ -129,10 +130,10 @@ class OnePageCheckout extends base
         if (defined('CHECKOUT_ONE_ENABLED') && (!isset($_SESSION['opc_error']) || $_SESSION['opc_error'] !== self::OPC_ERROR_NO_JS)) {
             if (CHECKOUT_ONE_ENABLED === 'true') {
                 $this->isEnabled = true;
-            } elseif (CHECKOUT_ONE_ENABLED === 'conditional' && isset($_SESSION['customer_id'])) {
-                if (in_array($_SESSION['customer_id'], explode(',', str_replace(' ', '', CHECKOUT_ONE_ENABLE_CUSTOMERS_LIST)))) {
-                    $this->isEnabled = true;
-                }
+            } elseif (in_array(CHECKOUT_ONE_ENABLED, ['conditional', 'enable-conditional'])) {
+                $this->isEnabled = in_array($_SESSION['customer_id'] ?? -1, explode(',', str_replace(' ', '', CHECKOUT_ONE_ENABLE_CUSTOMERS_LIST)));
+            } elseif (CHECKOUT_ONE_ENABLED === 'disable-conditional') {
+                $this->isEnabled = !in_array($_SESSION['customer_id'] ?? -1, explode(',', str_replace(' ', '', CHECKOUT_ONE_DISABLE_CUSTOMERS_LIST)));
             }
 
             $set_disabled = false;

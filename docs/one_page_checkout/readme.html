@@ -298,7 +298,7 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
     <h3>Changes and Bugfixes</h3>
     <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank" rel="noopener">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color and removals are indicated like <span class="removed">this</span>.</p>
     <ul>
-        <li>v2.6.0-beta3, 2026-03-26 (lat9):<ul>
+        <li>v2.6.0-beta3, 2026-03-28 (lat9):<ul>
             <li>BUGFIX: Correct unwanted PHP Fatal errors when OPC session is missing or isn't an object.</li>
             <li>CHANGE: Ensure admin language files are in array format.</li>
             <li>CHANGE: Complete updates recognizing features provided by zc158 and later.</li>
@@ -309,6 +309,7 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
             <li>CHANGE: Telephone can now be optional during registration, overriding 'base' minimum length.</li>
             <li>CHANGE: The customer's telephone number can now be modified during checkout.</li>
             <li>CHANGE: Send 'welcome' email when guest-customer converts to regular account.</li>
+            <li>CHANGE: Add a list of customers for whom OPC is always <em>disabled</em>.</li>
             <li>The following files were changed, <span class="added">added</span> or <span class="removed">removed</span>:<ol>
                 <li>/includes/classes/OnePageCheckout.php</li>
                 <li>/includes/classes/observers/class.checkout_one_observer.php</li>

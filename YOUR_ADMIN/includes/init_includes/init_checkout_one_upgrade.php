@@ -308,9 +308,26 @@ switch (true) {
     // -----
     // v2.6.0:
     //
-    // - Add setting to enable telephone number to **always** be optional during account registration
+    // - Add a setting to identify 'conditional' customers for whom OPC is always disabled.
+    // - Add a setting to enable telephone number to **always** be optional during account registration
     //
     case version_compare(CHECKOUT_ONE_MODULE_VERSION, '2.6.0', '<'):    //-Fall-through processing from above
+        $db->Execute(
+            "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
+                (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function) 
+             VALUES 
+                ('Disable: Customer List', 'CHECKOUT_ONE_DISABLE_CUSTOMERS_LIST', '', 'When you <em>conditionally</em> disable the plugin, use this setting to identify the customers for whom the plugin is disabled.  Leave the setting blank (the default) to <em>enable</em> the plugin for all customers or identify a comma-separated list of customer_id values for whom the plugin is to be <em>disabled</em>.<br>', $cgi, now(), 12, NULL, NULL)"
+        );
+        $enable_value = (CHECKOUT_ONE_ENABLED === 'conditional') ? 'enable-conditional' : CHECKOUT_ONE_ENABLED;
+        $db->Execute(
+            "UPDATE " . TABLE_CONFIGURATION . "
+                SET configuration_value = '$enable_value',
+                    configuration_description = 'Enable the One-Page Checkout processing for your store? Choose <ul><li><code>true</code> to enable for <b>all</b> customers.</li><li><code>false</code> to disable for <b>all</b> customers.</li><li><code>enable-conditional</code> to enable the processing only for customers identified by <b>Enable: Customer List</b>.</li><li><code>disable-conditional</code> to enable the processing for all customers except those identified in <b>Disable: Customer List</b>.</li></ul>Default: <b>false</b>',
+                    set_function = 'zen_cfg_select_option([\'true\', \'enable-conditional\', \'disable-conditional\', \'false\'],'
+              WHERE configuration_key = 'CHECKOUT_ONE_ENABLED'
+              LIMIT 1"
+        );
+
         $telephone_min_length = (int)ENTRY_TELEPHONE_MIN_LENGTH;
         $db->Execute(
             "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
