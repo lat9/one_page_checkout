@@ -11,13 +11,12 @@ if (!defined('IS_ADMIN_FLAG')) {
 
 class checkout_one_observer extends base
 {
-    private
-        $enabled = false,
-        $debug = false,
-        $debug_logfile,
-        $current_page_base,
-        $needUnsupportedPageMessage = false,
-        $needGuestCheckoutUnavailableMessage = false;
+    private bool $enabled = false;
+    private bool $debug = false;
+    private string $debug_logfile;
+    private string $current_page_base;
+    private bool $needUnsupportedPageMessage = false;
+    private bool $needGuestCheckoutUnavailableMessage = false;
 
     public function __construct()
     {
@@ -738,7 +737,7 @@ class checkout_one_observer extends base
         }
     }
 
-    public function debug_message($message, $include_request = false, $other_caller = '')
+    public function debug_message(string $message, bool $include_request = false, string $other_caller = '')
     {
         if ($this->debug === true) {
             $extra_info = '';
@@ -763,7 +762,7 @@ class checkout_one_observer extends base
         }
     }
 
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return $this->enabled;
     }
