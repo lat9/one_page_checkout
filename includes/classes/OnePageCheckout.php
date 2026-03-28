@@ -58,34 +58,33 @@ class OnePageCheckout extends base
     // billtoAddressChangeable .. Identifies whether (true) or not (false) the payment address can be changed.
     // sendtoAddressChangeable .. Identifies whether (true) or not (false) the shipping address can be changed.
     //
-    protected
-        $isGuestCheckoutEnabled,
-        $registeredAccounts,
-        $isEnabled,
-        $guestIsActive,
-        $tempAddressValues,
-        $guestCustomerInfo,
-        $guestCustomerId,
-        $reset_info,
-        $tempBilltoAddressBookId,
-        $tempSendtoAddressBookId,
-        $dbStringType,
-        $label_params,
-        $sendtoSaved,
-        $rebuildRequired,
+    protected bool $isGuestCheckoutEnabled;
+    protected bool $registeredAccounts;
+    protected bool $isEnabled;
+    protected bool $guestIsActive;
+    protected array $tempAddressValues;
+    protected array $guestCustomerInfo;
+    protected int $guestCustomerId;
+    protected array $reset_info;
+    protected int $tempBilltoAddressBookId;
+    protected int $tempSendtoAddressBookId;
+    protected string $dbStringType;
+    protected string $label_params;
+    protected int $sendtoSaved;
+    protected bool $rebuildRequired;
 
-        $paypalAddressOverride,
-        $paypalTotalValue,
-        $paypalTotalValueChanged,
-        $paypalNoShipping,
+    protected string $paypalAddressOverride;
+    protected string $paypalTotalValue;
+    protected bool $paypalTotalValueChanged;
+    protected bool $paypalNoShipping;
 
-        $customerInfoOk,
-        $billtoTempAddrOk,
-        $sendtoTempAddrOk,
+    protected bool $customerInfoOk;
+    protected bool $billtoTempAddrOk;
+    protected bool $sendtoTempAddrOk;
 
-        $isVirtualOrder,
-        $billtoAddressChangeable,
-        $sendtoAddressChangeable;
+    protected bool $isVirtualOrder;
+    protected bool $billtoAddressChangeable;
+    protected bool $sendtoAddressChangeable;
 
     public function __construct()
     {
@@ -102,9 +101,9 @@ class OnePageCheckout extends base
     /* -----
     ** This function, called by the OPC's observer-class, provides the common-use debug filename.
     */
-    public function getDebugLogFileName()
+    public function getDebugLogFileName(): string
     {
-        $customer_id = (isset($_SESSION['customer_id'])) ? $_SESSION['customer_id'] : 'na';
+        $customer_id = $_SESSION['customer_id'] ?? 'na';
         return DIR_FS_LOGS . "/one_page_checkout-$customer_id-" . date('Y-m-d') . ".log";
     }
 
@@ -112,7 +111,7 @@ class OnePageCheckout extends base
     ** This function returns whether (true) or not (false) the overall OPC functionality
     ** is enabled.
     */
-    public function checkEnabled()
+    public function checkEnabled(): bool
     {
         // -----
         // Determine whether the overall OPC processing should be enabled.  It's enabled if:
@@ -168,7 +167,7 @@ class OnePageCheckout extends base
     // handling, using the detection currently (zc156a) present in the paypalwpp::in_special_checkout's
     // processing.
     //
-    protected function isPayPalExpressCheckout()
+    protected function isPayPalExpressCheckout(): bool
     {
         global $current_page_base;
 
@@ -186,7 +185,7 @@ class OnePageCheckout extends base
     ** This function returns a boolean indication as to whether (true) or not (false) OPC's
     ** guest-checkout is currently enabled.
     */
-    public function guestCheckoutEnabled()
+    public function guestCheckoutEnabled(): bool
     {
         $this->initializeGuestCheckout();
         return ($this->isEnabled === true && $this->isGuestCheckoutEnabled === true);
@@ -196,7 +195,7 @@ class OnePageCheckout extends base
     ** This function returns a boolean indication as to whether (true) or not (false) the order
     ** is currently being processed with the shipping address, same as billing.
     */    
-    public function getShippingBilling()
+    public function getShippingBilling(): bool
     {
         if (!isset($_SESSION['shipping_billing'])) {
             $_SESSION['shipping_billing'] = (CHECKOUT_ONE_ENABLE_SHIPPING_BILLING === 'true' || $this->isVirtualOrder === true);
@@ -216,7 +215,7 @@ class OnePageCheckout extends base
     ** (bool)false ... Free shipping, determined by the country currently recorded in the order's delivery address.
     ** otherwise ..... Free shipping, determined by the country associated with the specified address-book table id.
     */
-    public function isOrderFreeShipping($country_override = false)
+    public function isOrderFreeShipping(bool $country_override = false): bool
     {
         if ($this->isVirtualOrder === true) {
             return true;
@@ -284,7 +283,7 @@ class OnePageCheckout extends base
     ** Note: This method (currently) returns a positive indication that those notifications should
     ** always be monitored.
     */
-    public function initTemporaryAddresses()
+    public function initTemporaryAddresses(): bool
     {
         $this->initializeGuestCheckout();
         return true;
@@ -295,7 +294,7 @@ class OnePageCheckout extends base
     ** account-registration is enabled.  This is used by the OPC's observer class to determine
     ** whether accesses to the 'create_account' page should be redirected to the 'register' page.
     */
-    public function accountRegistrationEnabled()
+    public function accountRegistrationEnabled(): bool
     {
         return ($this->isEnabled === true && $this->registeredAccounts === true);
     }
@@ -342,15 +341,15 @@ class OnePageCheckout extends base
     /* -----
     ** These functions, used by the OPC's AJAX class, retrieve those values as saved above.
     */
-    public function isVirtualOrder()
+    public function isVirtualOrder(): bool
     {
         return $this->isVirtualOrder;
     }
-    public function isBilltoAddressChangeable()
+    public function isBilltoAddressChangeable(): bool
     {
         return $this->billtoAddressChangeable;
     }
-    public function isSendtoAddressChangeable()
+    public function isSendtoAddressChangeable(): bool
     {
         return $this->sendtoAddressChangeable;
     }
@@ -360,7 +359,7 @@ class OnePageCheckout extends base
     ** currently-logged-in customer has registered (i.e. no primary address yet provided) or
     ** created a fully-fledged account.
     */
-    public function customerAccountNeedsPrimaryAddress()
+    public function customerAccountNeedsPrimaryAddress(): bool
     {
         global $db;
 
@@ -395,7 +394,7 @@ class OnePageCheckout extends base
     ** "temporary addresses" (used for guest-checkout and registered-accounts) is currently
     ** enabled.
     */
-    public function temporaryAddressesEnabled()
+    public function temporaryAddressesEnabled(): bool
     {
          return ($this->guestCheckoutEnabled() === true || $this->accountRegistrationEnabled() === true);
     }
@@ -445,7 +444,7 @@ class OnePageCheckout extends base
     /* -----
     ** This function returns the current value to be used when setting string-type values into the database.
     */
-    public function getDbStringType()
+    public function getDbStringType(): string
     {
         return $this->dbStringType;
     }
@@ -457,7 +456,7 @@ class OnePageCheckout extends base
     ** OPC's observer-class causes this function's return value to be returned by call to the
     ** zen_in_guest_checkout() function.
     */
-    public function isGuestCheckout()
+    public function isGuestCheckout(): bool
     {
         return $this->guestIsActive;
     }
@@ -469,7 +468,7 @@ class OnePageCheckout extends base
     ** OPC's observer-class causes this function's return value to be returned by call to the
     ** zen_is_logged_in() function.
     */
-    public function isLoggedIn()
+    public function isLoggedIn(): bool
     {
         return (!empty($_SESSION['customer_id']));
     }
@@ -561,7 +560,7 @@ class OnePageCheckout extends base
     public function saveOrdersSendtoAddress()
     {
         if (isset($this->tempAddressValues) && !isset($this->sendtoSaved) && !empty($_SESSION['sendto'])) {
-            $this->sendtoSaved = $_SESSION['sendto'];
+            $this->sendtoSaved = (int)$_SESSION['sendto'];
         }
     }
 
@@ -575,7 +574,7 @@ class OnePageCheckout extends base
     ** unprocessed POST value and results in an unwanted browser message when the guest updates his/her
     ** contact information and/or addresses.
     */
-    public function startGuestOnePageCheckout()
+    public function startGuestOnePageCheckout(): bool
     {
         global $current_page_base;
 
@@ -644,7 +643,7 @@ class OnePageCheckout extends base
     ** supports the AJAX processing's continuation.  The AJAX handler will instruct the
     ** OPC's jQuery to reload the page in an attempt to correct current session's state.
     */
-    public function sanitizeCustomerAddressInfo()
+    public function sanitizeCustomerAddressInfo(): bool
     {
         $information_ok = true;
 
@@ -705,7 +704,7 @@ class OnePageCheckout extends base
     ** This function, called by the guest customer-information block's formatting, returns the
     ** guest's currently-set email address.
     */
-    public function getGuestEmailAddress()
+    public function getGuestEmailAddress(): string
     {
         if (!isset($this->guestCustomerInfo['email_address'])) {
             trigger_error("getGuestEmailAddress: Guest customer-info not set during guest checkout.", E_USER_WARNING);
@@ -719,7 +718,7 @@ class OnePageCheckout extends base
     ** This function, called by the guest customer-information block's formatting, returns the
     ** guest's currently-set telephone number.
     */
-    public function getGuestTelephone()
+    public function getGuestTelephone(): string
     {
         if (!isset($this->guestCustomerInfo['telephone'])) {
             trigger_error("getGuestTelephone: Guest customer-info not set during guest checkout.", E_USER_WARNING);
@@ -733,7 +732,7 @@ class OnePageCheckout extends base
     ** This function, called by the guest customer-information block's formatting, returns the
     ** guest's currently-set date-of-birth.
     */
-    public function getGuestDateOfBirth()
+    public function getGuestDateOfBirth(): string
     {
         if (!isset($this->guestCustomerInfo['dob_display'])) {
             trigger_error("getGuestDataOfBirth: Guest customer-info not set during guest checkout.", E_USER_WARNING);
@@ -787,7 +786,7 @@ class OnePageCheckout extends base
                       WHERE o.customers_email_address = '$email_address'
                       LIMIT $uses_per_user"
                 );
-                if ($check->recordCount() == $uses_per_user) {
+                if ($check->RecordCount() == $uses_per_user) {
                     $coupon_uses_per_user_exceeded = true;
                 }
             }
@@ -800,7 +799,7 @@ class OnePageCheckout extends base
     ** of the currently-enabled payment methods should be disabled due to guest-checkout
     ** restraints configured by the current store.
     */
-    public function validateGuestPaymentMethods($enabled_payment_modules)
+    public function validateGuestPaymentMethods($enabled_payment_modules): array
     {
         if (!is_array($enabled_payment_modules)) {
             $enabled_payment_modules = [];
@@ -831,7 +830,7 @@ class OnePageCheckout extends base
     ** The field is displayed only during an account-holder checkout, where that customer does
     ** not (yet) have the maximum number of address-book entries.
     */
-    public function showAddAddressField()
+    public function showAddAddressField(): bool
     {
         global $db;
 
@@ -856,7 +855,7 @@ class OnePageCheckout extends base
     */
     public function updateOrderAddresses($order, &$taxCountryId, &$taxZoneId)
     {
-        $current_settings = json_encode($this->tempAddressValues);
+        $current_settings = json_encode($this->tempAddressValues ?? 'not-set');
         $session_sendto = (isset($_SESSION['sendto'])) ? (int)$_SESSION['sendto'] : 'not set';
         $this->debugMessage(
             "updateOrderAddresses, on entry: Current sendto: $session_sendto" . PHP_EOL .
@@ -905,7 +904,7 @@ class OnePageCheckout extends base
     // -----
     // This internal function returns the guest-customer information currently gathered.
     //
-    protected function getGuestCustomerInfo()
+    protected function getGuestCustomerInfo(): array
     {
         if (!isset($this->guestCustomerInfo)) {
             trigger_error("getGuestCustomerInfo: Guest customer-info not set during guest checkout.", E_USER_WARNING);
@@ -922,7 +921,7 @@ class OnePageCheckout extends base
     // Note: Updated to use zen_get_country_name as a future-proofing for the inclusion of
     // "Multi-lingual Country Names" in zc157.
     //
-    protected function createOrderAddressFromTemporary($which)
+    protected function createOrderAddressFromTemporary($which): array
     {
         global $db;
 
@@ -979,7 +978,7 @@ class OnePageCheckout extends base
     // This internal function, called when an address-change is detected, determines the current tax-basis
     // used during the checkout process.
     //
-    protected function recalculateTaxBasis($order, $use_temp_billing, $use_temp_shipping)
+    protected function recalculateTaxBasis($order, $use_temp_billing, $use_temp_shipping): array
     {
         $this->debugMessage(
             "recalculateTaxBasis(order, $use_temp_billing, $use_temp_shipping):\n" .
@@ -1072,7 +1071,7 @@ class OnePageCheckout extends base
     ** Side-effects: Might affect the current session's sendto/billto address-book-ids if
     ** temporary addresses are being used.
     */
-    public function validateBilltoSendto($which)
+    public function validateBilltoSendto($which): bool
     {
         global $db;
 
@@ -1199,7 +1198,7 @@ class OnePageCheckout extends base
         return $this->updateStateDropdownSettings($address_values);
     }
 
-    protected function getAddressValuesFromDb($address_book_id, $which)
+    protected function getAddressValuesFromDb($address_book_id, $which): array
     {
         global $db;
 
@@ -1261,7 +1260,7 @@ class OnePageCheckout extends base
         return $address_info->fields;
     }
 
-    protected function initAddressValuesForGuest($which)
+    protected function initAddressValuesForGuest($which): array
     {
         $address_values = [
             'gender' => '',
@@ -1297,7 +1296,7 @@ class OnePageCheckout extends base
         return $address_values;
     }
 
-    public function formatAddressBookDropdown()
+    public function formatAddressBookDropdown(): array
     {
         global $db;
 
@@ -1329,21 +1328,21 @@ class OnePageCheckout extends base
         return $select_array;
     }
 
-    public function getAddressDropDownSelection($which)
+    public function getAddressDropDownSelection($which): string
     {
         if ($which === 'bill') {
             $selection = (!isset($_SESSION['billto']) || (int)$_SESSION['billto'] === $this->tempBilltoAddressBookId) ? 0 : $_SESSION['billto'];
         } else {
             $selection = (!isset($_SESSION['sendto']) || (int)$_SESSION['sendto'] === $this->tempSendtoAddressBookId) ? 0 : $_SESSION['sendto'];
         }
-        return $selection;
+        return (string)$selection;
     }
 
     // -----
     // Creates the json-formatted array that maps countries to zones, for use in the
     // customer address-forms when dropdown states are enabled.
     //
-    public function getCountriesZonesJavascript()
+    public function getCountriesZonesJavascript(): string
     {
         global $db;
 
@@ -1383,7 +1382,7 @@ class OnePageCheckout extends base
         }
     }
 
-    protected function countryHasZones($country_id)
+    protected function countryHasZones(int $country_id): bool
     {
         global $db;
 
@@ -1401,7 +1400,7 @@ class OnePageCheckout extends base
     // setting.  Simplifies (and corrects) the OPC address-update processing for stores that have
     // that setting set to 'false'.
     //
-    protected function updateStateDropdownSettings($address_values)
+    protected function updateStateDropdownSettings(array $address_values): array
     {
         $show_pulldown_states = true;
         $address_values['selected_country'] = $address_values['country'];
@@ -1421,7 +1420,7 @@ class OnePageCheckout extends base
     {
         $this->label_params = $label_params;
     }
-    public function formatAddressElement($which, $field_name, $field_value, $field_text, $db_table, $db_fieldname, $min_length, $placeholder, $field_params = '', $label_params = '')
+    public function formatAddressElement($which, $field_name, $field_value, $field_text, $db_table, $db_fieldname, $min_length, $placeholder, $field_params = '', $label_params = ''): string
     {
         // -----
         // Special handling for the 'company' and 'suburb' fields, to guide browser autofill operations to
@@ -1453,7 +1452,7 @@ class OnePageCheckout extends base
             );
     }
 
-    public function validateAndSaveAjaxPostedAddress($which, &$messages)
+    public function validateAndSaveAjaxPostedAddress($which, &$messages): bool
     {
         $this->debugMessage("validateAndSaveAJaxPostedAddress($which, ..), POST: " . json_encode($_POST, JSON_PRETTY_PRINT));
 
@@ -1475,7 +1474,7 @@ class OnePageCheckout extends base
         return !$address_info['validated'];
     }
 
-    public function validateAndSaveAjaxCustomerInfo()
+    public function validateAndSaveAjaxCustomerInfo(): array
     {
         $messages = [];
         $this->customerInfoOk = false;
@@ -1565,7 +1564,7 @@ class OnePageCheckout extends base
     // returning an array of messages identifying "issues" found.  If the returned array is
     // empty, no "issues" were found.
     //
-    protected function validateUpdatedAddress(&$address_values, $which, $prepend_which = true)
+    protected function validateUpdatedAddress(&$address_values, string $which, bool $prepend_which = true): array
     {
         global $db;
 
@@ -1785,7 +1784,7 @@ class OnePageCheckout extends base
     // This internal function saves the requested (and previously validated!) address,
     // either to a temporary, in-session, value or to the database.
     //
-    protected function saveCustomerAddress($address, $which, $add_address = false)
+    protected function saveCustomerAddress(array $address, string $which, bool $add_address = false)
     {
         global $db;
 
@@ -1919,7 +1918,7 @@ class OnePageCheckout extends base
     ** Note: Under 'normal' circumstances, this function will never return 'false'.  The function's purpose is to thwart
     ** script-kiddies from messing with the CSS overlay and attempting to create an order with invalid entries.
     */
-    public function validateTemporaryEntries()
+    public function validateTemporaryEntries(): bool
     {
         $validated = ($this->validateCustomerInfo() === true && $this->validateTempBilltoAddress() === true && $this->validateTempShiptoAddress() === true);
 
@@ -1937,11 +1936,11 @@ class OnePageCheckout extends base
     ** Each returns a boolean value, indicating whether or not the associated entries have been found
     ** to be valid.
     */
-    public function validateCustomerInfo()
+    public function validateCustomerInfo(): bool
     {
         return ($this->guestIsActive === false || $this->customerInfoOk === true);
     }
-    public function validateTempBilltoAddress()
+    public function validateTempBilltoAddress(): bool
     {
         if ($this->guestIsActive === false) {
             $address_ok = !$this->customerAccountNeedsPrimaryAddress();
@@ -2060,7 +2059,7 @@ class OnePageCheckout extends base
     // This internal function creates an address-book record in the database using one of the 
     // temporary address-book records.
     //
-    protected function createAddressBookRecord($customer_id, $which)
+    protected function createAddressBookRecord($customer_id, string $which): int
     {
         global $db;
 
@@ -2098,14 +2097,14 @@ class OnePageCheckout extends base
         
         $this->notify('NOTIFY_OPC_CREATED_ADDRESS_BOOK_DB_ENTRY', $address_book_id, $sql_data_array);
 
-        return $address_book_id;
+        return (int)$address_book_id;
     }
 
     // -----
     // This internal function checks the database to see if the specified address already exists
     // for the customer associated with the current session.
     //
-    protected function findAddressBookEntry($address)
+    protected function findAddressBookEntry(array $address): bool|int
     {
         global $db;
 
@@ -2145,7 +2144,7 @@ class OnePageCheckout extends base
         $address_to_match = $this->addressArrayToString($address);
         foreach ($possible_addresses as $next_address) {
             if ($address_to_match === $this->addressArrayToString($next_address)) {
-                $address_book_id = $next_address['address_book_id'];
+                $address_book_id = (int)$next_address['address_book_id'];
                 break;
             }
         }
@@ -2157,7 +2156,7 @@ class OnePageCheckout extends base
     // This internal function creates a string containing the address-related values
     // in the specified address-array.
     //
-    protected function addressArrayToString($address_array)
+    protected function addressArrayToString(array $address_array): string
     {
         $the_address =
             $address_array['company'] .
@@ -2189,7 +2188,7 @@ class OnePageCheckout extends base
     ** return to ensure that the order's total remains the same ... just in case the ship-to address returned
     ** from PayPal has a different taxation.
     */
-    public function createPayPalTemporaryAddressInfo($paypal_options, $order)
+    public function createPayPalTemporaryAddressInfo($paypal_options, $order): bool|array
     {
         // -----
         // Determine which (bill/ship) temporary address is currently in use for the order's shipping.
@@ -2224,7 +2223,7 @@ class OnePageCheckout extends base
             $this->debugMessage("createPayPalTemporaryAddressInfo, returning ($which):\n" . json_encode($paypal_temp, JSON_PRETTY_PRINT));
         }
 
-        $this->paypalTotalValue = $order->info['total'];
+        $this->paypalTotalValue = (string)$order->info['total'];
         $this->paypalNoShipping = (bool)$paypal_options['NOSHIPPING'];
 
         return $paypal_temp;
@@ -2399,7 +2398,7 @@ class OnePageCheckout extends base
     // the order's shipping address for PayPal Express Checkout processing; the value returned
     // is (bool)false if the address is not one of OPC's temporary addresses.
     //
-    protected function determineTempShippingAddress()
+    protected function determineTempShippingAddress(): bool|string
     {
         $which = false;
         if ($this->isVirtualOrder === false) {
@@ -2438,7 +2437,7 @@ class OnePageCheckout extends base
     // This internal method returns a country-array containing its id, name, iso-code-2 and iso-code-3
     // values, based on an iso_code_2 value input.
     //
-    protected function getCountryInfoFromIsoCode2($iso_code_2)
+    protected function getCountryInfoFromIsoCode2($iso_code_2): bool|array
     {
         global $db;
 
@@ -2452,15 +2451,15 @@ class OnePageCheckout extends base
         if ($country_info->EOF) {
             trigger_error("Could not locate the country with the iso-code-2 of $iso_code_2.", E_USER_WARNING);
             return false;
-        } else {
-            $country = [
-                'id' => $country_info->fields['countries_id'],
-                'title' => zen_get_country_name($country_info->fields['countries_id']),
-                'iso_code_2' => $country_info->fields['countries_iso_code_2'],
-                'iso_code_3' => $country_info->fields['countries_iso_code_3'],
-                'format_id' => $country_info->fields['address_format_id'],
-            ];
         }
+
+        $country = [
+            'id' => $country_info->fields['countries_id'],
+            'title' => zen_get_country_name($country_info->fields['countries_id']),
+            'iso_code_2' => $country_info->fields['countries_iso_code_2'],
+            'iso_code_3' => $country_info->fields['countries_iso_code_3'],
+            'format_id' => $country_info->fields['address_format_id'],
+        ];
         return $country;
     }
 
@@ -2468,7 +2467,7 @@ class OnePageCheckout extends base
     // This internal method returns a zone/state array containing the zone_id and name of the
     // state associated with the country/code provided.
     //
-    protected function getZoneInfoFromCode($country_id, $zone_code)
+    protected function getZoneInfoFromCode(int $country_id, string $zone_code): array
     {
         global $db;
 
@@ -2496,7 +2495,7 @@ class OnePageCheckout extends base
     **
     ** Returns (bool)true if the order's total value was changed; (bool)false otherwise.
     */
-    public function didPayPalOrderTotalValueChange($order)
+    public function didPayPalOrderTotalValueChange($order): bool
     {
         $value_changed = (isset($this->paypalTotalValue) && $this->paypalTotalValue != $order->info['total']);
         unset($this->paypalTotalValue);
@@ -2541,7 +2540,7 @@ class OnePageCheckout extends base
     ** Noting that this is somewhat complicated, since for the 'Store' tax-basis the order might
     ** have one temporary and one 'permanent' address in use.
     */
-    public function getTaxLocations()
+    public function getTaxLocations(): bool|array
     {
         global $db;
 
@@ -2643,7 +2642,7 @@ class OnePageCheckout extends base
     // function.  This allows the various messages to be consolidated into a single
     // log-file for easier troubleshooting.
     //
-    protected function debugMessage($message, $include_request = false)
+    protected function debugMessage(string $message, bool $include_request = false)
     {
         global $checkout_one;
 
