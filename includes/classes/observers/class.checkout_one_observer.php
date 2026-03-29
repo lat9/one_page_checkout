@@ -91,7 +91,7 @@ class checkout_one_observer extends base
         // We'll attach notifiers to the various elements of the 3-page checkout to consolidate that
         // processing into a single page.
         //
-        if ($_SESSION['opc']->checkEnabled() === true) {
+        if ($_SESSION['opc']->checkOpcEnabled() === true) {
             $this->enabled = true;
             $this->current_page_base = $current_page_base;
 
