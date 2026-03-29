@@ -1,9 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
-// Copyright (C) 2013-2025, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2026 Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.5.5
+// Last updated: OPC v2.6.0
 //
 class zcAjaxOnePageCheckout extends base
 {
@@ -22,7 +22,7 @@ class zcAjaxOnePageCheckout extends base
     // Update the order's shipping module/method when the shipping selection was
     // changed on the checkout_one page.
     //
-    public function updateShippingSelection()
+    public function updateShippingSelection(): array
     {
         global $checkout_one, $order, $currencies;
 
@@ -132,7 +132,7 @@ class zcAjaxOnePageCheckout extends base
     // Called by jQuery handling when the shipping=billing checkbox
     // is changed such that billing and shipping are now the same.
     //
-    public function setShippingEqualBilling()
+    public function setShippingEqualBilling(): array
     {
         // -----
         // Load the One-Page Checkout page's language files.
@@ -182,7 +182,7 @@ class zcAjaxOnePageCheckout extends base
     // Function to return the current value for an address (either bill-to or send-to) block.  Used
     // within the plugin's jQuery when the customer has cancelled an address-block change.
     //
-    public function restoreAddressValues()
+    public function restoreAddressValues(): array
     {
         global $checkout_one;
 
@@ -218,7 +218,7 @@ class zcAjaxOnePageCheckout extends base
     // within the plugin's jQuery when the customer has requested that changes to an address-block
     // be saved.
     //
-    public function validateAddressValues()
+    public function validateAddressValues(): array
     {
         global $checkout_one;
 
@@ -253,7 +253,7 @@ class zcAjaxOnePageCheckout extends base
     // -----
     // This function validates and updates any guest-customer's contact information.
     //
-    public function validateCustomerInfo()
+    public function validateCustomerInfo(): array
     {
         global $checkout_one;
 
@@ -284,7 +284,7 @@ class zcAjaxOnePageCheckout extends base
     // -----
     // This function restores the guest-customer's previously-entered contact information.
     //
-    public function restoreCustomerInfo()
+    public function restoreCustomerInfo(): array
     {
         global $checkout_one;
 
@@ -323,7 +323,7 @@ class zcAjaxOnePageCheckout extends base
     // Public function to update the requested address based on a change in the saved-addresses'
     // dropdown menu.
     //
-    public function setAddressFromSavedSelections()
+    public function setAddressFromSavedSelections(): array
     {
         global $checkout_one;
 
@@ -358,7 +358,7 @@ class zcAjaxOnePageCheckout extends base
     // Public function to update the payment-method and the order-totals block; used when the payment method is changed
     // so that payment-related totals (like ot_cod_fee) are properly updated.
     //
-    public function updatePaymentMethod()
+    public function updatePaymentMethod(): array
     {
         // -----
         // Load the One-Page Checkout page's language files.
@@ -461,7 +461,7 @@ class zcAjaxOnePageCheckout extends base
         return $order_total_html;
     }
 
-    protected function renderAddressBlock($which)
+    protected function renderAddressBlock(string $which): string
     {
         global $current_page_base, $template;
 
@@ -512,7 +512,7 @@ class zcAjaxOnePageCheckout extends base
     // -----
     // Common, for each AJAX request, checking for timeout and OPC-unavailable conditions.
     //
-    protected function initializeResponseStatus($method_name, &$error_message)
+    protected function initializeResponseStatus(string $method_name, string &$error_message): string
     {
         global $checkout_one;
 
@@ -523,7 +523,7 @@ class zcAjaxOnePageCheckout extends base
         // If One-Page Checkout is no longer available, return a status code to the jQuery handler which, in turn,
         // will result in the customer being redirected to the checkout_shipping page.
         //
-        if (!isset($_SESSION['opc']) || !is_object($_SESSION['opc']) || $_SESSION['opc']->checkEnabled() === false) {
+        if (!isset($_SESSION['opc']) || !is_object($_SESSION['opc']) || $_SESSION['opc']->checkOpcEnabled() === false) {
             $status = 'unavailable';
             $checkout_one->debug_message('OPC is no longer available.', "zcAjaxOnePageCheckout::$method_name");
         // -----
