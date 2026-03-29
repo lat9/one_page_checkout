@@ -22,7 +22,8 @@ class OnePageCheckout extends base
     //
     // isGuestCheckoutEnabled ... Indicates whether (true) or not (false) the overall guest-checkout is enabled via configuration.
     // registeredAccounts ....... Indicates whether (true) or not (false) "registered" accounts are enabled via configuration.
-    // isEnabled ................ Essentially follows the enable-value of the OPC observer.
+    // opcIsEnabled ............. Indicates whether or not the overall OPC operation is enabled.
+    // isEnabled ................ Indicates whether OPC's operation is currently enabled.
     // guestIsActive ............ Indicates whether (true) or not (false) we're currently handling a guest-checkout
     // tempAddressValues ........ Array, if set, contains any temporary addresses used within the checkout process.
     // guestCustomerInfo ........ Array, if set, contains the customer-specific (i.e. email, phone, etc.) information for a guest customer.
@@ -60,6 +61,7 @@ class OnePageCheckout extends base
     //
     protected bool $isGuestCheckoutEnabled;
     protected bool $registeredAccounts;
+    protected bool $opcIsEnabled;
     protected bool $isEnabled;
     protected bool $guestIsActive;
     protected array $tempAddressValues;
@@ -88,6 +90,7 @@ class OnePageCheckout extends base
 
     public function __construct()
     {
+        $this->opcIsEnabled = (defined('CHECKOUT_ONE_ENABLED') && CHECKOUT_ONE_ENABLED !== 'false');
         $this->isEnabled = false;
         $this->guestIsActive = false;
         $this->isGuestCheckoutEnabled = false;
@@ -108,8 +111,17 @@ class OnePageCheckout extends base
     }
 
     /* -----
-    ** This function returns whether (true) or not (false) the overall OPC functionality
-    ** is enabled.
+    ** This function returns whether (true) or not (false) OPC's overall functionality
+    ** is enabled, via configuration.
+    */
+    public function checkOpcEnabled(): bool
+    {
+        return $this->opcIsEnabled;
+    }
+
+    /* -----
+    ** This function returns whether (true) or not (false) the site's current environment supports
+    ** OPC to be enabled.
     */
     public function checkEnabled(): bool
     {
@@ -125,6 +137,7 @@ class OnePageCheckout extends base
         // Note: If we're currently in the PayPal Express Checkout's "Express Checkout" 
         // (aka in_special_checkout) processing, OPC will (currently) be disabled.
         //
+        $this->opcIsEnabled = false;
         $this->isEnabled = false;
         if (defined('CHECKOUT_ONE_ENABLED') && (!isset($_SESSION['opc_error']) || $_SESSION['opc_error'] !== self::OPC_ERROR_NO_JS)) {
             if (CHECKOUT_ONE_ENABLED === 'true') {
@@ -134,6 +147,8 @@ class OnePageCheckout extends base
             } elseif (CHECKOUT_ONE_ENABLED === 'disable-conditional') {
                 $this->isEnabled = !in_array($_SESSION['customer_id'] ?? -1, explode(',', str_replace(' ', '', CHECKOUT_ONE_DISABLE_CUSTOMERS_LIST)));
             }
+
+            $this->opcIsEnabled = (CHECKOUT_ONE_ENABLED !== 'false');
 
             $set_disabled = false;
             $this->notify('NOTIFY_OPC_SET_DISABLED', [], $set_disabled);
@@ -188,7 +203,7 @@ class OnePageCheckout extends base
     public function guestCheckoutEnabled(): bool
     {
         $this->initializeGuestCheckout();
-        return ($this->isEnabled === true && $this->isGuestCheckoutEnabled === true);
+        return ($this->opcIsEnabled === true && $this->isGuestCheckoutEnabled === true);
     }
 
     /* -----
@@ -296,7 +311,7 @@ class OnePageCheckout extends base
     */
     public function accountRegistrationEnabled(): bool
     {
-        return ($this->isEnabled === true && $this->registeredAccounts === true);
+        return ($this->opcIsEnabled === true && $this->registeredAccounts === true);
     }
 
     /* -----
@@ -2021,7 +2036,7 @@ class OnePageCheckout extends base
         //
         $customer = new Customer();
         $result = $customer->create($data);
-        
+
         $customer_id = (int)$result['customers_id'];
         $db->Execute(
             "UPDATE " . TABLE_ORDERS . "
@@ -2029,6 +2044,7 @@ class OnePageCheckout extends base
               WHERE orders_id = " . (int)$order_id . "
               LIMIT 1"
         );
+        $data['customers_id'] = $customer_id;
 
         // -----
         // Issue a notification, indicating that the customer's record has been successfully created
