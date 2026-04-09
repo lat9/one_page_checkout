@@ -751,11 +751,6 @@ jQuery(document).ready(function() {
             if (typeof initializeStateZones != 'undefined') {
                 initializeStateZones();
             }
-            if (which == 'ship') {
-                jQuery(document).on('change', '#checkoutOneShipto input, #checkoutOneShipto select:not(#select-address-ship)', changeShippingFields);
-            } else {
-                jQuery(document).on('change', '#checkoutOneBillto input, #checkoutOneBillto select:not(#select-address-bill)', changeBillingFields);
-            }
         });
     }
 
