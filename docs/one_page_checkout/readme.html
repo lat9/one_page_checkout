@@ -275,7 +275,7 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
         <li>Now, check your store's <code>/includes/modules/pages/checkout_payment</code> directory's files. If you have plugins or additional payment methods that have added files to that directory, copy them to your store's <code>/includes/modules/pages/checkout_one</code> directory.  Those additional files will be required proper operation in the One-Page Checkout environment.</li>
         <li>If you placed your store into <em>Maintenance Mode</em>, as suggested at step <b>D</b>, you can now safely take your site out of <em>Maintenance Mode</em>.</li>
         <li>Note that the plugin, upon initial installation, defaults its enabling settings to <em>false</em>; see the <em>Overview / Configuration</em> tab of this readme for additional information.</li>
-        <li>One last item to &quot;tidy up&quot; ... registering the two new checkout pages into the <b>ROBOTS_PAGES_TO_SKIP</b> value.  I don't think this is a high-priority item since the pages' names don't appear on any menus and include it only for completeness!  If you want to make sure that robots aren't indexing the <code>checkout_one</code> and <code>checkout_one_confirmation</code> pages, you'll need to edit your template's version of <code>/includes/languages/english/meta_tags.php</code> and add those two page-names to the end of that constant's comma-separated-list.</li>
+        <li>One last item to &quot;tidy up&quot; ... registering the two new checkout pages into the <b>ROBOTS_PAGES_TO_SKIP</b> value.  I don't think this is a high-priority item since the pages' names don't appear on any menus and include it only for completeness!  If you want to make sure that robots aren't indexing the <code>checkout_one</code> and <code>checkout_one_confirmation</code> pages, you'll need to edit your site's version of <code>/includes/extra_configures/robots_pages_to_skip.php</code> and add those two page-names to the end of that constant's comma-separated-list.</li>
     </ol>
 
     <h3>Updating</h3>
@@ -305,6 +305,7 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
                 <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
             </ol></li>
+        </li>
         <li>v2.6.0, 2026-03-30 (lat9):<ul>
             <li>BUGFIX: Correct unwanted PHP Fatal errors when OPC session is missing or isn't an object.</li>
             <li>CHANGE: Ensure admin language files are in array format.</li>
