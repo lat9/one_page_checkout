@@ -144,6 +144,13 @@ if (isset($_GET['action']) && $_GET['action'] === 'status') {
 }
 
 // -----
+// If there is a posted 'order_id', make sure it's cast to an int.
+//
+if (isset($_POST['order_id'])) {
+    $_POST['order_id'] = (int)$_POST['order_id'];
+}
+
+// -----
 // Give a listener (like a captcha) the opportunity to supply its validation form-field(s) for the
 // template's display.
 //
