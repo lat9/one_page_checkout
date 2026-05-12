@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.6.0
+// Last updated: OPC v2.6.2
 //
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
@@ -23,11 +23,13 @@ class checkout_one_observer extends base
         global $current_page_base, $spider_flag;
 
         // -----
-        // If the session-based OPC 'brains' aren't available, there's nothing to be done.
+        // If the session-based OPC 'brains' aren't available, there's nothing to be done. The
+        // same is true if we're in paypalwpp's 'ec' mode.
+        //
         // The observer will not attach to its various notifications.
         //
-        if (empty($_SESSION['opc']) || !is_object($_SESSION['opc'])) {
-//            trigger_error('Missing $_SESSION[\'opc\']:' . var_export($_SERVER, true) . PHP_EOL . var_export($_GET, true) . PHP_EOL . var_export($_POST, true), E_USER_WARNING);
+        if (empty($_SESSION['opc']) || !is_object($_SESSION['opc']) || ($_GET['type'] ?? '') === 'ec') {
+//            trigger_error('Missing $_SESSION[\'opc\'] or in PayPal special checkout:' . var_export($_SERVER, true) . PHP_EOL . var_export($_GET, true) . PHP_EOL . var_export($_POST, true), E_USER_WARNING);
             return;
         }
 
