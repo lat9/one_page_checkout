@@ -300,8 +300,10 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
     <ul>
         <li>v2.6.2-beta1, 2026-05-12 (lat9):<ul>
             <li>BUGFIX: Correct PHP fatal error during <code>paypalwpp</code> special checkout.</li>
+            <li>BUGFIX: Correct &quot;undefined constant&quot; PHP error when guest converts to full account on Zen Cart versions prior to v2.2.2.</li>
             <li>The following files were changed:<ol>
                 <li>/includes/classes/observers/class.checkout_one_observer.php</li>
+                <li>/includes/modules/checkout_one_send_welcome_email.php</li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
             </ol></li>
         </li>
