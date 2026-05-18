@@ -6,7 +6,7 @@
 // This class, instantiated in the current customer session, keeps track of a customer's login and checkout
 // progression with the aid of the OPC's observer- and AJAX-classes.
 //
-// Last updated: OPC v2.6.0
+// Last updated: OPC v2.6.2
 //
 class OnePageCheckout extends base
 {
@@ -22,7 +22,7 @@ class OnePageCheckout extends base
     //
     // isGuestCheckoutEnabled ... Indicates whether (true) or not (false) the overall guest-checkout is enabled via configuration.
     // registeredAccounts ....... Indicates whether (true) or not (false) "registered" accounts are enabled via configuration.
-    // opcIsEnabled ............. Indicates whether or not the overall OPC operation is enabled.
+    // opcIsEnabled ............. Indicates whether or not the overall OPC operation is enabled, via configuration.
     // isEnabled ................ Indicates whether OPC's operation is currently enabled.
     // guestIsActive ............ Indicates whether (true) or not (false) we're currently handling a guest-checkout
     // tempAddressValues ........ Array, if set, contains any temporary addresses used within the checkout process.
@@ -203,7 +203,7 @@ class OnePageCheckout extends base
     public function guestCheckoutEnabled(): bool
     {
         $this->initializeGuestCheckout();
-        return ($this->opcIsEnabled === true && $this->isGuestCheckoutEnabled === true);
+        return ($this->isEnabled === true && $this->isGuestCheckoutEnabled === true);
     }
 
     /* -----
