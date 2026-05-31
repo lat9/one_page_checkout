@@ -302,10 +302,12 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
             <li>BUGFIX: Correct PHP fatal error during <code>paypalwpp</code> special checkout.</li>
             <li>BUGFIX: Correct &quot;undefined constant&quot; PHP error when guest converts to full account on Zen Cart versions prior to v2.2.2.</li>
             <li>BUGFIX: Correct OPC disable during <code>paypalwpp</code> special checkout.</li>
+            <li>BUGFIX: Correct missing <code>$gender</code> for account registration, if not enabled via configuration.</li>
             <li>The following files were changed:<ol>
                 <li>/includes/classes/OnePageCheckout.php</li>
                 <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                 <li>/includes/modules/checkout_one_send_welcome_email.php</li>
+                <li>/includes/modules/pages/create_account/header_php_create_account_register.php</li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
             </ol></li>
         </li>

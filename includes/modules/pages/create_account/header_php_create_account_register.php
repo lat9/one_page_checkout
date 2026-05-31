@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
 // Copyright (C) 2017-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.6.0
+// Last updated: OPC v2.6.2
 //
 // This should be first line of the script:
 $zco_notifier->notify('NOTIFY_HEADER_START_CREATE_ACCOUNT_REGISTER');
@@ -216,8 +216,12 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
         // A "registered" customer doesn't supply their address information, set some defaults
         // for the customer's address.
         //
+        // Note that the $gender variable is previously set to a valid value if enabled via configuration;
+        // the 'Customer' class ignores the variable if not so enabled.
+        //
         $dob ??= '';
         $fax ??= '';
+        $company = '';
         $street_address = '';
         $suburb = '';
         $city = '';
@@ -225,6 +229,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
         $postcode = '';
         $country = (int)STORE_COUNTRY;
         $state = zen_get_zone_name($country, $zone_id);
+        $gender ??= false;
         $data = compact(
             'firstname', 'lastname', 'email_address', 'nick', 'email_format', 'telephone', 'fax',
             'newsletter', 'password', 'customers_authorization', 'customers_referral',
