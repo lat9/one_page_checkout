@@ -90,7 +90,7 @@ class OnePageCheckout extends base
 
     public function __construct()
     {
-        $this->opcIsEnabled = (defined('CHECKOUT_ONE_ENABLED') && CHECKOUT_ONE_ENABLED !== 'false');
+        $this->opcIsEnabled = zen_config('CHECKOUT_ONE_ENABLED', 'false') !== 'false';
         $this->isEnabled = false;
         $this->guestIsActive = false;
         $this->isGuestCheckoutEnabled = false;
@@ -139,16 +139,22 @@ class OnePageCheckout extends base
         //
         $this->opcIsEnabled = false;
         $this->isEnabled = false;
-        if (defined('CHECKOUT_ONE_ENABLED') && (!isset($_SESSION['opc_error']) || $_SESSION['opc_error'] !== self::OPC_ERROR_NO_JS)) {
-            if (CHECKOUT_ONE_ENABLED === 'true') {
+
+        $checkout_one_enabled = zen_config('CHECKOUT_ONE_ENABLED');
+        if ($checkout_one_enabled === null) {
+            return false;
+        }
+
+        if (!isset($_SESSION['opc_error']) || $_SESSION['opc_error'] !== self::OPC_ERROR_NO_JS) {
+            if ($checkout_one_enabled === 'true') {
                 $this->isEnabled = true;
-            } elseif (in_array(CHECKOUT_ONE_ENABLED, ['conditional', 'enable-conditional'])) {
-                $this->isEnabled = in_array($_SESSION['customer_id'] ?? -1, explode(',', str_replace(' ', '', CHECKOUT_ONE_ENABLE_CUSTOMERS_LIST)));
-            } elseif (CHECKOUT_ONE_ENABLED === 'disable-conditional') {
-                $this->isEnabled = !in_array($_SESSION['customer_id'] ?? -1, explode(',', str_replace(' ', '', CHECKOUT_ONE_DISABLE_CUSTOMERS_LIST)));
+            } elseif (in_array($checkout_one_enabled, ['conditional', 'enable-conditional'])) {
+                $this->isEnabled = in_array($_SESSION['customer_id'] ?? -1, explode(',', str_replace(' ', '', zen_config('CHECKOUT_ONE_ENABLE_CUSTOMERS_LIST'))));
+            } elseif ($checkout_one_enabled === 'disable-conditional') {
+                $this->isEnabled = !in_array($_SESSION['customer_id'] ?? -1, explode(',', str_replace(' ', '', zen_config('CHECKOUT_ONE_DISABLE_CUSTOMERS_LIST'))));
             }
 
-            $this->opcIsEnabled = (CHECKOUT_ONE_ENABLED !== 'false');
+            $this->opcIsEnabled = ($checkout_one_enabled !== 'false');
 
             $set_disabled = false;
             $this->notify('NOTIFY_OPC_SET_DISABLED', [], $set_disabled);
@@ -187,7 +193,7 @@ class OnePageCheckout extends base
         global $current_page_base;
 
         $is_paypal_express_checkout = false;
-        if ($current_page_base !== FILENAME_CHECKOUT_PROCESS && defined('MODULE_PAYMENT_PAYPALWPP_STATUS') && MODULE_PAYMENT_PAYPALWPP_STATUS === 'True') {
+        if ($current_page_base !== FILENAME_CHECKOUT_PROCESS && zen_config('MODULE_PAYMENT_PAYPALWPP_STATUS') === 'True') {
             if (isset($_SESSION['customer_guest_id']) || (!empty($_SESSION['paypal_ec_token']) && !empty($_SESSION['paypal_ec_payer_id']) && !empty($_SESSION['paypal_ec_payer_info']))) {
                 $this->debugMessage("PayPal Express Checkout, in special checkout.  One Page Checkout is disabled.");
                 $is_paypal_express_checkout = true;
@@ -213,7 +219,7 @@ class OnePageCheckout extends base
     public function getShippingBilling(): bool
     {
         if (!isset($_SESSION['shipping_billing'])) {
-            $_SESSION['shipping_billing'] = (CHECKOUT_ONE_ENABLE_SHIPPING_BILLING === 'true' || $this->isVirtualOrder === true);
+            $_SESSION['shipping_billing'] = (zen_config('CHECKOUT_ONE_ENABLE_SHIPPING_BILLING') === 'true' || $this->isVirtualOrder === true);
         } elseif ($this->isVirtualOrder === true) {
             $_SESSION['shipping_billing'] = true;
         }
@@ -242,7 +248,7 @@ class OnePageCheckout extends base
         $address_book_id = -1;
         $order_country = -1;
         $pass = false;
-        if (defined('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING') && MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING === 'true') {
+        if (zen_config('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING') === 'true') {
             if ($country_override === false) {
                 $order_country = $order->delivery['country_id'];
             } else {
@@ -264,15 +270,15 @@ class OnePageCheckout extends base
                 }
             }
             if ($order_country !== false) {
-                switch (MODULE_ORDER_TOTAL_SHIPPING_DESTINATION) {
+                switch (zen_config('MODULE_ORDER_TOTAL_SHIPPING_DESTINATION')) {
                     case 'national':
-                        if ($order_country === STORE_COUNTRY) {
+                        if ($order_country === zen_config('STORE_COUNTRY')) {
                             $pass = true;
                         }
                         break;
 
                     case 'international':
-                        if ($order_country !== STORE_COUNTRY) {
+                        if ($order_country !== zen_config('STORE_COUNTRY')) {
                             $pass = true;
                         }
                         break;
@@ -283,7 +289,7 @@ class OnePageCheckout extends base
                 }
             }
 
-            if ($pass === true && $_SESSION['cart']->show_total() >= MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER) {
+            if ($pass === true && $_SESSION['cart']->show_total() >= zen_config('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER')) {
                 $free_shipping = true;
             }
         }
@@ -394,9 +400,9 @@ class OnePageCheckout extends base
         $default_address = $db->Execute($addresses_query);
         
         if (!$default_address->EOF) {
-            if (mb_strlen($default_address->fields['street_address']) >= (int)ENTRY_STREET_ADDRESS_MIN_LENGTH ||
-                mb_strlen($default_address->fields['city']) >= (int)ENTRY_CITY_MIN_LENGTH ||
-                mb_strlen($default_address->fields['postcode']) >= (int)ENTRY_POSTCODE_MIN_LENGTH) {
+            if (mb_strlen($default_address->fields['street_address']) >= (int)zen_config('ENTRY_STREET_ADDRESS_MIN_LENGTH') ||
+                mb_strlen($default_address->fields['city']) >= (int)zen_config('ENTRY_CITY_MIN_LENGTH') ||
+                mb_strlen($default_address->fields['postcode']) >= (int)zen_config('ENTRY_POSTCODE_MIN_LENGTH')) {
                 $account_needs_primary_address = false;
             }
         }
@@ -432,7 +438,7 @@ class OnePageCheckout extends base
             $this->debugMessage("Guest checkout disabled via observer.");
         }
 
-        $this->isGuestCheckoutEnabled = ($allow_guest_checkout === true && empty($spider_flag) && (defined('CHECKOUT_ONE_ENABLE_GUEST') && CHECKOUT_ONE_ENABLE_GUEST === 'true'));
+        $this->isGuestCheckoutEnabled = ($allow_guest_checkout === true && empty($spider_flag) && zen_config('CHECKOUT_ONE_ENABLE_GUEST') === 'true');
         if ($this->isGuestCheckoutEnabled === true) {
             if (isset($_SESSION['opc_error']) && ($_SESSION['opc_error'] === self::OPC_ERROR_NO_GC || $_SESSION['opc_error'] === self::OPC_ERROR_NO_JS)) {
                 if ($_SESSION['opc_error'] === self::OPC_ERROR_NO_JS || in_array($current_page_base, [FILENAME_LOGIN, FILENAME_CHECKOUT_ONE, FILENAME_CHECKOUT_ONE_CONFIRMATION])) {
@@ -441,10 +447,10 @@ class OnePageCheckout extends base
             }
         }
 
-        $this->guestCustomerId = (defined('CHECKOUT_ONE_GUEST_CUSTOMER_ID')) ? (int)CHECKOUT_ONE_GUEST_CUSTOMER_ID : 0;
-        $this->tempBilltoAddressBookId = (defined('CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID')) ? (int)CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID : 0;
-        $this->tempSendtoAddressBookId = (defined('CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID')) ? (int)CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID : 0;
-        $this->registeredAccounts = (defined('CHECKOUT_ONE_ENABLE_REGISTERED_ACCOUNTS') && CHECKOUT_ONE_ENABLE_REGISTERED_ACCOUNTS === 'true');
+        $this->guestCustomerId = (int)zen_config('CHECKOUT_ONE_GUEST_CUSTOMER_ID', 0);
+        $this->tempBilltoAddressBookId = (int)zen_config('CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID', 0);
+        $this->tempSendtoAddressBookId = (int)zen_config('CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID', 0);
+        $this->registeredAccounts = zen_config('CHECKOUT_ONE_ENABLE_REGISTERED_ACCOUNTS') === 'true';
 
         // -----
         // The 'stringIgnoreNull' type of database "bind" type was introduced in ZC1.5.5b; if the store
@@ -767,7 +773,7 @@ class OnePageCheckout extends base
     */
     public function enableCreditSelection($ot_name)
     {
-        return !($this->guestIsActive === true && in_array($ot_name, explode(',', str_replace(' ', '', CHECKOUT_ONE_ORDER_TOTALS_DISALLOWED_FOR_GUEST))));
+        return !($this->guestIsActive === true && in_array($ot_name, explode(',', str_replace(' ', '', zen_config('CHECKOUT_ONE_ORDER_TOTALS_DISALLOWED_FOR_GUEST')))));
     }
 
     /* -----
@@ -821,7 +827,7 @@ class OnePageCheckout extends base
         }
 
         if ($this->guestIsActive === true) {
-            $disallowed_payment_methods = explode(',', str_replace(' ', '', CHECKOUT_ONE_PAYMENTS_DISALLOWED_FOR_GUEST));
+            $disallowed_payment_methods = explode(',', str_replace(' ', '', zen_config('CHECKOUT_ONE_PAYMENTS_DISALLOWED_FOR_GUEST')));
             if (count($disallowed_payment_methods) > 0) {
                 for ($i = 0, $n = count($enabled_payment_modules); $i < $n; $i++) {
                     if (in_array($enabled_payment_modules[$i]['id'], $disallowed_payment_methods)) {
@@ -856,7 +862,7 @@ class OnePageCheckout extends base
                    FROM " . TABLE_ADDRESS_BOOK . "
                   WHERE customers_id = " . (int)$_SESSION['customer_id']
             );
-            if ($check->fields['count'] < (int)MAX_ADDRESS_BOOK_ENTRIES) {
+            if ($check->fields['count'] < (int)zen_config('MAX_ADDRESS_BOOK_ENTRIES')) {
                 $show_add_address = true;
             }
         }
@@ -999,7 +1005,7 @@ class OnePageCheckout extends base
             "recalculateTaxBasis(order, $use_temp_billing, $use_temp_shipping):\n" .
             json_encode($order, JSON_PRETTY_PRINT) . "\n" .
             json_encode($this->tempAddressValues, JSON_PRETTY_PRINT));
-        switch (STORE_PRODUCT_TAX_BASIS) {
+        switch (zen_config('STORE_PRODUCT_TAX_BASIS')) {
             case 'Shipping':
                 if ($order->content_type === 'virtual') {
                     if ($use_temp_billing === true) {
@@ -1029,10 +1035,10 @@ class OnePageCheckout extends base
                 break;
 
             default:
-                if ($use_temp_billing === true && $this->tempAddressValues['bill']['zone_id'] == STORE_ZONE) {
+                if ($use_temp_billing === true && (int)$this->tempAddressValues['bill']['zone_id'] === (int)zen_config('STORE_ZONE')) {
                     $tax_country_id = $this->tempAddressValues['bill']['country'];
                     $tax_zone_id = $this->tempAddressValues['bill']['zone_id'];
-                } elseif (($use_temp_billing === false && $order->billing['zone_id'] == STORE_ZONE) || $order->content_type === 'virtual') {
+                } elseif (($use_temp_billing === false && (int)$order->billing['zone_id'] === (int)zen_config('STORE_ZONE')) || $order->content_type === 'virtual') {
                     $tax_country_id = $order->billing['country_id'];
                     $tax_zone_id = $order->billing['zone_id'];
                 } else {
@@ -1287,13 +1293,13 @@ class OnePageCheckout extends base
             'city' => '',
             'postcode' => '',
             'state' => '',
-            'country' => (int)STORE_COUNTRY,
-            'country_id' => (int)STORE_COUNTRY,
+            'country' => (int)zen_config('STORE_COUNTRY'),
+            'country_id' => (int)zen_config('STORE_COUNTRY'),
             'zone_id' => 0,
             'zone_name' => '',
             'address_book_id' => 0,
-            'selected_country' => (int)STORE_COUNTRY,
-            'country_has_zones' => $this->countryHasZones((int)STORE_COUNTRY),
+            'selected_country' => (int)zen_config('STORE_COUNTRY'),
+            'country_has_zones' => $this->countryHasZones((int)zen_config('STORE_COUNTRY')),
             'state_field_label' => '',
             'show_pulldown_states' => true,
             'error' => false,
@@ -1495,11 +1501,11 @@ class OnePageCheckout extends base
         $this->customerInfoOk = false;
 
         $email_address = zen_db_prepare_input(zen_sanitize_string($_POST['email_address'] ?? ''));
-        if (mb_strlen($email_address) < ENTRY_EMAIL_ADDRESS_MIN_LENGTH) {
+        if (mb_strlen($email_address) < zen_config('ENTRY_EMAIL_ADDRESS_MIN_LENGTH')) {
             $messages['email_address'] = ENTRY_EMAIL_ADDRESS_ERROR;
         } elseif (!zen_validate_email($email_address) || $this->isEmailAuthorized($email_address) === false) {
             $messages['email_address'] = ENTRY_EMAIL_ADDRESS_CHECK_ERROR;
-        } elseif (CHECKOUT_ONE_GUEST_EMAIL_CONFIRMATION === 'true') {
+        } elseif (zen_config('CHECKOUT_ONE_GUEST_EMAIL_CONFIRMATION') === 'true') {
             $email_confirm = zen_db_prepare_input(zen_sanitize_string($_POST['email_address_conf']));
             if ($email_confirm !== $email_address) {
                 $messages['email_address_conf'] = ERROR_EMAIL_MUST_MATCH_CONFIRMATION;
@@ -1507,7 +1513,7 @@ class OnePageCheckout extends base
         }
 
         $telephone = zen_db_prepare_input(zen_sanitize_string($_POST['telephone'] ?? ''));
-        if (strlen($telephone) < ENTRY_TELEPHONE_MIN_LENGTH) {
+        if (strlen($telephone) < zen_config('ENTRY_TELEPHONE_MIN_LENGTH')) {
             $messages['telephone'] = ENTRY_TELEPHONE_NUMBER_ERROR;
         }
 
@@ -1520,10 +1526,10 @@ class OnePageCheckout extends base
         //
         $dob = '';
         $dob_display = '';
-        if (ACCOUNT_DOB === 'true') {
+        if (zen_config('ACCOUNT_DOB') === 'true') {
             $dob = zen_db_prepare_input($_POST['dob'] ?? '');
             $dob_display = $dob;
-            if (ENTRY_DOB_MIN_LENGTH > 0 || !empty($_POST['dob'])) {
+            if (zen_config('ENTRY_DOB_MIN_LENGTH') > 0 || !empty($_POST['dob'])) {
                 // Support ISO-8601 style date
                 if (preg_match('/^([0-9]{4})(|-|\/)([0-9]{2})\2([0-9]{2})$/', $dob)) {
                     $_POST['dob'] = $dob = date(DATE_FORMAT, strtotime($dob));
@@ -1607,15 +1613,15 @@ class OnePageCheckout extends base
         $company = '';
         $suburb = '';
 
-        if (ACCOUNT_COMPANY === 'true') {
+        if (zen_config('ACCOUNT_COMPANY') === 'true') {
             $company = zen_db_prepare_input(zen_sanitize_string($address_values['company']));
-            if (((int)ENTRY_COMPANY_MIN_LENGTH > 0) && mb_strlen($company) < ((int)ENTRY_COMPANY_MIN_LENGTH)) {
+            if ((int)zen_config('ENTRY_COMPANY_MIN_LENGTH') > 0 && mb_strlen($company) < (int)zen_config('ENTRY_COMPANY_MIN_LENGTH')) {
                 $error = true;
                 $messages['company'] = $message_prefix . ENTRY_COMPANY_ERROR;
             }
         }
 
-        if (ACCOUNT_GENDER === 'true') {
+        if (zen_config('ACCOUNT_GENDER') === 'true') {
             $gender = zen_db_prepare_input($address_values['gender'] ?? '');
             if ($gender !== 'm' && $gender !== 'f') {
                 $error = true;
@@ -1624,35 +1630,35 @@ class OnePageCheckout extends base
         }
 
         $firstname = zen_db_prepare_input(zen_sanitize_string($address_values['firstname']));
-        if (mb_strlen($firstname) < ENTRY_FIRST_NAME_MIN_LENGTH) {
+        if (mb_strlen($firstname) < zen_config('ENTRY_FIRST_NAME_MIN_LENGTH')) {
             $error = true;
             $messages['firstname'] = $message_prefix . ENTRY_FIRST_NAME_ERROR;
         }
 
         $lastname = zen_db_prepare_input(zen_sanitize_string($address_values['lastname']));
-        if (mb_strlen($lastname) < ENTRY_LAST_NAME_MIN_LENGTH) {
+        if (mb_strlen($lastname) < zen_config('ENTRY_LAST_NAME_MIN_LENGTH')) {
             $error = true;
             $messages['lastname'] = $message_prefix . ENTRY_LAST_NAME_ERROR;
         }
 
         $street_address = zen_db_prepare_input(zen_sanitize_string($address_values['street_address']));
-        if (mb_strlen($street_address) < ENTRY_STREET_ADDRESS_MIN_LENGTH) {
+        if (mb_strlen($street_address) < zen_config('ENTRY_STREET_ADDRESS_MIN_LENGTH')) {
             $error = true;
             $messages['street_address'] = $message_prefix . ENTRY_STREET_ADDRESS_ERROR;
         }
 
-        if (ACCOUNT_SUBURB === 'true') {
+        if (zen_config('ACCOUNT_SUBURB') === 'true') {
             $suburb = zen_db_prepare_input(zen_sanitize_string($address_values['suburb']));
         }
 
         $city = zen_db_prepare_input(zen_sanitize_string($address_values['city']));
-        if (mb_strlen($city) < ENTRY_CITY_MIN_LENGTH) {
+        if (mb_strlen($city) < zen_config('ENTRY_CITY_MIN_LENGTH')) {
             $error = true;
             $messages['city'] = $message_prefix . ENTRY_CITY_ERROR;
         }
 
         $postcode = zen_db_prepare_input(zen_sanitize_string($address_values['postcode']));
-        if (mb_strlen($postcode) < ENTRY_POSTCODE_MIN_LENGTH) {
+        if (mb_strlen($postcode) < zen_config('ENTRY_POSTCODE_MIN_LENGTH')) {
             $error = true;
             $messages['postcode'] = $message_prefix . ENTRY_POST_CODE_ERROR;
         }
@@ -1664,7 +1670,7 @@ class OnePageCheckout extends base
         if (!ctype_digit($country)) {
             $error = true;
             $messages['zone_country_id'] = $message_prefix . ENTRY_COUNTRY_ERROR;
-        } elseif (ACCOUNT_STATE === 'true') {
+        } elseif (zen_config('ACCOUNT_STATE') === 'true') {
             $state = trim(zen_db_prepare_input(zen_sanitize_string($address_values['state'] ?? '')));
             $zone_id = (int)zen_db_prepare_input($address_values['zone_id'] ?? 0);
 
@@ -1703,18 +1709,16 @@ class OnePageCheckout extends base
                     $error_state_input = true;
                     $messages['zone_id'] = $message_prefix . ENTRY_STATE_ERROR_SELECT;
                 }
-            } else {
-                if (mb_strlen($state) < ENTRY_STATE_MIN_LENGTH) {
-                    $error = true;
-                    $error_state_input = true;
-                    $messages['state'] = $message_prefix . ENTRY_STATE_ERROR;
-                }
+            } elseif (mb_strlen($state) < zen_config('ENTRY_STATE_MIN_LENGTH')) {
+                $error = true;
+                $error_state_input = true;
+                $messages['state'] = $message_prefix . ENTRY_STATE_ERROR;
             }
         }
 
         if (isset($address_values['telephone'])) {
             $telephone = zen_db_prepare_input($address_values['telephone']);
-            if (strlen($telephone) < (int)ENTRY_TELEPHONE_MIN_LENGTH) {
+            if (strlen($telephone) < (int)zen_config('ENTRY_TELEPHONE_MIN_LENGTH')) {
                 $error = true;
                 $messages['telephone'] = $message_prefix . ENTRY_TELEPHONE_NUMBER_ERROR;
             }
@@ -1859,19 +1863,19 @@ class OnePageCheckout extends base
                 ['fieldName' => 'entry_country_id', 'value' => $address['country'], 'type' => 'integer']
             ];
 
-            if (ACCOUNT_GENDER === 'true') {
+            if (zen_config('ACCOUNT_GENDER') === 'true') {
                 $sql_data_array[] = ['fieldName' => 'entry_gender', 'value' => $address['gender'], 'type' => 'enum:m|f'];
             }
 
-            if (ACCOUNT_COMPANY === 'true') {
+            if (zen_config('ACCOUNT_COMPANY') === 'true') {
                 $sql_data_array[] = ['fieldName' => 'entry_company', 'value' => $address['company'], 'type' => $this->dbStringType];
             }
 
-            if (ACCOUNT_SUBURB === 'true') {
+            if (zen_config('ACCOUNT_SUBURB') === 'true') {
                 $sql_data_array[] = ['fieldName' => 'entry_suburb', 'value' => $address['suburb'], 'type' => $this->dbStringType];
             }
 
-            if (ACCOUNT_STATE === 'true') {
+            if (zen_config('ACCOUNT_STATE') === 'true') {
                 if ($address['zone_id'] > 0) {
                     $sql_data_array[] = ['fieldName' => 'entry_zone_id', 'value' => $address['zone_id'], 'type' => 'integer'];
                     $sql_data_array[] = ['fieldName' => 'entry_state', 'value'=> '', 'type' => $this->dbStringType];
@@ -2004,24 +2008,24 @@ class OnePageCheckout extends base
             'nick' => '',
             'fax' => '',
             'customers_referral' => '',
-            'gender' => (ACCOUNT_GENDER === 'true') ? $this->guestCustomerInfo['gender'] : '',
-            'dob' => (ACCOUNT_DOB === 'true') ? $this->guestCustomerInfo['dob'] : '',
+            'gender' => (zen_config('ACCOUNT_GENDER') === 'true') ? $this->guestCustomerInfo['gender'] : '',
+            'dob' => (zen_config('ACCOUNT_DOB') === 'true') ? $this->guestCustomerInfo['dob'] : '',
             'firstname' => $this->guestCustomerInfo['firstname'],
             'lastname' => $this->guestCustomerInfo['lastname'],
             'email_address' => $this->guestCustomerInfo['email_address'],
             'telephone' => $this->guestCustomerInfo['telephone'],
-            'customers_authorization' => (int)CUSTOMERS_APPROVAL_AUTHORIZATION,
+            'customers_authorization' => (int)zen_config('CUSTOMERS_APPROVAL_AUTHORIZATION'),
             'ip_address' => zen_get_ip_address(),
 
             'street_address' => $this->tempAddressValues['bill']['street_address'],
             'postcode' => $this->tempAddressValues['bill']['postcode'],
             'city' => $this->tempAddressValues['bill']['city'],
             'country' => $this->tempAddressValues['bill']['country'],
-            'company' => (ACCOUNT_COMPANY === 'true') ? $this->tempAddressValues['bill']['company'] : '',
-            'suburb' => (ACCOUNT_SUBURB === 'true') ? $this->tempAddressValues['bill']['suburb'] : '',
+            'company' => (zen_config('ACCOUNT_COMPANY') === 'true') ? $this->tempAddressValues['bill']['company'] : '',
+            'suburb' => (zen_config('ACCOUNT_SUBURB') === 'true') ? $this->tempAddressValues['bill']['suburb'] : '',
         ];
 
-        if (ACCOUNT_STATE === 'true') {
+        if (zen_config('ACCOUNT_STATE') === 'true') {
             if ($this->tempAddressValues['bill']['zone_id'] > 0) {
                 $data['zone_id'] = $this->tempAddressValues['bill']['zone_id'];
                 $data['state'] = '';
@@ -2089,17 +2093,17 @@ class OnePageCheckout extends base
             ['fieldName' => 'entry_country_id', 'value' => $this->tempAddressValues[$which]['country'], 'type' => 'integer'],
         ];
 
-        if (ACCOUNT_GENDER === 'true') {
+        if (zen_config('ACCOUNT_GENDER') === 'true') {
             $sql_data_array[] = ['fieldName' => 'entry_gender', 'value' => $this->tempAddressValues[$which]['gender'], 'type' => $this->dbStringType];
         }
-        if (ACCOUNT_COMPANY === 'true') {
+        if (zen_config('ACCOUNT_COMPANY') === 'true') {
             $sql_data_array[] = ['fieldName' => 'entry_company', 'value' => $this->tempAddressValues[$which]['company'], 'type' => $this->dbStringType];
         }
-        if (ACCOUNT_SUBURB === 'true') {
+        if (zen_config('ACCOUNT_SUBURB') === 'true') {
             $sql_data_array[] = ['fieldName' => 'entry_suburb', 'value' => $this->tempAddressValues[$which]['suburb'], 'type' => $this->dbStringType];
         }
 
-        if (ACCOUNT_STATE === 'true') {
+        if (zen_config('ACCOUNT_STATE') === 'true') {
             if ($this->tempAddressValues[$which]['zone_id'] > 0) {
                 $sql_data_array[] = ['fieldName' => 'entry_zone_id', 'value' => $this->tempAddressValues[$which]['zone_id'], 'type' => 'integer'];
                 $sql_data_array[] = ['fieldName' => 'entry_state', 'value' => '', 'type' => $this->dbStringType];
@@ -2563,7 +2567,7 @@ class OnePageCheckout extends base
         $billing_is_temp = (isset($_SESSION['billto']) && (int)$_SESSION['billto'] === $this->tempBilltoAddressBookId);
         $shipping_is_temp = (isset($_SESSION['sendto']) && (int)$_SESSION['sendto'] === $this->tempSendtoAddressBookId);
 
-        switch (STORE_PRODUCT_TAX_BASIS) {
+        switch (zen_config('STORE_PRODUCT_TAX_BASIS')) {
             case 'Shipping':
                 if ($this->isVirtualOrder === true || $this->getShippingBilling() === true) {
                     if ($billing_is_temp === true) {
@@ -2604,7 +2608,7 @@ class OnePageCheckout extends base
                         $_SESSION['billto'] = $_SESSION['customer_default_address_id'];
                         return null;
                     }
-                    if ($this->isVirtualOrder === true || $country_zone->fields['entry_zone_id'] === STORE_ZONE) {
+                    if ($this->isVirtualOrder === true || (int)$country_zone->fields['entry_zone_id'] === (int)zen_config('STORE_ZONE')) {
                         $country_id = $country_zone->fields['entry_country_id'];
                         $zone_id = $country_zone->fields['entry_zone_id'];
                     }

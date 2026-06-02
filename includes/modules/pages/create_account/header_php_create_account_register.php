@@ -49,7 +49,7 @@ if (!function_exists('zen_valid_date')) {
 // to the OPC-specific value (added in v2.6.0), if present, otherwise it'll
 // default to the base's minimum value setting.
 //
-$telephone_min_length = (int)((defined('CHECKOUT_ONE_REGISTERED_ACCT_TELEPHONE_MIN')) ? CHECKOUT_ONE_REGISTERED_ACCT_TELEPHONE_MIN : ENTRY_TELEPHONE_MIN_LENGTH);
+$telephone_min_length = (int)((zen_config('CHECKOUT_ONE_REGISTERED_ACCT_TELEPHONE_MIN') !== null) ? zen_config('CHECKOUT_ONE_REGISTERED_ACCT_TELEPHONE_MIN') : zen_config('ENTRY_TELEPHONE_MIN_LENGTH'));
 
 // -----
 // Ditto for the telephone number's placeholder text, using the registered-account version, if
@@ -79,24 +79,24 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
         $email_format = in_array($_POST['email_format'], ['HTML', 'TEXT', 'NONE', 'OUT'], true) ? $_POST['email_format'] : 'TEXT';
     }
 
-    $customers_authorization = (int)CUSTOMERS_APPROVAL_AUTHORIZATION;
+    $customers_authorization = (int)zen_config('CUSTOMERS_APPROVAL_AUTHORIZATION');
     $customers_referral = isset($_POST['customers_referral']) ? zen_db_prepare_input(zen_sanitize_string($_POST['customers_referral'])) : '';
 
-    if (ACCOUNT_NEWSLETTER_STATUS === '1' || ACCOUNT_NEWSLETTER_STATUS === '2') {
+    if (in_array(zen_config('ACCOUNT_NEWSLETTER_STATUS'), ['1', '2'], true)) {
         $newsletter = 0;
         if (isset($_POST['newsletter'])) {
             $newsletter = zen_db_prepare_input($_POST['newsletter']);
         }
     }
 
-    if (DISPLAY_PRIVACY_CONDITIONS === 'true') {
+    if (zen_config('DISPLAY_PRIVACY_CONDITIONS') === 'true') {
         if (!(isset($_POST['privacy_conditions']) && $_POST['privacy_conditions'] === '1')) {
             $error = true;
             $messageStack->add('create_account', ERROR_PRIVACY_STATEMENT_NOT_ACCEPTED, 'error');
         }
     }
 
-    if (ACCOUNT_GENDER === 'true') {
+    if (zen_config('ACCOUNT_GENDER') === 'true') {
         $gender = (isset($_POST['gender'])) ? zen_db_prepare_input($_POST['gender']) : false;
         if ($gender !== 'm' && $gender !== 'f') {
             $error = true;
@@ -105,20 +105,20 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
     }
 
     $firstname = zen_db_prepare_input(zen_sanitize_string($_POST['firstname']));
-    if (mb_strlen($firstname) < ENTRY_FIRST_NAME_MIN_LENGTH) {
+    if (mb_strlen($firstname) < zen_config('ENTRY_FIRST_NAME_MIN_LENGTH')) {
         $error = true;
         $messageStack->add('create_account', ENTRY_FIRST_NAME_ERROR);
     }
 
     $lastname = zen_db_prepare_input(zen_sanitize_string($_POST['lastname']));
-    if (mb_strlen($lastname) < ENTRY_LAST_NAME_MIN_LENGTH) {
+    if (mb_strlen($lastname) < zen_config('ENTRY_LAST_NAME_MIN_LENGTH')) {
         $error = true;
         $messageStack->add('create_account', ENTRY_LAST_NAME_ERROR);
     }
 
-    if (ACCOUNT_DOB === 'true') {
+    if (zen_config('ACCOUNT_DOB') === 'true') {
         $dob = zen_db_prepare_input($_POST['dob']);
-        if ((int)ENTRY_DOB_MIN_LENGTH > 0 || !empty($_POST['dob'])) {
+        if ((int)zen_config('ENTRY_DOB_MIN_LENGTH') > 0 || !empty($_POST['dob'])) {
             if (strlen($dob) > 10 || zen_valid_date($dob) === false) {
                 $error = true;
                 $messageStack->add('create_account', ENTRY_DATE_OF_BIRTH_ERROR);
@@ -126,7 +126,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
         }
     }
 
-    if (ACCOUNT_COMPANY === 'true') {
+    if (zen_config('ACCOUNT_COMPANY') === 'true') {
         $company = zen_db_prepare_input(zen_sanitize_string($_POST['company']));
         if ((int)ENTRY_COMPANY_MIN_LENGTH > 0 && mb_strlen($company) < ENTRY_COMPANY_MIN_LENGTH) {
             $error = true;
@@ -137,7 +137,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
     $nick_error = false;
     $email_address = zen_db_prepare_input($_POST['email_address']);
     $email_address_confirm = zen_db_prepare_input($_POST['email_address_confirm']);
-    if (mb_strlen($email_address) < ENTRY_EMAIL_ADDRESS_MIN_LENGTH) {
+    if (mb_strlen($email_address) < zen_config('ENTRY_EMAIL_ADDRESS_MIN_LENGTH')) {
         $error = true;
         $messageStack->add('create_account', ENTRY_EMAIL_ADDRESS_ERROR);
     } elseif (zen_validate_email($email_address) === false) {
@@ -164,7 +164,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
     }
 
     $nick = (isset($_POST['nick'])) ? zen_db_prepare_input(zen_sanitize_string($_POST['nick'])) : '';
-    $nick_length_min = ENTRY_NICK_MIN_LENGTH;
+    $nick_length_min = zen_config('ENTRY_NICK_MIN_LENGTH');
     $zco_notifier->notify('NOTIFY_NICK_CHECK_FOR_MIN_LENGTH', $nick, $nick_error, $nick_length_min);
     if ($nick_error === true) {
         $error = true;
@@ -193,7 +193,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
 
     $password = zen_db_prepare_input($_POST['password']);
     $confirmation = zen_db_prepare_input($_POST['confirmation']);
-    if (strlen($password) < ENTRY_PASSWORD_MIN_LENGTH) {
+    if (strlen($password) < zen_config('ENTRY_PASSWORD_MIN_LENGTH')) {
         $error = true;
         $messageStack->add('create_account', ENTRY_PASSWORD_ERROR);
     } elseif ($password !== $confirmation) {
@@ -225,9 +225,9 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
         $street_address = '';
         $suburb = '';
         $city = '';
-        $zone_id = (int)STORE_ZONE;
+        $zone_id = (int)zen_config('STORE_ZONE');
         $postcode = '';
-        $country = (int)STORE_COUNTRY;
+        $country = (int)zen_config('STORE_COUNTRY');
         $state = zen_get_zone_name($country, $zone_id);
         $gender ??= false;
         $data = compact(
@@ -242,7 +242,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
             $zco_notifier->notify('NOTIFY_HEADER_REGISTER_ADDED_CUSTOMER_RESULT', $result);
 
             $customer->login($result['customers_id'], $restore_cart = true);
-            if (SESSION_RECREATE === 'True') {
+            if (zen_config('SESSION_RECREATE') === 'True') {
                 zen_session_recreate();
             }
         }

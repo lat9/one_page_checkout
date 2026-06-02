@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
 // Copyright (C) 2018-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: v2.6.0
+// Last updated: v2.6.2
 //
 // If the previous order was placed via the One-Page Checkout's "Guest Checkout", set a flag for the
 // template processing (to load the alternate template) and reset the session-related information
@@ -12,7 +12,7 @@
 $order_placed_by_guest = false;
 if (isset($_SESSION['order_placed_by_guest'])) {
     $order_placed_by_guest = true;
-    $email_format = (ACCOUNT_EMAIL_PREFERENCE === '1') ? 'HTML' : 'TEXT';
+    $email_format = (zen_config('ACCOUNT_EMAIL_PREFERENCE') === '1') ? 'HTML' : 'TEXT';
     $check = $db->Execute(
         "SELECT customers_id
            FROM " . TABLE_CUSTOMERS . "
@@ -26,7 +26,7 @@ if (isset($_SESSION['order_placed_by_guest'])) {
         $confirmation = zen_db_prepare_input($_POST['confirmation']);
         $newsletter = (isset($_POST['newsletter']));
         $email_format = $_POST['email_format'];
-        if (strlen($password) < ENTRY_PASSWORD_MIN_LENGTH) {
+        if (strlen($password) < zen_config('ENTRY_PASSWORD_MIN_LENGTH')) {
             $messageStack->add('checkout_success', ENTRY_PASSWORD_ERROR, 'error');
         } elseif ($password !== $confirmation) {
             $messageStack->add('checkout_success', ENTRY_PASSWORD_ERROR_NOT_MATCHING, 'error');
@@ -41,7 +41,7 @@ if (isset($_SESSION['order_placed_by_guest'])) {
                 $zco_notifier->notify('CHECKOUT_ONE_SEND_WELCOME_EMAIL', $send_welcome_email, $send_welcome_email);
                 require DIR_WS_MODULES . zen_get_module_directory(FILENAME_CHECKOUT_ONE_SEND_WELCOME_EMAIL);
 
-                if (SESSION_RECREATE === 'True') {
+                if (zen_config('SESSION_RECREATE') === 'True') {
                     zen_session_recreate();
                 }
                 zen_redirect(zen_href_link(FILENAME_CREATE_ACCOUNT_SUCCESS, '', 'SSL')); 

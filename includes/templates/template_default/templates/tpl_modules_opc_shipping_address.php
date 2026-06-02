@@ -1,7 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2021, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2026, Vinos de Frutas Tropicales.  All rights reserved.
+//
+// Last updated: OPC v2.6.2
 //
 ?>
 <!--bof shipping-address block -->
@@ -12,7 +14,7 @@
 if ($is_virtual_order) {
     echo zen_draw_checkbox_field('shipping_billing', '1', false, 'id="shipping_billing" style="display: none;"');
 } else {
-    if (CHECKOUT_ONE_ENABLE_SHIPPING_BILLING == 'false') {
+    if (zen_config('CHECKOUT_ONE_ENABLE_SHIPPING_BILLING') === 'false') {
         echo zen_draw_checkbox_field('shipping_billing', '1', false, 'id="shipping_billing" style="display: none;"');
     } else {
 ?>

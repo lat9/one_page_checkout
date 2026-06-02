@@ -1,12 +1,12 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2022, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
 // If the One-Page Checkout's "Guest Checkout" or account-registration are enabled, instruct the template-formatting 
 // to disable the right and left sideboxes.
 //
-// Last updated: OPC v2.4.1
+// Last updated: OPC v2.6.2
 //
 $block_error = false;
 if (!empty($_SESSION['opc']) && is_object($_SESSION['opc']) && $_SESSION['opc']->temporaryAddressesEnabled()) {
@@ -47,7 +47,7 @@ if (!empty($_SESSION['opc']) && is_object($_SESSION['opc']) && $_SESSION['opc']-
     $ppec_divider_location = 'prev';
 
     $column_blocks = [];
-    $display_elements = explode(';', CHECKOUT_ONE_LOGIN_LAYOUT);
+    $display_elements = explode(';', zen_config('CHECKOUT_ONE_LOGIN_LAYOUT'));
     $valid_blocks = explode(',', 'L,P,G,C,B');
     $num_columns = 0;
     foreach ($display_elements as $current_element) {

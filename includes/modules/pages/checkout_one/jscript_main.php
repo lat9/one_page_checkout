@@ -1,9 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
-// Copyright (C) 2013-2025, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.5.5
+// Last updated: OPC v2.6.2
 //
 ?>
 <script>
@@ -13,20 +13,12 @@
 // order's current total.  If not defined, default to the selector associated with
 // the 'responsive_classic' template.
 //
-if (!defined('CHECKOUT_ONE_OTTOTAL_SELECTOR')) {
-    define('CHECKOUT_ONE_OTTOTAL_SELECTOR', '#ottotal > div:first-child');
-//    define('CHECKOUT_ONE_OTTOTAL_SELECTOR', '#ottotal div span');   //-Value for YourStore template
-}
+zen_define_default('CHECKOUT_ONE_OTTOTAL_SELECTOR', '#ottotal > div:first-child');
+//    zen_define_default('CHECKOUT_ONE_OTTOTAL_SELECTOR', '#ottotal div span');   //-Value for YourStore template
 
-// -----
-// Introduced in OPC v2.4.0 to identify payment methods that handle the form's submittal directly.
-//
-if (!defined('CHECKOUT_ONE_PAYMENT_METHODS_THAT_SUBMIT')) {
-    define('CHECKOUT_ONE_PAYMENT_METHODS_THAT_SUBMIT', 'square_webPay');
-}
 $payments_that_submit = '';
-if (CHECKOUT_ONE_PAYMENT_METHODS_THAT_SUBMIT !== '') {
-    $payments_that_submit = explode(',', str_replace(' ', '', CHECKOUT_ONE_PAYMENT_METHODS_THAT_SUBMIT));
+if (zen_config('CHECKOUT_ONE_PAYMENT_METHODS_THAT_SUBMIT', 'square_webPay') !== '') {
+    $payments_that_submit = explode(',', str_replace(' ', '', zen_config('CHECKOUT_ONE_PAYMENT_METHODS_THAT_SUBMIT', 'square_webPay')));
     $payments_that_submit = '"' . implode('", "', $payments_that_submit) . '"';
 }
 
@@ -57,7 +49,7 @@ $show_state_dropdowns = true;
     var checkoutShippingUrl = '<?= zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL') ?>';
     var noShippingSelectedError = '<?= ERROR_NO_SHIPPING_SELECTED ?>';
     var flagOnSubmit = <?= ($flagOnSubmit) ? 'true' : 'false' ?>;
-    var shippingTimeout = <?= (int)((defined('CHECKOUT_ONE_SHIPPING_TIMEOUT')) ? CHECKOUT_ONE_SHIPPING_TIMEOUT : 5000) ?>;
+    var shippingTimeout = <?= (int)zen_config('CHECKOUT_ONE_SHIPPING_TIMEOUT', 5000) ?>;
     var textPleaseSelect = '<?= PLEASE_SELECT ?>';
     var displayShippingBlock = <?= ($display_shipping_block) ? 'true' : 'false' ?>;
     var displayPaymentBlock = <?= ($display_payment_block) ? 'true' : 'false' ?>;
@@ -114,7 +106,7 @@ if (isset($quotes) && is_array($quotes)) {
     var additionalShippingInputs = <?= json_encode($opc_additional_shipping_inputs) ?>;
 </script>
 <?php
-if (defined('CHECKOUT_ONE_MINIFIED_SCRIPT') && CHECKOUT_ONE_MINIFIED_SCRIPT === 'true') {
+if (zen_config('CHECKOUT_ONE_MINIFIED_SCRIPT') === 'true') {
     $main_script_filename = 'jquery.checkout_one.min.js';
     $addr_script_filename = 'jquery.checkout_one_addr.min.js';
 } else {

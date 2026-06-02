@@ -1,9 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2025, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.5.5
+// Last updated: OPC v2.6.2
 //
 ?>
 <!--bof shopping-cart block -->
@@ -79,7 +79,7 @@ for ($i = 0, $n = count($order->products); $i < $n; $i++) {
 }
 // end for loopthru all products 
 
-if (MODULE_ORDER_TOTAL_INSTALLED) {
+if (zen_config('MODULE_ORDER_TOTAL_INSTALLED')) {
     $row_class = ($last_row_class == 'rowEven') ? 'rowOdd' : 'rowEven';
 ?>
         <tr class="<?php echo $row_class; ?>" id="cartOrderTotals">

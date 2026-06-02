@@ -1,9 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
-// Copyright (C) 2013-2025, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated for OPC v2.5.5
+// Last updated for OPC v2.6.2
 //
 // -----
 // This should be first line of the script:
@@ -12,7 +12,7 @@ $zco_notifier->notify('NOTIFY_HEADER_START_CHECKOUT_ONE');
 // -----
 // Use "normal" checkout if not enabled.
 //
-if (!(defined('CHECKOUT_ONE_ENABLED') && isset($checkout_one) && $checkout_one->isEnabled())) {
+if (zen_config('CHECKOUT_ONE_ENABLED') === null || !isset($checkout_one) || $checkout_one->isEnabled() === false) {
     $zco_notifier->notify('NOTIFY_CHECKOUT_ONE_NOT_ENABLED');
     zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
 }
@@ -21,12 +21,17 @@ require_once DIR_WS_CLASSES . 'http_client.php';
 
 require DIR_WS_MODULES . zen_get_module_directory('require_languages.php');
 
-$checkout_one->debug_message(sprintf('CHECKOUT_ONE_ENTRY, version (%s), Zen Cart version (%s), template (%s)', CHECKOUT_ONE_MODULE_VERSION, PROJECT_VERSION_MAJOR . '.' . PROJECT_VERSION_MINOR, $template_dir));
+$checkout_one->debug_message(sprintf(
+    'CHECKOUT_ONE_ENTRY, version (%s), Zen Cart version (%s), template (%s)',
+    zen_config('CHECKOUT_ONE_MODULE_VERSION'),
+    PROJECT_VERSION_MAJOR . '.' . PROJECT_VERSION_MINOR,
+    $template_dir
+));
 
 // -----
 // If the plugin's debug-mode is set to "full", then enable ALL error reporting for the checkout_one page.
 //
-if (CHECKOUT_ONE_DEBUG === 'full') {
+if (zen_config('CHECKOUT_ONE_DEBUG') === 'full') {
     @ini_set('error_reporting', -1);
 }
 
@@ -80,7 +85,7 @@ if ($_SESSION['valid_to_checkout'] == false) {
 $stock_check = [];
 for ($i = 0, $n = count($products_array); $i < $n; $i++) {
     $stock_check[$i] = zen_check_stock($products_array[$i]['id'], $products_array[$i]['quantity']);
-    if (STOCK_CHECK === 'true' && STOCK_ALLOW_CHECKOUT !== 'true' && !empty($stock_check[$i])) {
+    if (zen_config('STOCK_CHECK') === 'true' && zen_config('STOCK_ALLOW_CHECKOUT') !== 'true' && !empty($stock_check[$i])) {
         zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
     }
 }
@@ -149,7 +154,7 @@ if (!isset($_SESSION['sendto'])) {
 }
 
 require DIR_WS_CLASSES . 'order.php';
-$order = new order;
+$order = new order();
 
 $total_weight = $_SESSION['cart']->show_weight();
 $total_count = $_SESSION['cart']->count_contents();
@@ -179,23 +184,23 @@ $temp_shipto_addr_ok = $_SESSION['opc']->validateTempShiptoAddress();
 if ($is_virtual_order === false && $customer_info_ok === true && $temp_shipto_addr_ok === true) {
     // load all enabled shipping modules
     require DIR_WS_CLASSES . 'shipping.php';
-    $shipping_modules = new shipping;
+    $shipping_modules = new shipping();
     
 //-bof-product_delivery_by_postcode (PDP) integration
-    if (defined('MODULE_SHIPPING_LOCALDELIVERY_POSTCODE') && defined('MODULE_SHIPPING_STOREPICKUP_POSTCODE') && function_exists('zen_get_UKPostcodeFirstPart')) {
+    if (zen_config('MODULE_SHIPPING_LOCALDELIVERY_POSTCODE') && zen_config('MODULE_SHIPPING_STOREPICKUP_POSTCODE') && function_exists('zen_get_UKPostcodeFirstPart')) {
         $check_delivery_postcode = $order->delivery['postcode'];
 
         // shorten UK / Canada postcodes to use first part only
         $check_delivery_postcode = zen_get_UKPostcodeFirstPart($check_delivery_postcode);
 
         // now check db for allowed postcodes and enable / disable relevant shipping modules
-        if (in_array($check_delivery_postcode, explode(',', MODULE_SHIPPING_LOCALDELIVERY_POSTCODE))) {
+        if (in_array($check_delivery_postcode, explode(',', zen_config('MODULE_SHIPPING_LOCALDELIVERY_POSTCODE')))) {
         // continue as normal
         } else {
             $localdelivery = false;
         }
 
-        if (in_array($check_delivery_postcode, explode(',', MODULE_SHIPPING_STOREPICKUP_POSTCODE))) {
+        if (in_array($check_delivery_postcode, explode(',', zen_config('MODULE_SHIPPING_STOREPICKUP_POSTCODE')))) {
         // continue as normal
         } else {
             $storepickup = false;
@@ -209,7 +214,7 @@ if ($is_virtual_order === false && $customer_info_ok === true && $temp_shipto_ad
     // Detect (and log) the condition where the store's configuration shows "Shipping/Packaging->Order Free Shipping 0 Weight Status"
     // has been enabled, but the 'freeshipper' shipping method isn't when the order's weight is 0.
     //
-    if ($total_weight == 0 && ORDER_WEIGHT_ZERO_STATUS === '1' && (!defined('MODULE_SHIPPING_FREESHIPPER_STATUS') || MODULE_SHIPPING_FREESHIPPER_STATUS !== 'True')) {
+    if ($total_weight == 0 && zen_config('ORDER_WEIGHT_ZERO_STATUS') === '1' && zen_config('MODULE_SHIPPING_FREESHIPPER_STATUS', 'False') !== 'True') {
         $message = "0 weight is configured for Free Shipping and Free Shipping Module is not enabled, product IDs in cart: " . $_SESSION['cart']->get_product_id_list();
         trigger_error($message, E_USER_WARNING);
         $extra_message .= (' ' . $message);
@@ -317,7 +322,7 @@ $address_can_be_changed = (MAX_ADDRESS_BOOK_ENTRIES > 1);
 // Now that the shipping information has been gathered, reset the order's total based on that shipping-cost.
 //
 $order->info['total'] = $order->info['subtotal'] + $order->info['shipping_cost'];
-if (DISPLAY_PRICE_WITH_TAX !== 'true') {
+if (zen_config('DISPLAY_PRICE_WITH_TAX') !== 'true') {
     $order->info['total'] += $order->info['tax'];
 }
 
@@ -332,7 +337,7 @@ if (isset($_SESSION['cot_gv'])) {
 if (!class_exists('order_total')) {
     require DIR_WS_CLASSES . 'order_total.php';
 }
-$order_total_modules = new order_total;
+$order_total_modules = new order_total();
 $order_total_modules->collect_posts();
 
 // -----
@@ -403,8 +408,8 @@ if ($display_payment_block === false || $shipping_module_available === false) {
 // display for the order-submittal text/title.
 //
 $required_list = '';
-if (!empty(CHECKOUT_ONE_CONFIRMATION_REQUIRED)) {
-    $confirmation_required = explode(',', CHECKOUT_ONE_CONFIRMATION_REQUIRED);
+if (!empty(zen_config('CHECKOUT_ONE_CONFIRMATION_REQUIRED'))) {
+    $confirmation_required = explode(',', zen_config('CHECKOUT_ONE_CONFIRMATION_REQUIRED'));
     $required_list = '"' . implode('", "', $confirmation_required) . '"';
 }
 

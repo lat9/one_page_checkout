@@ -181,7 +181,8 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
             <li>/includes/classes/observers/class.checkout_one_observer.php</li>
             <li>/includes/classes/observers/CheckoutOneEmailObserver.php</li>
             <li>/includes/extra_datafiles/checkout_one_filenames.php</li>
-            <li>/includes/functions/extra_functions/one_page_checkout_functions.php</li>
+            <li><span class="removed">/includes/functions/extra_functions/one_page_checkout_functions.php</span> <span class="smaller">(Removed in v2.6.2)</span></li>
+            <li>/includes/functions/extra_functions/zen_config.php <span class="smaller">(Added in v2.6.2)</span></li>
             <li><span class="removed">/includes/langauges/english/address_book_register.php</span> <span class="smaller">(Removed in v2.5.4)</span></li>
             <li><span class="removed">/includes/languages/english/checkout_one.php</span> <span class="smaller">(Removed in v2.5.4)</span></li>
             <li><span class="removed">/includes/languages/english/checkout_one_confirmation.php</span> <span class="smaller">(Removed in v2.5.4)</span></li>
@@ -269,6 +270,7 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
             <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one_install.php</li>
             <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one_upgrade.php</li>
             <li><span class="removed">/YOUR_ADMIN/includes/functions/extra_functions/zen_cfg_read_only.php</span> <span class="smaller">(Removed in v2.5.5)</span></li>
+            <li>/YOUR_ADMIN/includes/functions/extra_functions/zen_config.php <span class="smaller">(Added in v2.6.2)</span></li>
             <li>/YOUR_ADMIN/includes/languages/english/extra_definitions/checkout_one_name.php</li>
         </ol></li>
         <li>Click the &quot;Admin Home&quot; link in your Zen Cart's top admin menu.  This action will cause the plugin's installation script to run.</li>
@@ -298,17 +300,49 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
     <h3>Changes and Bugfixes</h3>
     <p>You can view the details of these changes on the plugin's <a href="https://github.com/lat9/one_page_checkout/issues" target="_blank" rel="noopener">GitHub repository</a>. <span class="template-changed">Changes to the plugin's default templates are identified in this color</span>; remember to merge those changes with any template-override version you might have created!  Additions are identified by <span class="added">this</span> color and removals are indicated like <span class="removed">this</span>.</p>
     <ul>
-        <li>v2.6.2-beta2, 2026-05-18 (lat9):<ul>
+        <li>v2.6.2-beta3, 2026-06-01 (lat9):<ul>
             <li>BUGFIX: Correct PHP fatal error during <code>paypalwpp</code> special checkout.</li>
             <li>BUGFIX: Correct &quot;undefined constant&quot; PHP error when guest converts to full account on Zen Cart versions prior to v2.2.2.</li>
             <li>BUGFIX: Correct OPC disable during <code>paypalwpp</code> special checkout.</li>
             <li>BUGFIX: Correct missing <code>$gender</code> for account registration, if not enabled via configuration.</li>
-            <li>The following files were changed:<ol>
+            <li>INTROP: Use zc300's <code>zen_config</code> when checking configuration settings.</li>
+            <li>The following files were changed or <span class="added">added</span>:<ol>
                 <li>/includes/classes/OnePageCheckout.php</li>
                 <li>/includes/classes/observers/class.checkout_one_observer.php</li>
+                <li><span class="added">/includes/functions/extra_functions/zen_config.php</span></li>
+                <li><span class="removed">/includes/functions/extra_functions/one_page_checkout_functions.php</span></li>
+                <li>/includes/languages/english/modules/order_total/YOUR_TEMPLATE/lang.ot_coupon.php</li>
+                <li>/includes/languages/english/modules/order_total/YOUR_TEMPLATE/lang.ot_gv.php</li>
+                <li>/includes/languages/english/lang.create_account_register.php</li>
+                <li>/includes/languages/english/lang.login_guest.php</li>
                 <li>/includes/modules/checkout_one_send_welcome_email.php</li>
                 <li>/includes/modules/pages/create_account/header_php_create_account_register.php</li>
+                <li>/includes/modules/pages/checkout_one/header_php.php</li>
+                <li>/includes/modules/pages/checkout_one/jscript_main.php</li>
+                <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
+                <li>/includes/modules/pages/checkout_success/header_php_guest.php</li>
+                <li>/includes/modules/pages/create_account/header_php_create_account_register.php</li>
+                <li>/includes/modules/pages/create_account/jscript_form_check_register.php</li>
+                <li>/includes/modules/pages/login/header_php_login_guest.php</li>
+                <li>/includes/modules/pages/order_status/header_php.php</li>
+                <li>/includes/templates/template_default/templates/tpl_checkout_one_confirmation_default.php</li>
+                <li>/includes/templates/template_default/templates/tpl_checkout_success_guest.php</li>
+                <li>/includes/templates/template_default/templates/tpl_create_account_register.php</li>
+                <li>/includes/templates/template_default/templates/tpl_login_guest.php</li>
+                <li>/includes/templates/template_default/templates/tpl_modules_opc_address_block.php</li>
+                <li>/includes/templates/template_default/templates/tpl_modules_opc_conditions.php</li>
+                <li>/includes/templates/template_default/templates/tpl_modules_opc_credit_selections.php</li>
+                <li>/includes/templates/template_default/templates/tpl_modules_opc_customer_info.php</li>
+                <li>/includes/templates/template_default/templates/tpl_modules_opc_payment_choices.php</li>
+                <li>/includes/templates/template_default/templates/tpl_modules_opc_shipping_address.php</li>
+                <li>/includes/templates/template_default/templates/tpl_modules_opc_shipping_choices.php</li>
+                <li>/includes/templates/template_default/templates/tpl_modules_opc_shopping_cart.php</li>
+                <li>/includes/templates/template_default/templates/tpl_order_status_default.php</li>
+                <li>/YOUR_ADMIN/includes/classes/observers/OnePageCheckoutAdminObserver.php</li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
+                <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one_install.php</li>
+                <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one_upgrade.php</li>
+                <li><span class="added">/YOUR_ADMIN/includes/functions/extra_functions/zen_config.php</span></li>
             </ol></li>
         </li>
         <li>v2.6.1, 2026-05-10 (lat9, hucario):<ul>

@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.6.0
+// Last updated: OPC v2.6.3
 //
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
@@ -13,15 +13,16 @@ if (!defined('IS_ADMIN_FLAG')) {
 // This module is required by the base 'init_checkout_one.php' installation script when it finds
 // that the One-Page Checkout plugin has been upgraded.
 //
+$opc_module_version = zen_config('CHECKOUT_ONE_MODULE_VERSION');
 switch (true) {
-    case version_compare(CHECKOUT_ONE_MODULE_VERSION, '1.1.0', '<'):
+    case version_compare($opc_module_version, '1.1.0', '<'):
         // -----
         // v1.1.0:  Update the 'Enable' setting to include a value that is conditional on the newly-added customer-id list.
         //
         $db->Execute(
             "UPDATE " . TABLE_CONFIGURATION . "
                 SET configuration_description = 'Enable the one-page checkout processing for your store? Choose <em>true</em> to enable for all customers, <em>false</em> to disable or <em>conditional</em> to enable the processing only for customers identified by <b>Enable: Customer List</b>.<br><br>Default: <b>false</b>',
-                    set_function = 'zen_cfg_select_option(array(\'true\', \'conditional\', \'false\'),',
+                    set_function = 'zen_cfg_select_option([\'true\', \'conditional\', \'false\'],',
                     last_modified = now()
               WHERE configuration_key = 'CHECKOUT_ONE_ENABLED'
               LIMIT 1"
@@ -33,12 +34,12 @@ switch (true) {
                 ( 'Enable: Customer List', 'CHECKOUT_ONE_ENABLE_CUSTOMERS_LIST', '', 'When you <em>conditionally</em> enable the plugin, use this setting to limit the customers for which the plugin is enabled.  Leave the setting blank (the default) to <em>disable</em> the plugin for all customers or identify a comma-separated list of customer_id values for whom the plugin is to be <em>enabled</em>.<br>', $cgi, now(), 11, NULL, NULL)"
         );
 
-    case version_compare(CHECKOUT_ONE_MODULE_VERSION, '1.3.0', '<'):    //-Fall-through processing from above
+    case version_compare($opc_module_version, '1.3.0', '<'):    //-Fall-through processing from above
         $db->Execute(
             "INSERT IGNORE INTO " . TABLE_CONFIGURATION . " 
                 ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) 
                 VALUES 
-                ( 'Enable Shipping=Billing?', 'CHECKOUT_ONE_ENABLE_SHIPPING_BILLING', 'true', 'Do you want to enable the <em>Shipping Address, same as Billing</em> for your store?<br><br>Default: <b>true</b>', $cgi, now(), 20, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),')"
+                ( 'Enable Shipping=Billing?', 'CHECKOUT_ONE_ENABLE_SHIPPING_BILLING', 'true', 'Do you want to enable the <em>Shipping Address, same as Billing</em> for your store?<br><br>Default: <b>true</b>', $cgi, now(), 20, NULL, 'zen_cfg_select_option([\'true\', \'false\'],')"
         );
         $db->Execute(
             "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
@@ -47,12 +48,12 @@ switch (true) {
                 ( 'Payment Methods Requiring Confirmation', 'CHECKOUT_ONE_CONFIRMATION_REQUIRED', 'eway_rapid,stripepay,gps', 'Identify (using a comma-separated list) the payment modules on your store that require confirmation.  If your store requires confirmation on all orders, simply list all payment modules used by your store.<br><br>Default: <code>eway_rapid,stripepay,gps</code>', $cgi, now(), 21, NULL, NULL)"
         );
 
-    case version_compare(CHECKOUT_ONE_MODULE_VERSION, '1.5.0', '<'):    //-Fall-through processing from above
+    case version_compare($opc_module_version, '1.5.0', '<'):    //-Fall-through processing from above
         $db->Execute(
             "INSERT IGNORE INTO " . TABLE_CONFIGURATION . " 
                 ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) 
                 VALUES 
-                ( 'Load Minified Script Files?', 'CHECKOUT_ONE_MINIFIED_SCRIPT', 'true', 'Should the plugin load the minified version of its jQuery scripts, reducing the page-load time for the <code>checkout_one</code> page?<br><br>Default: <b>true</b>.', $cgi, now(), 25, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),')"
+                ( 'Load Minified Script Files?', 'CHECKOUT_ONE_MINIFIED_SCRIPT', 'true', 'Should the plugin load the minified version of its jQuery scripts, reducing the page-load time for the <code>checkout_one</code> page?<br><br>Default: <b>true</b>.', $cgi, now(), 25, NULL, 'zen_cfg_select_option([\'true\', \'false\'],')"
         );
 
     // -----
@@ -62,7 +63,7 @@ switch (true) {
     // - Update debug-related sort-orders to "make room" for the guest-checkout options.
     // - Add 'is_guest_order' field to the orders table in the database.
     //
-    case version_compare(CHECKOUT_ONE_MODULE_VERSION, '2.0.0', '<'):    //-Fall-through processing from above
+    case version_compare($opc_module_version, '2.0.0', '<'):    //-Fall-through processing from above
         $db->Execute(
             "INSERT IGNORE INTO " . TABLE_CONFIGURATION . " 
                 ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) 
@@ -73,13 +74,13 @@ switch (true) {
             "INSERT IGNORE INTO " . TABLE_CONFIGURATION . " 
                 ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) 
                 VALUES 
-                ( 'Enable Guest Checkout?', 'CHECKOUT_ONE_ENABLE_GUEST', 'false', 'Do you want to enable <em>Guest Checkout</em> for your store?<br><br>Default: <b>false</b>', $cgi, now(), 30, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),')"
+                ( 'Enable Guest Checkout?', 'CHECKOUT_ONE_ENABLE_GUEST', 'false', 'Do you want to enable <em>Guest Checkout</em> for your store?<br><br>Default: <b>false</b>', $cgi, now(), 30, NULL, 'zen_cfg_select_option([\'true\', \'false\'],')"
         );
         $db->Execute(
             "INSERT IGNORE INTO " . TABLE_CONFIGURATION . " 
                 ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) 
                 VALUES 
-                ( 'Guest Checkout: Require Email Confirmation?', 'CHECKOUT_ONE_GUEST_EMAIL_CONFIRMATION', 'true', 'Should a guest-customer be required to confirm their email address when placing an order?<br><br>Default: <b>true</b>', $cgi, now(), 40, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),')"
+                ( 'Guest Checkout: Require Email Confirmation?', 'CHECKOUT_ONE_GUEST_EMAIL_CONFIRMATION', 'true', 'Should a guest-customer be required to confirm their email address when placing an order?<br><br>Default: <b>true</b>', $cgi, now(), 40, NULL, 'zen_cfg_select_option([\'true\', \'false\'],')"
         );
         $db->Execute(
             "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
@@ -109,7 +110,7 @@ switch (true) {
             "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
                 ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) 
                 VALUES 
-                ( 'Enable Account Registration?', 'CHECKOUT_ONE_ENABLE_REGISTERED_ACCOUNTS', 'false', 'Do you want your store\\'s <code>create_account</code> processing to create a <em>registered</em> rather than a <em>full</em> account?<br><br>Default: <b>false</b>', $cgi, now(), 500, NULL, 'zen_cfg_select_option(array(\'true\', \'false\'),')"
+                ( 'Enable Account Registration?', 'CHECKOUT_ONE_ENABLE_REGISTERED_ACCOUNTS', 'false', 'Do you want your store\\'s <code>create_account</code> processing to create a <em>registered</em> rather than a <em>full</em> account?<br><br>Default: <b>false</b>', $cgi, now(), 500, NULL, 'zen_cfg_select_option([\'true\', \'false\'],')"
         );
         $db->Execute(
             "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
@@ -139,12 +140,12 @@ switch (true) {
     //
     // - If the CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED setting does not include the 'download' page, add it!
     //
-    case version_compare(CHECKOUT_ONE_MODULE_VERSION, '2.0.4', '<'):    //-Fall-through processing from above
-        if (defined('CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED') && strpos(CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED, 'download') === false) {
-            if (CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED === '') {
+    case version_compare($opc_module_version, '2.0.4', '<'):    //-Fall-through processing from above
+        if (strpos(zen_config('CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED'), 'download') === false) {
+            if (zen_config('CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED') === '') {
                 $checkout_pages = [];
             } else {
-                $checkout_pages = explode(',', str_replace(' ', '', CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED));
+                $checkout_pages = explode(',', str_replace(' ', '', zen_config('CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED')));
             }
             $checkout_pages[] = 'download';
             $checkout_pages = implode(', ', $checkout_pages);
@@ -166,10 +167,10 @@ switch (true) {
     //
     //   Note: Will default to 'no-update' if the store currently uses the Square payment-method or to 'update' otherwise.
     //
-    case version_compare(CHECKOUT_ONE_MODULE_VERSION, '2.0.5', '<'):    //-Fall-through processing from above
+    case version_compare($opc_module_version, '2.0.5', '<'):    //-Fall-through processing from above
         $opc_pba_default = 'update';
-        if (defined('MODULE_PAYMENT_INSTALLED')) {
-            $opc_payment_modules = explode(';', MODULE_PAYMENT_INSTALLED);
+        if (zen_config('MODULE_PAYMENT_INSTALLED') !== null) {
+            $opc_payment_modules = explode(';', zen_config('MODULE_PAYMENT_INSTALLED'));
             if (in_array('square.php', $opc_payment_modules)) {
                 $opc_pba_default = 'no-update';
             }
@@ -178,7 +179,7 @@ switch (true) {
             "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
                 ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function ) 
                 VALUES 
-                ( 'Payment-Block Action on Shipping Change', 'CHECKOUT_ONE_PAYMENT_BLOCK_ACTION', '$opc_pba_default', 'Identify the action to be taken for the order\'s &quot;payment-block&quot; when the order\'s shipping-method changes.  Some payment-methods (e.g. <em>square</em>) require that the block <b>not</b> be updated while others are dependent on the shipping-method selected (e.g. a <em>Cash</em> payment is accepted <em>only</em> if the customer has chosen &quot;Store Pickup&quot;).<br><br>Choose <b>no-update</b> if at least one of your store\'s payment methods require that no update be performed.<br><br>Choose <b>update</b>, the default, if <em>none</em> of your store\'s payment methods require no-update.<br><br>If your store has a combination of payment-method requirements, choose <b>refresh</b> &mdash; but any credit-card information entered in the payment-block will be lost upon a shipping-method change!', $cgi, now(), 16, NULL, 'zen_cfg_select_option(array(\'update\', \'no-update\', \'refresh\'),')"
+                ( 'Payment-Block Action on Shipping Change', 'CHECKOUT_ONE_PAYMENT_BLOCK_ACTION', '$opc_pba_default', 'Identify the action to be taken for the order\'s &quot;payment-block&quot; when the order\'s shipping-method changes.  Some payment-methods (e.g. <em>square</em>) require that the block <b>not</b> be updated while others are dependent on the shipping-method selected (e.g. a <em>Cash</em> payment is accepted <em>only</em> if the customer has chosen &quot;Store Pickup&quot;).<br><br>Choose <b>no-update</b> if at least one of your store\'s payment methods require that no update be performed.<br><br>Choose <b>update</b>, the default, if <em>none</em> of your store\'s payment methods require no-update.<br><br>If your store has a combination of payment-method requirements, choose <b>refresh</b> &mdash; but any credit-card information entered in the payment-block will be lost upon a shipping-method change!', $cgi, now(), 16, NULL, 'zen_cfg_select_option([\'update\', \'no-update\', \'refresh\'],')"
         );
 
     // -----
@@ -186,7 +187,7 @@ switch (true) {
     //
     // - Remove 'myDEBUG-' prefix from OPC's debug file names.
     //
-    case version_compare(CHECKOUT_ONE_MODULE_VERSION, '2.2.0', '<'):    //-Fall-through processing from above
+    case version_compare($opc_module_version, '2.2.0', '<'):    //-Fall-through processing from above
         $db->Execute(
             "UPDATE " . TABLE_CONFIGURATION . "
                 SET configuration_description = 'When enabled, debug files named <code>one_page_checkout-<em>xx</em>.log</code> are created in your /logs folder (<em>xx</em> is the customer_id for the checkout).  Use the <b>true</b> setting in combination with the <em>Debug: Customer List</em> setting to limit the customers for which the debug-action is taken.<br><br>Default: <b>false</b>'
@@ -200,7 +201,7 @@ switch (true) {
     // - Add configuration setting, enabling different 'selectors' to locate an order's total
     //   value for their customized template.
     //
-    case version_compare(CHECKOUT_ONE_MODULE_VERSION, '2.3.0', '<'):    //-Fall-through processing from above
+    case version_compare($opc_module_version, '2.3.0', '<'):    //-Fall-through processing from above
         $db->Execute(
             "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
                 (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function) 
@@ -213,12 +214,12 @@ switch (true) {
     //
     // - Remove 'password_forgotten' from the guest-checkout disallowed pages' setting.
     //
-    case version_compare(CHECKOUT_ONE_MODULE_VERSION, '2.3.1', '<'):    //-Fall-through processing from above
-        if (defined('CHECKOUT_ONE_GUEST_PAGES_DISALLOWED')) {
-            $guest_pages_disallowed = CHECKOUT_ONE_GUEST_PAGES_DISALLOWED;
-            if (strpos(CHECKOUT_ONE_GUEST_PAGES_DISALLOWED, 'password_forgotten') !== false) {
+    case version_compare($opc_module_version, '2.3.1', '<'):    //-Fall-through processing from above
+        if (zen_config('CHECKOUT_ONE_GUEST_PAGES_DISALLOWED') !== null) {
+            $guest_pages_disallowed = zen_config('CHECKOUT_ONE_GUEST_PAGES_DISALLOWED');
+            if (strpos($guest_pages_disallowed, 'password_forgotten') !== false) {
                 $disallowed_pages = explode(',', str_replace(' ', '', $guest_pages_disallowed));
-                $guest_pages_disallowed = array_diff($disallowed_pages, array('password_forgotten'));
+                $guest_pages_disallowed = array_diff($disallowed_pages, ['password_forgotten']);
                 $guest_pages_disallowed = implode(', ', $guest_pages_disallowed);
             }
             $db->Execute(
@@ -236,7 +237,7 @@ switch (true) {
     // - Adding a configuration setting to identify payment methods that auto-submit the form, e.g. square_webPay
     // - Modify module-version setting to use 'zen_cfg_read_only` as its set_function so that the configuration value doesn't get wiped.
     //
-    case version_compare(CHECKOUT_ONE_MODULE_VERSION, '2.4.0', '<'):    //-Fall-through processing from above
+    case version_compare($opc_module_version, '2.4.0', '<'):    //-Fall-through processing from above
         $db->Execute(
             "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
                 (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function) 
@@ -258,7 +259,7 @@ switch (true) {
     //   'credit_covers' method indicates that the confirmation page is required for orders where
     //   a Gift Certificate or coupon that 'covers' the charge for the order is present.
     //
-    case version_compare(CHECKOUT_ONE_MODULE_VERSION, '2.4.2', '<'):    //-Fall-through processing from above
+    case version_compare($opc_module_version, '2.4.2', '<'):    //-Fall-through processing from above
         $db->Execute(
             "UPDATE " . TABLE_CONFIGURATION . "
                 SET configuration_description = 'Identify (using a comma-separated list) the payment modules on your store that require confirmation.  If your store requires confirmation on all orders, simply list all payment modules used by your store.<br><br>Use the <code>credit_covers</code> &quot;method&quot; if orders that are fully paid using a Gift Certificate or coupon should also require confirmation.<br><br>Default: <code>eway_rapid,stripepay,gps</code><br>',
@@ -273,7 +274,7 @@ switch (true) {
     // - The setting 'CHECKOUT_ONE_PAYMENT_BLOCK_ACTION', since there's no longer a page
     //   reload when the shipping selection is changed.
     //
-    case version_compare(CHECKOUT_ONE_MODULE_VERSION, '2.5.0', '<'):    //-Fall-through processing from above
+    case version_compare($opc_module_version, '2.5.0', '<'):    //-Fall-through processing from above
         $db->Execute(
             "DELETE FROM " . TABLE_CONFIGURATION . "
               WHERE configuration_key = 'CHECKOUT_ONE_PAYMENT_BLOCK_ACTION'
@@ -283,9 +284,9 @@ switch (true) {
     // -----
     // v2.5.1:
     //
-    // - Correct misspelling of squary_webPay in the description for 'CHECKOUT_ONE_PAYMENT_METHODS_THAT_SUBMIT'.
+    // - Correct misspelling of square_webPay in the description for 'CHECKOUT_ONE_PAYMENT_METHODS_THAT_SUBMIT'.
     //
-    case version_compare(CHECKOUT_ONE_MODULE_VERSION, '2.5.1', '<'):    //-Fall-through processing from above
+    case version_compare($opc_module_version, '2.5.1', '<'):    //-Fall-through processing from above
         $db->Execute(
             "UPDATE " . TABLE_CONFIGURATION . "
                 SET configuration_description = 'Use a comma-separated list (intervening blanks are OK) to identify any payment methods that handle the checkout form\'s submittal themselves, e.g. <code>square_webPay</code>, the default.<br>'
@@ -298,7 +299,7 @@ switch (true) {
     //
     // - Remove no-longer-used 'CHECKOUT_ONE_OTTOTAL_SELECTOR' setting.
     //
-    case version_compare(CHECKOUT_ONE_MODULE_VERSION, '2.5.2', '<'):    //-Fall-through processing from above
+    case version_compare($opc_module_version, '2.5.2', '<'):    //-Fall-through processing from above
         $db->Execute(
             "DELETE FROM " . TABLE_CONFIGURATION . "
               WHERE configuration_key = 'CHECKOUT_ONE_OTTOTAL_SELECTOR'
@@ -311,14 +312,14 @@ switch (true) {
     // - Add a setting to identify 'conditional' customers for whom OPC is always disabled.
     // - Add a setting to enable telephone number to **always** be optional during account registration
     //
-    case version_compare(CHECKOUT_ONE_MODULE_VERSION, '2.6.0', '<'):    //-Fall-through processing from above
+    case version_compare($opc_module_version, '2.6.0', '<'):    //-Fall-through processing from above
         $db->Execute(
             "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
                 (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function) 
              VALUES 
                 ('Disable: Customer List', 'CHECKOUT_ONE_DISABLE_CUSTOMERS_LIST', '', 'When you <em>conditionally</em> disable the plugin, use this setting to identify the customers for whom the plugin is disabled.  Leave the setting blank (the default) to <em>enable</em> the plugin for all customers or identify a comma-separated list of customer_id values for whom the plugin is to be <em>disabled</em>.<br>', $cgi, now(), 12, NULL, NULL)"
         );
-        $enable_value = (CHECKOUT_ONE_ENABLED === 'conditional') ? 'enable-conditional' : CHECKOUT_ONE_ENABLED;
+        $enable_value = (zen_config('CHECKOUT_ONE_ENABLED') === 'conditional') ? 'enable-conditional' : zen_config('CHECKOUT_ONE_ENABLED');
         $db->Execute(
             "UPDATE " . TABLE_CONFIGURATION . "
                 SET configuration_value = '$enable_value',
@@ -328,7 +329,7 @@ switch (true) {
               LIMIT 1"
         );
 
-        $telephone_min_length = (int)ENTRY_TELEPHONE_MIN_LENGTH;
+        $telephone_min_length = (int)zen_config('ENTRY_TELEPHONE_MIN_LENGTH');
         $db->Execute(
             "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
                 (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function) 
@@ -344,7 +345,7 @@ switch (true) {
 // If this isn't an initial install, set the message to let the currently-signed-in admin
 // know that the upgrade has occurred.
 //
-if (CHECKOUT_ONE_MODULE_VERSION !== '0.0.0' && CHECKOUT_ONE_MODULE_VERSION !== $version_release_date) {
-    $messageStack->add(sprintf(TEXT_OPC_UPDATED, CHECKOUT_ONE_MODULE_VERSION, $version_release_date), 'success');
+if ($opc_module_version !== '0.0.0' && $opc_module_version !== $version_release_date) {
+    $messageStack->add(sprintf(TEXT_OPC_UPDATED, $opc_module_version, $version_release_date), 'success');
     $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '$version_release_date', last_modified = now() WHERE configuration_key = 'CHECKOUT_ONE_MODULE_VERSION' LIMIT 1");
 }
