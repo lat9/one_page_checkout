@@ -1,9 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2013-2024, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.5.0
+// Last updated: OPC v2.6.2
 //
 ?>
 <!--bof credit-selection block -->
@@ -41,7 +41,7 @@ if ($shipping_module_available) {
         // the class is submitted to the function as part of the to-be-created parameter list.
         //
         $ot_class = str_replace('ot_', '', $current_selection['id']);
-        if (strtolower(IMAGE_USE_CSS_BUTTONS) === 'yes') {
+        if (strtolower(zen_config('IMAGE_USE_CSS_BUTTONS')) === 'yes') {
             $secondary_class = 'opc-cc-submit';
             $additional_parms = '';
         } else {

@@ -1,9 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2018-2024, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2018-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.5.3
+// Last updated: OPC v2.6.2
 //
 if (!defined('IS_ADMIN_FLAG') || IS_ADMIN_FLAG !== true) {
     die('Illegal Access');
@@ -19,9 +19,9 @@ class OnePageCheckoutAdminObserver extends base
         // indicating that the action can't be performed for that 'guest' customer.
         //
         global $current_page, $messageStack;
-        if ($current_page === FILENAME_CUSTOMERS . '.php' && isset($_GET['action']) && defined('CHECKOUT_ONE_GUEST_CUSTOMER_ID')) {
+        if ($current_page === FILENAME_CUSTOMERS . '.php' && isset($_GET['action']) && zen_config('CHECKOUT_ONE_GUEST_CUSTOMER_ID') !== null) {
             $opc_cid = (int)($_POST['cID'] ?? $_GET['cID'] ?? 0);
-            if ($opc_cid === (int)CHECKOUT_ONE_GUEST_CUSTOMER_ID && in_array($_GET['action'], ['status', 'update', 'deleteconfirm'])) {
+            if ($opc_cid === (int)zen_config('CHECKOUT_ONE_GUEST_CUSTOMER_ID') && in_array($_GET['action'], ['status', 'update', 'deleteconfirm'])) {
                 $messageStack->add_session(sprintf(ERROR_ACTION_INVALID_FOR_GUEST_CUSTOMER, $_GET['action']), 'error');
                 zen_redirect(zen_href_link(FILENAME_CUSTOMERS, zen_get_all_get_params(['cID', 'action']) . 'cID=' . $opc_cid));
             }

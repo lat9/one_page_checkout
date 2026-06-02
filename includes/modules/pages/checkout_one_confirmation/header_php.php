@@ -1,9 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
-// Copyright (C) 2013-2024, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2013-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.5.4
+// Last updated: OPC v2.6.2
 //
 
 // This should be first line of the script:
@@ -19,7 +19,7 @@ require DIR_WS_MODULES . zen_get_module_directory('require_languages.php');
 // -----
 // Use "normal" checkout if not enabled.
 //
-if (!(defined('CHECKOUT_ONE_ENABLED') && isset($checkout_one) && $checkout_one->isEnabled())) {
+if (zen_config('CHECKOUT_ONE_ENABLED') === null || !isset($checkout_one) || $checkout_one->isEnabled() === false) {
     $zco_notifier->notify('NOTIFY_CHECKOUT_ONE_NOT_ENABLED');
     zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
 }
@@ -29,9 +29,7 @@ if (!(defined('CHECKOUT_ONE_ENABLED') && isset($checkout_one) && $checkout_one->
 // the "process_button" payment-class function.  Rather than hard-code the list in code, below, the following
 // constant will be updated as additional payment-methods that make use of that interface are identified.
 //
-if (!defined('CHECKOUT_ONE_CONFIRMATION_REQUIRED')) {
-    define('CHECKOUT_ONE_CONFIRMATION_REQUIRED', 'eway_rapid,stripepay,gps');
-}
+zen_define_default('CHECKOUT_ONE_CONFIRMATION_REQUIRED', 'eway_rapid,stripepay,gps');
 
 // if there is nothing in the customers cart, redirect them to the shopping_cart page
 if ($_SESSION['cart']->count_contents() <= 0) {
@@ -76,10 +74,10 @@ if (!isset($_SESSION['shipping'])) {
 
 $checkout_one->debug_message('Starting confirmation, shipping and request data follows:' . json_encode($_SESSION['shipping'], JSON_PRETTY_PRINT), true);
 
-$free_shipping_enabled = (defined('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING') && MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING === 'true');
+$free_shipping_enabled = zen_config('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING') === 'true';
 $free_shipping_over = 0;
-if (defined('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER')) {
-    $free_shipping_over = $currencies->value((float)MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER);
+if (zen_config('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER') !== null) {
+    $free_shipping_over = $currencies->value((float)zen_config('MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER'));
 }
 $cart_not_virtual = ($_SESSION['cart']->get_content_type() !== 'virtual');
 if (isset($_SESSION['shipping']['id']) && $_SESSION['shipping']['id'] === 'free_free' && $cart_not_virtual === true && $free_shipping_enabled === true && $_SESSION['cart']->show_total() < $free_shipping_over) {
@@ -197,9 +195,9 @@ if ($messageStack->size('checkout') !== 0 || $messageStack->size('checkout_payme
 // be displayed.
 //
 $confirmation_required = false;
-if ($credit_covers === true && strpos(CHECKOUT_ONE_CONFIRMATION_REQUIRED, 'credit_covers') !== false) {
+if ($credit_covers === true && strpos(zen_config('CHECKOUT_ONE_CONFIRMATION_REQUIRED'), 'credit_covers') !== false) {
     $confirmation_required = true;
-} elseif (!empty($_SESSION['payment']) && in_array($_SESSION['payment'], explode(',', str_replace(' ', '', CHECKOUT_ONE_CONFIRMATION_REQUIRED)))) {
+} elseif (!empty($_SESSION['payment']) && in_array($_SESSION['payment'], explode(',', str_replace(' ', '', zen_config('CHECKOUT_ONE_CONFIRMATION_REQUIRED'))))) {
     $confirmation_required = true;
 }
 
@@ -223,14 +221,14 @@ $zco_notifier->notify('NOTIFY_CHECKOUT_ONE_CONFIRMATION_PRE_ORDER_CHECK', '', $e
 // terms-and-conditions or privacy-terms agreement need to be ticked.
 //
 if ($error === false) {
-    if (DISPLAY_CONDITIONS_ON_CHECKOUT === 'true') {
+    if (zen_config('DISPLAY_CONDITIONS_ON_CHECKOUT') === 'true') {
         if (!isset($_POST['conditions']) || $_POST['conditions'] !== '1') {
             $error = true;
             $messageStack->add_session('checkout_payment', ERROR_CONDITIONS_NOT_ACCEPTED, 'error');
         }
     }
 
-    if ($_SESSION['opc']->isGuestCheckout() && DISPLAY_PRIVACY_CONDITIONS === 'true') {
+    if ($_SESSION['opc']->isGuestCheckout() && zen_config('DISPLAY_PRIVACY_CONDITIONS') === 'true') {
         if (!isset($_POST['privacy_conditions']) || ($_POST['privacy_conditions'] !== '1')) {
             $error = true;
             $messageStack->add_session('checkout_payment', ERROR_PRIVACY_STATEMENT_NOT_ACCEPTED, 'error');
@@ -249,7 +247,7 @@ if ($error === true) {
 // Stock Check
 $flagAnyOutOfStock = false;
 $stock_check = [];
-if (STOCK_CHECK === 'true') {
+if (zen_config('STOCK_CHECK') === 'true') {
     for ($i = 0, $n = count($order->products); $i < $n; $i++) {
         $stock_check[$i] = zen_check_stock($order->products[$i]['id'], $order->products[$i]['qty']);
         if (!empty($stock_check[$i])) {
@@ -257,7 +255,7 @@ if (STOCK_CHECK === 'true') {
         }
     }
     // Out of Stock
-    if (STOCK_ALLOW_CHECKOUT !== 'true' && $flagAnyOutOfStock === true) {
+    if (zen_config('STOCK_ALLOW_CHECKOUT') !== 'true' && $flagAnyOutOfStock === true) {
         zen_redirect(zen_href_link(FILENAME_SHOPPING_CART));
     }
 }
@@ -279,7 +277,7 @@ if (!empty($_SESSION['cc_id'])) {
     $customers_referral = $db->Execute($customers_referral_query);
 
     // only use discount coupon if set by coupon
-    if ($customers_referral->fields['customers_referral'] === '' && CUSTOMERS_REFERRAL_STATUS === '1') {
+    if ($customers_referral->fields['customers_referral'] === '' && zen_config('CUSTOMERS_REFERRAL_STATUS') === '1') {
         $sql =
             "UPDATE " . TABLE_CUSTOMERS . "
                 SET customers_referral = :customersReferral

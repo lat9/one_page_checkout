@@ -19,10 +19,11 @@ if (defined('FILENAME_CREATE_ACCOUNT_SEND_EMAIL')) {
     $email_text .=  EMAIL_WELCOME;
     $html_msg['EMAIL_WELCOME'] = str_replace('\n', '', EMAIL_WELCOME);
 
-    if (NEW_SIGNUP_DISCOUNT_COUPON !== '' && NEW_SIGNUP_DISCOUNT_COUPON !== '0') {
-        $coupon_id = (int)NEW_SIGNUP_DISCOUNT_COUPON;
+    $new_signup_discount_coupon = zen_config('NEW_SIGNUP_DISCOUNT_COUPON');
+    if ($new_signup_discount_coupon !== '' && $new_signup_discount_coupon !== '0') {
+        $coupon_id = (int)$new_signup_discount_coupon;
         if ($coupon_id < 1) {
-            trigger_error('Invalid integer value detected for \'NEW_SIGNUP_DISCOUNT_COUPON\' (' . NEW_SIGNUP_DISCOUNT_COUPON . ').  The coupon was not sent.', E_USER_WARNING);
+            trigger_error('Invalid integer value detected for \'NEW_SIGNUP_DISCOUNT_COUPON\' (' . $new_signup_discount_coupon . ').  The coupon was not sent.', E_USER_WARNING);
         } else {
             $coupon = $db->Execute(
                 "SELECT c.*, cd.coupon_description
@@ -34,7 +35,7 @@ if (defined('FILENAME_CREATE_ACCOUNT_SEND_EMAIL')) {
                   LIMIT 1"
             );
             if ($coupon->EOF) {
-                trigger_error('Unknown coupon_id (' . NEW_SIGNUP_DISCOUNT_COUPON . ') during account creation.  The coupon was not sent.', E_USER_WARNING);
+                trigger_error('Unknown coupon_id (' . $new_signup_discount_coupon . ') during account creation.  The coupon was not sent.', E_USER_WARNING);
             } else {
                 $db->Execute(
                     "INSERT INTO " . TABLE_COUPON_EMAIL_TRACK . "
@@ -63,12 +64,13 @@ if (defined('FILENAME_CREATE_ACCOUNT_SEND_EMAIL')) {
         }
     } //endif coupon
 
-    if (NEW_SIGNUP_GIFT_VOUCHER_AMOUNT > 0) {
+    $new_signup_gift_voucher_amount = zen_config('NEW_SIGNUP_GIFT_VOUCHER_AMOUNT');
+    if ($new_signup_gift_voucher_amount > 0) {
         $coupon_code = zen_create_coupon_code();
         $insert_query = $db->Execute(
             "INSERT INTO " . TABLE_COUPONS . "
                 (coupon_code, coupon_type, coupon_amount, date_created)
-             VALUES ('" . $coupon_code . "', 'G', '" . NEW_SIGNUP_GIFT_VOUCHER_AMOUNT . "', now())"
+             VALUES ('" . $coupon_code . "', 'G', '" . (float)$new_signup_gift_voucher_amount . "', now())"
         );
         $insert_id = $db->Insert_ID();
         $db->Execute("insert into " . TABLE_COUPON_EMAIL_TRACK . " (coupon_id, customer_id_sent, sent_firstname, emailed_to, date_sent) values ('" . $insert_id ."', '0', 'Admin', '" . $email_address . "', now() )");
@@ -76,12 +78,12 @@ if (defined('FILENAME_CREATE_ACCOUNT_SEND_EMAIL')) {
         // if on, add in GV explanation
         $email_text .= 
             PHP_EOL . PHP_EOL . 
-            sprintf(EMAIL_GV_INCENTIVE_HEADER, $currencies->format(NEW_SIGNUP_GIFT_VOUCHER_AMOUNT)) .
+            sprintf(EMAIL_GV_INCENTIVE_HEADER, $currencies->format($new_signup_gift_voucher_amount)) .
             sprintf(EMAIL_GV_REDEEM, $coupon_code) .
             EMAIL_GV_LINK . zen_href_link(FILENAME_GV_REDEEM, 'gv_no=' . $coupon_code, 'NONSSL', false) . PHP_EOL . PHP_EOL .
             EMAIL_GV_LINK_OTHER . 
             EMAIL_SEPARATOR;
-        $html_msg['GV_WORTH'] = str_replace('\n', '', sprintf(EMAIL_GV_INCENTIVE_HEADER, $currencies->format(NEW_SIGNUP_GIFT_VOUCHER_AMOUNT)) );
+        $html_msg['GV_WORTH'] = str_replace('\n', '', sprintf(EMAIL_GV_INCENTIVE_HEADER, $currencies->format($new_signup_gift_voucher_amount)) );
         $html_msg['GV_REDEEM'] = str_replace('\n', '', str_replace('\n\n', '<br>',sprintf(EMAIL_GV_REDEEM, '<strong>' . $coupon_code . '</strong>')));
         $html_msg['GV_CODE_NUM'] = $coupon_code;
         $html_msg['GV_CODE_URL'] = str_replace('\n', '', EMAIL_GV_LINK . '<a href="' . zen_href_link(FILENAME_GV_REDEEM, 'gv_no=' . $coupon_code, 'NONSSL', false) . '">' . TEXT_GV_NAME . ': ' . $coupon_code . '</a>');
@@ -96,20 +98,29 @@ if (defined('FILENAME_CREATE_ACCOUNT_SEND_EMAIL')) {
     $html_msg['EMAIL_CLOSURE']       = nl2br(EMAIL_GV_CLOSURE);
 
     // include create-account-specific disclaimer
-    $email_text .= "\n\n" . sprintf(EMAIL_DISCLAIMER_NEW_CUSTOMER, STORE_OWNER_EMAIL_ADDRESS). "\n\n";
-    $html_msg['EMAIL_DISCLAIMER'] = sprintf(EMAIL_DISCLAIMER_NEW_CUSTOMER, '<a href="mailto:' . STORE_OWNER_EMAIL_ADDRESS . '">'. STORE_OWNER_EMAIL_ADDRESS .' </a>');
+    $email_text .= "\n\n" . sprintf(EMAIL_DISCLAIMER_NEW_CUSTOMER, zen_config('STORE_OWNER_EMAIL_ADDRESS')). "\n\n";
+    $html_msg['EMAIL_DISCLAIMER'] = sprintf(EMAIL_DISCLAIMER_NEW_CUSTOMER, '<a href="mailto:' . zen_config('STORE_OWNER_EMAIL_ADDRESS') . '">'. zen_config('STORE_OWNER_EMAIL_ADDRESS') . ' </a>');
 
     // send welcome email
     if (trim(EMAIL_SUBJECT) != 'n/a') {
-        zen_mail($name, $email_address, EMAIL_SUBJECT, $email_text, STORE_NAME, EMAIL_FROM, $html_msg, 'welcome');
+        zen_mail($name, $email_address, EMAIL_SUBJECT, $email_text, zen_config('STORE_NAME'), zen_config('EMAIL_FROM'), $html_msg, 'welcome');
     }
 
     // send additional emails
-    if (SEND_EXTRA_CREATE_ACCOUNT_EMAILS_TO_STATUS === '1' && SEND_EXTRA_CREATE_ACCOUNT_EMAILS_TO !== '') {
+    if (zen_config('SEND_EXTRA_CREATE_ACCOUNT_EMAILS_TO_STATUS') === '1' && zen_config('SEND_EXTRA_CREATE_ACCOUNT_EMAILS_TO') !== '') {
         $extra_info = email_collect_extra_info($name, $email_address, $name, $email_address, $telephone, $fax ?? '');
         $html_msg['EXTRA_INFO'] = $extra_info['HTML'];
         if (trim(SEND_EXTRA_CREATE_ACCOUNT_EMAILS_TO_SUBJECT) !== 'n/a') {
-            zen_mail('', SEND_EXTRA_CREATE_ACCOUNT_EMAILS_TO, SEND_EXTRA_CREATE_ACCOUNT_EMAILS_TO_SUBJECT . ' ' . EMAIL_SUBJECT, $email_text . $extra_info['TEXT'], STORE_NAME, EMAIL_FROM, $html_msg, 'welcome_extra');
+            zen_mail(
+                '',
+                zen_config('SEND_EXTRA_CREATE_ACCOUNT_EMAILS_TO'),
+                SEND_EXTRA_CREATE_ACCOUNT_EMAILS_TO_SUBJECT . ' ' . EMAIL_SUBJECT,
+                $email_text . $extra_info['TEXT'],
+                zen_config('STORE_NAME'),
+                zen_config('EMAIL_FROM'),
+                $html_msg,
+                'welcome_extra'
+            );
         }
     } //endif send extra emails
 }

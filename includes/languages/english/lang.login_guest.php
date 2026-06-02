@@ -1,9 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2017-2022, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2017-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated for OPC v2.4.2.
+// Last updated for OPC v2.6.2
 //
 $define = [
     'HEADING_NEW_CUSTOMER_OPC' => 'New Customers',
@@ -14,10 +14,10 @@ $define = [
     'BUTTON_GUEST_CHECKOUT_CONTINUE' => 'Continue Guest Checkout',
 
     'HEADING_RETURNING_CUSTOMER_OPC' => 'Returning Customers',
-    'TEXT_RETURNING_CUSTOMER_OPC' => 'If you have an account with <strong>' . STORE_NAME . '</strong>, please enter your email address and password to continue.',
+    'TEXT_RETURNING_CUSTOMER_OPC' => 'If you have an account with <strong>' . zen_config('STORE_NAME') . '</strong>, please enter your email address and password to continue.',
 
     'HEADING_ACCOUNT_BENEFITS_OPC' => 'Account Benefits',
-    'TEXT_ACCOUNT_BENEFITS_OPC' => 'With an account at ' . STORE_NAME . ', you will have additional shopping services including:',
+    'TEXT_ACCOUNT_BENEFITS_OPC' => 'With an account at ' . zen_config('STORE_NAME') . ', you will have additional shopping services including:',
 
     'HEADING_BENEFIT_1' => 'Quick Checkout',
     'TEXT_BENEFIT_1' => 'Save your favorite shipping addresses in your personal address book.  You will never have to re-type an address again!',

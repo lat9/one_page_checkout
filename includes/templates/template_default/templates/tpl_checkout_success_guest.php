@@ -40,7 +40,7 @@ if ($offer_account_creation) {
             
             <h3><?php echo ENTRY_EMAIL_PREFERENCE; ?></h3>
 <?php
-    if (ACCOUNT_NEWSLETTER_STATUS != 0) {
+    if (zen_config('ACCOUNT_NEWSLETTER_STATUS') !== '0') {
 ?>
             <div class="custom-control custom-checkbox">
                 <?php echo zen_draw_checkbox_field('newsletter', '1', false, 'id="newsletter-checkbox"'); ?>
@@ -65,7 +65,7 @@ if ($offer_account_creation) {
 <?php
 }
 
-if (DEFINE_CHECKOUT_SUCCESS_STATUS >= 1 and DEFINE_CHECKOUT_SUCCESS_STATUS <= 2) { 
+if (in_array(zen_config('DEFINE_CHECKOUT_SUCCESS_STATUS'), ['1', '2'], true)) { 
 ?>
     <div id="checkoutSuccessMainContent" class="content"><?php require $define_page; ?></div>
 <?php 

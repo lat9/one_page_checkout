@@ -38,7 +38,7 @@ class checkout_one_observer extends base
         // a quick return.  That will result in an overall 'OPC' disablement and any previous guest-related
         // accesses being cleared.
         //
-        if (!defined('CHECKOUT_ONE_ENABLED') || CHECKOUT_ONE_ENABLED === 'false' || !empty($spider_flag)) {
+        if (zen_config('CHECKOUT_ONE_ENABLED', 'false') === 'false' || !empty($spider_flag)) {
             $_SESSION['opc']->resetGuestSessionValues();
             return;
         }
@@ -67,9 +67,9 @@ class checkout_one_observer extends base
         // -----
         // Initialize the plugin's debug filename and enabled control.
         //
-        $this->debug = (defined('CHECKOUT_ONE_DEBUG') && (CHECKOUT_ONE_DEBUG === 'true' || CHECKOUT_ONE_DEBUG === 'full'));
-        if ($this->debug === true && defined('CHECKOUT_ONE_DEBUG_EXTRA') && CHECKOUT_ONE_DEBUG_EXTRA !== '' && CHECKOUT_ONE_DEBUG_EXTRA !== '*') {
-            $debug_customers = explode(',', str_replace(' ', '', CHECKOUT_ONE_DEBUG_EXTRA));
+        $this->debug = in_array(zen_config('CHECKOUT_ONE_DEBUG'), ['true', 'full'], true);
+        if ($this->debug === true && !in_array(zen_config('CHECKOUT_ONE_DEBUG_EXTRA'), ['', '*'], true)) {
+            $debug_customers = explode(',', str_replace(' ', '', zen_config('CHECKOUT_ONE_DEBUG_EXTRA')));
             if (!in_array($_SESSION['customer_id'], $debug_customers)) {
                 $this->debug = false;
             }
@@ -81,7 +81,7 @@ class checkout_one_observer extends base
         // the checkout_success or other, customizable, pages, need to remove all session-variables associated with that
         // guest checkout.
         //
-        $post_checkout_pages = explode(',', str_replace(' ', '', CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED));
+        $post_checkout_pages = explode(',', str_replace(' ', '', zen_config('CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED')));
         $post_checkout_pages[] = FILENAME_CHECKOUT_SUCCESS;
         if (isset($_SESSION['order_placed_by_guest']) && !in_array($current_page_base, $post_checkout_pages)) {
             unset($_SESSION['order_placed_by_guest'], $_SESSION['order_number_created']);
@@ -108,7 +108,7 @@ class checkout_one_observer extends base
                 // built-in 3-page version.
                 //
                 if ($_SESSION['opc']->guestCheckoutEnabled() === true) {
-                    $disallowed_pages = explode(',', str_replace(' ', '', CHECKOUT_ONE_GUEST_PAGES_DISALLOWED));
+                    $disallowed_pages = explode(',', str_replace(' ', '', zen_config('CHECKOUT_ONE_GUEST_PAGES_DISALLOWED')));
                     if (in_array($this->current_page_base, $disallowed_pages)) {
                         $this->needUnsupportedPageMessage = true;
                     }
@@ -362,7 +362,7 @@ class checkout_one_observer extends base
                 if ($is_logged_in === true && isset($current_page_base)) {
                     if ($current_page_base === FILENAME_POPUP_SHIPPING_ESTIMATOR) {
                         $is_logged_in = ($_SESSION['opc']->isGuestCheckout() === false && $_SESSION['opc']->customerAccountNeedsPrimaryAddress() === false);
-                    } elseif ($current_page_base === FILENAME_SHOPPING_CART && SHOW_SHIPPING_ESTIMATOR_BUTTON === '2') {
+                    } elseif ($current_page_base === FILENAME_SHOPPING_CART && zen_config('SHOW_SHIPPING_ESTIMATOR_BUTTON') === '2') {
                         $calling_list = debug_backtrace();
                         $is_shipping_estimator = false;
                         foreach ($calling_list as $next_caller) {
@@ -543,7 +543,7 @@ class checkout_one_observer extends base
                     CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID,
                     CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID,
                 ];
-                if (in_array($_SESSION['sendto'], $temp_addresses) || $_SESSION['billto'] == CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID) {
+                if (in_array($_SESSION['sendto'], $temp_addresses) || (int)$_SESSION['billto'] === (int)zen_config('CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID')) {
                     $order_id = (int)$p1['zf_insert_id'];
                     $email_text = $p2;
                     $html_msg = $p3;
@@ -716,7 +716,7 @@ class checkout_one_observer extends base
             // $p2 ... (r/w) the current slamming threshold.
             //
             case 'NOTIFY_ORDER_STATUS_SLAMMING_ALERT':
-                $slamming_threshold = (int)CHECKOUT_ONE_ORDER_STATUS_SLAM_COUNT;
+                $slamming_threshold = (int)zen_config('CHECKOUT_ONE_ORDER_STATUS_SLAM_COUNT');
                 if ($slamming_threshold <= 0) {
                     $slamming_threshold = 3;
                 }

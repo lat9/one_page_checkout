@@ -7,7 +7,7 @@
 // The $enabled_payment_modules variable must be handled using foreach, since numerical keys
 // might have been removed if the payment method is not supported for guest-checkout!!
 //
-// Last updated: OPC v2.6.0
+// Last updated: OPC v2.6.2
 //
 ?>
 <!--bof payment-method choices -->
@@ -25,11 +25,11 @@ if ($shipping_module_available && $display_payment_block) {
     // ** BEGIN PAYPAL EXPRESS CHECKOUT **
     if (!$payment_modules->in_special_checkout()) {
     // ** END PAYPAL EXPRESS CHECKOUT ** 
-        if (SHOW_ACCEPTED_CREDIT_CARDS !== '0') {
-            if (SHOW_ACCEPTED_CREDIT_CARDS === '1') {
+        if (zen_config('SHOW_ACCEPTED_CREDIT_CARDS') !== '0') {
+            if (zen_config('SHOW_ACCEPTED_CREDIT_CARDS') === '1') {
                 echo TEXT_ACCEPTED_CREDIT_CARDS . zen_get_cc_enabled();
 
-            } elseif (SHOW_ACCEPTED_CREDIT_CARDS === '2') {
+            } elseif (zen_config('SHOW_ACCEPTED_CREDIT_CARDS') === '2') {
                 echo TEXT_ACCEPTED_CREDIT_CARDS . zen_get_cc_enabled('IMAGE_');
 
             }
@@ -71,7 +71,7 @@ if ($shipping_module_available && $display_payment_block) {
         <label for="pmt-<?= $payment_id ?>" class="custom-control-label radioButtonLabel"><?= $current_method['module'] ?></label>
       </div>
 <?php
-            if (defined('MODULE_ORDER_TOTAL_COD_STATUS') && MODULE_ORDER_TOTAL_COD_STATUS == 'true' && $payment_id == 'cod') {
+            if (zen_config('MODULE_ORDER_TOTAL_COD_STATUS') === 'true' && $payment_id === 'cod') {
                 if (!defined('TEXT_INFO_COD_FEES')) {
                     // -----
                     // Need to load the 'ot_cod' language file, since it's not pre-loaded during AJAX operations.

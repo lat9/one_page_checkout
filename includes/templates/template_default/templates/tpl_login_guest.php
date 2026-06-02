@@ -1,9 +1,9 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2017-2022, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2017-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.4.1
+// Last updated: OPC v2.6.2
 //
 ?>
 <div class="centerColumn" id="loginOpcDefault">
@@ -40,11 +40,11 @@ foreach ($column_blocks as $display_blocks) {
 ?>
         <div class="opc-label"><?php echo ENTRY_EMAIL_ADDRESS; ?></div>
 <?php 
-                    echo zen_draw_input_field('email_address', '', 'size="18" id="login-email-address" autofocus placeholder="' . ENTRY_EMAIL_ADDRESS_TEXT . '"' . ((int)ENTRY_EMAIL_ADDRESS_MIN_LENGTH > 0 ? ' required' : ''), 'email'); 
+                    echo zen_draw_input_field('email_address', '', 'size="18" id="login-email-address" autofocus placeholder="' . ENTRY_EMAIL_ADDRESS_TEXT . '"' . ((int)zen_config('ENTRY_EMAIL_ADDRESS_MIN_LENGTH') > 0 ? ' required' : ''), 'email'); 
 ?>
         <div class="opc-label"><?php echo ENTRY_PASSWORD; ?></div>
 <?php 
-                    echo zen_draw_password_field('password', '', 'size="18" id="login-password" autocomplete="off" placeholder="' . ENTRY_REQUIRED_SYMBOL . '"' . ((int)ENTRY_PASSWORD_MIN_LENGTH > 0 ? ' required' : '')); 
+                    echo zen_draw_password_field('password', '', 'size="18" id="login-password" autocomplete="off" placeholder="' . ENTRY_REQUIRED_SYMBOL . '"' . ((int)zen_config('ENTRY_PASSWORD_MIN_LENGTH') > 0 ? ' required' : '')); 
 ?>
         <div class="buttonRow" id="opc-pwf"><?php echo '<a href="' . zen_href_link(FILENAME_PASSWORD_FORGOTTEN, '', 'SSL') . '">' . TEXT_PASSWORD_FORGOTTEN . '</a>'; ?></div>
         <div class="buttonRow"><?php echo zen_image_submit(BUTTON_IMAGE_LOGIN, BUTTON_LOGIN_ALT); ?></div>

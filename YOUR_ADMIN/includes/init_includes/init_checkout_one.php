@@ -15,8 +15,8 @@ if (!defined('IS_ADMIN_FLAG')) {
 // 500-599 ... Registered-account settings
 // 1000+ ..... Debug settings
 //
-define('CHECKOUT_ONE_CURRENT_VERSION', '2.6.2-beta1');
-define('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2026-05-12');
+define('CHECKOUT_ONE_CURRENT_VERSION', '2.6.2-beta2');
+define('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2026-06-01');
 
 if (isset($_SESSION['admin_id'])) {
     $version_release_date = CHECKOUT_ONE_CURRENT_VERSION . ' (' . CHECKOUT_ONE_CURRENT_UPDATE_DATE . ')';
@@ -27,7 +27,7 @@ if (isset($_SESSION['admin_id'])) {
         $db->Execute("INSERT INTO " . TABLE_CONFIGURATION_GROUP . " 
                      (configuration_group_title, configuration_group_description, sort_order, visible) 
                      VALUES ('$configurationGroupTitle', '$configurationGroupTitle', 1, 1);");
-        $cgi = $db->Insert_ID(); 
+        $cgi = $db->insert_ID(); 
         $db->Execute("UPDATE " . TABLE_CONFIGURATION_GROUP . " SET sort_order = $cgi WHERE configuration_group_id = $cgi");
     } else {
         $cgi = $configuration->fields['configuration_group_id'];
@@ -36,14 +36,14 @@ if (isset($_SESSION['admin_id'])) {
     // -----
     // If One-Page Checkout is not yet installed, bring in the initial-installation script.
     //
-    if (!defined('CHECKOUT_ONE_MODULE_VERSION')) {
+    if (zen_config('CHECKOUT_ONE_MODULE_VERSION') === null) {
         require DIR_WS_INCLUDES . 'init_includes/init_checkout_one_install.php';
     }
 
     // -----
     // If a new version is present, bring in the plugin's upgrade script.
     //
-    if (CHECKOUT_ONE_MODULE_VERSION !== $version_release_date) {
+    if (zen_config('CHECKOUT_ONE_MODULE_VERSION') !== $version_release_date) {
         require DIR_WS_INCLUDES . 'init_includes/init_checkout_one_upgrade.php';
     }
 
@@ -53,8 +53,8 @@ if (isset($_SESSION['admin_id'])) {
     // existing entries in the customers/address_book tables, too!
     //
     $guest_customer_id_ok = false;
-    if (defined('CHECKOUT_ONE_GUEST_CUSTOMER_ID')) {
-        $guest_customer_id = (int)CHECKOUT_ONE_GUEST_CUSTOMER_ID;
+    if (zen_config('CHECKOUT_ONE_GUEST_CUSTOMER_ID') !== null) {
+        $guest_customer_id = (int)zen_config('CHECKOUT_ONE_GUEST_CUSTOMER_ID');
         $opc_check = $db->Execute(
             "SELECT customers_id
                FROM " . TABLE_CUSTOMERS . "
@@ -78,7 +78,7 @@ if (isset($_SESSION['admin_id'])) {
             'customers_lastname' => 'Customer, **do not remove**'
         ];
         zen_db_perform(TABLE_CUSTOMERS, $sql_data_array);
-        $guest_customer_id = zen_db_insert_id();
+        $guest_customer_id = (int)zen_db_insert_id();
         $db->Execute(
             "INSERT INTO " . TABLE_CONFIGURATION . " 
                 (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order)
@@ -98,11 +98,11 @@ if (isset($_SESSION['admin_id'])) {
     // present in the address_book table.
     //
     $guest_address_id_ok = false;
-    if (defined('CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID')) {
+    if (zen_config('CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID') !== null) {
         $opc_check = $db->Execute(
             "SELECT address_book_id
                FROM " . TABLE_ADDRESS_BOOK . "
-              WHERE address_book_id = " . (int)CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID . "
+              WHERE address_book_id = " . (int)zen_config('CHECKOUT_ONE_GUEST_BILLTO_ADDRESS_BOOK_ID') . "
                 AND customers_id = $guest_customer_id
               LIMIT 1"
         );
@@ -122,11 +122,11 @@ if (isset($_SESSION['admin_id'])) {
             'entry_firstname' => 'Guest',
             'entry_lastname' => 'Customer, **do not remove**',
             'entry_street_address' => 'Default billing address',
-            'entry_country_id' => (int)STORE_COUNTRY,
-            'entry_zone_id' => (int)STORE_ZONE
+            'entry_country_id' => (int)zen_config('STORE_COUNTRY'),
+            'entry_zone_id' => (int)zen_config('STORE_ZONE'),
         ];
         zen_db_perform(TABLE_ADDRESS_BOOK, $sql_data_array);
-        $address_book_id = zen_db_insert_id();
+        $address_book_id = (int)zen_db_insert_id();
         $db->Execute(
             "INSERT INTO " . TABLE_CONFIGURATION . " 
                 (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order)
@@ -146,11 +146,11 @@ if (isset($_SESSION['admin_id'])) {
     // present in the address_book table.
     //
     $guest_address_id_ok = false;
-    if (defined('CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID')) {
+    if (zen_config('CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID') !== null) {
         $opc_check = $db->Execute(
             "SELECT address_book_id
                FROM " . TABLE_ADDRESS_BOOK . "
-              WHERE address_book_id = " . (int)CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID . "
+              WHERE address_book_id = " . (int)zen_config('CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID') . "
                 AND customers_id = $guest_customer_id
               LIMIT 1"
         );
@@ -170,11 +170,11 @@ if (isset($_SESSION['admin_id'])) {
             'entry_firstname' => 'Guest',
             'entry_lastname' => 'Customer, **do not remove**',
             'entry_street_address' => 'Default shipping address',
-            'entry_country_id' => (int)STORE_COUNTRY,
-            'entry_zone_id' => (int)STORE_ZONE
+            'entry_country_id' => (int)zen_config('STORE_COUNTRY'),
+            'entry_zone_id' => (int)zen_config('STORE_ZONE'),
         ];
         zen_db_perform(TABLE_ADDRESS_BOOK, $sql_data_array);
-        $address_book_id = zen_db_insert_id();
+        $address_book_id = (int)zen_db_insert_id();
         $db->Execute(
             "INSERT INTO " . TABLE_CONFIGURATION . " 
                 (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order)
@@ -190,7 +190,7 @@ if (isset($_SESSION['admin_id'])) {
     $template_check = $db->Execute("SELECT DISTINCT template_dir FROM " . TABLE_TEMPLATE_SELECT);
     foreach ($template_check as $next_template) {
         $jscript_dir = DIR_FS_CATALOG . 'includes/templates/' . $next_template['template_dir'] . '/jscript';
-        if (CHECKOUT_ONE_ENABLED !== 'false' && !is_dir($jscript_dir) || !file_exists("$jscript_dir/jscript_framework.php")) {
+        if (zen_config('CHECKOUT_ONE_ENABLED') !== 'false' && !is_dir($jscript_dir) || !file_exists("$jscript_dir/jscript_framework.php")) {
             $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = 'false' WHERE configuration_key = 'CHECKOUT_ONE_ENABLED' LIMIT 1");
             $messageStack->add(sprintf(ERROR_STORESIDE_CONFIG, "$jscript_dir/jscript_framework.php"), 'error');
             break;
