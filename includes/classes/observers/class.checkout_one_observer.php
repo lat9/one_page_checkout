@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.6.2
+// Last updated: OPC v2.6.3
 //
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
@@ -23,13 +23,11 @@ class checkout_one_observer extends base
         global $current_page_base, $spider_flag;
 
         // -----
-        // If the session-based OPC 'brains' aren't available, there's nothing to be done. The
-        // same is true if we're in paypalwpp's 'ec' mode.
+        // If the session-based OPC 'brains' aren't available, there's nothing to be done.
         //
         // The observer will not attach to its various notifications.
         //
-        if (empty($_SESSION['opc']) || !is_object($_SESSION['opc']) || ($_GET['type'] ?? '') === 'ec') {
-//            trigger_error('Missing $_SESSION[\'opc\'] or in PayPal special checkout:' . var_export($_SERVER, true) . PHP_EOL . var_export($_GET, true) . PHP_EOL . var_export($_POST, true), E_USER_WARNING);
+        if (empty($_SESSION['opc']) || !is_object($_SESSION['opc'])) {
             return;
         }
 
@@ -38,7 +36,9 @@ class checkout_one_observer extends base
         // a quick return.  That will result in an overall 'OPC' disablement and any previous guest-related
         // accesses being cleared.
         //
-        if (zen_config('CHECKOUT_ONE_ENABLED', 'false') === 'false' || !empty($spider_flag)) {
+        // This disablement is also done if the site is currently processing a paypalwpp "Express Checkout"
+        //
+        if (zen_config('CHECKOUT_ONE_ENABLED', 'false') === 'false' || !empty($spider_flag) || (($_GET['type'] ?? '') === 'ec') || $this->isPayPalExpressCheckout() === true) {
             $_SESSION['opc']->resetGuestSessionValues();
             return;
         }
@@ -767,5 +767,22 @@ class checkout_one_observer extends base
     public function isEnabled(): bool
     {
         return $this->enabled;
+    }
+
+    // -----
+    // Determine whether we're currently in the PayPal Express Checkout's "Express Checkout"
+    // handling, using the detection currently (zc156a) present in the paypalwpp::in_special_checkout's
+    // processing.
+    //
+    protected function isPayPalExpressCheckout(): bool
+    {
+        $is_paypal_express_checkout = false;
+        if (zen_config('MODULE_PAYMENT_PAYPALWPP_STATUS') === 'True') {
+            if (isset($_SESSION['customer_guest_id']) || (!empty($_SESSION['paypal_ec_token']) && !empty($_SESSION['paypal_ec_payer_id']) && !empty($_SESSION['paypal_ec_payer_info']))) {
+                $this->debug_message("PayPal Express Checkout, in special checkout.  One Page Checkout is disabled by observer.");
+                $is_paypal_express_checkout = true;
+            }
+        }
+        return $is_paypal_express_checkout;
     }
 }
