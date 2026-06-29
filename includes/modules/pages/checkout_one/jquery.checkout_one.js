@@ -2,7 +2,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
 // Copyright (C) 2013-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last changed: OPC v2.6.1
+// Last changed: OPC v2.6.3
 //
 var selected;
 var submitter = null;
@@ -515,24 +515,25 @@ jQuery(document).ready(function() {
     // when 'shipping=billing' is checked.
     //
     jQuery(document).on('click', '#shipping_billing', function() {
-        if (jQuery('#shipping_billing').is(':checked')) {
-            zcJS.ajax({
-                url: 'ajax.php?act=ajaxOnePageCheckout&method=setShippingEqualBilling',
-                timeout: shippingTimeout,
-                error: function (jqXHR, textStatus, errorThrown) {
-                    zcLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
-                    if (textStatus == 'timeout') {
-                        alert(ajaxTimeoutShippingErrorMessage);
-                    }
-                    shippingError = true;
-                },
-            }).done(function(response) {
-                // -----
-                // Handle any redirects required, based on the AJAX response's status.
-                //
-                checkForRedirect(response);
-            });
-        }
+        zcJS.ajax({
+            url: 'ajax.php?act=ajaxOnePageCheckout&method=setShippingEqualBilling',
+            data: {
+                shipping_is_billing: jQuery("#shipping_billing").is(':checked')
+            },
+            timeout: shippingTimeout,
+            error: function (jqXHR, textStatus, errorThrown) {
+                zcLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
+                if (textStatus == 'timeout') {
+                    alert(ajaxTimeoutShippingErrorMessage);
+                }
+                shippingError = true;
+            },
+        }).done(function(response) {
+            // -----
+            // Handle any redirects required, based on the AJAX response's status.
+            //
+            checkForRedirect(response);
+        });
 
         shippingIsBilling();
     });
