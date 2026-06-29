@@ -6,7 +6,7 @@
 // This class, instantiated in the current customer session, keeps track of a customer's login and checkout
 // progression with the aid of the OPC's observer- and AJAX-classes.
 //
-// Last updated: OPC v2.6.2
+// Last updated: OPC v2.6.3
 //
 class OnePageCheckout extends base
 {
@@ -1149,34 +1149,35 @@ class OnePageCheckout extends base
     }
 
     /* -----
-    ** This function, called from OPC's AJAX handler, requests that the customer
-    ** has indicated that their shipping-address should be the same as the billing
-    ** one.
+    ** This function, called from OPC's AJAX handler, indicates that the customer
+    ** has changed their request that their shipping-address should be the same
+    ** as the billing one.
     **
     ** Returns a boolean flag that indicates whether the session's shipto address
     ** was changed.
     */
     public function setShippingEqualBilling(): bool
     {
+        $_SESSION['shipping_billing'] = ($_POST['shipping_is_billing'] ?? 'false') === 'true';
         $shipping_address_changed = false;
-        if (!empty($_SESSION['sendto']) && ((int)$_SESSION['sendto']) !== ((int)$_SESSION['billto'])) {
-            $shipping_address_changed = true;
-            $_SESSION['sendto'] = (int)$_SESSION['billto'];
+        if ($_SESSION['shipping_billing'] === true) {
+            if (!empty($_SESSION['sendto']) && (int)$_SESSION['sendto'] !== (int)$_SESSION['billto']) {
+                $shipping_address_changed = true;
+                $_SESSION['sendto'] = (int)$_SESSION['billto'];
+            }
+            $this->setTempShippingToBilling();
         }
-
-        $_SESSION['shipping_billing'] = true;
-        $this->setTempShippingToBilling();
 
         return $shipping_address_changed;
     }
 
     /* -----
-    ** This function, called from OPC's AJAX handler, requests that the temporary shipping
+    ** This function, called from above, requests that the temporary shipping
     ** address' contents be set to the current billing address.
     **
     ** If the session's current bill-to address is set, that address id is used
     */
-    public function setTempShippingToBilling()
+    protected function setTempShippingToBilling()
     {
         $address_book_id = (int)$_SESSION['billto'];
         if ($address_book_id === $this->tempBilltoAddressBookId) {

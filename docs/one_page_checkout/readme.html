@@ -302,8 +302,12 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
     <ul>
         <li>v2.6.3-beta1, 2026-06-19 (lat9):<ul>
             <li>BUGFIX: Correct PHP fatal error during <code>paypalwpp</code> special checkout, <b>really, this time</b></li>
+            <li>BUGFIX: Correct &quot;Shipping Address, Same as Billing&quot; state management.</li>
             <li>The following files were changed:<ol>
+                <li>/includes/classes/OnePageCheckout.php</li>
                 <li>/includes/classes/observers/class.checkout_one_observer.php</li>
+                <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
+                <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
             </ol></li>
         </li>
