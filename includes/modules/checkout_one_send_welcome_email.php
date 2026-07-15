@@ -3,12 +3,14 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
 // Copyright (C) 2017-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.6.2
+// Last updated: OPC v2.6.3
 //
 if (defined('FILENAME_CREATE_ACCOUNT_SEND_EMAIL')) {
     require DIR_WS_MODULES . zen_get_module_directory(FILENAME_CREATE_ACCOUNT_SEND_EMAIL);
     Customer::setWelcomeEmailSent((int)$result['customers_id']);
 } elseif ($send_welcome_email) {
+    zen_include_language_file('opc_send_welcome_email.php', '/modules/', 'inline');
+
     // build the message content
     $name = $firstname . ' ' . $lastname;
 
