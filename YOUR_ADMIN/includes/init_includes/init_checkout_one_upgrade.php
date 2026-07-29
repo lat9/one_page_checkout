@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.6.3
+// Last updated: OPC v2.6.4
 //
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
@@ -141,7 +141,7 @@ switch (true) {
     // - If the CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED setting does not include the 'download' page, add it!
     //
     case version_compare($opc_module_version, '2.0.4', '<'):    //-Fall-through processing from above
-        if (strpos(zen_config('CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED'), 'download') === false) {
+        if (strpos(zen_config('CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED') ?? '', 'download') === false) {
             if (zen_config('CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED') === '') {
                 $checkout_pages = [];
             } else {
