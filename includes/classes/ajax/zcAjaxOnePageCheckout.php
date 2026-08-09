@@ -3,10 +3,26 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
 // Copyright (C) 2013-2026 Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.6.0
+// Last updated: OPC v2.6.4
 //
-class zcAjaxOnePageCheckout extends base
+class zcAjaxOnePageCheckout
 {
+    // -----
+    // Used by zc230+ ajax.php to further ensure proper AJAX access.
+    //
+    public const ALLOWED_METHODS = [
+        'resetGuestCheckout',
+        'updateShippingSelection',
+        'setShippingEqualBilling',
+        'getOrderTotal',
+        'restoreAddressValues',
+        'validateAddressValues',
+        'validateCustomerInfo',
+        'restoreCustomerInfo',
+        'setAddressFromSavedSelections',
+        'updatePaymentMethod',
+    ];
+
     // -----
     // If OPC's guest checkout is active and the customer has requested to use PayPal Express
     // Checkout instead, reset OPC to indicate that its guest checkout is no longer active.
@@ -91,7 +107,7 @@ class zcAjaxOnePageCheckout extends base
                         'cost' => $shipping_method_cost,
                     ];
 
-                    $this->notify('NOTIFY_AJAX_OPC_UPDATE_SHIPPING', $shipping_elements, $status, $error_message);
+                    GLOBALS['zco_notifier']->notify('NOTIFY_AJAX_OPC_UPDATE_SHIPPING', $shipping_elements, $status, $error_message);
 
                     $order_total_html = $this->createOrderTotalHtml();
                     foreach ($order->products as $key => $values) {
