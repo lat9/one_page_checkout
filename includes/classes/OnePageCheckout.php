@@ -1720,6 +1720,7 @@ class OnePageCheckout extends base
 
         if ($which === 'bill' && isset($address_values['telephone'])) {
             $telephone = zen_db_prepare_input($address_values['telephone']);
+            $address_values['telephone'] = $telephone;
             if (strlen($telephone) < (int)zen_config('ENTRY_TELEPHONE_MIN_LENGTH')) {
                 $error = true;
                 $messages['telephone'] = $message_prefix . ENTRY_TELEPHONE_NUMBER_ERROR;
@@ -1789,9 +1790,6 @@ class OnePageCheckout extends base
 
             $address_values = $this->updateStateDropdownSettings($address_values);
             if ($which === 'bill') {
-                if (isset($address_values['telephone'])) {
-                    $address_values['telephone'] = $telephone;
-                }
                 $this->billtoTempAddrOk = true;
                 if ($this->getShippingBilling() === true) {
                     $this->sendtoTempAddrOk = true;
@@ -1951,12 +1949,14 @@ class OnePageCheckout extends base
         }
 
         if ($which === 'bill' && $this->guestIsActive === false && isset($address['telephone'])) {
-            $db->Execute(
+            $sql =
                 "UPDATE " . TABLE_CUSTOMERS . "
-                    SET customers_telephone = '" . zen_db_input($address['telephone']) . "'
-                  WHERE customers_id = " . $_SESSION['customer_id'] . "
-                  LIMIT 1"
-            );
+                    SET customers_telephone = :telephone:
+                  WHERE customers_id = :customersID:
+                  LIMIT 1";
+            $sql = $db->bindVars($sql, ':telephone:', $address['telephone'], $this->dbStringType);
+            $sql = $db->bindVars($sql, ':customersID:', $_SESSION['customer_id'], 'integer');
+            $db->Execute($sql);
         }
     }
 
