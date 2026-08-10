@@ -75,7 +75,7 @@ class zcAjaxOnePageCheckout
                 // issued to try to put the session/page-elements back.
                 //
                 $shipping_elements = explode('_', $_POST['shipping_selection']);
-                if (count($shipping_elements) !== 2 || !isset($_SESSION['opc_shipping_quotes'][$shipping_elements[0]][$shipping_elements[1]])) {
+                if (count($shipping_elements) !== 2 || $shipping_elements[1] === 'title' || !isset($_SESSION['opc_shipping_quotes'][$shipping_elements[0]][$shipping_elements[1]])) {
                     $status = 'reload';
                     $error_message = ERROR_AJAX_SHIPPING_SELECTION;
                     $checkout_one->debug_message(
