@@ -1189,10 +1189,30 @@ class OnePageCheckout extends base
     }
 
     /* -----
-    ** This function resets the current session's address to the specified address-book entry.
+    ** This function resets the current session's address to the specified address-book entry
+    ** ... for a logged-in customer only!  That's from existing customers' dropdown selection
+    ** of existing addresses.
     */
-    public function setAddressFromSavedSelections(string $which, int $address_book_id, string $shipping_is_billing)
+    public function setAddressFromSavedSelections(string $which, int $address_book_id, string $shipping_is_billing): bool
     {
+        if ($this->guestIsActive === true || $address_book_id < 1) {
+            return false;
+        }
+
+        global $db;
+        $sql =
+            "SELECT address_book_id
+               FROM " . TABLE_ADDRESS_BOOK . "
+              WHERE address_book_id = :address_book_id:
+                AND customers_id = :customers_id:
+              LIMIT 1";
+        $sql = $db->bindVars($sql, ':customers_id:', $_SESSION['customer_id'], 'integer');
+        $sql = $db->bindVars($sql, ':address_book_id:', $address_book_id, 'integer');
+        $result = $db->Execute($sql);
+        if ($result->EOF) {
+            return false;
+        }
+
         $_SESSION['shipping_billing'] = ($shipping_is_billing === 'true');
         if ($which === 'bill') {
             $_SESSION['billto'] = $address_book_id;
@@ -1202,6 +1222,7 @@ class OnePageCheckout extends base
         } else {
             $_SESSION['sendto'] = $address_book_id;
         }
+        return true;
     }
 
     public function getAddressValues($which)
