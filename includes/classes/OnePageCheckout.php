@@ -6,7 +6,7 @@
 // This class, instantiated in the current customer session, keeps track of a customer's login and checkout
 // progression with the aid of the OPC's observer- and AJAX-classes.
 //
-// Last updated: OPC v2.6.3
+// Last updated: OPC v2.6.4
 //
 class OnePageCheckout extends base
 {
@@ -1311,8 +1311,9 @@ class OnePageCheckout extends base
 
         $original_address_values = json_encode($address_values, JSON_PRETTY_PRINT);
         $this->notify('NOTIFY_OPC_INIT_ADDRESS_FOR_GUEST', $which, $address_values);
-        if ($original_address_values !== json_encode($address_values)) {
-            $this->debugMessage("Guest address values ($which) modified by observer. Starting values:\n$original_address_values\nFinal values:\n" . json_encode($address_values, JSON_PRETTY_PRINT));
+        $final_address_values = json_encode($address_values, JSON_PRETTY_PRINT);
+        if ($original_address_values !== $final_address_values) {
+            $this->debugMessage("Guest address values ($which) modified by observer. Starting values:\n$original_address_values\nFinal values:\n$final_address_values");
         }
 
         return $address_values;
@@ -1717,7 +1718,7 @@ class OnePageCheckout extends base
             }
         }
 
-        if (isset($address_values['telephone'])) {
+        if ($which === 'bill' && isset($address_values['telephone'])) {
             $telephone = zen_db_prepare_input($address_values['telephone']);
             if (strlen($telephone) < (int)zen_config('ENTRY_TELEPHONE_MIN_LENGTH')) {
                 $error = true;
@@ -1785,8 +1786,12 @@ class OnePageCheckout extends base
                 ],
                 $additional_address_values
             );
+
             $address_values = $this->updateStateDropdownSettings($address_values);
             if ($which === 'bill') {
+                if (isset($address_values['telephone'])) {
+                    $address_values['telephone'] = $telephone;
+                }
                 $this->billtoTempAddrOk = true;
                 if ($this->getShippingBilling() === true) {
                     $this->sendtoTempAddrOk = true;
@@ -1815,7 +1820,7 @@ class OnePageCheckout extends base
         // guest-checkout is currently active, the updated address is stored in
         // a temporary address-book record.
         //
-        if (!$add_address === true || $this->guestIsActive === true) {
+        if ($add_address === false || $this->guestIsActive === true) {
             // -----
             // Ensure that the zone_id is an integer type (it will be an empty string if the associated
             // country doesn't have zones!); needed if follow-on processing is passing the values to
@@ -1823,31 +1828,53 @@ class OnePageCheckout extends base
             //
             $address['zone_id'] = (int)$address['zone_id'];
 
-            $this->tempAddressValues[$which] = $address;
-            if ($which === 'ship') {
-                $_SESSION['sendto'] = $this->tempSendtoAddressBookId;
-            } else {
-                if ($this->guestIsActive === true) {
-                    $this->guestCustomerInfo['firstname'] = $address['firstname'];
-                    $this->guestCustomerInfo['lastname'] = $address['lastname'];
-                    $this->guestCustomerInfo['gender'] = $address['gender'];
-
-                    $_SESSION['customer_first_name'] = $address['firstname'];
-                    $_SESSION['customer_last_name'] = $address['lastname'];
-                }
-                $_SESSION['billto'] = $this->tempBilltoAddressBookId;
-                if ($this->guestIsActive === true && $this->sendtoTempAddrOk === false) {
-                    $this->tempAddressValues['ship'] = $this->tempAddressValues['bill'];
-                    $this->sendtoTempAddrOk = true;
-                }
-                if ($this->getShippingBilling() === true) {
-                    $_SESSION['sendto'] = $this->tempBilltoAddressBookId;
-                    $this->tempAddressValues['ship'] = $this->tempAddressValues['bill'];
-                } elseif ($this->guestIsActive === true && (int)$_SESSION['sendto'] === $this->tempBilltoAddressBookId) {
-                    $_SESSION['sendto'] = $this->tempSendtoAddressBookId;
+            // -----
+            // If this is an address update for a signed-in account holder, first
+            // check to see if the submitted address is already one of their registered
+            // ones.
+            //
+            $address_book_id = false;
+            if ($this->guestIsActive === false) {
+                $address_book_id = $this->findAddressBookEntry($address);
+                if ($address_book_id !== false) {
+                    if ($which === 'ship') {
+                        $_SESSION['sendto'] = $address_book_id;
+                    } else {
+                        $_SESSION['billto'] = $address_book_id;
+                        if ($this->getShippingBilling() === true) {
+                            $_SESSION['sendto'] = $address_book_id;
+                        }
+                    }
                 }
             }
-            $this->debugMessage("Updated tempAddressValues[$which], billing=shipping(" . $_SESSION['shipping_billing'] . "), sendto(" . $_SESSION['sendto'] . "), billto(" . $_SESSION['billto'] . "):\n" . json_encode($this->tempAddressValues, JSON_PRETTY_PRINT));
+
+            if ($address_book_id === false) {
+                $this->tempAddressValues[$which] = $address;
+                if ($which === 'ship') {
+                    $_SESSION['sendto'] = $this->tempSendtoAddressBookId;
+                } else {
+                    if ($this->guestIsActive === true) {
+                        $this->guestCustomerInfo['firstname'] = $address['firstname'];
+                        $this->guestCustomerInfo['lastname'] = $address['lastname'];
+                        $this->guestCustomerInfo['gender'] = $address['gender'];
+
+                        $_SESSION['customer_first_name'] = $address['firstname'];
+                        $_SESSION['customer_last_name'] = $address['lastname'];
+                    }
+                    $_SESSION['billto'] = $this->tempBilltoAddressBookId;
+                    if ($this->guestIsActive === true && $this->sendtoTempAddrOk === false) {
+                        $this->tempAddressValues['ship'] = $this->tempAddressValues['bill'];
+                        $this->sendtoTempAddrOk = true;
+                    }
+                    if ($this->getShippingBilling() === true) {
+                        $_SESSION['sendto'] = $this->tempBilltoAddressBookId;
+                        $this->tempAddressValues['ship'] = $this->tempAddressValues['bill'];
+                    } elseif ($this->guestIsActive === true && (int)$_SESSION['sendto'] === $this->tempBilltoAddressBookId) {
+                        $_SESSION['sendto'] = $this->tempSendtoAddressBookId;
+                    }
+                }
+            }
+            $this->debugMessage("Updated tempAddressValues[$which] / $address_book_id, billing=shipping(" . $_SESSION['shipping_billing'] . "), sendto(" . $_SESSION['sendto'] . "), billto(" . $_SESSION['billto'] . "):\n" . json_encode($this->tempAddressValues, JSON_PRETTY_PRINT));
         // -----
         // Otherwise, the address is to be saved in the database ...
         //
@@ -1915,17 +1942,21 @@ class OnePageCheckout extends base
             //
             if ($which === 'bill') {
                 $_SESSION['billto'] = $address_book_id;
-                if (isset($address['telephone'])) {
-                    $db->Execute(
-                        "UPDATE " . TABLE_CUSTOMERS . "
-                            SET customers_telephone = '" . $address['telephone'] . "'
-                          WHERE customers_id = " . $_SESSION['customer_id'] . "
-                          LIMIT 1"
-                    );
+                if ($this->getShippingBilling() === true) {
+                    $_SESSION['sendto'] = $address_book_id;
                 }
             } else {
                 $_SESSION['sendto'] = $address_book_id;
             }
+        }
+
+        if ($which === 'bill' && $this->guestIsActive === false && isset($address['telephone'])) {
+            $db->Execute(
+                "UPDATE " . TABLE_CUSTOMERS . "
+                    SET customers_telephone = '" . zen_db_input($address['telephone']) . "'
+                  WHERE customers_id = " . $_SESSION['customer_id'] . "
+                  LIMIT 1"
+            );
         }
     }
 

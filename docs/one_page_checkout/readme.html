@@ -304,8 +304,12 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
         <li>v2.6.4-beta2, 2026-08-09 (lat9):<ul>
             <li>BUGFIX: Correct PHP Deprecated issue on upgrade.</li>
             <li>INTROP: Adding zc300's <code>ALLOWED_METHODS</code> constant to the AJAX handler.</li>
+            <li>BUGFIX: Correct telephone-update for logged-in customers.</li>
             <li>The following files were changed:<ol>
                 <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
+                <li>/includes/classes/OnePageCheckout.php</li>
+                <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
+                <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one_upgrade.php</li>
             </ol></li>
