@@ -6,7 +6,7 @@
 // This module is included by tpl_modules_opc_billing_address.php and tpl_modules_opc_shipping_address.php and
 // provides a common-formatting for those two address-blocks.
 //
-// Last updated: OPC v2.6.2
+// Last updated: OPC v2.6.4
 //
 
 // -----
@@ -154,7 +154,7 @@ if ($which === 'bill' && !zen_in_guest_checkout()) {
     $telephone_required = (((int)zen_config('ENTRY_TELEPHONE_MIN_LENGTH')) > 0) ? ' required' : '';
 ?>
     <label class="inputLabel phone" for="telephone"><?= ENTRY_TELEPHONE_NUMBER ?></label>
-    <?= zen_draw_input_field('telephone[bill]', $address['telephone'], $telephone_field_length . ' id="telephone" class="phone" placeholder="' . ENTRY_TELEPHONE_NUMBER_TEXT . '"' . $telephone_required, 'tel') ?>
+    <?= zen_draw_input_field('telephone', $address['telephone'], $telephone_field_length . ' id="telephone" class="phone" placeholder="' . ENTRY_TELEPHONE_NUMBER_TEXT . '"' . $telephone_required, 'tel') ?>
     <div class="clearBoth phone"></div>
 <?php
 }

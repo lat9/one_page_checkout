@@ -107,7 +107,7 @@ class zcAjaxOnePageCheckout
                         'cost' => $shipping_method_cost,
                     ];
 
-                    GLOBALS['zco_notifier']->notify('NOTIFY_AJAX_OPC_UPDATE_SHIPPING', $shipping_elements, $status, $error_message);
+                    $GLOBALS['zco_notifier']->notify('NOTIFY_AJAX_OPC_UPDATE_SHIPPING', $shipping_elements, $status, $error_message);
 
                     $order_total_html = $this->createOrderTotalHtml();
                     foreach ($order->products as $key => $values) {

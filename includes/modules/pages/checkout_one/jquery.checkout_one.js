@@ -2,7 +2,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
 // Copyright (C) 2013-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last changed: OPC v2.6.3
+// Last changed: OPC v2.6.4
 //
 var selected;
 var submitter = null;
@@ -776,7 +776,7 @@ jQuery(document).ready(function() {
                 zone_country_id: jQuery('select[name="zone_country_id['+which+']"] option:selected').val(),
                 shipping_billing: jQuery('#shipping_billing').is(':checked'),
                 add_address: jQuery('#opc-add-'+which).prop('checked'),
-                telephone: jQuery('input[name="telephone['+which+']"]').val(),
+                telephone: jQuery('input[name="telephone"]').val(),
             },
             timeout: shippingTimeout,
             error: function (jqXHR, textStatus, errorThrown) {
