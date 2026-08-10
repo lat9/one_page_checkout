@@ -356,8 +356,9 @@ class zcAjaxOnePageCheckout
             if (!isset($_POST['which'], $_POST['address_id'], $_POST['shipping_is_billing']) || ($_POST['which'] !== 'bill' && $_POST['which'] !== 'ship')) {
                 $status = 'error';
                 $error_message = ERROR_INVALID_REQUEST;
-            } else {
-                $_SESSION['opc']->setAddressFromSavedSelections($_POST['which'], (int)$_POST['address_id'], $_POST['shipping_is_billing']);
+            } elseif ($_SESSION['opc']->setAddressFromSavedSelections($_POST['which'], (int)$_POST['address_id'], $_POST['shipping_is_billing']) === false) {
+                $status = 'error';
+                $error_message = ERROR_INVALID_REQUEST;
             }
         }
 
