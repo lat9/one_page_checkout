@@ -1,11 +1,11 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2023, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2023-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated for OPC v2.4.6
+// Last updated for OPC v2.6.4
 //
-if (!isset($_SESSION['opc']) || $_SESSION['opc']->isGuestCheckout() === false) {
+if (!isset($_SESSION['opc']) || !is_object($_SESSION['opc']) || $_SESSION['opc']->isGuestCheckout() === false) {
     return;
 }
 ?>
