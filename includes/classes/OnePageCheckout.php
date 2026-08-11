@@ -14,8 +14,14 @@ class OnePageCheckout extends base
     // Constants used to coordinate definitions for the OPC's $_SESSION['opc_error'] variable between this
     // controlling class and its associated observer.
     //
-    const OPC_ERROR_NO_JS   = 'jserr';  //-jQuery/javascript error detected
-    const OPC_ERROR_NO_GC   = 'no-gc';  //-Guest checkout can't be used due to a Gift Certificate being present in the cart.
+    const OPC_ERROR_NO_JS = 'jserr';  //-jQuery/javascript error detected
+    const OPC_ERROR_NO_GC = 'no-gc';  //-Guest checkout can't be used due to a Gift Certificate being present in the cart.
+
+    // -----
+    // Many of the public methods are restricted to either OPC's AJAX handler or observer-class.
+    //
+    const OPC_AJAX_CLASS = 'zcAjaxOnePageCheckout.php';
+    const OPC_OBSERVER_CLASS = 'class.checkout_one_observer.php';
 
     // -----
     // Various protected data elements:
@@ -28,7 +34,6 @@ class OnePageCheckout extends base
     // tempAddressValues ........ Array, if set, contains any temporary addresses used within the checkout process.
     // guestCustomerInfo ........ Array, if set, contains the customer-specific (i.e. email, phone, etc.) information for a guest customer.
     // guestCustomerId .......... Contains a sanitized/int version of the configured "guest" customer ID.
-    // reset_info ............... A backtrace array to be used in debug, not currently used.
     // tempBilltoAddressBookId .. Contains a sanitized/int version of the configured "temporary" bill-to address-book ID.
     // tempSendtoAddressBookId .. Contains a sanitized/int version of the configured "temporary" ship-to address-book ID.
     // dbStringType ............. Identifies the form of string data "binding" to use on $db requests; 'string' for ZC < 1.5.5b, 'stringIgnoreNull', otherwise.
@@ -67,7 +72,6 @@ class OnePageCheckout extends base
     protected array $tempAddressValues;
     protected array $guestCustomerInfo;
     protected int $guestCustomerId;
-    protected array $reset_info;
     protected int $tempBilltoAddressBookId;
     protected int $tempSendtoAddressBookId;
     protected string $dbStringType;
@@ -98,7 +102,6 @@ class OnePageCheckout extends base
         $this->customerInfoOk = false;
         $this->billtoTempAddrOk = false;
         $this->sendtoTempAddrOk = false;
-        $this->reset_info = [];
     }
 
     /* -----
@@ -494,12 +497,38 @@ class OnePageCheckout extends base
         return (!empty($_SESSION['customer_id']));
     }
 
+    // -----
+    // This function checks to see if the module that invoked a method
+    // is a valid caller.
+    //
+    // The presumed external caller will be present in the 2nd array index, since
+    // the first contains the class-based method caller.
+    //
+    protected function isValidCaller(array $valid_callers): bool
+    {
+        $backtrace = debug_backtrace(~DEBUG_BACKTRACE_PROVIDE_OBJECT | DEBUG_BACKTRACE_IGNORE_ARGS);
+        if (count($backtrace) < 2) {
+            return false;
+        }
+
+        foreach ($valid_callers as $next_caller) {
+            if (str_ends_with($backtrace[1]['file'], $next_caller)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /* -----
     ** This function resets the guest-related information stored in the current session,
     ** essentially restoring the session to a non-guest-checkout scenario.
     */
     public function resetGuestSessionValues()
     {
+        if ($this->isValidCaller([self::OPC_AJAX_CLASS, self::OPC_OBSERVER_CLASS]) === false) {
+            return;
+        }
+
         if ($this->guestIsActive === true || (!empty($_SESSION['customer_id']) && (int)$_SESSION['customer_id'] === $this->guestCustomerId)) {
             unset(
                 $_SESSION['customer_id'], 
@@ -534,7 +563,8 @@ class OnePageCheckout extends base
     {
         unset(
             $_SESSION['shipping_billing'],
-            $_SESSION['opc_saved_order_total']
+            $_SESSION['opc_saved_order_total'],
+            $_SESSION['opc_shipping_quotes']
         );
         if (isset($_SESSION['opc_error']) && $_SESSION['opc_error'] !== self::OPC_ERROR_NO_JS) {
             unset($_SESSION['opc_error']);
@@ -563,12 +593,6 @@ class OnePageCheckout extends base
             $this->paypalTotalValueChanged,
             $this->paypalNoShipping
         ); 
-
-        // -----
-        // Gather some information about 'who' requested the reset, included when it's
-        // detected that the tempAddressValues are missing.
-        //
-        $this->reset_info[] = debug_backtrace();
 
         $this->initializeGuestCheckout();
     }
