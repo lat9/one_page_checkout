@@ -27,9 +27,16 @@ class zcAjaxOnePageCheckout
     // If OPC's guest checkout is active and the customer has requested to use PayPal Express
     // Checkout instead, reset OPC to indicate that its guest checkout is no longer active.
     //
+    // Note: This method is supported **only** if issued from the site's login or shopping_cart pages, which
+    // is where the PPEC button's displayed (if enabled).
+    //
     public function resetGuestCheckout()
     {
-        if (isset($_SESSION['opc'])) {
+        $error_message = '';
+        if ($this->initializeResponseStatus('resetGuestCheckout', $error_message) === 'ok' && $_SESSION['opc']->isGuestCheckout() === true) {
+            if (!isset($_SERVER['HTTP_REFERER']) || !in_array($_SERVER['HTTP_REFERER'], [zen_href_link(FILENAME_LOGIN), zen_href_link(FILENAME_SHOPPING_CART)])) {
+                return;
+            }
             $_SESSION['opc']->resetGuestSessionValues();
         }
     }
