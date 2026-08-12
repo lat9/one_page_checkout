@@ -34,9 +34,6 @@ class zcAjaxOnePageCheckout
     {
         $error_message = '';
         if ($this->initializeResponseStatus('resetGuestCheckout', $error_message) === 'ok' && $_SESSION['opc']->isGuestCheckout() === true) {
-            if (!isset($_SERVER['HTTP_REFERER']) || !in_array($_SERVER['HTTP_REFERER'], [zen_href_link(FILENAME_LOGIN), zen_href_link(FILENAME_SHOPPING_CART)])) {
-                return;
-            }
             $_SESSION['opc']->resetGuestSessionValues();
         }
     }
