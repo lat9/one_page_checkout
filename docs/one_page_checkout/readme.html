@@ -42,15 +42,15 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
 </head>
 
 <body>
-    <h1>One-Page Checkout &hellip; with Guest &hellip; <span class="smaller">for Zen Cart v1.5.8 (and later)</span></h1>
-    <h3>Version 2.6.4 by lat9, swguy, simon1066, marco-pm, drbyte, proseLA, brittainmark and hucario</h3>
+    <h1>One-Page Checkout &hellip; with Guest &hellip; <span class="smaller">for Zen Cart v2.0.0 (and later)</span></h1>
+    <h3>Version 2.7.0 by lat9, swguy, simon1066, marco-pm, drbyte, proseLA, brittainmark and hucario</h3>
     <h3>Copyright &copy; 2013-2026 <a href="https://vinosdefrutastropicales.com" target="_blank" rel="noopener">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
     <p>Released under the General Public License (see the file named <code>license.txt</code> in the plugin's distribution for full details). This script is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</p>
     <hr>
     <div><i class="fas fa-exclamation-circle fa-5x red back"></i>&nbsp;&nbsp;<b>Important Notes:</b></div>
-    <p>This version of <em>One-Page Checkout</em> supports Zen Cart <em>1.5.8 and later, including 2.1.0 and 2.2.x</em> &hellip; <b>only</b>. The <a href="#install">installation instructions</a> for <em>OPC</em> differ, depending on the version of Zen Cart on which your site runs.</p>
+    <p>This version of <em>One-Page Checkout</em> supports Zen Cart <em>2.0.0 and later, including 2.3.0 and 3.0.0-dev</em> &hellip; <b>only</b>. The <a href="#install">installation instructions</a> for <em>OPC</em> differ, depending on the version of Zen Cart on which your site runs.</p>
     <ol>
-        <li>For zc158, zc158a, zc20x and zc210, there are <span class="corefile">core-file overwrites</span> for the <code>order_status</code> page if you want to include <em>OPC</em>'s updates.</li>
+        <li>For zc20x and zc210, there are <span class="corefile">core-file overwrites</span> for the <code>order_status</code> page if you want to include <em>OPC</em>'s updates.</li>
         <li>For zc221 and later, no such overwrites are needed as <em>OPC</em>'s now distributes that version of the files.</li>
     </ol>
 
@@ -74,7 +74,7 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
         <li>Tableau (numinix)</li>
         <li>YourStore (themeforest)</li>
     </ol>
-    <p>One-Page Checkout has been validated with the <a href="https://www.zen-cart.com/downloads.php?do=file&id=2191" target="_blank" rel="noopener">ZCA Bootstrap Template</a>, <b>v3.7.8</b> and later; best supported by v3.7.9 and later.  It's also been validated with the built-in <code>responsive_classic</code> template provided by Zen Cart 2.2.1.</p>
+    <p>One-Page Checkout has been validated with the <a href="https://www.zen-cart.com/downloads.php?do=file&id=2191" target="_blank" rel="noopener">ZCA Bootstrap Template</a>, <b>v3.7.9</b> and later; best supported by v3.8.0 and later.  It's also been validated with the built-in <code>responsive_classic</code> template provided by Zen Cart 2.2.1.</p>
 
     <div class="box-border">
         <p>The plugin checks (on confirmation) that the order's information hasn't changed by inspecting the customer's session, ensuring that what the customer saw on the checkout page is the same on confirmation page.  There are order-total modules that make changes to those session-based settings, resulting in an order-confirmation loop and are, as such, incompatible with <em>One-Page Checkout</em>:</p>
@@ -88,7 +88,7 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
     </div>
 
     <p><em>One-Page Checkout's</em> installation loads all the plugin's files into the sub-directories associated with the <em>template_default</em> template's use; that way, the processing is available for <b>all</b> templates you might use in your store.  If you make changes to those default files, you'll use the Zen Cart &quot;override&quot; system to make your updates.  For example, if you're adding a top-of-page message, you'll copy the file /includes/languages/english/lang.checkout_one.php to the /includes/languages/english/YOUR_TEMPLATE sub-directory and make your changes there.</p>
-    <p>The plugin has been validated on Zen Cart 1.5.8 through 2.2.1 and PHP versions 7.4 through 8.5, using the following shipping, order-total and payment methods:</p>
+    <p>The plugin has been validated on Zen Cart 2.0.0 through 3.0.0-dev and PHP versions 8.0 through 8.5, using the following shipping, order-total and payment methods:</p>
     <div class="multi-list">
         <h4>Shipping Methods</h4>
         <ol>
@@ -146,7 +146,7 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
     <p>This section identifies the procedure you'll use to install/update or remove the plugin for your Zen Cart.</p>
 
     <h3 id="install">Initial Installation</h3>
-    <p class="fs-larger"><b>Note:</b> Starting with v2.5.5 of <em>OPC</em>, <b>an initial installation on Zen Cart versions prior to 1.5.8 is no longer supported</b>!</p>
+    <p class="fs-larger"><b>Note:</b> Starting with v2.7.0 of <em>OPC</em>, <b>an initial installation on Zen Cart versions prior to 2.0.0 is no longer supported</b>!</p>
     <p>There are <span class="template">template-override</span> changes required by this plugin; you should <strong>always</strong> backup your cart's database and files prior to making any changes.  Unzip the plugin's package file and then:</p>
     <ol type="A">
         <li>If your store is running on a Zen Cart version <b>prior to 2.2.1</b>, there are <span class="corefile">core-file overwrites</span> required. If that's your case:<ol type="a">
@@ -282,7 +282,7 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
     </ol>
 
     <h3>Updating</h3>
-    <p class="fs-larger"><b>Note:</b> Starting with v2.5.5 of <em>OPC</em>, <b>upgrades on Zen Cart versions prior to 1.5.8 is no longer supported</b>!</p>
+    <p class="fs-larger"><b>Note:</b> Starting with v2.7.0 of <em>OPC</em>, <b>upgrades on Zen Cart versions prior to 2.0.0 is no longer supported</b>!</p>
     <p>There are <span class="template">template-override</span> changes required by this plugin; you should <strong>always</strong> backup your cart's database and files prior to making any changes.  Unzip the plugin's package file and then:</p>
     <ol type="A">
         <li>Sign into your Zen Cart's admin panel.  Since there might be a number of files that require uploading, I suggest that you place the site into <em>Maintenance Mode</em> by setting <b><i>Configuration :: Website Maintenance :: Down for Maintenance: ON/OFF</i></b> to <em>true</em>.</li>
@@ -308,6 +308,7 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
             <li>BUGFIX: Disallow a shipping module-id of 'title'.</li>
             <li>BUGFIX: <code>setAddressFromSavedSelections</code> should apply <em>only to</em> logged-in customers.</li>
             <li>BUGFIX: <code>resetGuestSessionValues</code> should apply only when guest checkout is in progress.</li>
+            <li>CHANGE: Dropping support for Zen Cart versions prior to 2.0.0; minimum PHP requirement is now 8.0.</li>
             <li>The following files were changed:<ol>
                 <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
                 <li>/includes/classes/observers/class.checkout_one_observer.php</li>
