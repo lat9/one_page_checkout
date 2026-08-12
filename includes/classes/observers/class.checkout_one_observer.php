@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.6.3
+// Last updated: OPC v2.6.4
 //
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
@@ -218,11 +218,11 @@ class checkout_one_observer extends base
         // attached!
         //
         if (($_SESSION['opc_error'] ?? '') !== OnePageCheckout::OPC_ERROR_NO_JS && is_object($_SESSION['opc'] ?? '') && $_SESSION['opc']->guestCheckoutEnabled() === true) {
-            if ($_SESSION['opc']->isLoggedIn() === false || $_SESSION['opc']->isGuestCheckout() === true) {
+            if (isset($_SESSION['cart']) && is_object($_SESSION['cart']) && ($_SESSION['opc']->isLoggedIn() === false || $_SESSION['opc']->isGuestCheckout() === true)) {
                 unset($_SESSION['opc_error']);
                 $cart_products = $_SESSION['cart']->get_products();
                 foreach ($cart_products as $current_product) {
-                    if (strpos($current_product['model'], 'GIFT') === 0) {
+                    if (str_starts_with($current_product['model'], 'GIFT')) {
                         $pages_to_reset_for_gc = [
                             FILENAME_LOGIN,
                             FILENAME_CHECKOUT_ONE,
