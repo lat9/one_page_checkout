@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.6.2
+// Last updated: OPC v2.7.0
 //
 
 // This should be first line of the script:
@@ -19,7 +19,7 @@ require DIR_WS_MODULES . zen_get_module_directory('require_languages.php');
 // -----
 // Use "normal" checkout if not enabled.
 //
-if (zen_config('CHECKOUT_ONE_ENABLED') === null || !isset($checkout_one) || $checkout_one->isEnabled() === false) {
+if (zen_config('CHECKOUT_ONE_ENABLED', 'false') === 'false' || !isset($checkout_one, $_SESSION['opc']) || !is_object($_SESSION['opc']) || $checkout_one->isEnabled() === false) {
     $zco_notifier->notify('NOTIFY_CHECKOUT_ONE_NOT_ENABLED');
     zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
 }
@@ -88,9 +88,14 @@ if (isset($_SESSION['shipping']['id']) && $_SESSION['shipping']['id'] === 'free_
 }
 
 // -----
-// If a payment-method has been posted, save that payment-method in the current session.
+// If a payment-method has been posted, save that payment-method in the current session, so
+// long as it's a valid payment method if we're in guest checkout. If not, redirect back to
+// the data-gathering phase of OPC's checkout.
 //
 if (isset($_POST['payment'])) {
+    if ($_SESSION['opc']->isPaymentMethodDisallowedForGuest($_POST['payment']) === true) {
+        zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));
+    }
     $_SESSION['payment'] = $_POST['payment'];
 }
 

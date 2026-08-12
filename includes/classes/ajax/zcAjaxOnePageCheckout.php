@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
 // Copyright (C) 2013-2026 Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.6.4
+// Last updated: OPC v2.7.0
 //
 class zcAjaxOnePageCheckout
 {
@@ -396,6 +396,11 @@ class zcAjaxOnePageCheckout
         if ($status === 'ok') {
             if (empty($_POST['payment'])) {
                 unset($_SESSION['payment']);
+            } elseif ($_SESSION['opc']->isPaymentMethodDisallowedForGuest($_POST['payment']) === true) {
+                return [
+                    'status' => 'reload',
+                    'errorMessage' => ERROR_NO_PAYMENT_MODULE_SELECTED,
+                ];
             } else {
                 $_SESSION['payment'] = $_POST['payment'];
             }

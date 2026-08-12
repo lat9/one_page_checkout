@@ -310,12 +310,14 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
             <li>BUGFIX: <code>resetGuestSessionValues</code> should apply only when guest checkout is in progress.</li>
             <li>CHANGE: Dropping support for Zen Cart versions prior to 2.0.0; minimum PHP requirement is now 8.0.</li>
             <li>BUGFIX: Ensure 'enforcement' of maximum number of address-book entries per customer.</li>
+            <li>BUGFIX: Additional validation that a payment method is allowed for guest-checkout.</li>
             <li>The following files were changed:<ol>
                 <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
                 <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                 <li>/includes/classes/OnePageCheckout.php</li>
                 <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
                 <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
+                <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
                 <li>/includes/modules/pages/login/jscript_opc_reset_guest_for_ppec.php</li>
                 <li>/includes/modules/pages/shopping_cart/jscript_opc_reset_guest_for_ppec.php</li>
                 <li><span class="template-changed">/includes/templates/template_default/templates/tpl_modules_opc_address_block.php</span> <span class="smaller"><b>Note:</b> This change does not affect the <code>bootstrap</code> template!</span></li>
