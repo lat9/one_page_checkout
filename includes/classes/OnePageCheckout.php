@@ -1506,7 +1506,7 @@ class OnePageCheckout extends base
         //
         $messages = $this->validateUpdatedAddress($address_info, $which, false);
         if ($address_info['validated'] === true) {
-            $add_address = ($this->customerAccountNeedsPrimaryAddress() === true || (isset($_POST['add_address']) && $_POST['add_address'] === 'true'));
+            $add_address = ($this->customerAccountNeedsPrimaryAddress() === true || ($this->showAddAddressField() === true && ($_POST['add_address'] ?? '') === 'true'));
             $this->saveCustomerAddress($address_info, $which, $add_address);
         }
 
