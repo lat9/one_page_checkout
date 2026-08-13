@@ -822,7 +822,7 @@ class OnePageCheckout extends base
         }
 
         if ($this->guestIsActive === true) {
-            $disallowed_payment_methods = explode(',', str_replace(' ', '', zen_config('CHECKOUT_ONE_PAYMENTS_DISALLOWED_FOR_GUEST')));
+            $disallowed_payment_methods = $this->getPaymentMethodsDisallowedForGuests();
             if (count($disallowed_payment_methods) > 0) {
                 for ($i = 0, $n = count($enabled_payment_modules); $i < $n; $i++) {
                     if (in_array($enabled_payment_modules[$i]['id'], $disallowed_payment_methods)) {
@@ -836,6 +836,32 @@ class OnePageCheckout extends base
         }
 
         return $enabled_payment_modules;
+    }
+
+    // -----
+    // This internal function returns the array of payment methods that are disallowed for
+    // guest checkout.
+    //
+    // Note that an empty string in that configured value results in a single-element array
+    // with with a value of ''.  Trapping that case and returning an empty array instead.
+    //
+    protected function getPaymentMethodsDisallowedForGuests(): array
+    {
+        $disallowed_payment_methods = explode(',', str_replace(' ', '', (string)zen_config('CHECKOUT_ONE_PAYMENTS_DISALLOWED_FOR_GUEST')));
+        return (count($disallowed_payment_methods) === 1 && $disallowed_payment_methods[0] === '') ? [] : $disallowed_payment_methods;
+    }
+
+    /* -----
+    ** This function lets the caller know whether the supplied payment method is
+    ** disallowed for OPC's guest checkout.
+    */
+    public function isPaymentMethodDisallowedForGuest(string $payment_method): bool
+    {
+        if ($this->guestIsActive === false || $payment_method === '') {
+            return false;
+        }
+        $disallowed_payment_methods = $this->getPaymentMethodsDisallowedForGuests();
+        return in_array($payment_method, $disallowed_payment_methods, true);
     }
 
     /* -----
