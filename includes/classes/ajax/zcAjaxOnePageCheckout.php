@@ -29,6 +29,7 @@ class zcAjaxOnePageCheckout
     //
     public function resetGuestCheckout()
     {
+        $this->loadLanguageFiles();
         $error_message = '';
         if ($this->initializeResponseStatus('resetGuestCheckout', $error_message) === 'ok' && $_SESSION['opc']->isGuestCheckout() === true) {
             $_SESSION['opc']->resetGuestSessionValues();
@@ -57,7 +58,7 @@ class zcAjaxOnePageCheckout
         // -----
         // Initialize the response's status code, continuing only if all is 'ok'.
         //
-        $status = $this->initializeResponseStatus('updateShippingSelection', $error_message);
+        $status = $this->initializeResponseStatus('updateShippingSelection', $error_message, validate_products: true);
         if ($status === 'ok') {
             // -----
             // Check to ensure that all the required posted values are present; returning an
@@ -252,6 +253,9 @@ class zcAjaxOnePageCheckout
             if (!isset($_POST['which']) || ($_POST['which'] !== 'bill' && $_POST['which'] !== 'ship')) {
                 $status = 'error';
                 $error_message = ERROR_INVALID_REQUEST;
+            } elseif ($this->isAddressChangeable($_POST['which']) === false) {
+                $status = 'reload';
+                $error_message = ERROR_INVALID_REQUEST;
             } else {
                 $_SESSION['opc']->validateAndSaveAjaxPostedAddress($_POST['which'], $messages);
             }
@@ -266,7 +270,15 @@ class zcAjaxOnePageCheckout
 
         return $return_array;
     }
-    
+
+    // -----
+    // Checks to see if the submitted address-type is changeable.
+    //
+    protected function isAddressChangeable(string $which): bool
+    {
+        return ($which === 'bill') ? $_SESSION['opc']->isBilltoAddressChangeable() : $_SESSION['opc']->isSendtoAddressChangeable();
+    }
+
     // -----
     // This function validates and updates any guest-customer's contact information.
     //
@@ -357,6 +369,9 @@ class zcAjaxOnePageCheckout
             if (!isset($_POST['which'], $_POST['address_id'], $_POST['shipping_is_billing']) || ($_POST['which'] !== 'bill' && $_POST['which'] !== 'ship')) {
                 $status = 'error';
                 $error_message = ERROR_INVALID_REQUEST;
+            } elseif ($this->isAddressChangeable($_POST['which']) === false) {
+                $status = 'reload';
+                $error_message = ERROR_INVALID_REQUEST;
             } elseif ($_SESSION['opc']->setAddressFromSavedSelections($_POST['which'], (int)$_POST['address_id'], $_POST['shipping_is_billing']) === false) {
                 $status = 'error';
                 $error_message = ERROR_INVALID_REQUEST;
@@ -389,11 +404,11 @@ class zcAjaxOnePageCheckout
         // -----
         // Initialize the response's status code, continuing only if all is 'ok'.
         //
-        $status = $this->initializeResponseStatus('updatePaymentMethod', $error_message);
+        $status = $this->initializeResponseStatus('updatePaymentMethod', $error_message, validate_products: true);
         if ($status === 'ok') {
             if (empty($_POST['payment'])) {
                 unset($_SESSION['payment']);
-            } elseif ($_SESSION['opc']->isPaymentMethodDisallowedForGuest($_POST['payment']) === true) {
+            } elseif (!is_string($_POST['payment']) || $_SESSION['opc']->isPaymentMethodDisallowedForGuest($_POST['payment']) === true) {
                 return [
                     'status' => 'reload',
                     'errorMessage' => ERROR_NO_PAYMENT_MODULE_SELECTED,
@@ -535,7 +550,7 @@ class zcAjaxOnePageCheckout
     // -----
     // Common, for each AJAX request, checking for timeout and OPC-unavailable conditions.
     //
-    protected function initializeResponseStatus(string $method_name, string &$error_message): string
+    protected function initializeResponseStatus(string $method_name, string &$error_message, bool $validate_products = false): string
     {
         global $checkout_one;
 
@@ -552,7 +567,7 @@ class zcAjaxOnePageCheckout
         // If One-Page Checkout is no longer available, return a status code to the jQuery handler which, in turn,
         // will result in the customer being redirected to the checkout_shipping page.
         //
-        } elseif (!isset($_SESSION['opc']) || !is_object($_SESSION['opc']) || $_SESSION['opc']->checkEnabled() === false) {
+        } elseif (!isset($_SESSION['opc']) || !is_object($_SESSION['opc']) || $checkout_one->isEnabled() === false) {
             $status = 'unavailable';
             $checkout_one->debug_message('OPC is no longer available.', "zcAjaxOnePageCheckout::$method_name");
         // -----
@@ -572,7 +587,7 @@ class zcAjaxOnePageCheckout
         // Verify that the current customer is still authorized to shop and do a full page reload to redirect
         // if not.
         //
-        } elseif ((int)$_SESSION['customers_authorization'] !== 0) {
+        } elseif ((int)($_SESSION['customers_authorization'] ?? 0) !== 0) {
             $status = 'reload';
             $error_message = TEXT_AUTHORIZATION_PENDING_CHECKOUT;
         // -----
@@ -585,9 +600,10 @@ class zcAjaxOnePageCheckout
         }
 
         // -----
-        // If a previous issue was found, return that status at this point.
+        // If a previous issue was found or the products' validation is not requested,
+        // return that status at this point.
         //
-        if ($status !== 'ok') {
+        if ($status !== 'ok' || $validate_products === false) {
             return $status;
         }
 

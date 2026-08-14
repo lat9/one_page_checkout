@@ -93,7 +93,7 @@ if (isset($_SESSION['shipping']['id']) && $_SESSION['shipping']['id'] === 'free_
 // the data-gathering phase of OPC's checkout.
 //
 if (isset($_POST['payment'])) {
-    if ($_SESSION['opc']->isPaymentMethodDisallowedForGuest($_POST['payment']) === true) {
+    if (!is_string($_POST['payment']) || $_SESSION['opc']->isPaymentMethodDisallowedForGuest($_POST['payment']) === true) {
         zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));
     }
     $_SESSION['payment'] = $_POST['payment'];
