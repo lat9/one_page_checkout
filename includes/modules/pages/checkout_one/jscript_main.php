@@ -3,10 +3,10 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.6.2
+// Last updated: OPC v2.7.0
 //
 ?>
-<script>
+<script id="opc-js-main">
 <?php
 // -----
 // Introduced in OPC v2.3.0 to identify the template-specific selector for the
@@ -19,6 +19,7 @@ zen_define_default('CHECKOUT_ONE_OTTOTAL_SELECTOR', '#ottotal > div:first-child'
 $payments_that_submit = '';
 if (zen_config('CHECKOUT_ONE_PAYMENT_METHODS_THAT_SUBMIT', 'square_webPay') !== '') {
     $payments_that_submit = explode(',', str_replace(' ', '', zen_config('CHECKOUT_ONE_PAYMENT_METHODS_THAT_SUBMIT', 'square_webPay')));
+    $payments_that_submit = (count($payments_that_submit) === 1 && $payments_that_submit[0] === '') ? [] : $payments_that_submit;
     $payments_that_submit = '"' . implode('", "', $payments_that_submit) . '"';
 }
 
@@ -31,32 +32,32 @@ if (zen_config('CHECKOUT_ONE_PAYMENT_METHODS_THAT_SUBMIT', 'square_webPay') !== 
 //
 $show_state_dropdowns = true;
 ?>
-    var confirmation_required = [<?= $required_list ?>];
-    var paymentsThatSubmit = [<?= $payments_that_submit ?>];
+    const confirmation_required = [<?= $required_list ?>];
+    const paymentsThatSubmit = [<?= $payments_that_submit ?>];
 
-    var virtual_order = <?= ($is_virtual_order) ? 'true' : 'false' ?>;
-    var timeoutUrl = '<?= zen_href_link(FILENAME_LOGIN, '', 'SSL') ?>';
-    var sessionTimeoutErrorMessage = '<?= JS_ERROR_SESSION_TIMED_OUT ?>';
-    var ajaxTimeoutErrorMessage = '<?= JS_ERROR_AJAX_TIMEOUT . JS_ERROR_CONTACT_US ?>';
-    var ajaxTimeoutShippingErrorMessage = '<?= JS_ERROR_AJAX_SHIPPING_TIMEOUT . JS_ERROR_CONTACT_US ?>';
-    var ajaxTimeoutPaymentErrorMessage = '<?= JS_ERROR_AJAX_PAYMENT_TIMEOUT . JS_ERROR_CONTACT_US ?>';
-    var ajaxTimeoutSetAddressErrorMessage = '<?= JS_ERROR_AJAX_SET_ADDRESS_TIMEOUT . JS_ERROR_CONTACT_US ?>';
-    var ajaxTimeoutRestoreAddressErrorMessage = '<?= JS_ERROR_AJAX_RESTORE_ADDRESS_TIMEOUT . JS_ERROR_CONTACT_US ?>';
-    var ajaxTimeoutValidateAddressErrorMessage = '<?= JS_ERROR_AJAX_VALIDATE_ADDRESS_TIMEOUT . JS_ERROR_CONTACT_US ?>';
-    var ajaxTimeoutRestoreCustomerErrorMessage = '<?= JS_ERROR_AJAX_RESTORE_CUSTOMER_TIMEOUT . JS_ERROR_CONTACT_US ?>';
-    var ajaxTimeoutValidateCustomerErrorMessage = '<?= JS_ERROR_AJAX_VALIDATE_CUSTOMER_TIMEOUT . JS_ERROR_CONTACT_US ?>';
-    var ajaxNotAvailableMessage = '<?= JS_ERROR_OPC_NOT_ENABLED ?>';
-    var checkoutShippingUrl = '<?= zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL') ?>';
-    var noShippingSelectedError = '<?= ERROR_NO_SHIPPING_SELECTED ?>';
-    var flagOnSubmit = <?= ($flagOnSubmit) ? 'true' : 'false' ?>;
-    var shippingTimeout = <?= (int)zen_config('CHECKOUT_ONE_SHIPPING_TIMEOUT', 5000) ?>;
-    var textPleaseSelect = '<?= PLEASE_SELECT ?>';
-    var displayShippingBlock = <?= ($display_shipping_block) ? 'true' : 'false' ?>;
-    var displayPaymentBlock = <?= ($display_payment_block) ? 'true' : 'false' ?>;
-    var billingTitle = '<?= TITLE_BILLING_ADDRESS ?>';
-    var billingShippingTitle = '<?= TITLE_BILLING_SHIPPING_ADDRESS ?>';
-    var shippingChoiceAvailable = <?= (is_array($quotes) && count($quotes) > 0) ? 'true' : 'false' ?>;
-    var paymentChoiceAvailable = <?= (is_array($enabled_payment_modules) && count($enabled_payment_modules) > 0) ? 'true' : 'false' ?>;
+    const virtual_order = <?= ($is_virtual_order) ? 'true' : 'false' ?>;
+    const timeoutUrl = '<?= zen_href_link(FILENAME_LOGIN, '', 'SSL') ?>';
+    const sessionTimeoutErrorMessage = '<?= JS_ERROR_SESSION_TIMED_OUT ?>';
+    const ajaxTimeoutErrorMessage = '<?= JS_ERROR_AJAX_TIMEOUT . JS_ERROR_CONTACT_US ?>';
+    const ajaxTimeoutShippingErrorMessage = '<?= JS_ERROR_AJAX_SHIPPING_TIMEOUT . JS_ERROR_CONTACT_US ?>';
+    const ajaxTimeoutPaymentErrorMessage = '<?= JS_ERROR_AJAX_PAYMENT_TIMEOUT . JS_ERROR_CONTACT_US ?>';
+    const ajaxTimeoutSetAddressErrorMessage = '<?= JS_ERROR_AJAX_SET_ADDRESS_TIMEOUT . JS_ERROR_CONTACT_US ?>';
+    const ajaxTimeoutRestoreAddressErrorMessage = '<?= JS_ERROR_AJAX_RESTORE_ADDRESS_TIMEOUT . JS_ERROR_CONTACT_US ?>';
+    const ajaxTimeoutValidateAddressErrorMessage = '<?= JS_ERROR_AJAX_VALIDATE_ADDRESS_TIMEOUT . JS_ERROR_CONTACT_US ?>';
+    const ajaxTimeoutRestoreCustomerErrorMessage = '<?= JS_ERROR_AJAX_RESTORE_CUSTOMER_TIMEOUT . JS_ERROR_CONTACT_US ?>';
+    const ajaxTimeoutValidateCustomerErrorMessage = '<?= JS_ERROR_AJAX_VALIDATE_CUSTOMER_TIMEOUT . JS_ERROR_CONTACT_US ?>';
+    const ajaxNotAvailableMessage = '<?= JS_ERROR_OPC_NOT_ENABLED ?>';
+    const checkoutShippingUrl = '<?= zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL') ?>';
+    const noShippingSelectedError = '<?= ERROR_NO_SHIPPING_SELECTED ?>';
+    const flagOnSubmit = <?= ($flagOnSubmit) ? 'true' : 'false' ?>;
+    const shippingTimeout = <?= (int)zen_config('CHECKOUT_ONE_SHIPPING_TIMEOUT', 5000) ?>;
+    const textPleaseSelect = '<?= PLEASE_SELECT ?>';
+    const displayShippingBlock = <?= ($display_shipping_block) ? 'true' : 'false' ?>;
+    const displayPaymentBlock = <?= ($display_payment_block) ? 'true' : 'false' ?>;
+    const billingTitle = '<?= TITLE_BILLING_ADDRESS ?>';
+    const billingShippingTitle = '<?= TITLE_BILLING_SHIPPING_ADDRESS ?>';
+    const shippingChoiceAvailable = <?= (is_array($quotes) && count($quotes) > 0) ? 'true' : 'false' ?>;
+    const paymentChoiceAvailable = <?= (is_array($enabled_payment_modules) && count($enabled_payment_modules) > 0) ? 'true' : 'false' ?>;
 <?php
 // -----
 // If dropdown states are to be displayed, include that json-formatted array of countries/zones.
@@ -103,7 +104,7 @@ if (isset($quotes) && is_array($quotes)) {
     }
 }
 ?>
-    var additionalShippingInputs = <?= json_encode($opc_additional_shipping_inputs) ?>;
+    const additionalShippingInputs = <?= json_encode($opc_additional_shipping_inputs) ?>;
 </script>
 <?php
 if (zen_config('CHECKOUT_ONE_MINIFIED_SCRIPT') === 'true') {
