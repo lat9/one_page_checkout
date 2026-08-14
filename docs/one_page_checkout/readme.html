@@ -313,10 +313,12 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
             <li>BUGFIX: Additional validation that a payment method is allowed for guest-checkout.</li>
             <li>BUGFIX: 'Tighten' pre-requesite checks for various AJAX methods.</li>
             <li>BUGFIX: Use <code>const</code> for javascript constants; was using <code>var</code>.</li>
+            <li>BUGFIX: Remove use of <code>console.log</code> and reduce PHP-based debug trace.</li>
             <li>The following files were changed:<ol>
                 <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
                 <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                 <li>/includes/classes/OnePageCheckout.php</li>
+                <li>/includes/modules/pages/checkout_one/header_php.php</li>
                 <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
                 <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
                 <li>/includes/modules/pages/checkout_one/jscript_main.php</li>

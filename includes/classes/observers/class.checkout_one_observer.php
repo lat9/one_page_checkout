@@ -1,9 +1,11 @@
 <?php
+
+declare(strict_types=1);
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.6.4
+// Last updated: OPC v2.7.0
 //
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
@@ -11,6 +13,21 @@ if (!defined('IS_ADMIN_FLAG')) {
 
 class checkout_one_observer extends base
 {
+    private const LOG_VARS_TO_FILTER = [
+        'cc_number',
+        'cc_cvv',
+        'cc_expires',
+        'cc_owner',
+        'cc_type',
+        'card-number',
+        'cv2-number',
+        'password',
+        'token',
+        'securityToken',
+        'paypal_ec_',
+        'opc_shipping_quotes',
+    ];
+
     private bool $enabled = false;
     private bool $debug = false;
     private string $debug_logfile;
@@ -67,7 +84,7 @@ class checkout_one_observer extends base
         // -----
         // Initialize the plugin's debug filename and enabled control.
         //
-        $this->debug = in_array(zen_config('CHECKOUT_ONE_DEBUG'), ['true', 'full'], true);
+        $this->debug = zen_config('CHECKOUT_ONE_DEBUG') === 'true';
         if ($this->debug === true && !in_array(zen_config('CHECKOUT_ONE_DEBUG_EXTRA'), ['', '*'], true)) {
             $debug_customers = explode(',', str_replace(' ', '', zen_config('CHECKOUT_ONE_DEBUG_EXTRA')));
             if (!in_array($_SESSION['customer_id'], $debug_customers)) {
@@ -270,7 +287,7 @@ class checkout_one_observer extends base
             //
             case 'NOTIFY_HEADER_START_CHECKOUT_SHIPPING':
             case 'NOTIFY_HEADER_START_CHECKOUT_PAYMENT':
-                $this->debug_message('checkout_one redirect 1a: ', true, 'checkout_one_observer');
+                $this->debug_message('checkout_one redirect 1a: ', false, 'checkout_one_observer');
                 zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, zen_get_all_get_params(), 'SSL'));
                 break;
 
@@ -278,7 +295,7 @@ class checkout_one_observer extends base
             // Redirect any accesses to the "3-page" checkout confirmation to the one-page version.
             //
             case 'NOTIFY_HEADER_START_CHECKOUT_CONFIRMATION':
-                $this->debug_message('checkout_one redirect 1b: ', true, 'checkout_one_observer');
+                $this->debug_message('checkout_one redirect 1b: ', false, 'checkout_one_observer');
                 zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE_CONFIRMATION, zen_get_all_get_params() . 'redirect=true', 'SSL'));
                 break;
 
@@ -302,7 +319,7 @@ class checkout_one_observer extends base
             //
             case 'NOTIFY_HEADER_START_CHECKOUT_SHIPPING_ADDRESS':
                 if ($_SESSION['opc']->isGuestCheckout() === true) {
-                    $this->debug_message('checkout_one redirect 2: ', true, 'checkout_one_observer');
+                    $this->debug_message('checkout_one redirect 2: ', false, 'checkout_one_observer');
                     zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, zen_get_all_get_params(), 'SSL'));
                 }
                 $_SESSION['shipping_billing'] = false;
@@ -314,7 +331,7 @@ class checkout_one_observer extends base
             //
             case 'NOTIFY_HEADER_START_CHECKOUT_PAYMENT_ADDRESS':
                 if ($_SESSION['opc']->isGuestCheckout() === true) {
-                    $this->debug_message('checkout_one redirect 3: ', true, 'checkout_one_observer');
+                    $this->debug_message('checkout_one redirect 3: ', false, 'checkout_one_observer');
                     zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, zen_get_all_get_params(), 'SSL'));
                 }
                 break;
@@ -657,8 +674,6 @@ class checkout_one_observer extends base
             // gives OPC the chance to 'deny' that address-override during guest-checkout since there is no
             // valid address-book table entry for a guest customer.
             //
-            // Note: Not in core for Zen Cart versions prior to 1.5.7a!
-            //
             // $p1 ... (r/o) The current address_book_id that will be used, if not overridden.
             // $p2 ... (r/w) A reference to a boolean flag that indicates whether or not the default processing should proceed.
             //
@@ -744,13 +759,8 @@ class checkout_one_observer extends base
         if ($this->debug === true) {
             $extra_info = '';
             if ($include_request !== false) {
-                $the_request = $_REQUEST;
-                foreach ($the_request as $name => $value) {
-                    if (strpos($name, 'cc_number') !== false || strpos($name, 'cc_cvv') !== false || strpos($name, 'card-number') !== false || strpos($name, 'cv2-number') !== false) {
-                        unset($the_request[$name]);
-                    }
-                }
-                $session_vars = $_SESSION;
+                $the_request = $this->filterDebugMessage($_REQUEST);
+                $session_vars = $this->filterDebugMessage($_SESSION);
                 unset($session_vars['navigation']);
                 $extra_info = json_encode($the_request, JSON_PRETTY_PRINT) . "\n\n" . json_encode($session_vars, JSON_PRETTY_PRINT);
             }
@@ -759,9 +769,21 @@ class checkout_one_observer extends base
             // Change any occurrences of [code] to ["code"] in the logs so that they can be properly posted between [CODE} tags on the Zen Cart forums.
             //
             $message = str_replace('[code]', '["code"]', $message);
-            error_log("\n" . date('Y-m-d H:i:s') . ' ' . (($other_caller !== '') ? $other_caller : $this->current_page_base) . ": $message$extra_info" . PHP_EOL, 3, $this->debug_logfile);
-            $this->notify($message);
+            error_log("\n" . date('Y-m-d H:i:s') . ' ' . (($other_caller !== '') ? $other_caller : $this->current_page_base) . ": $message$extra_info\n", 3, $this->debug_logfile);
         }
+    }
+
+    public function filterDebugMessage(array $fields): array
+    {
+        foreach ($fields as $name => $value) {
+            foreach (self::LOG_VARS_TO_FILTER as $filter_var) {
+                if (str_contains($name, $filter_var)) {
+                    unset($fields[$name]);
+                    continue;
+                }
+            }
+        }
+        return $fields;
     }
 
     public function isEnabled(): bool

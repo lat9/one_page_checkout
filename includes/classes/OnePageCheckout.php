@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
 // Copyright (C) 2017-2026, Vinos de Frutas Tropicales.  All rights reserved.
@@ -643,7 +645,7 @@ class OnePageCheckout extends base
         }
 
         $current_settings = print_r($this, true);
-        $this->debugMessage('startGuestOnePageCheckout, exit: sendto: ' . ($_SESSION['sendto'] ?? 'not set') . ', billto: ' . ($_SESSION['billto'] ?? 'not set') . PHP_EOL . $current_settings);
+        $this->debugMessage('startGuestOnePageCheckout, exit: sendto: ' . ($_SESSION['sendto'] ?? 'not set') . ', billto: ' . ($_SESSION['billto'] ?? 'not set') . "\n" . $current_settings);
 
         if ($redirect_required === true) {
             zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));
@@ -900,13 +902,13 @@ class OnePageCheckout extends base
         $current_settings = json_encode($this->tempAddressValues ?? 'not-set');
         $session_sendto = (isset($_SESSION['sendto'])) ? (int)$_SESSION['sendto'] : 'not set';
         $this->debugMessage(
-            "updateOrderAddresses, on entry: Current sendto: $session_sendto" . PHP_EOL .
-            json_encode($order->customer) . PHP_EOL .
-            json_encode($order->billing) . PHP_EOL .
-            json_encode($order->delivery) . PHP_EOL .
+            "updateOrderAddresses, on entry: Current sendto: $session_sendto" . "\n\t" .
+            json_encode($order->customer) . "\n\t" .
+            json_encode($order->billing) . "\n\t" .
+            json_encode($order->delivery) . "\n\t" .
             $current_settings
         );
-        $this->debugMessage("Current sendto: $session_sendto.");
+
         if ($this->guestIsActive === true) {
             $address = (array)$order->customer;
             $order->customer = array_merge($address, $this->createOrderAddressFromTemporary('bill'), $this->getGuestCustomerInfo());
@@ -936,9 +938,9 @@ class OnePageCheckout extends base
             $taxZoneId = $tax_info['tax_zone_id'];
         }
         $this->debugMessage(
-            "updateOrderAddresses, on exit: $temp_billing_address, $temp_shipping_address, $taxCountryId, $taxZoneId" . PHP_EOL .
-            json_encode($order->customer) . PHP_EOL .
-            json_encode($order->billing) . PHP_EOL .
+            "updateOrderAddresses, on exit: $temp_billing_address, $temp_shipping_address, $taxCountryId, $taxZoneId\n\t" .
+            json_encode($order->customer) . "\n\t" .
+            json_encode($order->billing) . "\n\t" .
             json_encode($order->delivery)
         );
     }
@@ -1312,7 +1314,7 @@ class OnePageCheckout extends base
 
         $address_info->fields['error_state_input'] = false;
         $address_info->fields['error'] = false;
-        $address_info->fields['country_has_zones'] = $this->countryHasZones($address_info->fields['country']);
+        $address_info->fields['country_has_zones'] = $this->countryHasZones((int)$address_info->fields['country']);
         $address_info->fields['validated'] = !$this->customerAccountNeedsPrimaryAddress();
 
         $address_info->fields = $this->updateStateDropdownSettings($address_info->fields);

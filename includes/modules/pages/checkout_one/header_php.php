@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated for OPC v2.6.2
+// Last updated for OPC v2.7.0
 //
 // -----
 // This should be first line of the script:
@@ -311,9 +311,8 @@ if (isset($_SESSION['shipping']) && is_array($_SESSION['shipping'])) {
 $checkout_one->debug_message(
     "CHECKOUT_ONE_AFTER_SHIPPING_QUOTES\n" .
     $shipping_debug . "\n" .
-    json_encode($order->info, JSON_PRETTY_PRINT) . "\n" .
-    json_encode($messageStack, JSON_PRETTY_PRINT) . "\n" .
-    json_encode($quotes, JSON_PRETTY_PRINT));
+    json_encode($checkout_one->filterDebugMessage($order->info), JSON_PRETTY_PRINT)
+);
 
 // Should address-edit button be offered?
 $address_can_be_changed = (MAX_ADDRESS_BOOK_ENTRIES > 1);
@@ -364,9 +363,8 @@ $_SESSION['opc_saved_order_total'] = $currencies->value($order->info['total']);
 $checkout_one->debug_message(
     "CHECKOUT_ONE_AFTER_ORDER_TOTAL_PROCESSING\n" .
     json_encode($order_total_modules, JSON_PRETTY_PRINT) . "\n" .
-    json_encode($saved_order_info, JSON_PRETTY_PRINT) . "\n" .
-    json_encode($order->info, JSON_PRETTY_PRINT) . "\n" .
-    json_encode($messageStack, JSON_PRETTY_PRINT)
+    json_encode($checkout_one->filterDebugMessage($saved_order_info), JSON_PRETTY_PRINT) . "\n" .
+    json_encode($checkout_one->filterDebugMessage($order->info), JSON_PRETTY_PRINT)
 );
 $order->info = $saved_order_info;
 
@@ -417,7 +415,7 @@ if (isset($_GET['payment_error']) && is_object(${$_GET['payment_error']}) && ($e
     $messageStack->add('checkout_payment', $error['error'], 'error');
 }
 
-$extra_message = (isset($_SESSION['shipping'])) ? json_encode($_SESSION['shipping']) : ' (not set)';
+$extra_message = 'Selected shipping: ' . (isset($_SESSION['shipping'])) ? json_encode($_SESSION['shipping']) : ' (not set)';
 $checkout_one->debug_message("CHECKOUT_ONE_AFTER_PAYMENT_MODULES_SELECTION\n" . json_encode($payment_modules, JSON_PRETTY_PRINT) . "\n" . $extra_message);
 
 // -----
