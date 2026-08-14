@@ -27,11 +27,9 @@ class zcAjaxOnePageCheckout
     // If OPC's guest checkout is active and the customer has requested to use PayPal Express
     // Checkout instead, reset OPC to indicate that its guest checkout is no longer active.
     //
-    // Note: This method is supported **only** if issued from the site's login or shopping_cart pages, which
-    // is where the PPEC button's displayed (if enabled).
-    //
     public function resetGuestCheckout()
     {
+        $this->loadLanguageFiles();
         $error_message = '';
         if ($this->initializeResponseStatus('resetGuestCheckout', $error_message) === 'ok' && $_SESSION['opc']->isGuestCheckout() === true) {
             $_SESSION['opc']->resetGuestSessionValues();
@@ -60,7 +58,7 @@ class zcAjaxOnePageCheckout
         // -----
         // Initialize the response's status code, continuing only if all is 'ok'.
         //
-        $status = $this->initializeResponseStatus('updateShippingSelection', $error_message);
+        $status = $this->initializeResponseStatus('updateShippingSelection', $error_message, validate_products: true);
         if ($status === 'ok') {
             // -----
             // Check to ensure that all the required posted values are present; returning an
@@ -255,6 +253,9 @@ class zcAjaxOnePageCheckout
             if (!isset($_POST['which']) || ($_POST['which'] !== 'bill' && $_POST['which'] !== 'ship')) {
                 $status = 'error';
                 $error_message = ERROR_INVALID_REQUEST;
+            } elseif ($this->isAddressChangeable($_POST['which']) === false) {
+                $status = 'reload';
+                $error_message = ERROR_INVALID_REQUEST;
             } else {
                 $_SESSION['opc']->validateAndSaveAjaxPostedAddress($_POST['which'], $messages);
             }
@@ -269,7 +270,15 @@ class zcAjaxOnePageCheckout
 
         return $return_array;
     }
-    
+
+    // -----
+    // Checks to see if the submitted address-type is changeable.
+    //
+    protected function isAddressChangeable(string $which): bool
+    {
+        return ($which === 'bill') ? $_SESSION['opc']->isBilltoAddressChangeable() : $_SESSION['opc']->isSendtoAddressChangeable();
+    }
+
     // -----
     // This function validates and updates any guest-customer's contact information.
     //
@@ -360,6 +369,9 @@ class zcAjaxOnePageCheckout
             if (!isset($_POST['which'], $_POST['address_id'], $_POST['shipping_is_billing']) || ($_POST['which'] !== 'bill' && $_POST['which'] !== 'ship')) {
                 $status = 'error';
                 $error_message = ERROR_INVALID_REQUEST;
+            } elseif ($this->isAddressChangeable($_POST['which']) === false) {
+                $status = 'reload';
+                $error_message = ERROR_INVALID_REQUEST;
             } elseif ($_SESSION['opc']->setAddressFromSavedSelections($_POST['which'], (int)$_POST['address_id'], $_POST['shipping_is_billing']) === false) {
                 $status = 'error';
                 $error_message = ERROR_INVALID_REQUEST;
@@ -392,11 +404,11 @@ class zcAjaxOnePageCheckout
         // -----
         // Initialize the response's status code, continuing only if all is 'ok'.
         //
-        $status = $this->initializeResponseStatus('updatePaymentMethod', $error_message);
+        $status = $this->initializeResponseStatus('updatePaymentMethod', $error_message, validate_products: true);
         if ($status === 'ok') {
             if (empty($_POST['payment'])) {
                 unset($_SESSION['payment']);
-            } elseif ($_SESSION['opc']->isPaymentMethodDisallowedForGuest($_POST['payment']) === true) {
+            } elseif (!is_string($_POST['payment']) || $_SESSION['opc']->isPaymentMethodDisallowedForGuest($_POST['payment']) === true) {
                 return [
                     'status' => 'reload',
                     'errorMessage' => ERROR_NO_PAYMENT_MODULE_SELECTED,
@@ -538,7 +550,7 @@ class zcAjaxOnePageCheckout
     // -----
     // Common, for each AJAX request, checking for timeout and OPC-unavailable conditions.
     //
-    protected function initializeResponseStatus(string $method_name, string &$error_message): string
+    protected function initializeResponseStatus(string $method_name, string &$error_message, bool $validate_products = false): string
     {
         global $checkout_one;
 
@@ -546,19 +558,38 @@ class zcAjaxOnePageCheckout
         $error_message = '';
 
         // -----
+        // Any AJAX request must have been submitted via POST, not GET; otherwise, it's treated as
+        // a timeout condition.
+        //
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $status = 'timeout';
+        // -----
         // If One-Page Checkout is no longer available, return a status code to the jQuery handler which, in turn,
         // will result in the customer being redirected to the checkout_shipping page.
         //
-        if (!isset($_SESSION['opc']) || !is_object($_SESSION['opc']) || $_SESSION['opc']->checkOpcEnabled() === false) {
+        } elseif (!isset($_SESSION['opc']) || !is_object($_SESSION['opc']) || $checkout_one->isEnabled() === false) {
             $status = 'unavailable';
             $checkout_one->debug_message('OPC is no longer available.', "zcAjaxOnePageCheckout::$method_name");
         // -----
-        // Check for a session timeout (i.e. no more customer_id in the session), returning a specific
-        // status and message for that case.
+        // Verify that there's still a valid cart for the customer.
         //
-        } elseif (!isset($_SESSION['customer_id'])) {
+        } elseif (!isset($_SESSION['cart']) || !is_object($_SESSION['cart']) || $_SESSION['cart']->count_contents() <= 0) {
+            $status = 'reload';
+            $checkout_one->debug_message('Empty or invalid cart detected.', "zcAjaxOnePageCheckout::$method_name");
+        // -----
+        // Check for a session timeout (i.e. no more valid customer in the session or missing cartID), returning a specific
+        // status for that case.
+        //
+        } elseif (!isset($_SESSION['customer_id'], $_SESSION['cart']->cartID) || zen_get_customer_validate_session($_SESSION['customer_id']) === false) {
             $status = 'timeout';
-            $checkout_one->debug_message("Session time-out detected.", "zcAjaxOnePageCheckout::$method_name");
+            $checkout_one->debug_message('Session time-out detected.', "zcAjaxOnePageCheckout::$method_name");
+        // -----
+        // Verify that the current customer is still authorized to shop and do a full page reload to redirect
+        // if not.
+        //
+        } elseif ((int)($_SESSION['customers_authorization'] ?? 0) !== 0) {
+            $status = 'reload';
+            $error_message = TEXT_AUTHORIZATION_PENDING_CHECKOUT;
         // -----
         // Otherwise, ensure that the OPC 'environment' is still 'sane', requesting that the jQuery portion of
         // the plugin do a full page reload in an attempt to further correct the situation if not.
@@ -568,6 +599,37 @@ class zcAjaxOnePageCheckout
             $error_message = ERROR_OPC_ADDRESS_INVALID;
         }
 
-        return $status;
+        // -----
+        // If a previous issue was found or the products' validation is not requested,
+        // return that status at this point.
+        //
+        if ($status !== 'ok' || $validate_products === false) {
+            return $status;
+        }
+
+        // -----
+        // Now, ensure that the products in the order are still valid to continue
+        // the checkout process.
+        //
+        $_SESSION['valid_to_checkout'] = true;
+        $products_array = $_SESSION['cart']->get_products(true);
+        if ((bool)$_SESSION['valid_to_checkout'] === false) {
+            return 'reload';
+        }
+
+        // -----
+        // Stock Check. Re-formulated based on the checkout_confirmation page's processing,
+        // with modifications here since we're just checking that each product in the order
+        // still has sufficient stock to satisfy the order.
+        //
+        if (zen_config('STOCK_CHECK') !== 'true' || zen_config('STOCK_ALLOW_CHECKOUT') === 'true') {
+            return 'ok';
+        }
+        foreach ($products_array as $next_product) {
+            if (!empty(zen_check_stock($next_product['id'], $next_product['quantity']))) {
+                return 'reload';
+            }
+        }
+        return 'ok';
     }
 }
