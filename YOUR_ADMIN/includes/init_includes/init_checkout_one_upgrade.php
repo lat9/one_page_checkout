@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.6.4
+// Last updated: OPC v2.7.0
 //
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
@@ -141,11 +141,11 @@ switch (true) {
     // - If the CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED setting does not include the 'download' page, add it!
     //
     case version_compare($opc_module_version, '2.0.4', '<'):    //-Fall-through processing from above
-        if (strpos(zen_config('CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED') ?? '', 'download') === false) {
-            if (zen_config('CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED') === '') {
+        if (strpos(zen_config('CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED', ''), 'download') === false) {
+            if (zen_config('CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED', '') === '') {
                 $checkout_pages = [];
             } else {
-                $checkout_pages = explode(',', str_replace(' ', '', zen_config('CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED')));
+                $checkout_pages = explode(',', str_replace(' ', '', zen_config('CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED', '')));
             }
             $checkout_pages[] = 'download';
             $checkout_pages = implode(', ', $checkout_pages);
@@ -337,7 +337,29 @@ switch (true) {
                 ('Registered Accounts: Telephone Minimum Length', 'CHECKOUT_ONE_REGISTERED_ACCT_TELEPHONE_MIN', '$telephone_min_length', 'When a customer creates a <em>registered</em> account, is a telephone number required? If so, enter the minimum length of the telephone number; use <code>0</code> to indicate the the telephone number is optional.<br><br><b>Note:</b> This setting <em>overrides</em> the value in <code>Minimum Values :: Telephone Number</code>.', $cgi, now(), 502, NULL, NULL)"
         );
 
-    default:                                                            //-Fall-through processing from above
+    // -----
+    // v2.7.0:
+    //
+    // - Ensure that 'full' setting is removed from CHECKOUT_ONE_DEBUG
+    //
+    case version_compare($opc_module_version, '2.7.0', '<'):    //-Fall-through processing from above
+        $debug_value = zen_config('CHECKOUT_ONE_DEBUG', 'false');
+        if ($debug_value === 'full') {
+            $debug_value = 'true';
+        }
+        if (!in_array($debug_value, ['true', 'false'], true)) {
+            $debug_value = 'false';
+        }
+        $db->Execute(
+            "UPDATE " . TABLE_CONFIGURATION . "
+                SET configuration_value = '$debug_value',
+                    configuration_description = 'When enabled, debug files named <code>one_page_checkout-<em>xx</em>.log</code> are created in your /logs folder (<em>xx</em> is the customer_id for the checkout).  Use the <b>true</b> setting in combination with the <em>Debug: Customer List</em> setting to limit the customers for which the debug-action is taken.<br><br>Default: <b>false</b>',
+                    set_function = 'zen_cfg_select_option([\'true\', \'false\'],'
+              WHERE configuration_key = 'CHECKOUT_ONE_DEBUG'
+              LIMIT 1"
+        );
+
+    default:                                                    //-Fall-through processing from above
         break;
 }
 

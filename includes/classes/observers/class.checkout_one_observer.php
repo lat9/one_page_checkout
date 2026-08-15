@@ -86,7 +86,7 @@ class checkout_one_observer extends base
         //
         $this->debug = zen_config('CHECKOUT_ONE_DEBUG') === 'true';
         if ($this->debug === true && !in_array(zen_config('CHECKOUT_ONE_DEBUG_EXTRA'), ['', '*'], true)) {
-            $debug_customers = explode(',', str_replace(' ', '', zen_config('CHECKOUT_ONE_DEBUG_EXTRA')));
+            $debug_customers = explode(',', str_replace(' ', '', (string)zen_config('CHECKOUT_ONE_DEBUG_EXTRA')));
             if (!in_array($_SESSION['customer_id'], $debug_customers)) {
                 $this->debug = false;
             }
@@ -98,7 +98,7 @@ class checkout_one_observer extends base
         // the checkout_success or other, customizable, pages, need to remove all session-variables associated with that
         // guest checkout.
         //
-        $post_checkout_pages = explode(',', str_replace(' ', '', zen_config('CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED')));
+        $post_checkout_pages = explode(',', str_replace(' ', '', (string)zen_config('CHECKOUT_ONE_GUEST_POST_CHECKOUT_PAGES_ALLOWED')));
         $post_checkout_pages[] = FILENAME_CHECKOUT_SUCCESS;
         if (isset($_SESSION['order_placed_by_guest']) && !in_array($current_page_base, $post_checkout_pages)) {
             unset($_SESSION['order_placed_by_guest'], $_SESSION['order_number_created']);
@@ -125,7 +125,7 @@ class checkout_one_observer extends base
                 // built-in 3-page version.
                 //
                 if ($_SESSION['opc']->guestCheckoutEnabled() === true) {
-                    $disallowed_pages = explode(',', str_replace(' ', '', zen_config('CHECKOUT_ONE_GUEST_PAGES_DISALLOWED')));
+                    $disallowed_pages = explode(',', str_replace(' ', '', (string)zen_config('CHECKOUT_ONE_GUEST_PAGES_DISALLOWED')));
                     if (in_array($this->current_page_base, $disallowed_pages)) {
                         $this->needUnsupportedPageMessage = true;
                     }
@@ -777,7 +777,7 @@ class checkout_one_observer extends base
     {
         foreach ($fields as $name => $value) {
             foreach (self::LOG_VARS_TO_FILTER as $filter_var) {
-                if (str_contains($name, $filter_var)) {
+                if (str_contains((string)$name, $filter_var)) {
                     unset($fields[$name]);
                     continue;
                 }

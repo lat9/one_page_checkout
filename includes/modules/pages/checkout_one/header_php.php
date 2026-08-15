@@ -28,13 +28,6 @@ $checkout_one->debug_message(sprintf(
     $template_dir
 ));
 
-// -----
-// If the plugin's debug-mode is set to "full", then enable ALL error reporting for the checkout_one page.
-//
-if (zen_config('CHECKOUT_ONE_DEBUG') === 'full') {
-    @ini_set('error_reporting', -1);
-}
-
 // if there is nothing in the customers cart, redirect them to the shopping cart page
 if ($_SESSION['cart']->count_contents() <= 0) {
     zen_redirect(zen_href_link(FILENAME_SHOPPING_CART, '', 'NONSSL'));
@@ -415,7 +408,7 @@ if (isset($_GET['payment_error']) && is_object(${$_GET['payment_error']}) && ($e
     $messageStack->add('checkout_payment', $error['error'], 'error');
 }
 
-$extra_message = 'Selected shipping: ' . (isset($_SESSION['shipping'])) ? json_encode($_SESSION['shipping']) : ' (not set)';
+$extra_message = 'Selected shipping: ' . ((isset($_SESSION['shipping'])) ? json_encode($_SESSION['shipping']) : ' (not set)');
 $checkout_one->debug_message("CHECKOUT_ONE_AFTER_PAYMENT_MODULES_SELECTION\n" . json_encode($payment_modules, JSON_PRETTY_PRINT) . "\n" . $extra_message);
 
 // -----
