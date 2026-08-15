@@ -2,7 +2,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
 // Copyright (C) 2013-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last changed: OPC v2.6.4
+// Last changed: OPC v2.7.0
 //
 var selected;
 var submitter = null;
@@ -45,20 +45,6 @@ function button_timeout()
 }
 
 // -----
-// Local to the checkout_one page, provides a common function to log a javascript console
-// message.  The checking is required for older (pre IE-9?) versions of Internet Explorer, which
-// doesn't instantiate the window.console class unless the debug pane is open.
-//
-function zcLog2Console(message)
-{
-    if (window.console) {
-        if (typeof(console.log) == 'function') {
-            console.log(message);
-        }
-    }
-}
-
-// -----
 // Normally used in an onfocus attribute of a payment-module's selection.
 //
 function methodSelect(theMethod) 
@@ -88,7 +74,6 @@ function setOrderConfirmed(value)
 {
     orderConfirmed = value;
     jQuery('#confirm-the-order').val(value);
-    zcLog2Console('Setting orderConfirmed ('+value+'), submitter ('+submitter+')');
 }
 
 // -----
@@ -101,13 +86,11 @@ jQuery(document).ready(function() {
     // are missing.
     //
     var elementsMissing = false;
-    if (jQuery('form[name="checkout_payment"]').length == 0) {
+    if (jQuery('form[name="checkout_payment"]').length === 0) {
         elementsMissing = true;
-        zcLog2Console('Missing form[name="checkout_payment"]');
     }
-    if (jQuery('#orderTotalDivs').length == 0) {
+    if (jQuery('#orderTotalDivs').length === 0) {
         elementsMissing = true;
-        zcLog2Console('Missing #orderTotalDivs');
     }
 
     // -----
@@ -133,24 +116,20 @@ jQuery(document).ready(function() {
     // in those "corner-cases".
     //
     if (checkMissingElements) {
-        if (jQuery('#current-order-total').length == 0) {
+        if (jQuery('#current-order-total').length === 0) {
             elementsMissing = true;
-            zcLog2Console ('Missing #current-order-total');
         }
-        if (jQuery('#opc-order-confirm').length == 0) {
+        if (jQuery('#opc-order-confirm').length === 0) {
             elementsMissing = true;
-            zcLog2Console('Missing #opc-order-confirm');
         }
-        if (jQuery('#opc-order-review').length == 0) {
+        if (jQuery('#opc-order-review').length === 0) {
             elementsMissing = true;
-            zcLog2Console('Missing #opc-order-review');
         }
     }
 
     if (!virtual_order && checkMissingElements) {
-        if (jQuery('#otshipping').length == 0) {
+        if (jQuery('#otshipping').length === 0) {
             elementsMissing = true;
-            zcLog2Console('Missing #otshipping');
         }
     }
 
@@ -194,7 +173,6 @@ jQuery(document).ready(function() {
         url: 'ajax.php?act=ajaxOnePageCheckout&method=getOrderTotal',
         timeout: shippingTimeout,
         error: function (jqXHR, textStatus, errorThrown) {
-            zcLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
             if (textStatus == 'timeout') {
                 alert(ajaxTimeoutShippingErrorMessage);
             }
@@ -243,25 +221,21 @@ jQuery(document).ready(function() {
                 payment_module = document.checkout_payment.payment.value;
             }
         }
-        zcLog2Console('setFormSubmitButton, payment-module: '+payment_module);
+
         jQuery('#opc-order-review, #opc-order-confirm').hide();
-        if (payment_module == null || confirmation_required.indexOf(payment_module) == -1) {
+        if (payment_module == null || confirmation_required.indexOf(payment_module) === -1) {
             jQuery('#opc-order-confirm').show();
-            if (payment_module != null && paymentsThatSubmit.indexOf(payment_module) != -1) {
+            if (payment_module != null && paymentsThatSubmit.indexOf(payment_module) !== -1) {
                 paymentMethodHandlesSubmit = true;
             } else {
                 paymentMethodHandlesSubmit = false;
             }
-            zcLog2Console('Showing "confirm", paymentMethodHandlesSubmit ('+paymentMethodHandlesSubmit+')');
         } else {
             jQuery('#opc-order-review').show();
-            zcLog2Console( 'Showing "review"' );
         }
         if ((jQuery('#privacy').length != 0 && !jQuery('#privacy').is(':checked')) || (jQuery('#conditions').length != 0 && !jQuery('#conditions').is(':checked'))) {
-            zcLog2Console('setFormSubmitButton, disabling Review and Confirm buttons.');
             jQuery('#checkoutOneSubmit').addClass('opc-disabled');
         } else {
-            zcLog2Console('setFormSubmitButton, enabling Review and Confirm buttons.');
             jQuery('#checkoutOneSubmit').removeClass('opc-disabled');
         }
     }
@@ -277,8 +251,6 @@ jQuery(document).ready(function() {
 
     setOrderConfirmed(0);
     jQuery('#checkoutOneShippingFlag').show();
-
-    zcLog2Console('jQuery version: '+jQuery().jquery);
 
     function focusOnShipping ()
     {
@@ -298,22 +270,18 @@ jQuery(document).ready(function() {
         if (gv >= total) {
             submitter = 1;
         }
-        zcLog2Console('submitFunction, on exit submitter='+submitter);
     }
 
     var lastPaymentValue = null;
 
     doesCollectsCardDataOnsite = function(paymentValue)
     {
-        zcLog2Console('Checking doesCollectsCardDataOnsite('+paymentValue+') ...');
         if (jQuery('#'+paymentValue+'_collects_onsite').val()) {
             if (jQuery('#pmt-'+paymentValue).is(':checked')) {
-                zcLog2Console('... it does!');
                 lastPaymentValue = paymentValue;
                 return true;
             }
         }
-        zcLog2Console('... it does not.');
         lastPaymentValue = null;
         return false;
     }
@@ -322,7 +290,6 @@ jQuery(document).ready(function() {
     {
         var str = jQuery('form[name="checkout_payment"]').serializeArray();
 
-        zcLog2Console('doCollectsCardDataOnsite for '+lastPaymentValue);
         zcJS.ajax({
             url: 'ajax.php?act=ajaxPayment&method=prepareConfirmation',
             data: str
@@ -337,9 +304,8 @@ jQuery(document).ready(function() {
             jQuery('#navBreadCrumb').html(response.breadCrumbHtml.replace(/\.ready/g, '.ajaxComplete'));
             jQuery('#checkoutPayment').before(response.confirmationHtml.replace(/\.ready/g, '.ajaxComplete'));
             jQuery(document).attr('title', response.pageTitle);
-            jQuery(document).scrollTop( 0 );
-            if (confirmation_required.indexOf( lastPaymentValue ) == -1) {
-                zcLog2Console('Preparing to submit form, since confirmation is not required for "'+lastPaymentValue+'", per the required list: "'+confirmation_required);
+            jQuery(document).scrollTop(0);
+            if (confirmation_required.indexOf(lastPaymentValue) === -1) {
                 jQuery('#checkoutOneLoading').show();
                 jQuery('#checkoutConfirmationDefault').hide();
                 
@@ -351,7 +317,6 @@ jQuery(document).ready(function() {
                     jQuery('form[name="checkout_confirmation"]')[0].submit();
                 });
             } else {
-                zcLog2Console('Confirmation required, displaying for '+lastPaymentValue+'.');
                 jQuery('#checkoutConfirmDefault').show();
             }
         });
@@ -376,7 +341,7 @@ jQuery(document).ready(function() {
     function checkForRedirect(response)
     {
         // -----
-        // If a session timeout was detected by the AJAX handler, display a message to the customer
+        // If a timeout condition was detected by the AJAX handler, display a message to the customer
         // and redirect to the login page.
         //
         if (response.status === 'timeout') {
@@ -409,7 +374,6 @@ jQuery(document).ready(function() {
     {
         submitFunction(jQuery('input[name=cot_gv]').val(), jQuery('#current-order-total').val());
         setOrderConfirmed(1);
-        zcLog2Console('Form being submitted, submit_type('+submit_type);
 
         jQuery('#confirm-the-order').attr('disabled', true);
 
@@ -419,11 +383,8 @@ jQuery(document).ready(function() {
         if (flagOnSubmit) {
             setFormSubmitButton();
             var formPassed = check_form();
-            zcLog2Console('Form checked, passed (' + formPassed + ')');
 
-            if (paymentMethodHandlesSubmit == true) {
-                zcLog2Console('Deferring form submittal to the currently-selected payment method.');
-            } else {
+            if (paymentMethodHandlesSubmit === false) {
                 if (formPassed) {
                     // -----
                     // If we're submitting based on a "Confirm Order" button-click,
@@ -455,7 +416,7 @@ jQuery(document).ready(function() {
             shipping_selection: jQuery(this).val(),
         };
 
-        if (additionalShippingInputs.length != 0) {
+        if (additionalShippingInputs.length !== 0) {
             var shippingInputs = {};
             jQuery.each(additionalShippingInputs, function(field_name, values) {
                 if (jQuery('select[name="'+field_name+'"]').length !== 0) {
@@ -464,18 +425,15 @@ jQuery(document).ready(function() {
                     shippingInputs[field_name] = jQuery('input[name="'+field_name+'"]'+values['parms']).val();
                 }
             });
-            console.log(shippingInputs);
             shippingData = jQuery.extend(shippingData, shippingInputs);
         }
 
-        zcLog2Console('Updating shipping method to '+jQuery(this).val());
         zcJS.ajax({
             url: 'ajax.php?act=ajaxOnePageCheckout&method=updateShippingSelection',
             data: shippingData,
             timeout: shippingTimeout,
             error: function (jqXHR, textStatus, errorThrown) {
-                zcLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
-                if (textStatus == 'timeout') {
+                if (textStatus === 'timeout') {
                     alert(ajaxTimeoutShippingErrorMessage);
                 }
                 shippingError = true;
@@ -522,8 +480,7 @@ jQuery(document).ready(function() {
             },
             timeout: shippingTimeout,
             error: function (jqXHR, textStatus, errorThrown) {
-                zcLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
-                if (textStatus == 'timeout') {
+                if (textStatus === 'timeout') {
                     alert(ajaxTimeoutShippingErrorMessage);
                 }
                 shippingError = true;
@@ -545,7 +502,6 @@ jQuery(document).ready(function() {
     // where that credit-class processing will record its changes.
     //
     jQuery(document).on('click', '.opc-cc-submit', function() {
-        zcLog2Console('Submitting credit-class request');
         setOrderConfirmed(0);
         jQuery('input[name="action"]').val('cc-submit');
         jQuery('form[name="checkout_payment"]').submit();
@@ -565,7 +521,7 @@ jQuery(document).ready(function() {
         if (paymentSelected.is(':radio')) {
             paymentSelected = jQuery('input[name=payment]:checked');
         }
-        if (paymentSelected.length == 0) {
+        if (paymentSelected.length === 0) {
             paymentSelected = '';
         } else {
             paymentSelected = paymentSelected.val();
@@ -575,14 +531,12 @@ jQuery(document).ready(function() {
             payment: paymentSelected
         };
 
-        zcLog2Console('Updating payment method to '+paymentSelected);
         zcJS.ajax({
             url: 'ajax.php?act=ajaxOnePageCheckout&method=updatePaymentMethod',
             data: paymentData,
             timeout: shippingTimeout,
             error: function (jqXHR, textStatus, errorThrown) {
-                zcLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
-                if (textStatus == 'timeout') {
+                if (textStatus === 'timeout') {
                     alert(ajaxTimeoutPaymentErrorMessage);
                 }
             },
@@ -626,7 +580,6 @@ jQuery(document).ready(function() {
     });
     function useSelectedAddress(which, address_id)
     {
-        zcLog2Console('useSelectedAddress('+which+', '+address_id+')');
         jQuery('#checkoutPayment > .opc-overlay').addClass('active');
         zcJS.ajax({
             url: 'ajax.php?act=ajaxOnePageCheckout&method=setAddressFromSavedSelections',
@@ -637,8 +590,7 @@ jQuery(document).ready(function() {
             },
             timeout: shippingTimeout,
             error: function (jqXHR, textStatus, errorThrown) {
-                zcLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
-                if (textStatus == 'timeout') {
+                if (textStatus === 'timeout') {
                     alert(ajaxTimeoutSetAddressErrorMessage);
                 }
             },
@@ -729,7 +681,6 @@ jQuery(document).ready(function() {
 
     function restoreAddressValues(which, address_block)
     {
-        zcLog2Console('restoreAddressValues('+which+', '+address_block+')');
         zcJS.ajax({
             url: 'ajax.php?act=ajaxOnePageCheckout&method=restoreAddressValues',
             data: {
@@ -737,8 +688,7 @@ jQuery(document).ready(function() {
             },
             timeout: shippingTimeout,
             error: function (jqXHR, textStatus, errorThrown) {
-                zcLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
-                if (textStatus == 'timeout') {
+                if (textStatus === 'timeout') {
                     alert(ajaxTimeoutRestoreAddressErrorMessage);
                 }
             },
@@ -747,9 +697,9 @@ jQuery(document).ready(function() {
             // Handle any redirects required, based on the AJAX response's status.
             //
             checkForRedirect(response);
-            
+
             jQuery(address_block).replaceWith(response.addressHtml);
-            if (typeof initializeStateZones != 'undefined') {
+            if (typeof initializeStateZones !== 'undefined') {
                 initializeStateZones();
             }
         });
@@ -757,8 +707,6 @@ jQuery(document).ready(function() {
 
     function saveAddressValues(which, address_block)
     {
-        zcLog2Console('saveAddressValues('+which+', '+address_block+')');
-
         zcJS.ajax({
             url: 'ajax.php?act=ajaxOnePageCheckout&method=validateAddressValues',
             data: {
@@ -780,8 +728,7 @@ jQuery(document).ready(function() {
             },
             timeout: shippingTimeout,
             error: function (jqXHR, textStatus, errorThrown) {
-                zcLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
-                if (textStatus == 'timeout') {
+                if (textStatus === 'timeout') {
                     alert(ajaxTimeoutValidateAddressErrorMessage);
                 }
             },
@@ -797,7 +744,7 @@ jQuery(document).ready(function() {
             // the messages at the bottom of the active address-block.
             //
             var messageBlock = '#messages-'+which;
-            if (response.messages.length != 0) {
+            if (response.messages.length !== 0) {
                 var focusSet = false;
                 jQuery(messageBlock).html('<ul></ul>').addClass('opc-error');
                 jQuery(address_block+' input, '+address_block+' select').removeClass('opc-error');
@@ -874,13 +821,11 @@ jQuery(document).ready(function() {
     //
     function restoreCustomerInfo()
     {
-        zcLog2Console('restoreCustomerInfo, starts ...');
         zcJS.ajax({
             url: 'ajax.php?act=ajaxOnePageCheckout&method=restoreCustomerInfo',
             timeout: shippingTimeout,
             error: function (jqXHR, textStatus, errorThrown) {
-                zcLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
-                if (textStatus == 'timeout') {
+                if (textStatus === 'timeout') {
                     alert(ajaxTimeoutRestoreCustomerErrorMessage);
                 }
             },
@@ -897,14 +842,12 @@ jQuery(document).ready(function() {
 
     function saveCustomerInfo()
     {
-        zcLog2Console('saveCustomerInfo, starts ...');
         zcJS.ajax({
             url: 'ajax.php?act=ajaxOnePageCheckout&method=validateCustomerInfo',
             data: jQuery('#checkoutOneGuestInfo input, #checkoutOneGuestInfo select').serialize(),
             timeout: shippingTimeout,
             error: function (jqXHR, textStatus, errorThrown) {
-                zcLog2Console('error: status='+textStatus+', errorThrown = '+errorThrown+', override: '+jqXHR);
-                if (textStatus == 'timeout') {
+                if (textStatus === 'timeout') {
                     alert(ajaxTimeoutValidateCustomerErrorMessage);
                 }
             },
@@ -920,7 +863,7 @@ jQuery(document).ready(function() {
             // the messages at the bottom of the guest-information block.
             //
             var messageBlock = '#messages-guest';
-            if (response.messages.length != 0) {
+            if (response.messages.length !== 0) {
                 var focusSet = false;
                 jQuery(messageBlock).html('<ul></ul>').addClass('opc-error');
                 jQuery('#checkoutOneGuestInfo input').removeClass('opc-error');

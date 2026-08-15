@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
 // Copyright (C) 2013-2026 Vinos de Frutas Tropicales.  All rights reserved.
@@ -266,7 +268,7 @@ class zcAjaxOnePageCheckout
             'errorMessage' => $error_message,
             'messages' => $messages
         ];
-        $checkout_one->debug_message('validateAddressValues, returning:' . json_encode($return_array) . PHP_EOL . json_encode($_SESSION['opc'], true));
+        $checkout_one->debug_message('validateAddressValues, returning:' . json_encode($return_array), true);
 
         return $return_array;
     }
@@ -305,7 +307,7 @@ class zcAjaxOnePageCheckout
             'errorMessage' => $error_message,
             'messages' => $messages
         ];
-        $checkout_one->debug_message('validateCustomerInfo, returning:' . json_encode($return_array) . PHP_EOL . json_encode($_SESSION['opc']));
+        $checkout_one->debug_message('validateCustomerInfo, returning:' . json_encode($return_array) . "\n" . json_encode($_SESSION['opc']));
 
         return $return_array;
     }
@@ -489,7 +491,7 @@ class zcAjaxOnePageCheckout
 
         $checkout_one->debug_message(
             "Returning:\n" .
-            json_encode($order->info, JSON_PRETTY_PRINT) . "\n" .
+            json_encode($checkout_one->filterDebugMessage($order->info), JSON_PRETTY_PRINT) . "\n" .
             json_encode($_SESSION['shipping'] ?? [], JSON_PRETTY_PRINT) . "\n" .
             ($_SESSION['payment'] ?? '[not set]'),
             false,
@@ -569,20 +571,20 @@ class zcAjaxOnePageCheckout
         //
         } elseif (!isset($_SESSION['opc']) || !is_object($_SESSION['opc']) || $checkout_one->isEnabled() === false) {
             $status = 'unavailable';
-            $checkout_one->debug_message('OPC is no longer available.', "zcAjaxOnePageCheckout::$method_name");
+            $checkout_one->debug_message('OPC is no longer available.', false, "zcAjaxOnePageCheckout::$method_name");
         // -----
         // Verify that there's still a valid cart for the customer.
         //
         } elseif (!isset($_SESSION['cart']) || !is_object($_SESSION['cart']) || $_SESSION['cart']->count_contents() <= 0) {
             $status = 'reload';
-            $checkout_one->debug_message('Empty or invalid cart detected.', "zcAjaxOnePageCheckout::$method_name");
+            $checkout_one->debug_message('Empty or invalid cart detected.', false, "zcAjaxOnePageCheckout::$method_name");
         // -----
         // Check for a session timeout (i.e. no more valid customer in the session or missing cartID), returning a specific
         // status for that case.
         //
         } elseif (!isset($_SESSION['customer_id'], $_SESSION['cart']->cartID) || zen_get_customer_validate_session($_SESSION['customer_id']) === false) {
             $status = 'timeout';
-            $checkout_one->debug_message('Session time-out detected.', "zcAjaxOnePageCheckout::$method_name");
+            $checkout_one->debug_message('Session time-out detected.', false, "zcAjaxOnePageCheckout::$method_name");
         // -----
         // Verify that the current customer is still authorized to shop and do a full page reload to redirect
         // if not.
