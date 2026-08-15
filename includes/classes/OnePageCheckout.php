@@ -1524,7 +1524,7 @@ class OnePageCheckout extends base
         $this->debugMessage("validateAndSaveAJaxPostedAddress($which, ..), POST: " . json_encode($_POST, JSON_PRETTY_PRINT));
 
         $address_info = $_POST;
-        $_SESSION['shipping_billing'] = (($address_info['shipping_billing'] ?? 'true') === 'true');
+        $_SESSION['shipping_billing'] = (($address_info['shipping_billing'] ?? 'false') === 'true');
 
         unset($address_info['securityToken'], $address_info['add_address'], $address_info['shipping_billing']);
 

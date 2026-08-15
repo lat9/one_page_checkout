@@ -777,9 +777,14 @@ class checkout_one_observer extends base
     {
         foreach ($fields as $name => $value) {
             foreach (self::LOG_VARS_TO_FILTER as $filter_var) {
+                // -----
+                // If the current 'name' contains the current to-be-filtered name-fragment,
+                // remove that element from the array and continue on to check the next
+                // $name.
+                //
                 if (str_contains((string)$name, $filter_var)) {
                     unset($fields[$name]);
-                    continue;
+                    continue 2;
                 }
             }
         }
