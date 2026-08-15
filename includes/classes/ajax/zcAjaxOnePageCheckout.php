@@ -190,7 +190,7 @@ class zcAjaxOnePageCheckout
         $this->loadLanguageFiles();
 
         $error_message = '';
-        $status = $this->initializeResponseStatus('setShippingEqualBilling', $error_message);
+        $status = $this->initializeResponseStatus('getOrderTotal', $error_message);
         return [
             'status' => $status,
             'errorMessage' => $error_message,
