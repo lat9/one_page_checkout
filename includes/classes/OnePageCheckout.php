@@ -76,6 +76,7 @@ class OnePageCheckout extends base
     protected string $label_params;
     protected int $sendtoSaved;
     protected bool $rebuildRequired;
+    protected static bool $accountNeedsPrimaryAddress;
 
     protected string $paypalAddressOverride;
     protected string $paypalTotalValue;
@@ -384,6 +385,10 @@ class OnePageCheckout extends base
     */
     public function customerAccountNeedsPrimaryAddress(): bool
     {
+        if (isset(self::$accountNeedsPrimaryAddress)) {
+            return self::$accountNeedsPrimaryAddress;
+        }
+
         global $db;
 
         $account_needs_primary_address = true;
@@ -409,6 +414,7 @@ class OnePageCheckout extends base
             }
         }
 
+        self::$accountNeedsPrimaryAddress = $account_needs_primary_address;
         return $account_needs_primary_address;
     }
 
