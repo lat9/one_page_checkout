@@ -560,6 +560,15 @@ class zcAjaxOnePageCheckout
         $error_message = '';
 
         // -----
+        // If issued in the absence of the IS_ADMIN flag or during admin processing, issue an HTTP-400 (Bad Request)
+        // and exit.
+        //
+        if (!defined('IS_ADMIN_FLAG') || IS_ADMIN_FLAG === true) {
+            header("HTTP/1.1 400 Bad Request");
+            zen_exit();
+        }
+
+        // -----
         // Any AJAX request must have been submitted via POST, not GET; otherwise, it's treated as
         // a timeout condition.
         //
@@ -569,7 +578,7 @@ class zcAjaxOnePageCheckout
         // If One-Page Checkout is no longer available, return a status code to the jQuery handler which, in turn,
         // will result in the customer being redirected to the checkout_shipping page.
         //
-        } elseif (!isset($_SESSION['opc']) || !is_object($_SESSION['opc']) || $checkout_one->isEnabled() === false) {
+        } elseif (!isset($_SESSION['opc'], $checkout_one) || !is_object($_SESSION['opc']) || $checkout_one->isEnabled() === false) {
             $status = 'unavailable';
             $checkout_one->debug_message('OPC is no longer available.', false, "zcAjaxOnePageCheckout::$method_name");
         // -----
