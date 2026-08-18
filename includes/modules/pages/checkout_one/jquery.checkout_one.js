@@ -776,8 +776,20 @@ jQuery(document).ready(function() {
     }
 
     // -----
-    // If we get here successfully, the jQuery processing for the page looks OK so we'll hide the
-    // alternate-checkout link and display the "normal" one-page checkout form.
+    // If we get here successfully, the jQuery processing for the page looks OK, but we still need to check
+    // that the current template has loaded the jscript_framework.php that contains the AJAX interface
+    // functions.
+    //
+    // No zcJS.ajax method, no one-page checkout! Simply return from the page's initialization; that will
+    // keep the alternate-checkout link visible so the customer will go through the "normal" 3-page checkout.
+    //
+    if (typeof zcJS === 'undefined' || typeof zcJS.ajax !== 'function') {
+        return;
+    }
+
+    // -----
+    // All looks good from a jQuery/AJAX standpoint, so we'll hide the alternate-checkout link and
+    // display the "normal" one-page checkout form.
     //
     jQuery('#checkoutPaymentNoJs').hide();
     jQuery('#checkoutPayment').show();

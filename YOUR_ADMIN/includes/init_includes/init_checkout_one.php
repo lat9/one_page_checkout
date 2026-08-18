@@ -15,8 +15,8 @@ if (!defined('IS_ADMIN_FLAG')) {
 // 500-599 ... Registered-account settings
 // 1000+ ..... Debug settings
 //
-define('CHECKOUT_ONE_CURRENT_VERSION', '2.7.0-beta1');
-define('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2026-08-15');
+define('CHECKOUT_ONE_CURRENT_VERSION', '2.7.0-beta2');
+define('CHECKOUT_ONE_CURRENT_UPDATE_DATE', '2026-08-16');
 
 if (isset($_SESSION['admin_id'])) {
     $version_release_date = CHECKOUT_ONE_CURRENT_VERSION . ' (' . CHECKOUT_ONE_CURRENT_UPDATE_DATE . ')';
@@ -181,19 +181,5 @@ if (isset($_SESSION['admin_id'])) {
              VALUES
                 ('Guest Checkout: Shipping-Address ID', 'CHECKOUT_ONE_GUEST_SENDTO_ADDRESS_BOOK_ID', '$address_book_id', 'This (hidden) value identifies the address_book-table entry that is used as the pseudo-shipping-address entry for any guest checkout in your store.', 6, now(), 30)"
         );
-    }
-
-    // -----
-    // Now, check to make sure that the currently-active template's folder includes the jscript_framework.php file and disable the One-Page Checkout if
-    // that file's not found.
-    //
-    $template_check = $db->Execute("SELECT DISTINCT template_dir FROM " . TABLE_TEMPLATE_SELECT);
-    foreach ($template_check as $next_template) {
-        $jscript_dir = DIR_FS_CATALOG . 'includes/templates/' . $next_template['template_dir'] . '/jscript';
-        if (zen_config('CHECKOUT_ONE_ENABLED') !== 'false' && !is_dir($jscript_dir) || !file_exists("$jscript_dir/jscript_framework.php")) {
-            $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = 'false' WHERE configuration_key = 'CHECKOUT_ONE_ENABLED' LIMIT 1");
-            $messageStack->add(sprintf(ERROR_STORESIDE_CONFIG, "$jscript_dir/jscript_framework.php"), 'error');
-            break;
-        }
     }
 }
