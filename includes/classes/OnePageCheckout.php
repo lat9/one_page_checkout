@@ -1982,6 +1982,8 @@ class OnePageCheckout extends base
                 $where_string = "customers_id = $customer_id AND address_book_id = $address_book_id LIMIT 1";
                 $db->perform(TABLE_ADDRESS_BOOK, $sql_data_array, 'update', $where_string);
 
+                self::$accountNeedsPrimaryAddress = false;
+
                 $this->notify('NOTIFY_OPC_ADDED_PRIMARY_ADDRESS', ['address_book_id' => $address_book_id], $sql_data_array);
             }
 
