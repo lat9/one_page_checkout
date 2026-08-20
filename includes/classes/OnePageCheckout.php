@@ -76,6 +76,7 @@ class OnePageCheckout extends base
     protected string $label_params;
     protected int $sendtoSaved;
     protected bool $rebuildRequired;
+    protected static bool $accountNeedsPrimaryAddress;
 
     protected string $paypalAddressOverride;
     protected string $paypalTotalValue;
@@ -384,6 +385,10 @@ class OnePageCheckout extends base
     */
     public function customerAccountNeedsPrimaryAddress(): bool
     {
+        if (isset(self::$accountNeedsPrimaryAddress)) {
+            return self::$accountNeedsPrimaryAddress;
+        }
+
         global $db;
 
         $account_needs_primary_address = true;
@@ -409,6 +414,7 @@ class OnePageCheckout extends base
             }
         }
 
+        self::$accountNeedsPrimaryAddress = $account_needs_primary_address;
         return $account_needs_primary_address;
     }
 
@@ -1975,6 +1981,8 @@ class OnePageCheckout extends base
                 $customer_id = (int)$_SESSION['customer_id'];
                 $where_string = "customers_id = $customer_id AND address_book_id = $address_book_id LIMIT 1";
                 $db->perform(TABLE_ADDRESS_BOOK, $sql_data_array, 'update', $where_string);
+
+                self::$accountNeedsPrimaryAddress = false;
 
                 $this->notify('NOTIFY_OPC_ADDED_PRIMARY_ADDRESS', ['address_book_id' => $address_book_id], $sql_data_array);
             }

@@ -1,6 +1,14 @@
 <?php
 
 declare(strict_types=1);
+
+// -----
+// Disallowed if issued in the absence of the IS_ADMIN flag or during admin processing.
+//
+if (!defined('IS_ADMIN_FLAG') || IS_ADMIN_FLAG === true) {
+    die('Illegal access');
+}
+
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
 // Copyright (C) 2013-2026 Vinos de Frutas Tropicales.  All rights reserved.
@@ -569,9 +577,8 @@ class zcAjaxOnePageCheckout
         // If One-Page Checkout is no longer available, return a status code to the jQuery handler which, in turn,
         // will result in the customer being redirected to the checkout_shipping page.
         //
-        } elseif (!isset($_SESSION['opc']) || !is_object($_SESSION['opc']) || $checkout_one->isEnabled() === false) {
+        } elseif (!isset($_SESSION['opc'], $checkout_one) || !is_object($_SESSION['opc']) || $checkout_one->isEnabled() === false) {
             $status = 'unavailable';
-            $checkout_one->debug_message('OPC is no longer available.', false, "zcAjaxOnePageCheckout::$method_name");
         // -----
         // Verify that there's still a valid cart for the customer.
         //
