@@ -2,7 +2,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
 // Copyright (C) 2013-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last changed: OPC v2.7.0
+// Last changed: OPC v2.7.1
 //
 var selected;
 var submitter = null;
@@ -636,6 +636,8 @@ jQuery(document).ready(function() {
 
     function editBilling()
     {
+        jQuery('#checkoutPayment > .opc-overlay').addClass('active');
+        jQuery('#checkoutOneBillto').addClass('opc-view');
         jQuery('#address-bill').hide();
         jQuery('#address-form-bill').show();
         jQuery('#checkoutOneBillto .opc-buttons').show();
@@ -645,6 +647,8 @@ jQuery(document).ready(function() {
     
     function editShipping()
     {
+        jQuery('#checkoutPayment > .opc-overlay').addClass('active');
+        jQuery('#checkoutOneShipto').addClass('opc-view');
         jQuery('#address-ship').hide();
         jQuery('#address-form-ship').show();
         jQuery('#checkoutOneShipto .opc-buttons').show();
