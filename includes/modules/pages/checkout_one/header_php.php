@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated for OPC v2.7.0
+// Last updated for OPC v2.7.1
 //
 // -----
 // This should be first line of the script:
@@ -47,6 +47,17 @@ if (!zen_is_logged_in()) {
         $_SESSION['navigation']->set_snapshot(['mode' => 'SSL', 'page' => FILENAME_CHECKOUT_ONE]);
         zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
     }
+}
+
+// -----
+// Zen Cart v3.0.0 and later sets the customer's password-hash into the
+// session so that multi-browser password changes can be detected.
+//
+// If this is a guest-checkout, set that in-session value to an empty
+// string ... guest customers don't have a password set.
+//
+if ($is_guest_checkout === true && function_exists('zen_set_customer_session_password_hash')) {
+    zen_set_customer_session_password_hash('');
 }
 
 // -----
@@ -373,10 +384,10 @@ $display_payment_block = ($customer_info_ok === true && $temp_billto_addr_ok ===
 $flagOnSubmit = 0;
 if ($display_payment_block === false || $shipping_module_available === false) {
     require DIR_WS_CLASSES . 'OnePageCheckoutNoPayment.php';
-    $payment_modules = new OnePageCheckoutNoPayment;
+    $payment_modules = new OnePageCheckoutNoPayment();
 } else {
     require DIR_WS_CLASSES . 'payment.php';
-    $payment_modules = new payment;
+    $payment_modules = new payment();
 
     // -----
     // Check to see if we're in "special checkout", i.e. the payment's being made via the PayPal Express
