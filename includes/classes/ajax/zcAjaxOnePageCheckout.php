@@ -424,7 +424,19 @@ class zcAjaxOnePageCheckout
                     'errorMessage' => ERROR_NO_PAYMENT_MODULE_SELECTED,
                 ];
             } else {
-                $_SESSION['payment'] = $_POST['payment'];
+                $payment_value = (isset($_POST['payment']) && is_string($_POST['payment'])) ? $_POST['payment'] : '';
+                $payment_value_ok = false;
+                if ($payment_value !== '' && preg_match('/^[a-zA-Z0-9_]+$/', $payment_value)) {
+                    if (!class_exists('payment')) {
+                        require DIR_WS_CLASSES . 'payment.php';
+                    }
+                    $payment_check = new payment($payment_value);
+                    $payment_value_ok = (isset($GLOBALS[$payment_value])
+                        && is_object($GLOBALS[$payment_value])
+                        && !empty($GLOBALS[$payment_value]->enabled));
+                }
+                if ($payment_value_ok === true) {
+                    $_SESSION['payment'] = $payment_value;
             }
 
             $order_total_html = $this->createOrderTotalHtml();
