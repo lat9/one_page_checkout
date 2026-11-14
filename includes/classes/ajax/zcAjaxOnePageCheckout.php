@@ -13,7 +13,7 @@ if (!defined('IS_ADMIN_FLAG') || IS_ADMIN_FLAG === true) {
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9.
 // Copyright (C) 2013-2026 Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.7.0
+// Last updated: OPC v2.7.1
 //
 class zcAjaxOnePageCheckout
 {
@@ -410,23 +410,21 @@ class zcAjaxOnePageCheckout
 
         $error_message = '';
         $order_total_html = '';
+        $total = '';
 
         // -----
         // Initialize the response's status code, continuing only if all is 'ok'.
         //
         $status = $this->initializeResponseStatus('updatePaymentMethod', $error_message, validate_products: true);
         if ($status === 'ok') {
-            if (empty($_POST['payment'])) {
+            if (empty($_POST['payment']) || !is_string($_POST['payment']) || $_POST['payment'] === 'freecharger' || $_SESSION['opc']->isPaymentMethodDisallowedForGuest($_POST['payment']) === true) {
                 unset($_SESSION['payment']);
-            } elseif (!is_string($_POST['payment']) || $_SESSION['opc']->isPaymentMethodDisallowedForGuest($_POST['payment']) === true) {
-                return [
-                    'status' => 'reload',
-                    'errorMessage' => ERROR_NO_PAYMENT_MODULE_SELECTED,
-                ];
+                $status = 'reload';
+                $error_message = ERROR_NO_PAYMENT_MODULE_SELECTED;
             } else {
-                $payment_value = (isset($_POST['payment']) && is_string($_POST['payment'])) ? $_POST['payment'] : '';
+                $payment_value = $_POST['payment'];
                 $payment_value_ok = false;
-                if ($payment_value !== '' && preg_match('/^[a-zA-Z0-9_]+$/', $payment_value)) {
+                if (preg_match('/^[a-zA-Z0-9_]+$/', $payment_value)) {
                     if (!class_exists('payment')) {
                         require DIR_WS_CLASSES . 'payment.php';
                     }
@@ -437,16 +435,21 @@ class zcAjaxOnePageCheckout
                 }
                 if ($payment_value_ok === true) {
                     $_SESSION['payment'] = $payment_value;
+                    $order_total_html = $this->createOrderTotalHtml();
+                    $total = $this->formatOrderTotal();
+                } else {
+                    unset($_SESSION['payment']);
+                    $status = 'reload';
+                    $error_message = ERROR_NO_PAYMENT_MODULE_SELECTED;
+                }
             }
-
-            $order_total_html = $this->createOrderTotalHtml();
         }
 
         return [
             'status' => $status,
             'errorMessage' => $error_message,
             'orderTotalHtml' => $order_total_html,
-            'total' => $this->formatOrderTotal(),
+            'total' => $total,
         ];
     }
 
