@@ -5,7 +5,7 @@ declare(strict_types=1);
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.7.0
+// Last updated: OPC v2.7.1
 //
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
@@ -539,7 +539,7 @@ class checkout_one_observer extends base
             // information from that order.
             //
             case 'NOTIFY_HEADER_START_CHECKOUT_SUCCESS':
-                if ($_SESSION['opc']->isGuestCheckout() === true && !isset($_SESSION['order_number_created'])) {
+                if ($_SESSION['opc']->isGuestCheckout() === true && !isset($_SESSION['order_number_created']) && isset($_SESSION['order_placed_by_guest'])) {
                     $_SESSION['order_number_created'] = $_SESSION['order_placed_by_guest'];
                 }
                 break;
