@@ -3,7 +3,7 @@
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9
 // Copyright (C) 2013-2026, Vinos de Frutas Tropicales.  All rights reserved.
 //
-// Last updated: OPC v2.7.0
+// Last updated: OPC v2.7.1
 //
 
 // This should be first line of the script:
@@ -93,7 +93,7 @@ if (isset($_SESSION['shipping']['id']) && $_SESSION['shipping']['id'] === 'free_
 // the data-gathering phase of OPC's checkout.
 //
 if (isset($_POST['payment'])) {
-    if (!is_string($_POST['payment']) || $_SESSION['opc']->isPaymentMethodDisallowedForGuest($_POST['payment']) === true) {
+    if (!is_string($_POST['payment']) || $_POST['payment'] === 'freecharger' || $_SESSION['opc']->isPaymentMethodDisallowedForGuest($_POST['payment']) === true) {
         zen_redirect(zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'));
     }
     $_SESSION['payment'] = $_POST['payment'];

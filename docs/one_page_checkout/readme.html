@@ -43,7 +43,7 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
 
 <body>
     <h1>One-Page Checkout &hellip; with Guest &hellip; <span class="smaller">for Zen Cart v2.0.0 (and later)</span></h1>
-    <h3>Version 2.7.1 by lat9, swguy, simon1066, marco-pm, drbyte, proseLA, brittainmark and hucario</h3>
+    <h3>Version 2.7.1 by lat9, swguy, simon1066, marco-pm, drbyte, proseLA, brittainmark, hucario and cstdenis</h3>
     <h3>Copyright &copy; 2013-2026 <a href="https://vinosdefrutastropicales.com" target="_blank" rel="noopener">Vinos de Frutas Tropicales</a>. All rights reserved.</h3>
     <p>Released under the General Public License (see the file named <code>license.txt</code> in the plugin's distribution for full details). This script is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</p>
     <hr>
@@ -306,11 +306,14 @@ pre.scroll { border: 1px solid #666; padding: 5px; }
             <li>BUGFIX: 'Overlay' all other form-fields when a billing or shipping address is being edited.</li>
             <li>INTROP: Correct guest-checkout operation for Zen Cart v3.0.0 and later.</li>
             <li>BUGFIX: Check for variable presence prior to use, preventing unwanted debug-logs.</li>
+            <li>BUGFIX: Harden checks on submitted payment module.</li>
             <li>The following files were changed:<ol>
+                <li>/includes/classes/ajax/zcAjaxOnePageCheckout.php</li>
                 <li>/includes/classes/observers/class.checkout_one_observer.php</li>
                 <li>/includes/modules/pages/checkout_one/header_php.php</li>
                 <li>/includes/modules/pages/checkout_one/jquery.checkout_one.js</li>
                 <li>/includes/modules/pages/checkout_one/jquery.checkout_one.min.js</li>
+                <li>/includes/modules/pages/checkout_one_confirmation/header_php.php</li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_checkout_one.php</li>
             </ol></li>
         </ul></li>
